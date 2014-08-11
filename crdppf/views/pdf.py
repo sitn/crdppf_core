@@ -287,6 +287,6 @@ def create_extract(request):
 
     extract.clean_up_temp_files()
 
-    pdffile = {'pdfurl':request.static_url('crdppf:static/public/pdf/'+pdfconfig.pdfname+'.pdf')}
+    pdffile = {'pdfurl':request.static_url('crdppfportal:static/public/pdf/'+pdfconfig.pdfname+'.pdf')}
 
     return pdffile
