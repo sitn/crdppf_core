@@ -27,15 +27,15 @@ class AppConfig(object):
     """
     def __init__(self, config):
         # tempdir : Path to the working directory where the temporary files will be stored
-        self.tempdir = pkg_resources.resource_filename('crdppf', 'static/public/temp_files/') 
+        self.tempdir = pkg_resources.resource_filename('crdppfportal', 'static/public/temp_files/') 
         # pdfbasedir : Path to the directory where the generated pdf's will be stored
-        self.pdfbasedir = pkg_resources.resource_filename('crdppf', 'static/public/pdf/') 
+        self.pdfbasedir = pkg_resources.resource_filename('crdppfportal', 'static/public/pdf/') 
         # imagesbasedir : Path to the directory where the images resources are stored
-        self.imagesbasedir = pkg_resources.resource_filename('crdppf','static/images/')
+        self.imagesbasedir = pkg_resources.resource_filename('crdppfportal','static/images/')
         # municipalitylogodir : Path to the directory where the logos of the municipalities are stored
-        self.municipalitylogodir = pkg_resources.resource_filename('crdppf','crdppf/static_specific/images/ecussons/')
+        self.municipalitylogodir = pkg_resources.resource_filename('crdppfportal','static/images/ecussons/')
         # legaldocsdir : Path to the folder where the legal documents are stored that may or may not be included
-        self.legaldocsdir = pkg_resources.resource_filename('crdppf', 'static/public/reglements/') 
+        self.legaldocsdir = pkg_resources.resource_filename('crdppfportal', 'static/public/reglements/') 
         self.ch_wms_layers = []
         self.ch_topics = config['ch_topics']
         self.ch_legend_layers = config['ch_legend_layers']
@@ -76,7 +76,7 @@ class PDFConfig(object):
         self.timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         self.siteplanname = str(self.timestamp)+'_siteplan'
         self.fitratio = config['fitratio']
-        self.pdfpath = pkg_resources.resource_filename('crdppf', 'static/public/pdf/')
+        self.pdfpath = pkg_resources.resource_filename('crdppfportal', 'static/public/pdf/')
         # CHlogopath : Path to the header logo of the Swiss Confederation
         self.CHlogopath = 'ecussons/Logo_Schweiz_Eidgen.png'
         # cantonlogopath : Path to the header logo of the canton
@@ -141,8 +141,8 @@ class Extract(FPDF):
         self.crdppf_wms = request.registry.settings['crdppf_wms']
         self.ch_wms = request.registry.settings['ch_wms']
         self.chfs_baseurl = request.registry.settings['chfs_baseurl']
-        self.sld_url = request.static_url('crdppf:static/public/temp_files/')
-        self.topiclegenddir = request.static_url('crdppf:static/public/legend/')
+        self.sld_url = request.static_url('crdppfportal:static/public/temp_files/')
+        self.topiclegenddir = request.static_url('crdppfportal:static/public/legend/')
         self.creationdate = datetime.now().strftime("%d.%m.%Y-%H:%M:%S")
         self.timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         self.printformat = {}
