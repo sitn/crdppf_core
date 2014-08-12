@@ -1,0 +1,4 @@
+*.pyc
+*.egg-info/
+static/build/crdppf.js
+*.bkp
