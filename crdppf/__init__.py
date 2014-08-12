@@ -56,9 +56,7 @@ def main(global_config, **settings):
     config.set_request_property(read_tile_date, name='tile_date', reify=True)
 
     config.add_static_view('static', 'crdppf:static', cache_max_age=3600)
-    #config.add_static_view('static_specific', specific_static_path, cache_max_age=3600)
-    #config.add_route('catchall_static', '/*subpath')
-    #config.add_view('crdppf.static.static_view', route_name='catchall_static')
+    config.add_static_view('proj', 'crdppfportal:static', cache_max_age=3600)
 
 
     # ROUTES
