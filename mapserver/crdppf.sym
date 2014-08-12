@@ -398,3 +398,15 @@ Symbol
     2 3.5
   END
 END
+
+SYMBOL
+    NAME "IcePack"
+    TYPE PIXMAP
+    IMAGE "images\IcePack.png"
+END
+
+SYMBOL
+    NAME "IcePack_gray"
+    TYPE PIXMAP
+    IMAGE "images\IcePack_gray.png"
+END
