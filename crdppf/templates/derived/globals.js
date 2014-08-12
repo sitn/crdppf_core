@@ -2,7 +2,7 @@ if(!window.Crdppf) Crdppf = {};
 
 Crdppf.baseUrl = "${request.route_url('home')}";
 Crdppf.imagesDir = "${request.route_url('images')}";
-Crdppf.staticImagesDir = "${request.route_url('catchall_static', subpath='static_specific/images/')}";
+Crdppf.staticImagesDir = "${request.route_url('catchall_static', subpath='proj/images/')}";
 Crdppf.getFeatureUrl = "${request.route_url('get_features')}";
 Crdppf.setLanguageUrl = "${request.route_url('set_language')}";
 Crdppf.getLanguageUrl = "${request.route_url('get_language')}";

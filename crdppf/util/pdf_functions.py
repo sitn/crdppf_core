@@ -116,7 +116,7 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
         'lang': lang
     }
     params = urllib.urlencode(params)
-    sdf
+    
     # Call the feature service URL wich sends back an XML Interlis 2.3 file in the OEREB Transfer structure
     response = urllib.urlopen(fsurl, params)
     content = response.read()
