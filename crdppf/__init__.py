@@ -10,21 +10,21 @@ import papyrus
 import os
 import yaml
 
-def read_tile_date(request):
-    """
-    Read the tile date from tile date file. Return "c2c", "c2c"
-    if there's no tile date file. "c2c" corresponds to a static
-    tile set that is always exists on the server.
-    """
+#~ def read_tile_date(request):
+    #~ """
+    #~ Read the tile date from tile date file. Return "c2c", "c2c"
+    #~ if there's no tile date file. "c2c" corresponds to a static
+    #~ tile set that is always exists on the server.
+    #~ """
 
-    tile_date_file = request.registry.settings['tile_date_file']
-    if os.path.exists(tile_date_file):
-        tile_date = yaml.load(file(tile_date_file))
-        return tile_date['plan_cadastral'], tile_date['plan_ville']
-    return 'c2c', 'c2c'
+    #~ tile_date_file = request.registry.settings['tile_date_file']
+    #~ if os.path.exists(tile_date_file):
+        #~ tile_date = yaml.load(file(tile_date_file))
+        #~ return tile_date['plan_cadastral'], tile_date['plan_ville']
+    #~ return 'c2c', 'c2c'
 
 
-def main(global_config, **settings):
+def includeme(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
     
@@ -90,5 +90,5 @@ def main(global_config, **settings):
     config.add_view('crdppf.static.static_view', route_name='catchall_static')
     config.scan()
 
-    return config.make_wsgi_app()
+    #return config.make_wsgi_app()
 
