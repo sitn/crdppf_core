@@ -25,7 +25,7 @@
 
  
 <body>
-<%include file='/header.mako'/>
+<%include file='crdppfportal:templates/header.mako'/>
     
 % if debug:
     <p>debug:ok</p>

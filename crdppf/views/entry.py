@@ -10,7 +10,7 @@ class Entry(object):
         self.settings = request.registry.settings
         self.request = request
         
-    @view_config(route_name='home', renderer = '/derived/crdppf.mako')
+    @view_config(route_name='home', renderer = 'crdppf:templates/derived/crdppf.mako')
     def home(self):
         d = {
             'debug': self.debug
