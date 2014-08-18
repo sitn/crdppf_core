@@ -10,23 +10,11 @@ import papyrus
 import os
 import yaml
 
-def read_tile_date(request):
-    """
-    Read the tile date from tile date file. Return "c2c", "c2c"
-    if there's no tile date file. "c2c" corresponds to a static
-    tile set that is always exists on the server.
-    """
-
-    tile_date_file = request.registry.settings['tile_date_file']
-    if os.path.exists(tile_date_file):
-        tile_date = yaml.load(file(tile_date_file))
-        return tile_date['plan_cadastral'], tile_date['plan_ville']
-    return 'c2c', 'c2c'
-
-
-def main(global_config, **settings):
+def includeme(config):
     """ This function returns a Pyramid WSGI application.
     """
+    
+    settings = config.get_settings()
     
     engine = engine_from_config(
         settings,
@@ -38,7 +26,6 @@ def main(global_config, **settings):
 
     specific_tmp_path = os.path.join(settings['specific_root_dir'], 'templates')
     specific_static_path = os.path.join(settings['specific_root_dir'], 'static')
-
     settings.setdefault('mako.directories',['crdppf:templates', specific_tmp_path])
     settings.setdefault('reload_templates',True)
 
@@ -47,18 +34,14 @@ def main(global_config, **settings):
 
     settings.update(yaml.load(file(settings.get('app.cfg'))))
 
-    my_session_factory = UnencryptedCookieSessionFactoryConfig('itsaseekreet',2400)
-    config = Configurator(settings=settings, session_factory = my_session_factory)
     config.include(papyrus.includeme)
     config.add_renderer('.js', mako_renderer_factory)
     config.add_renderer('geojson', GeoJSON())
 
-    config.set_request_property(read_tile_date, name='tile_date', reify=True)
-
-    config.add_static_view('static', 'crdppf:static', cache_max_age=3600)
+    # add the static view (for static resources)
+    config.add_static_view('static', 'crdppf:static',cache_max_age=3600)
     config.add_static_view('proj', 'crdppfportal:static', cache_max_age=3600)
-
-
+     
     # ROUTES
     config.add_route('home', '/')
     config.add_route('images', '/static/images/')
@@ -86,9 +69,9 @@ def main(global_config, **settings):
     config.add_view('crdppf.views.entry.Entry', route_name = 'images')
     config.add_view('crdppf.views.entry.Entry', route_name='formulaire_reglements')
     config.add_view('crdppf.views.entry.Entry', route_name='test')
+    
     config.add_route('catchall_static', '/*subpath')
     config.add_view('crdppf.static.static_view', route_name='catchall_static')
     config.scan()
 
-    return config.make_wsgi_app()
 

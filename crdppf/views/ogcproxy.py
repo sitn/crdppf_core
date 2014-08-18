@@ -47,7 +47,7 @@ def ogcproxy(request):
     http = httplib2.Http()
 
     resp, content = http.request(url, method=method, body=body, headers=h)
-
+    
     if method == "POST" and is_get_feature(body):
         content = limit_featurecollection(content, limit=1)
 

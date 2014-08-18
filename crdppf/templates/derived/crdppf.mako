@@ -1,4 +1,4 @@
-<%inherit file="/base/index.mako"/>
+<%inherit file="../base/index.mako"/>
 
 % if debug:
     <%!

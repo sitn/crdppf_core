@@ -1,4 +1,4 @@
 *.pyc
 *.egg-info/
 apache/*.conf
-static/build/crdppf.js
+crdppf/static/build/crdppf.js
