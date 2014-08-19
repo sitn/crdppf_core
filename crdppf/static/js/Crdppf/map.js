@@ -203,7 +203,7 @@ function makeMap(mapOptions, labels){
         name: "Base layer",
         url: Crdppf.mapproxyUrl,
         layer: Crdppf.tileNames.plan_cadastral_name,
-        matrixSet: 'swiss_grid_new',
+        matrixSet: Crdppf.mapMatrixSet,
         format: 'image/png',
         isBaseLayer: true,
         style: 'default',

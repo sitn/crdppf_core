@@ -171,7 +171,7 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
                                     name: "Base layer",
                                     url: Crdppf.mapproxyUrl,
                                     layer: node.id,
-                                    matrixSet: 'swiss_grid_new',
+                                    matrixSet: Crdppf.mapMatrixSet,
                                     format: format,
                                     formatSuffixMap: formatSuffixMap,
                                     isBaseLayer: true,
