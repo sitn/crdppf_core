@@ -251,13 +251,13 @@ body {
 
 .olControlOverviewMapMinimizeButton {
     cursor: pointer;
-	background-image: url("../../../static/images/layer-switcher-minimize.png");
+	background-image: url("../../static/images/layer-switcher-minimize.png");
     top: 0;
     left: 0;
 }
 
 .olControlOverviewMapMaximizeButton {
-	background-image: url("../../../static/images/layer-switcher-maximize.png");
+	background-image: url("../../static/images/layer-switcher-maximize.png");
     right: 3px !important;
     bottom: 4px !important;
     cursor: pointer;
