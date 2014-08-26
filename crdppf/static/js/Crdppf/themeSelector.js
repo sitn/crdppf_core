@@ -41,13 +41,13 @@ Crdppf.ThemeSelector = function(labels, layerList) {
         columns: [
             {
                 header:'icon',
-                width: 0.25,
+                width: 0.15,
                 dataIndex: 'image',
-                tpl: '<img src=' + Crdppf.imagesDir + '/themes/{image}'+ ' width=50 height=25></img>'
+                tpl: '<img src=' + Crdppf.imagesDir + '/themes/{image}'+ ' width=25 height=25></img>'
             },
             {
-                header: 'Thèmes',
-                width: 0.75,
+                header: 'topic',
+                width: 0.85,
                 dataIndex: 'name',
                 tpl: themeTemplate
             }
