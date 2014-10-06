@@ -255,15 +255,15 @@ function makeMap(mapOptions, labels){
         bottomInUnits: '',
         maxWidth: 200
     });
-    
+  
     // THE OL map object
     var map = new OpenLayers.Map({
-        projection: new OpenLayers.Projection('EPSG:21781'),
-        resolutions: [250, 100, 50, 20, 10, 5, 2.5, 2, 1.5, 1, 0.5, 0.25, 0.125, 0.0625],
+        projection: new OpenLayers.Projection(Crdppf.mapSRS),
+        resolutions: Crdppf.mapResolutions,
         units: 'm',
         theme: null,
-        maxExtent: new OpenLayers.Bounds(420000.0, 30000.0, 900000.0, 360000.0),
-        restrictedExtent: new OpenLayers.Bounds(515000,180000,580000,230000),
+        maxExtent: new OpenLayers.Bounds(Crdppf.mapMaxExtent),
+        restrictedExtent: new OpenLayers.Bounds(Crdppf.mapExtent),
         controls: [
             new OpenLayers.Control.PanZoomBar({
                 slideFactor: 300,
@@ -285,25 +285,25 @@ function makeMap(mapOptions, labels){
     
     // add base layers & selection layers
     map.addLayers([intersect,select, layer]);
-
+  
     // create an overview map control and customize it
     var overviewMap = new OpenLayers.Control.OverviewMap({
             layers: [
                 new OpenLayers.Layer.Image(
                     "overview",
-                    Crdppf.staticImagesDir + 'keymap.png',
-                    new OpenLayers.Bounds(522000, 180000, 575000, 225000),
-                    new OpenLayers.Size(150, 126)
+                    Crdppf.staticImagesDir + Crdppf.keymap,
+                    new OpenLayers.Bounds(Crdppf.mapOverviewExtent),
+                    new OpenLayers.Size(Crdppf.mapOverviewSizeW, Crdppf.mapOverviewSizeH)
                 )
             ],
-            size: new OpenLayers.Size(150, 126),
+            size: new OpenLayers.Size(Crdppf.mapOverviewSizeW, Crdppf.mapOverviewSizeH),
             maximized: true,
             isSuitableOverview: function() {
                 return true;
             },
             mapOptions: {
-                projection: new OpenLayers.Projection("EPSG:21781"),
-                displayProjection: new OpenLayers.Projection("EPSG:21781"),
+                projection: new OpenLayers.Projection(Crdppf.mapSRS),
+                displayProjection: new OpenLayers.Projection(Crdppf.mapSRS),
                 units: "m",
                 theme: null
             }
