@@ -517,9 +517,9 @@ Crdppf.init_main = function(lang) {
         stateId: "map",
         region: 'center',
         theme: null,
-        extent: new OpenLayers.Bounds(420000,30000,900000,360000),
+        extent: new OpenLayers.Bounds(Crdppf.mapExtent),
         prettyStateKeys: true,
-        center: new OpenLayers.LonLat(550000, 204000),
+        center: new OpenLayers.LonLat(Crdppf.mapCenter),
         zoom: 1,
         map: map,
         tbar: mapToolbar
