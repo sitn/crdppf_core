@@ -60,11 +60,11 @@ Ext.onReady(function(){
             text: 'Retour au portail CRDPPF',
             iconCls: 'geoshop_menu_geoshop',
             handler: function() {
-                if (document.URL == "${request.route_url('select')}") {
-                    alert('Mais, t\'es déjà sur le Geoshop...');
+                if (document.URL == "${request.route_url('home')}") {
+                    alert('Mais, t\'es déjà sur le CRDPPF...');
                     return;
                 }
-                window.location = "${request.route_url('select')}";
+                window.location = "${request.route_url('home')}";
             }
         }
     );
