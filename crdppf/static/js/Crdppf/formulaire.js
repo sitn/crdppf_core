@@ -81,7 +81,7 @@ Ext.onReady(function(){
         bodyStyle: 'padding:5px 5px 0px',
         autoWidth: true,
         autoHeight: true,
-        renderTo:'form',
+        renderTo:'main',
         monitorValid: true,
         items: [{
                 xtype:'numberfield',

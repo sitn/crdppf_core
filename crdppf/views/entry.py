@@ -17,13 +17,6 @@ class Entry(object):
         }
         return d
 
-    @view_config(route_name='formulaire_reglements',renderer = '/derived/formulaire_reglements.mako')
-    def formulaire_reglements(self):
-        d = {
-            'debug': self.debug
-        }
-        return d
-
     @view_config(route_name='test',renderer = '/derived/test.mako')
     def test(self):
         d = {
