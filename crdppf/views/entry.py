@@ -16,18 +16,3 @@ class Entry(object):
             'debug': self.debug
         }
         return d
-
-    @view_config(route_name='test',renderer = '/derived/test.mako')
-    def test(self):
-        d = {
-            'debug': self.debug
-        }
-        asd
-        return d
-
-    @view_config(route_name='map',renderer = '/derived/map.mako')
-    def map(self):
-        d = {
-            'debug': self.debug
-        }
-        return d

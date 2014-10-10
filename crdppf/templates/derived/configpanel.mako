@@ -5,15 +5,9 @@
     <!-- GENERAL LIBRARIES -->
     
     <!-- CUSTOM CRDPPF STUFF -->
-    <script type="text/javascript" src="${request.static_url('crdppf:static/js/Crdppf/resources/Fr.js')}"></script>
-    <script type="text/javascript" src="${request.static_url('crdppf:static/js/Crdppf/resources/De.js')}"></script>
-    <script type="text/javascript" src="${request.static_url('crdppf:static/js/Crdppf/formulaire.js')}"></script>
-    <script type="text/javascript" src="${request.static_url('crdppf:static/js/Crdppf/admintoolbar.js')}"></script>
+    <script type="text/javascript" src="${request.static_url('crdppf:static/js/Crdppf/adminPanel.js')}"></script>
 % else:
-    <script type="text/javascript" src="${request.static_url('crdppf:static/js/Crdppf/formulaire.js')}"></script>
-    <script type="text/javascript" src="${request.static_url('crdppf:static/js/Crdppf/admintoolbar.js')}"></script>
+    <script type="text/javascript" src="${request.static_url('crdppf:static/js/Crdppf/adminPanel.js')}"></script>
 % endif
     
-    
-<div id="tbar"></div>
 <div id="main"></div>
