@@ -114,6 +114,8 @@ def createNewDocEntry(request):
 def getLegalDocuments(request):
     """Gets all the legal documents related to a feature.
     """
+    session = request.session    
+    
     legalbases = {}
     legalbases = DBSession.query(LegalBases).order_by(LegalBases.legalbaseid.asc()).all()
 

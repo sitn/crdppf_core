@@ -3,7 +3,7 @@ from pyramid.view import view_config
 
 #from simplejson import loads as sloads
 
-#~ from crdppf.models import DBSession
+from crdppf.models import DBSession, Translations
 #~ from crdppf.models import Topics, LegalBases, LegalProvisions, References
 #~ from crdppf.models import TemporaryProvisions
 #~ from crdppf.models import Town
