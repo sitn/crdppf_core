@@ -9,6 +9,8 @@
  * @include Crdppf/themeSelector.js
  * @include Crdppf/legalDocuments.js
  * @include Crdppf/measureTools.js
+ * @include Crdppf/admintoolbar.js
+ * @include Crdppf/formulaire.js
  */
 
 var layerList;
@@ -20,6 +22,7 @@ Ext.onReady(function() {
     Crdppf.layerList = '';
     Crdppf.labels = '' ;
     Crdppf.baseLayersList = '';
+    Crdppf.docfilters = {'topic':'0'};
     
     // set the application language to the user session settings
     var lang = ''; // The current session language
@@ -658,7 +661,7 @@ Crdppf.init_main = function(lang) {
         autoScroll: true,
         items:[
             mapContainer,
-            Crdppf.legalDocuments(Crdppf.labels)
+            Crdppf.legalDocuments(Crdppf.labels, Crdppf.docfilters)
         ]
     });
     

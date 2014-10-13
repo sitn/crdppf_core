@@ -1,6 +1,6 @@
 Ext.namespace('Crdppf');
 
-Crdppf.legalDocuments = function(labels) {
+Crdppf.legalDocuments = function(labels, filters) {
 /*
 Function to collect all legal documents related to a selection of restrictions from the db
 and create a data view applying a template to format the page layout
@@ -9,7 +9,7 @@ TODO: pass topic and layerfk to the function to request only related docs
         var legaldocs = new Ext.data.JsonStore({
         autoDestroy: true,
         autoLoad: true,
-        url: Crdppf.getLegalDocumentsUrl,
+        url: Crdppf.getLegalDocumentsUrl(filters),
         sort: {
             field: 'doctype',
             direction: 'ASC'
@@ -49,7 +49,7 @@ TODO: pass topic and layerfk to the function to request only related docs
     var templates = new Ext.XTemplate(
    // Bases légales/legal bases
   '<div style="font-family:Arial;padding:5px;">',
-    '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">Bases légales</h1>',
+    '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">Bases légales - '+filters['topic']+'</h1>',
   	'<div style="font-family:Arial;margin-left:10px;">',
   	'<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
 		'<tpl for=".">',
