@@ -1,7 +1,6 @@
 /*
- * @include Crdppf/adminToolbar.js
- * @include Crdppf/legalDocuments.js
- * @include Crdppf/measureTools.js
+ONLY reference scripts here, if they should be compiled in the build for faster loading
+not really needed for admin stuff as the server should respond fast enough...
  */
 
 var layerList;
@@ -21,18 +20,6 @@ Ext.onReady(function() {
         success: function(response) {
             var lang_json = Ext.decode(response.responseText);
             lang = lang_json['lang'];
-            //OpenLayers.Lang.setCode(lang);
-            //~ if (lang !== '' && lang == 'Fr'){
-                //~ OpenLayers.Util.extend(OpenLayers.Lang.fr, Crdppf.labels);
-            //~ } else if (lang !== '' && lang == 'De') {
-                //~ OpenLayers.Util.extend(OpenLayers.Lang.de, Crdppf.labels);
-            //~ } else if (lang !== '' && lang == 'en') {
-                //~ OpenLayers.Util.extend(OpenLayers.Lang.en, Crdppf.labels);
-            //~ } else if (lang !== '') {
-                //~ OpenLayers.Util.extend(OpenLayers.Lang.fr, Crdppf.labels);
-            //~ }
-            //~ loadingCounter += 1;
-            //~ triggerFunction(loadingCounter);            
         },
         method: 'POST',
         failure: function () {
@@ -52,21 +39,6 @@ Ext.onReady(function() {
         }
     });
 
-    //~ // set the lang parameter in session when selected through the language buttons
-    //~ function setLanguage(value){
-        //~ var request = OpenLayers.Request.GET({
-            //~ url: Crdppf.setLanguageUrl,
-            //~ params: {
-                //~ lang:value,
-                //~ randomkey: Math.random()
-            //~ },
-            //~ proxy: null,
-            //~ async: false
-        //~ });
-        //~ window.location.reload();
-    //~ }
-
-
     // create the header panel containing the page banner
     var headerPanel = new Ext.Panel({
         region: 'north',
@@ -75,18 +47,12 @@ Ext.onReady(function() {
         contentEl: 'header'
     });
 
-    adminToolbar =  new Ext.Toolbar({
-        autoWidth: true,
-        height: 20,
-        html: 'toolbar'
-    });
-    
     // Container for the map and legal documents display
     centerPanel = new Ext.Panel({
         region: 'center',
         autoScroll: true,
         items:[
-            adminToolbar //,Crdppf.legalDocuments(Crdppf.labels)
+            Crdppf.adminToolbar(Crdppf.labels)
         ]
     });
     
@@ -104,5 +70,5 @@ Ext.onReady(function() {
   
 	// Refait la mise en page si la fenêtre change de taille
 	//pass along browser window resize events to the panel
-	//Ext.EventManager.onWindowResize(crdppf.doLayout,crdppf);
+	Ext.EventManager.onWindowResize(crdppf.doLayout,crdppf);
 });
