@@ -1,15 +1,11 @@
-Ext.onReady(function(){
+Ext.namespace('Crdppf');
 
-    Ext.QuickTips.init();
-   // turn on validation errors beside the field globally
-    Ext.form.Field.prototype.msgTarget = 'side';
-
-    var bd = Ext.getBody();
+// create layer tree and append nodes & subnodes to it
+Crdppf.adminToolbar = function(labels) {
     
-    var tb = new Ext.Toolbar();
-    tb.render('tbar');
+    var toolbar = new Ext.Toolbar();
 
-    tb.add({
+   toolbar.add({
             text:'Application',
             iconCls: 'crdppf_application_menu',
             menu: {
@@ -72,16 +68,15 @@ Ext.onReady(function(){
             text: 'Retour au portail CRDPPF',
             iconCls: 'geoshop_menu_geoshop',
             handler: function() {
-                if (document.URL == "${request.route_url('home')}") {
+                if (document.URL == 'home') {
                     alert('Mais, t\'es déjà sur le CRDPPF...');
                     return;
                 }
-                window.location = 'home';
+                window.location = '/';
             }
         }
     );
     
-    tb.doLayout();
-
-    
-});
+   toolbar.doLayout();
+    return toolbar
+}
