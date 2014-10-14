@@ -68,6 +68,7 @@ def includeme(config):
     config.add_route('set_language', 'set_language')
     config.add_route('get_language', 'get_language')
     config.add_route('get_translation_dictionary', 'get_translation_dictionary')
+    config.add_route('get_translations_list', 'get_translations_list')
     config.add_route('get_interface_config', 'get_interface_config')
     config.add_route('get_baselayers_config', 'get_baselayers_config')
     config.add_route('test', 'test')

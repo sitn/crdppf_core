@@ -14,7 +14,7 @@ Crdppf.adminToolbar = function(labels) {
                 items:[{
                     text: 'Configuration de l\'application',
                     handler: function() {
-                        window.location = 'get_configpanel';
+                        window.location = 'configpanel';
                     }
                 },{
                     text: 'Afficher les traductions',
@@ -65,10 +65,23 @@ Crdppf.adminToolbar = function(labels) {
                 }]
             }
         },'-',{
+            text: 'Openlayers',
+            iconCls: 'crdppf_openlayers_menu',
+            menu: {
+                xtype: 'menu',
+                plain: true,
+                items:[{
+                    text: 'Configuration Openlayers',
+                    handler: function() {
+                        window.location = 'get_OLconfig';
+                    }
+                }]
+            }
+        },'-',{
             text: 'Retour au portail CRDPPF',
-            iconCls: 'geoshop_menu_geoshop',
+            iconCls: 'crdppf_menu_home',
             handler: function() {
-                if (document.URL == 'home') {
+                if (document.URL == '/') {
                     alert('Mais, t\'es déjà sur le CRDPPF...');
                     return;
                 }
@@ -78,5 +91,5 @@ Crdppf.adminToolbar = function(labels) {
     );
     
    toolbar.doLayout();
-    return toolbar
-}
+    return toolbar;
+};

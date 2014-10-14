@@ -47,12 +47,21 @@ Ext.onReady(function() {
         contentEl: 'header'
     });
 
+    // Container for the content display
+    contentPanel = new Ext.Panel({
+        autoScroll: true,
+        items:[
+            Crdppf.translationsPanel(Crdppf.labels)
+        ]
+    });
+    
     // Container for the map and legal documents display
     centerPanel = new Ext.Panel({
         region: 'center',
         autoScroll: true,
         items:[
-            Crdppf.adminToolbar(Crdppf.labels)
+            Crdppf.adminToolbar(Crdppf.labels),
+            contentPanel
         ]
     });
     
