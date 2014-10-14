@@ -79,23 +79,6 @@ Crdppf.translationsPanel = function(labels) {
     // Définition de la structure de l'affichage de la grille des données
     var colModel = new Ext.grid.ColumnModel([
         {header: "Id", width: 30, dataIndex: 'id', sortable: true, filtrable: true},
-        //~ {
-            //~ xtype: 'actioncolumn',
-            //~ header:"Résumé",
-            //~ width:80,
-            //~ css: 'text-align:center;',
-            //~ items:[{
-                //~ icon:'${request.static_url('geoshop:static/images/map_magnify.png')}',
-                //~ tooltip:'Afficher le résumé',
-                //~ handler: function(grid,rowIndex){
-                    //~ var row=translationsstore.getAt(rowIndex);
-                    //~ window.open(
-                        //~ '${request.route_url('abstract')}'+'?id_order='+row.id,
-                        //~ '_blank'
-                    //~ );
-                //~ }
-            //~ }]
-        //~ },
         {header: "Nom de la variable", width: 50, dataIndex: 'varstr', sortable: true, filtrable: true},
         {header: "Deutsch", width: 50, dataIndex: 'de', sortable: true, filtrable: true},
         {header: "Français", width: 50, dataIndex: 'fr', sortable: true, filtrable: true},
@@ -104,7 +87,8 @@ Crdppf.translationsPanel = function(labels) {
         {header: "English", width: 50, dataIndex: 'en',  sortable: true, filtrable: true}
     ]);
     
-    var grid = new Ext.grid.GridPanel({
+    var translationpanel = new Ext.grid.GridPanel({
+        layout: 'fit',
         border: false,
         store: translationsstore,
         title: 'Liste des traductions',
@@ -123,17 +107,11 @@ Crdppf.translationsPanel = function(labels) {
                 emptyMsg: "Pas de résultat trouvé"
         })
     });
-  
-    var translationpanel = new Ext.Panel({
-        height:500,
-        renderTo: 'main',
-        layout: 'fit',
-        items: grid
-    });
+
     
     //pass along browser window resize events to the panel
     Ext.EventManager.onWindowResize(translationpanel.doLayout, translationpanel);
     
-    return translationsgrid;
+    return translationpanel;
     
 };

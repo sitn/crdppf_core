@@ -46,23 +46,16 @@ Ext.onReady(function() {
         border: false,
         contentEl: 'header'
     });
-
-    // Container for the content display
-    contentPanel = new Ext.Panel({
-        autoScroll: true,
-        items:[
-            Crdppf.translationsPanel(Crdppf.labels)
-        ]
-    });
-    
+  
     // Container for the map and legal documents display
-    centerPanel = new Ext.Panel({
+    var contentPanel = new Ext.Panel({
         region: 'center',
-        autoScroll: true,
-        items:[
-            Crdppf.adminToolbar(Crdppf.labels),
-            contentPanel
-        ]
+        margins: '5 5 0 0',
+        layout: 'fit',
+        items: [
+            Crdppf.translationsPanel(Crdppf.labels)
+        ],
+        tbar: Crdppf.adminToolbar(Crdppf.labels)
     });
     
     // Main window layout
@@ -73,7 +66,7 @@ Ext.onReady(function() {
         border:true,
         items: [
             headerPanel,
-            centerPanel
+            contentPanel
         ]
     });
   

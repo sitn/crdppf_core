@@ -9,8 +9,6 @@
  * @include Crdppf/themeSelector.js
  * @include Crdppf/legalDocuments.js
  * @include Crdppf/measureTools.js
- * @include Crdppf/admintoolbar.js
- * @include Crdppf/formulaire.js
  */
 
 var layerList;
