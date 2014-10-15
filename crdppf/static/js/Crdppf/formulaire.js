@@ -1,5 +1,8 @@
 Ext.onReady(function(){
 
+    Ext.namespace('Crdppf');
+    Crdppf.labels = '' ;
+    
     Ext.QuickTips.init();
     var winWait = new Ext.LoadMask(
         Ext.getBody(),
@@ -37,7 +40,17 @@ Ext.onReady(function(){
             {name: 'authorityfk', type:'integer'},
             {name: 'topicorder',type:'integer'}
         ]
-    }); 
+    });
+    
+    
+    var checkboxlist = [];
+    var tt = topicstore.getCount();
+    console.log(tt);
+    topicstore.each( function(record) {
+        console.log(record);
+    })
+
+        
 
     var cantons = new Ext.data.SimpleStore({
         autoDestroy: true,
@@ -72,7 +85,7 @@ Ext.onReady(function(){
             ['ZH']
         ]
     });
-
+    
     var formulaire = new Ext.FormPanel({
         id: 'formulaire_saisie',
         title: 'Saisie des règlements',
@@ -81,7 +94,7 @@ Ext.onReady(function(){
         bodyStyle: 'padding:5px 5px 0px',
         autoWidth: true,
         autoHeight: true,
-        renderTo:'main',
+        //renderTo:'main',
         monitorValid: true,
         items: [{
                 xtype:'numberfield',
@@ -304,5 +317,36 @@ Ext.onReady(function(){
         }]
     });
 
+    // create the header panel containing the page banner
+    var headerPanel = new Ext.Panel({
+        region: 'north',
+        height: 55,
+        border: false,
+        contentEl: 'header'
+    });
+  
+    // Container for the map and legal documents display
+    var contentPanel = new Ext.Panel({
+        region: 'center',
+        margins: '5 5 0 0',
+        layout: 'fit',
+        items: [
+            formulaire           
+        ],
+        tbar: Crdppf.adminToolbar(Crdppf.labels)
+    });
+    
+    // Main window layout
+    var crdppf = new Ext.Viewport({
+        layout: 'border',
+        renderTo:'main',
+        id:'viewPort',
+        border:true,
+        items: [
+            headerPanel,
+            contentPanel
+        ]
+    });
+  
     
 });

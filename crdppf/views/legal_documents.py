@@ -5,7 +5,7 @@ from simplejson import loads as sloads
 
 from crdppf.models import DBSession
 from crdppf.models import Topics, LegalBases, LegalProvisions, References
-from crdppf.models import TemporaryProvisions
+from crdppf.models import TemporaryProvisions, Documents, ReferenceLinks
 from crdppf.models import Town
 
 @view_config(route_name='getTownList', renderer='json')
