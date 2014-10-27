@@ -1,7 +1,47 @@
-Ext.onReady(function(){
+ // MAIN USER INTERFACE
+Ext.onReady(function() {
 
     Ext.namespace('Crdppf');
-    Crdppf.labels = '' ;
+    //Crdppf.labels = '' ;
+    Crdppf.topics = '' ;
+    //Crdppf.baseLayersList = '';
+    
+    var loadingCounter = 0;
+    
+ // Load the interface's Crdppf.labels
+    Ext.Ajax.request({
+        url: 'getTopicsList',
+        success: function(response) {           
+            
+            var data = Ext.decode(response.responseText);
+            var data_array = []
+            for (var i = 0; i < data.length; i++) {
+                data_array.push([
+                    data[i].topicid,
+                    data[i].topicname
+                ]);
+            }
+            
+            Crdppf.topicstore = new Ext.data.ArrayStore({
+                idIndex: 0,  
+                fields: [
+                    {name: 'topicid', type: 'string'},
+                    {name: 'topicname', type: 'string'}
+                ],
+                data: data_array
+            });
+            
+            console.log(Crdppf.topicstore);
+            loadingCounter += 1;
+            
+            
+            Crdppf.documentsForm(Crdppf.labels);            
+        },
+        method: 'POST',
+        failure: function () {
+            Ext.Msg.alert(Crdppf.topics.serverErrorMessage);
+        }
+    });
     
     Ext.QuickTips.init();
     var winWait = new Ext.LoadMask(
@@ -29,28 +69,31 @@ Ext.onReady(function(){
         ]
     }); 
 
-    var topicstore = new Ext.data.JsonStore({
-        autoDestroy: true,
-        autoLoad: true,
-        url: 'getTopicsList',
-        idProperty: 'topicid',
-        fields:[
-            {name: 'topicid'},
-            {name: 'topicname'},
-            {name: 'authorityfk', type:'integer'},
-            {name: 'topicorder',type:'integer'}
-        ]
-    });
+    var topicslist = [];
     
-    
-    var checkboxlist = [];
-    var tt = topicstore.getCount();
-    console.log(tt);
-    topicstore.each( function(record) {
-        console.log(record);
-    })
-
-        
+    //~ var topicstore = new Ext.data.JsonStore({
+        //~ autoDestroy: true,
+        //~ autoLoad: true,
+        //~ url: 'getTopicsList',
+        //~ idProperty: 'topicid',
+        //~ fields:[
+            //~ {name: 'topicid'},
+            //~ {name: 'topicname'},
+            //~ {name: 'authorityfk', type:'integer'},
+            //~ {name: 'topicorder',type:'integer'}
+        //~ ],
+        //~ listeners: {
+            //~ load: function(st, records, opt) {
+                //~ st.data.each(function (record) {
+                    //~ topicslist.push({
+                        //~ boxLabel: record.data.topicname,
+                        //~ name: record.data.topicid
+                    //~ });
+                //~ });
+            //~ }
+        //~ }
+    //~ });
+    //~ console.log(topicslist);
 
     var cantons = new Ext.data.SimpleStore({
         autoDestroy: true,
@@ -85,6 +128,9 @@ Ext.onReady(function(){
             ['ZH']
         ]
     });
+ 
+    // create the empty form, then fill it with values
+    Crdppf.documentsForm = function(labels) {
     
     var formulaire = new Ext.FormPanel({
         id: 'formulaire_saisie',
@@ -174,7 +220,7 @@ Ext.onReady(function(){
                 maxLength: 100
             },{
                 xtype:'combo',
-                store: topicstore,
+                store: Crdppf.topicstore,
                 fieldLabel: 'Identifiant du thème',
                 displayField:'topicname',
                 valueField: 'topicid',
@@ -218,9 +264,17 @@ Ext.onReady(function(){
                 maxLength: 25
             },{
                 xtype:'textfield',
-                fieldLabel: 'Lien vers le document',
+                fieldLabel: 'Lien web du document',
                 labelStyle: 'white-space: nowrap;font-weight: bold;',
                 name: 'url',
+                allowBlank: false,
+                width: 500,
+                maxLength: 500
+            },{
+                xtype:'textfield',
+                fieldLabel: 'Chemin vers le document',
+                labelStyle: 'white-space: nowrap;font-weight: bold;',
+                name: 'localurl',
                 allowBlank: false,
                 width: 500,
                 maxLength: 500
@@ -293,7 +347,7 @@ Ext.onReady(function(){
         buttons: [{
             text: 'Enregistrer',
             handler: function(){
-                //~ add form validation
+                 //add form validation
                 var formvalues =formulaire.getForm().getValues();
                 winWait.show();
                 var transaction =Ext.Ajax.request({
@@ -316,6 +370,9 @@ Ext.onReady(function(){
             text: 'Cancel'
         }]
     });
+  
+    return formulaire;
+};
 
     // create the header panel containing the page banner
     var headerPanel = new Ext.Panel({
@@ -331,7 +388,7 @@ Ext.onReady(function(){
         margins: '5 5 0 0',
         layout: 'fit',
         items: [
-            formulaire           
+            Crdppf.documentsForm(Crdppf.labels)        
         ],
         tbar: Crdppf.adminToolbar(Crdppf.labels)
     });
@@ -347,6 +404,5 @@ Ext.onReady(function(){
             contentPanel
         ]
     });
-  
     
 });

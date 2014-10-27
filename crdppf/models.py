@@ -60,7 +60,7 @@ class Documents(Base):
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     
 class ReferenceLinks(Base):
-    __tablename__ = 'origin_destination'
+    __tablename__ = 'origin_reference'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     
 class Authority(Base):
@@ -70,7 +70,7 @@ class Authority(Base):
 class LegalBases(Base):
     __tablename__ = 'legalbases'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    topicfk = Column(String(10), ForeignKey(db_config['topickey']))
+    topicfk = Column(String(10), ForeignKey('crdppf.topic.topicid'))
 
 class LegalProvisions(Base):
     __tablename__ = 'legalprovisions'
