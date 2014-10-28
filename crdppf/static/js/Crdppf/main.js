@@ -20,7 +20,7 @@ Ext.onReady(function() {
     Crdppf.layerList = '';
     Crdppf.labels = '' ;
     Crdppf.baseLayersList = '';
-    Crdppf.docfilters = {'topic':'0'};
+    Crdppf.docfilters = {};
     
     // set the application language to the user session settings
     var lang = ''; // The current session language
@@ -659,7 +659,7 @@ Crdppf.init_main = function(lang) {
         autoScroll: true,
         items:[
             mapContainer,
-            Crdppf.legalDocuments(Crdppf.labels, Crdppf.docfilters)
+            Crdppf.legalDocuments(Crdppf.labels)
         ]
     });
     
