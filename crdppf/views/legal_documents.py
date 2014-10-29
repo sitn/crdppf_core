@@ -116,116 +116,107 @@ def getLegalDocuments(request):
     """
     session = request.session    
 
-    filter = ''
-    filter_params = {}
+    doclist = []
 
-    try:
-        filter_params = request.params['filters']
-        filter_params = sloads(filter_params)
-    except KeyError: 
-        filter_params = None
-    documents = DBSession.query(LegalBases)
+    #~ documents = {}
+    #~ documents = DBSession.query(Documents).order_by(Documents.idobj.asc()).all()
     
-    if filter_params is not None :
-        for filterparam in filter_params :
-            documents = documents.filter(getattr(LegalBases, str(filterparam)).like("%%%s%%" % str(filter_params[filterparam])))
-        
+    #~ for document in documents :
+        #~ doclist.append({
+            #~ 'documentid':document.idobj,
+            #~ 'doctype':document.doctype,
+            #~ 'numcom':document.nocom, 
+            #~ 'nocad':document.nocad, 
+            #~ 'topicfk':document.topicfk, 
+            #~ 'title':document.title, 
+            #~ 'officialtitle':document.officialtitle, 
+            #~ 'abreviation':document.abreviation, 
+            #~ 'officialnb':document.officialnb,
+            #~ 'canton':document.canton,
+            #~ 'commune':document.commune,
+            #~ 'documenturl':document.legalbaseurl,
+            #~ 'legalstate':document.legalstate,
+            #~ 'publishedsince':document.publishedsince.isoformat()
+        #~ })
+    
     legalbases = {}
     legalbases = DBSession.query(LegalBases).order_by(LegalBases.legalbaseid.asc()).all()
-
-    doclist = []
-    for document in documents :
+    
+    for legalbase in legalbases :
         doclist.append({
-            'documentid':document.legalbaseid,
+            'documentid':legalbase.legalbaseid,
             'doctype':'legalbase',
-            'numcom':document.topicfk, 
-            'topicfk':document.title, 
-            'title':document.title, 
-            'officialtitle':document.officialtitle, 
-            'abreviation':document.abreviation, 
-            'officialnb':document.officialnb,
-            'canton':document.canton,
-            'commune':document.commune,
-            'documenturl':document.legalbaseurl,
-            'legalstate':document.legalstate,
-            'publishedsince':document.publishedsince.isoformat()
+            #'numcom':legalbase.numcom, 
+            'topicfk':legalbase.topicfk, 
+            'title':legalbase.title, 
+            'officialtitle':legalbase.officialtitle, 
+            'abreviation':legalbase.abreviation, 
+            'officialnb':legalbase.officialnb,
+            'canton':legalbase.canton,
+            'commune':legalbase.commune,
+            'documenturl':legalbase.legalbaseurl,
+            'legalstate':legalbase.legalstate,
+            'publishedsince':legalbase.publishedsince.isoformat()
         })
 
-    #~ for legalbase in legalbases :
-        #~ doclist.append({
-            #~ 'documentid':legalbase.legalbaseid,
-            #~ 'doctype':'legalbase',
-            #~ 'numcom':legalbase.topicfk, 
-            #~ 'topicfk':legalbase.title, 
-            #~ 'title':legalbase.title, 
-            #~ 'officialtitle':legalbase.officialtitle, 
-            #~ 'abreviation':legalbase.abreviation, 
-            #~ 'officialnb':legalbase.officialnb,
-            #~ 'canton':legalbase.canton,
-            #~ 'commune':legalbase.commune,
-            #~ 'documenturl':legalbase.legalbaseurl,
-            #~ 'legalstate':legalbase.legalstate,
-            #~ 'publishedsince':legalbase.publishedsince.isoformat()
-        #~ })
+    legalprovisions = {}
+    legalprovisions = DBSession.query(LegalProvisions).order_by(LegalProvisions.legalprovisionid.asc()).all()
 
-    #~ legalprovisions = {}
-    #~ legalprovisions = DBSession.query(LegalProvisions).order_by(LegalProvisions.legalprovisionid.asc()).all()
+    for legalprovision in legalprovisions :
+        doclist.append({
+            'documentid':legalprovision.legalprovisionid,
+            'doctype':'legalprovision',
+            #'numcom':legalprovision.numcom, 
+            'topicfk':legalprovision.topicfk, 
+            'title':legalprovision.title, 
+            'officialtitle':legalprovision.officialtitle, 
+            'abreviation':legalprovision.abreviation, 
+            'officialnb':legalprovision.officialnb,
+            'canton':legalprovision.canton,
+            'commune':legalprovision.commune,
+            'documenturl':legalprovision.legalprovisionurl,
+            'legalstate':legalprovision.legalstate,
+            'publishedsince':legalprovision.publishedsince.isoformat()
+        })
 
-    #~ for legalprovision in legalprovisions :
-        #~ doclist.append({
-            #~ 'documentid':legalprovision.legalprovisionid,
-            #~ 'doctype':'legalprovision',
-            #~ 'numcom':legalprovision.topicfk, 
-            #~ 'topicfk':legalprovision.title, 
-            #~ 'title':legalprovision.title, 
-            #~ 'officialtitle':legalprovision.officialtitle, 
-            #~ 'abreviation':legalprovision.abreviation, 
-            #~ 'officialnb':legalprovision.officialnb,
-            #~ 'canton':legalprovision.canton,
-            #~ 'commune':legalprovision.commune,
-            #~ 'documenturl':legalprovision.legalprovisionurl,
-            #~ 'legalstate':legalprovision.legalstate,
-            #~ 'publishedsince':legalprovision.publishedsince.isoformat()
-        #~ })
+    temporaryprovisions = {}
+    temporaryprovisions = DBSession.query(TemporaryProvisions).order_by(TemporaryProvisions.temporaryprovisionid.asc()).all()
 
-    #~ temporaryprovisions = {}
-    #~ temporaryprovisions = DBSession.query(TemporaryProvisions).order_by(TemporaryProvisions.temporaryprovisionid.asc()).all()
+    for temporaryprovision in temporaryprovisions :
+        doclist.append({
+            'documentid':temporaryprovision.temporaryprovisionid,
+            'doctype':'temporaryprovsion',
+            #'numcom':temporaryprovision.numcom, 
+            'topicfk':temporaryprovision.topicfk, 
+            'title':temporaryprovision.title, 
+            'officialtitle':temporaryprovision.officialtitle, 
+            'abreviation':temporaryprovision.abreviation, 
+            'officialnb':temporaryprovision.officialnb,
+            'canton':temporaryprovision.canton,
+            'commune':temporaryprovision.commune,
+            'documenturl':temporaryprovision.temporaryprovisionurl,
+            'legalstate':temporaryprovision.legalstate,
+            'publishedsince':temporaryprovision.publishedsince.isoformat()
+        })
 
-    #~ for temporaryprovision in temporaryprovisions :
-        #~ doclist.append({
-            #~ 'documentid':temporaryprovision.temporaryprovisionid,
-            #~ 'doctype':'temporaryprovsion',
-            #~ 'numcom':temporaryprovision.topicfk, 
-            #~ 'topicfk':temporaryprovision.title, 
-            #~ 'title':temporaryprovision.title, 
-            #~ 'officialtitle':temporaryprovision.officialtitle, 
-            #~ 'abreviation':temporaryprovision.abreviation, 
-            #~ 'officialnb':temporaryprovision.officialnb,
-            #~ 'canton':temporaryprovision.canton,
-            #~ 'commune':temporaryprovision.commune,
-            #~ 'documenturl':temporaryprovision.temporaryprovisionurl,
-            #~ 'legalstate':temporaryprovision.legalstate,
-            #~ 'publishedsince':temporaryprovision.publishedsince.isoformat()
-        #~ })
+    references = {}
+    references = DBSession.query(References).order_by(References.referenceid.asc()).all()
 
-    #~ references = {}
-    #~ references = DBSession.query(References).order_by(References.referenceid.asc()).all()
-
-    #~ for reference in references :
-        #~ doclist.append({
-            #~ 'documentid':reference.referenceid,
-            #~ 'doctype':'reference',
-            #~ 'numcom':reference.topicfk, 
-            #~ 'topicfk':reference.title, 
-            #~ 'title':reference.title, 
-            #~ 'officialtitle':reference.officialtitle, 
-            #~ 'abreviation':reference.abreviation, 
-            #~ 'officialnb':reference.officialnb,
-            #~ 'canton':reference.canton,
-            #~ 'commune':reference.commune,
-            #~ 'documenturl':reference.referenceurl,
-            #~ 'legalstate':reference.legalstate,
-            #~ 'publishedsince':reference.publishedsince.isoformat()
-        #~ })
+    for reference in references :
+        doclist.append({
+            'documentid':reference.referenceid,
+            'doctype':'reference',
+            #'numcom':reference.numcom, 
+            'topicfk':reference.topicfk, 
+            'title':reference.title, 
+            'officialtitle':reference.officialtitle, 
+            'abreviation':reference.abreviation, 
+            'officialnb':reference.officialnb,
+            'canton':reference.canton,
+            'commune':reference.commune,
+            'documenturl':reference.referenceurl,
+            'legalstate':reference.legalstate,
+            'publishedsince':reference.publishedsince.isoformat()
+        })
 
     return {'docs': doclist}

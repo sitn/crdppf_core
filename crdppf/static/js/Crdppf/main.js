@@ -20,15 +20,14 @@ Ext.onReady(function() {
     Crdppf.layerList = '';
     Crdppf.labels = '' ;
     Crdppf.baseLayersList = '';
-    Crdppf.docfilters = {};
     
     // set the application language to the user session settings
     var lang = ''; // The current session language
     // We need to ensure all json data are recieved by the client before starting the application
-    var loadingCounter = 0;
+    Crdppf.loadingCounter = 0;
     
     var triggerFunction = function(counter) {
-        if (counter == 4) {
+        if (counter == 5) {
             Ext.MessageBox.buttonText.yes = Crdppf.labels.disclaimerAcceptance;
             Ext.MessageBox.buttonText.no = Crdppf.labels.diclaimerRefusal;
             var dlg = Ext.MessageBox.getDialog();
@@ -56,6 +55,9 @@ Ext.onReady(function() {
         }  
     };
 
+    // Create LegalDocumentStore and load it
+    Crdppf.legalDocuments();
+    
     // Get the current session language
     Ext.Ajax.request({
         url: Crdppf.getLanguageUrl,
@@ -72,8 +74,8 @@ Ext.onReady(function() {
             } else if (lang !== '') {
                 OpenLayers.Util.extend(OpenLayers.Lang.fr, Crdppf.labels);
             }
-            loadingCounter += 1;
-            triggerFunction(loadingCounter);            
+            Crdppf.loadingCounter += 1;
+            triggerFunction(Crdppf.loadingCounter);            
         },
         method: 'POST',
         failure: function () {
@@ -86,8 +88,8 @@ Ext.onReady(function() {
         url: Crdppf.getTranslationDictionaryUrl,
         success: function(response) {
             Crdppf.labels = Ext.decode(response.responseText);
-            loadingCounter += 1; 
-            triggerFunction(loadingCounter);            
+            Crdppf.loadingCounter += 1; 
+            triggerFunction(Crdppf.loadingCounter);            
         },
         method: 'POST',
         failure: function () {
@@ -100,8 +102,8 @@ Ext.onReady(function() {
         url: Crdppf.getBaselayerConfigUrl,
         success: function(response) {
             Crdppf.baseLayersList = Ext.decode(response.responseText);
-            loadingCounter += 1; 
-            triggerFunction(loadingCounter);            
+            Crdppf.loadingCounter += 1; 
+            triggerFunction(Crdppf.loadingCounter);            
         },
         method: 'POST',
         failure: function () {
@@ -115,8 +117,8 @@ Ext.onReady(function() {
         success: function(response) {
             Crdppf.layerList = Ext.decode(response.responseText);
 
-            loadingCounter += 1;
-            triggerFunction(loadingCounter);        
+            Crdppf.loadingCounter += 1;
+            triggerFunction(Crdppf.loadingCounter);        
         },
         method: 'POST',
         failure: function () {
@@ -652,6 +654,9 @@ Crdppf.init_main = function(lang) {
         ]
     });
     
+    // Create the inital view with the legal documents
+    Crdppf.legalDocuments.dataView = Crdppf.legalDocuments.createView(Crdppf.labels);
+    
     // Container for the map and legal documents display
     centerPanel = new Ext.TabPanel({
         region: 'center',
@@ -659,7 +664,7 @@ Crdppf.init_main = function(lang) {
         autoScroll: true,
         items:[
             mapContainer,
-            Crdppf.legalDocuments(Crdppf.labels)
+            Crdppf.legalDocuments.dataView
         ]
     });
     
@@ -677,7 +682,6 @@ Crdppf.init_main = function(lang) {
         ]
     });
 
-    mapPanel = Ext.getCmp('mappanel');    
 	// Refait la mise en page si la fenêtre change de taille
 	//pass along browser window resize events to the panel
 	Ext.EventManager.onWindowResize(crdppf.doLayout,crdppf);

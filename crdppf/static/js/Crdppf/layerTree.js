@@ -101,13 +101,12 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
                         'checkchange': function(node, checked){
                             if(checked){
                                 overlaysList.push(node.id);
-                                alert(node.id);
+                                //node.id = layername
                                 MapO.setOverlays();
                                 Ext.getCmp('infoButton').toggle(true);
                                 MapO.setInfoControl();
                             }else{
                                 overlaysList.remove(node.id);
-                                alert(node.id);
                                 MapO.setOverlays();
                                 Ext.getCmp('panButton').toggle(true);
                             }

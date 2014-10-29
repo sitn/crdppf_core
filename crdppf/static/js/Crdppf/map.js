@@ -62,7 +62,6 @@ var setInfoControl = function setInfoControl(){
             autoconfig: false
         }
     });
-    console.log(geometryName);
     
     // create infoControl with our WFS protocol
    var control = new OpenLayers.Control.GetFeature({
