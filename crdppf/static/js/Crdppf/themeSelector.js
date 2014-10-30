@@ -60,8 +60,6 @@ Crdppf.ThemeSelector = function(labels, layerList) {
                 });
                 layerTree.getNodeById(myStore.getAt(index).id).getUI().toggleCheck(true);
                 Ext.getCmp('infoButton').toggle(true);
-                Crdppf.legalDocuments.store.clearFilter();
-                Crdppf.legalDocuments.store.filter({'property':'topicfk','value': myStore.getAt(index).id});
                 MapO.setInfoControl();
             }
         }

@@ -185,7 +185,7 @@ def getLegalDocuments(request):
     for temporaryprovision in temporaryprovisions :
         doclist.append({
             'documentid':temporaryprovision.temporaryprovisionid,
-            'doctype':'temporaryprovsion',
+            'doctype':'temporaryprovision',
             #'numcom':temporaryprovision.numcom, 
             'topicfk':temporaryprovision.topicfk, 
             'title':temporaryprovision.title, 

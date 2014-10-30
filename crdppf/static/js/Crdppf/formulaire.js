@@ -220,10 +220,12 @@ Ext.onReady(function() {
                 maxLength: 100
             },{
                 xtype:'combo',
+                id: 'topicfield',
                 store: Crdppf.topicstore,
                 fieldLabel: 'Identifiant du thème',
                 displayField:'topicname',
                 valueField: 'topicid',
+                hiddenName: 'topicfk',
                 triggerAction: 'all',
                 labelStyle: 'white-space: nowrap;font-weight: bold;',
                 name: 'topicfk',

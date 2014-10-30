@@ -1,5 +1,34 @@
 Ext.namespace('Crdppf');
 
+Crdppf.filterlist = [];
+
+    Crdppf.docfilters = function(themeid, checked) {
+    
+        function isInArray(value, array) {
+            return array.indexOf(value) > -1;
+        }
+
+        if (checked) {
+            // function to add a filter criteria
+            if ( !(isInArray(themeid, Crdppf.filterlist))){
+                Crdppf.filterlist.push(themeid);
+            }
+        } else {
+            if (isInArray(themeid, Crdppf.filterlist)){
+                Crdppf.filterlist.splice(Crdppf.filterlist.indexOf(themeid),1);
+            }
+        }
+
+        Crdppf.legalDocuments.store.clearFilter();
+        Crdppf.legalDocuments.store.filterBy(function (record) {
+            for (var i=0; i < Crdppf.filterlist.length; i++){
+            // if the key matches either Benz or BMW then return that record
+             if (record.get('topicfk') == Crdppf.filterlist[i].toString()) return record;
+            }
+        });
+        return Crdppf.filterlist;
+    };
+    
 
 Crdppf.legalDocuments = function() {
     /*
@@ -26,11 +55,11 @@ Crdppf.legalDocuments = function() {
             }],
             reader: new Ext.data.JsonReader({
                 root:'docs',
-                id:'documentid'
+                id:'idobj'
                 },
                 // Definition des attributs à récuperer de la base de données des commandes
                 [
-                {name: 'documentid', type:'integer'},
+                {name: 'documentid'},
                 {name: 'doctype'},
                 {name: 'numcom'},
                 {name: 'numcad'},
@@ -68,150 +97,230 @@ Crdppf.legalDocuments = function() {
 
 
 Crdppf.legalDocuments.createView = function(labels) {
-        //~ legaldocs.setDefaultSort('documentid', 'asc');
-        
-        if (Crdppf.legalDocuments.store.getTotalCount()> 0) {
-            // Parse the legal documents and apply the corresponding template
-            var templates = new Ext.XTemplate(
-           // Bases légales/legal bases
-          '<div style="font-family:Arial;padding:5px;">',
-            '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">Bases légales</h1>',
-            '<div style="font-family:Arial;margin-left:10px;">',
-            '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
-                '<tpl for=".">',
-                    '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isFederal(canton, commune)">',
-                        '<tpl for=".">',
-                        '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publishedsince:date("d.m.Y")}</h3>',
-                            '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
-                        '</div>',
-                        '</tpl>',
-                    '</tpl>',
-                '</tpl>',
 
-          '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
-                '<tpl for=".">',
-                    '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isCantonal(canton, commune)">',
-                            '<tpl for=".">',
-                        '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}"">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publishedsince:date("d.m.Y")}</h3>',
-                            '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
-                        '</div>',
+    if (Crdppf.legalDocuments.store.getTotalCount()> 0) {
+        // Parse the legal documents and apply the corresponding template
+        var templates = new Ext.XTemplate(
+       // Bases légales/legal bases
+      '<div style="font-family:Arial;padding:5px;">',
+        '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">Bases légales</h1>',
+        '<div style="font-family:Arial;margin-left:10px;">',
+        '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
+            '<tpl for=".">',
+                '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isFederal(canton, commune)">',
+                    '<tpl for=".">',
+                    '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
+                        '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publishedsince:date("d.m.Y")}</h3>',
+                        '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
+                    '</div>',
                     '</tpl>',
                 '</tpl>',
-                
-                '<tpl for=".">',
-                    '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isCommunal(canton, commune)">',
-                    '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+            '</tpl>',
+
+      '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
+            '<tpl for=".">',
+                '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isCantonal(canton, commune)">',
                         '<tpl for=".">',
-                        '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
-                            '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
-                            '<br />',
-                        '</div>',
-                        '</tpl>',
-                        '</tpl>',
-                    '</tpl>',
+                    '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}"">',
+                        '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publishedsince:date("d.m.Y")}</h3>',
+                        '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
+                    '</div>',
                 '</tpl>',
-                '</div>',
-            '</div>',
+            '</tpl>',
             
-           // Dispositions légales/legal provisions
-          '<div style="font-family:Arial;padding:5px;">',
-            '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;;">Dispositions juridiques</h1>',
-            '<div style="font-family:Arial;margin-left:10px;">',
-            '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
-                '<tpl for=".">',
-                    '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isFederal(canton)">',
-                        '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publishedsince:date("d.m.Y")}</h3>',
-                            '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
-                            '<br />',
-                        '</div>',
+            '<tpl for=".">',
+                '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isCommunal(canton, commune)">',
+                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+                    '<tpl for=".">',
+                    '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
+                        '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
+                        '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
+                        '<br />',
+                    '</div>',
+                    '</tpl>',
                     '</tpl>',
                 '</tpl>',
-
-          '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
-                '<tpl for=".">',
-                    '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isCantonal(canton, commune)">',
-                        '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
-                            '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
-                            '<br />',
-                        '</div>',
-                    '</tpl>',
-                '</tpl>',
-                
-          '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
-                '<tpl for=".">',
-                    '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isCommunal(canton, commune)">',
-                        '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
-                            '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
-                            '<br />',
-                        '</div>',
-                    '</tpl>',
-                '</tpl>',
-                '</div>',
+            '</tpl>',
             '</div>',
-            {
-                // member functions:
-                isLegalbase: function(doctype){
-                    return doctype == 'legalbase';
-                },
-                isLegalprovision: function(doctype){
-                    return doctype == 'legalprovision';
-                },
-                isReference: function(doctype){
-                    return doctype == 'reference';
-                },
-                isOther: function(doctype){
-                    return doctype == 'other';
-                },
-                isFederal: function(canton){
-                    return canton == null;
-                },
-                isCantonal: function(canton, commune){
-                    return canton != null && commune == null;
-                },
-                isCommunal: function(canton, commune){
-                    return canton != null && commune != null;
-                }
+        '</div>',
+        
+       // Dispositions légales/legal provisions
+      '<div style="font-family:Arial;padding:5px;">',
+        '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;;">Dispositions juridiques</h1>',
+        '<div style="font-family:Arial;margin-left:10px;">',
+        '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
+            '<tpl for=".">',
+                '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isFederal(canton)">',
+                    '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
+                        '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publishedsince:date("d.m.Y")}</h3>',
+                        '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
+                        '<br />',
+                    '</div>',
+                '</tpl>',
+            '</tpl>',
+
+      '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
+            '<tpl for=".">',
+                '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isCantonal(canton, commune)">',
+                    '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
+                        '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
+                        '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
+                        '<br />',
+                    '</div>',
+                '</tpl>',
+            '</tpl>',
+            
+      '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+            '<tpl for=".">',
+                '<tpl if="this.isLegalprovision(doctype)">',
+                    '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
+                        '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
+                        '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
+                        '<br />',
+                    '</div>',
+                '</tpl>',
+            '</tpl>',
+            '</div>',
+        '</div>',
+        
+       // references
+      '<div style="font-family:Arial;padding:5px;">',
+        '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;;">Renvois et informations</h1>',
+        '<div style="font-family:Arial;margin-left:10px;">',
+        '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
+            '<tpl for=".">',
+                '<tpl if="this.isReference(doctype) &amp;&amp; this.isFederal(canton)">',
+                    '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
+                        '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publishedsince:date("d.m.Y")}</h3>',
+                        '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
+                        '<br />',
+                    '</div>',
+                '</tpl>',
+            '</tpl>',
+
+      '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
+            '<tpl for=".">',
+                '<tpl if="this.isReference(doctype) &amp;&amp; this.isCantonal(canton, commune)">',
+                    '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
+                        '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
+                        '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
+                        '<br />',
+                    '</div>',
+                '</tpl>',
+            '</tpl>',
+            
+      '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+            '<tpl for=".">',
+                '<tpl if="this.isReference(doctype)">',
+                    '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
+                        '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
+                        '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
+                        '<br />',
+                    '</div>',
+                '</tpl>',
+            '</tpl>',
+            '</div>',
+        '</div>',
+        
+       // temporary provisions
+      '<div style="font-family:Arial;padding:5px;">',
+        '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;;">Dispositions transitoires</h1>',
+        '<div style="font-family:Arial;margin-left:10px;">',
+        '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
+            '<tpl for=".">',
+                '<tpl if="this.isTemporaryprovision(doctype) &amp;&amp; this.isFederal(canton)">',
+                    '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
+                        '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publishedsince:date("d.m.Y")}</h3>',
+                        '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
+                        '<br />',
+                    '</div>',
+                '</tpl>',
+            '</tpl>',
+
+      '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
+            '<tpl for=".">',
+                '<tpl if="this.isTemporaryprovision(doctype) &amp;&amp; this.isCantonal(canton, commune)">',
+                    '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
+                        '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
+                        '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
+                        '<br />',
+                    '</div>',
+                '</tpl>',
+            '</tpl>',
+            
+      '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+            '<tpl for=".">',
+                '<tpl if="this.isTemporaryprovision(doctype)">',
+                    '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
+                        '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
+                        '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
+                        '<br />',
+                    '</div>',
+                '</tpl>',
+            '</tpl>',
+            '</div>',
+        '</div>',
+        {
+            // member functions:
+            isLegalbase: function(doctype){
+                return doctype == 'legalbase';
+            },
+            isLegalprovision: function(doctype){
+                return doctype == 'legalprovision';
+            },
+            isTemporaryprovision: function(doctype){
+                return doctype == 'temporaryprovision';
+            },
+            isReference: function(doctype){
+                return doctype == 'reference';
+            },
+            isOther: function(doctype){
+                return doctype == 'other';
+            },
+            isFederal: function(canton){
+                return canton == null;
+            },
+            isCantonal: function(canton, commune){
+                return canton != null && commune == null;
+            },
+            isCommunal: function(canton, commune){
+                return canton != null && commune != null;
             }
-            );
-                 
-            // Create the legal information container
-            var legalInfo = new Ext.DataView({
-                title: labels.legalBasisTab,
-                store: this.store,
-                tpl: templates,
-                autoHeight: true,
-                multiSelect: true,
-                //overClass: 'x-view-over', - not used yet, might be nice so I leave it for now
-                emptyText: labels.noDocumentsTxt
-            });
-              
-        } else {
-            var nodocs = ('<div style="font-family:Arial;padding:5px;">'+
-            '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">Documents légaux</h1>'+
-                '<div style="font-family:Arial;margin-left:10px;">'+
-                    '<h2 style="margin-top:10px;margin-bottom:5px;">Pour cette séléction aucun document n\'a été trouvé.</h2>'+
-                '</div>'+
-            '</div>');
+        }
+        );
+             
+        // Create the legal information container
+        var legalInfo = new Ext.DataView({
+            title: labels.legalBasisTab,
+            store: this.store,
+            tpl: templates,
+            autoHeight: true,
+            multiSelect: true,
+            //overClass: 'x-view-over', - not used yet, might be nice so I leave it for now
+            emptyText: labels.noDocumentsTxt
+        });
+          
+    } else {
+        var nodocs = ('<div style="font-family:Arial;padding:5px;">'+
+        '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">Documents légaux</h1>'+
+            '<div style="font-family:Arial;margin-left:10px;">'+
+                '<h2 style="margin-top:10px;margin-bottom:5px;">Pour cette séléction aucun document n\'a été trouvé.</h2>'+
+            '</div>'+
+        '</div>');
 
-            // Create the legal information container
-            var legalInfo = new Ext.DataView({
-                title: labels.legalBasisTab,
-                html: nodocs,
-                autoHeight: true,
-                multiSelect: true,
-                //overClass: 'x-view-over', - not used yet, might be nice so I leave it for now
-                emptyText: labels.noDocumentsTxt
-            });
+        // Create the legal information container
+        var legalInfo = new Ext.DataView({
+            title: labels.legalBasisTab,
+            html: nodocs,
+            autoHeight: true,
+            multiSelect: true,
+            //overClass: 'x-view-over', - not used yet, might be nice so I leave it for now
+            emptyText: labels.noDocumentsTxt
+        });
 
-        };
+    };
 
-        return legalInfo;
-                    
+    return legalInfo;
+                
 };
 
