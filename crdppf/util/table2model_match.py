@@ -4,6 +4,7 @@ from crdppf.models import ComplementaryLandUsePerimeters, LandUseLinearConstrain
 from crdppf.models import LandUsePointConstraints, CHAirportProjectZones
 from crdppf.models import CHAirportSecurityZones, CHAirportSecurityZonesPDF 
 from crdppf.models import PollutedSites, Zoneprotection, CHAirportProjectZonesPDF
+from crdppf.models import CHPollutedSitesCivilAirports, CHPollutedSitesCivilAirportsPDF
 from crdppf.models import CHPollutedSitesPublicTransports, CHPollutedSitesPublicTransportsPDF
 from crdppf.models import Zoneprotection, WaterProtectionPerimeters
 from crdppf.models import RoadNoise, ForestLimits, ForestDistances
@@ -20,6 +21,8 @@ table2model = {
     'r108_bazl_sicherheitszonenplan': CHAirportSecurityZones,
     'r108_bazl_sicherheitszonenplan_pdf': CHAirportSecurityZonesPDF,
     'r116_sites_pollues': PollutedSites,
+    'r118_bazl_belastete_standorte_zivilflugplaetze': CHPollutedSitesCivilAirports,
+    'r118_bazl_belastete_standorte_zivilflugplaetze_pdf': CHPollutedSitesCivilAirportsPDF,
     'r119_bav_belastete_standorte_oev': CHPollutedSitesPublicTransports,
     'r119_bav_belastete_standorte_oev_pdf': CHPollutedSitesPublicTransportsPDF,
     'r131_zone_prot_eau': Zoneprotection,

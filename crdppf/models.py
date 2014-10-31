@@ -251,6 +251,20 @@ class PollutedSites(GeoInterface,Base):
     idobj = Column(Integer, primary_key=True)
     geom =GeometryColumn(Geometry(2,srid=srid_))
     
+class CHPollutedSitesCivilAirports(GeoInterface,Base):
+    __tablename__ = 'r118_bazl_belastete_standorte_zivilflugplaetze'
+    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+    idobj = Column(Integer, primary_key=True)
+    geom =GeometryColumn(Geometry(2,srid=srid_))
+
+class CHPollutedSitesCivilAirportsPDF(GeoInterface,Base):
+    __tablename__ = 'r118_bazl_belastete_standorte_zivilflugplaetze_pdf'
+    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+    idobj = Column(Integer, primary_key=True)
+    geom =GeometryColumn(Geometry(2,srid=srid_))
+
+GeometryDDL(CHPollutedSitesCivilAirportsPDF.__table__)  
+
 class CHPollutedSitesPublicTransports(GeoInterface,Base):
     __tablename__ = 'r119_bav_belastete_standorte_oev'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
