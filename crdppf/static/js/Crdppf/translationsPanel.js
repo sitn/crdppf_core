@@ -16,6 +16,10 @@ Crdppf.translationsPanel = function(labels) {
     var translationsstore=new Ext.data.Store({
         proxy: translationsproxy,
         remoteSort: true,
+        baseParams:{
+          start: 0,          
+          limit: myPageSize
+        },
         sorters: [{
             property: 'id',
             direction: 'DESC'
