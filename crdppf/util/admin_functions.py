@@ -10,11 +10,15 @@ from crdppf.models import DBSession, Translations
 def get_translations_list(request):
     """Loads the translations for all the multilingual labels
     """
-    limit = int(request.params['limit'])
-    start = int(request.params['start'])
+    try:
+        limit = int(request.params['limit'])
+        start = int(request.params['start'])
+    except:
+        limit = 25
+        start = 0
     
     if request.params['sort'] == 'id':
-        sort = 'Translations.Id'
+        sort = 'Translations.id'
     else:
         sort = request.params['sort']
     sort += ' '+request.params['dir']
@@ -31,7 +35,7 @@ def get_translations_list(request):
         totalCount =  int(DBSession.query(Translations).count())
     else:
         totalCount =  '999'
-    translationslist = DBSession.query(Translations).order_by(Translations.Id).offset(start).limit(limit).all()
+    translationslist = DBSession.query(Translations).order_by(Translations.id).offset(start).limit(limit).all()
 
     #~ if filter_params is not None :
         #~ for filterparam in filter_params :

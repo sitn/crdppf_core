@@ -1,6 +1,21 @@
  // MAIN USER INTERFACE
 Ext.onReady(function() {
 
+
+    // Load the interface's Crdppf.labels
+    Ext.Ajax.request({
+        url: Crdppf.getTranslationDictionaryUrl,
+        success: function(response) {
+            Crdppf.labels = Ext.decode(response.responseText);
+            formtrigger = 1;
+            triggerFunction(formtrigger);
+        },
+        method: 'POST',
+        failure: function () {
+            Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
+        }
+    });
+    
     Ext.namespace('Crdppf');
    
     var loadingCounter = 0;
@@ -99,7 +114,7 @@ Ext.onReady(function() {
     });
  
     // create the empty form, then fill it with values
-    Crdppf.documentsForm = function(labels) {
+    Crdppf.documentsForm = function() {
     
     var formulaire = new Ext.FormPanel({
         id: 'formulaire_saisie',
@@ -345,35 +360,39 @@ Ext.onReady(function() {
     return formulaire;
 };
 
-    // create the header panel containing the page banner
-    var headerPanel = new Ext.Panel({
-        region: 'north',
-        height: 55,
-        border: false,
-        contentEl: 'header'
-    });
-  
-    // Container for the map and legal documents display
-    var contentPanel = new Ext.Panel({
-        region: 'center',
-        margins: '5 5 0 0',
-        layout: 'fit',
-        items: [
-            Crdppf.documentsForm(Crdppf.labels)        
-        ],
-        tbar: Crdppf.adminToolbar(Crdppf.labels)
-    });
-    
-    // Main window layout
-    var crdppf = new Ext.Viewport({
-        layout: 'border',
-        renderTo:'main',
-        id:'viewPort',
-        border:true,
-        items: [
-            headerPanel,
-            contentPanel
-        ]
-    });
-    
+
+    var triggerFunction = function(counter) {
+        if (counter == 1) {
+            // create the header panel containing the page banner
+            var headerPanel = new Ext.Panel({
+                region: 'north',
+                height: 55,
+                border: false,
+                contentEl: 'header'
+            });
+          
+            // Container for the map and legal documents display
+            var contentPanel = new Ext.Panel({
+                region: 'center',
+                margins: '5 5 0 0',
+                layout: 'fit',
+                items: [
+                    Crdppf.documentsForm()        
+                ],
+                tbar: Crdppf.adminToolbar(Crdppf.labels)
+            });
+            
+            // Main window layout
+            var crdppf = new Ext.Viewport({
+                layout: 'border',
+                renderTo:'main',
+                id:'viewPort',
+                border:true,
+                items: [
+                    headerPanel,
+                    contentPanel
+                ]
+            });
+        }
+    };
 });
