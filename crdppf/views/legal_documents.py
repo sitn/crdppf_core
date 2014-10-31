@@ -5,7 +5,7 @@ from simplejson import loads as sloads
 
 from crdppf.models import DBSession
 from crdppf.models import Topics, LegalBases, LegalProvisions, References
-from crdppf.models import TemporaryProvisions
+from crdppf.models import TemporaryProvisions, Documents, ReferenceLinks
 from crdppf.models import Town
 
 @view_config(route_name='getTownList', renderer='json')
@@ -114,16 +114,18 @@ def createNewDocEntry(request):
 def getLegalDocuments(request):
     """Gets all the legal documents related to a feature.
     """
-    legalbases = {}
-    legalbases = DBSession.query(LegalBases).order_by(LegalBases.legalbaseid.asc()).all()
 
     doclist = []
+
+    legalbases = {}
+    legalbases = DBSession.query(LegalBases).order_by(LegalBases.legalbaseid.asc()).all()
+    
     for legalbase in legalbases :
         doclist.append({
             'documentid':legalbase.legalbaseid,
             'doctype':'legalbase',
-            'numcom':legalbase.topicfk, 
-            'topicfk':legalbase.title, 
+            #'numcom':legalbase.numcom, 
+            'topicfk':legalbase.topicfk, 
             'title':legalbase.title, 
             'officialtitle':legalbase.officialtitle, 
             'abreviation':legalbase.abreviation, 
@@ -142,8 +144,8 @@ def getLegalDocuments(request):
         doclist.append({
             'documentid':legalprovision.legalprovisionid,
             'doctype':'legalprovision',
-            'numcom':legalprovision.topicfk, 
-            'topicfk':legalprovision.title, 
+            #'numcom':legalprovision.numcom, 
+            'topicfk':legalprovision.topicfk, 
             'title':legalprovision.title, 
             'officialtitle':legalprovision.officialtitle, 
             'abreviation':legalprovision.abreviation, 
@@ -161,9 +163,9 @@ def getLegalDocuments(request):
     for temporaryprovision in temporaryprovisions :
         doclist.append({
             'documentid':temporaryprovision.temporaryprovisionid,
-            'doctype':'temporaryprovsion',
-            'numcom':temporaryprovision.topicfk, 
-            'topicfk':temporaryprovision.title, 
+            'doctype':'temporaryprovision',
+            #'numcom':temporaryprovision.numcom, 
+            'topicfk':temporaryprovision.topicfk, 
             'title':temporaryprovision.title, 
             'officialtitle':temporaryprovision.officialtitle, 
             'abreviation':temporaryprovision.abreviation, 
@@ -182,8 +184,8 @@ def getLegalDocuments(request):
         doclist.append({
             'documentid':reference.referenceid,
             'doctype':'reference',
-            'numcom':reference.topicfk, 
-            'topicfk':reference.title, 
+            #'numcom':reference.numcom, 
+            'topicfk':reference.topicfk, 
             'title':reference.title, 
             'officialtitle':reference.officialtitle, 
             'abreviation':reference.abreviation, 
@@ -195,4 +197,4 @@ def getLegalDocuments(request):
             'publishedsince':reference.publishedsince.isoformat()
         })
 
-    return doclist
+    return {'docs': doclist}

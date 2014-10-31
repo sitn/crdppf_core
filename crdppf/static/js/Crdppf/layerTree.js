@@ -1,5 +1,5 @@
 ﻿Ext.namespace('Crdppf');
-
+        
 // create layer tree and append nodes & subnodes to it
 Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
     // create layer tree object
@@ -45,7 +45,6 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
                     }
                     Ext.getCmp('infoButton').toggle(true);
                     MapO.setInfoControl();
-                    
                 }else{
                     for (n=1; n < rootLayerTree.childNodes.length; n++){
                         if( rootLayerTree.childNodes[n].id != 'baseLayers') {
@@ -72,22 +71,26 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
             checked: false,
             listeners: {
                 'checkchange': function(node, checked){
+                    Crdppf.legalDocuments.store.filter({'property':'topicfk','value': themeId});
                     MapO.disableInfoControl();
                     if (checked){
+                        Crdppf.docfilters(node.id, checked);
                         node.expand();
                         for (k=0; k < node.childNodes.length; k++){
                             node.childNodes[k].getUI().toggleCheck(true);
                         }
-                    } else { 
+                    } else {
+                        Crdppf.docfilters(node.id, checked);                        
                         node.collapse();
                         for (k=0; k < node.childNodes.length; k++){
                             node.childNodes[k].getUI().toggleCheck(false);
                         }
-                }
+                    }
                 }
             }
         });
         // fill each theme node with his contained node (level 2)
+
         for (var keys in ll[i].layers)
         {
             layerNode =  new Ext.tree.TreeNode({
@@ -116,7 +119,7 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
         }
         rootLayerTree.appendChild(themeNode);
     }
-    
+        
     // Top node of the base layers group
     var baseLayersNode = new Ext.tree.TreeNode({
         text: labels.baseLayerGroup,

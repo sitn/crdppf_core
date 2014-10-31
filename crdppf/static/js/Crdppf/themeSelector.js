@@ -10,7 +10,7 @@ Crdppf.ThemeSelector = function(labels, layerList) {
             {name: 'image', mapping: 'image'}
         ]
     });
-    
+
     var myStore = new Ext.data.Store({
         reader: myReader
     });

@@ -1,5 +1,41 @@
-Ext.onReady(function(){
+ // MAIN USER INTERFACE
+Ext.onReady(function() {
 
+    Ext.namespace('Crdppf');
+   
+    var loadingCounter = 0;
+    
+ // Load the interface's Crdppf.labels
+    Ext.Ajax.request({
+        url: 'getTopicsList',
+        success: function(response) {           
+            
+            var data = Ext.decode(response.responseText);
+            var data_array = []
+            for (var i = 0; i < data.length; i++) {
+                data_array.push([
+                    data[i].topicid,
+                    data[i].topicname
+                ]);
+            }
+            
+            Crdppf.topicstore = new Ext.data.ArrayStore({
+                idIndex: 0,  
+                fields: [
+                    {name: 'topicid', type: 'string'},
+                    {name: 'topicname', type: 'string'}
+                ],
+                data: data_array
+            });
+            loadingCounter += 1;
+            Crdppf.documentsForm(Crdppf.labels);            
+        },
+        method: 'POST',
+        failure: function () {
+            Ext.Msg.alert(Crdppf.topics.serverErrorMessage);
+        }
+    });
+    
     Ext.QuickTips.init();
     var winWait = new Ext.LoadMask(
         Ext.getBody(),
@@ -26,18 +62,7 @@ Ext.onReady(function(){
         ]
     }); 
 
-    var topicstore = new Ext.data.JsonStore({
-        autoDestroy: true,
-        autoLoad: true,
-        url: 'getTopicsList',
-        idProperty: 'topicid',
-        fields:[
-            {name: 'topicid'},
-            {name: 'topicname'},
-            {name: 'authorityfk', type:'integer'},
-            {name: 'topicorder',type:'integer'}
-        ]
-    }); 
+    var topicslist = [];
 
     var cantons = new Ext.data.SimpleStore({
         autoDestroy: true,
@@ -72,7 +97,10 @@ Ext.onReady(function(){
             ['ZH']
         ]
     });
-
+ 
+    // create the empty form, then fill it with values
+    Crdppf.documentsForm = function(labels) {
+    
     var formulaire = new Ext.FormPanel({
         id: 'formulaire_saisie',
         title: 'Saisie des règlements',
@@ -81,7 +109,7 @@ Ext.onReady(function(){
         bodyStyle: 'padding:5px 5px 0px',
         autoWidth: true,
         autoHeight: true,
-        renderTo:'form',
+        //renderTo:'main',
         monitorValid: true,
         items: [{
                 xtype:'numberfield',
@@ -161,10 +189,12 @@ Ext.onReady(function(){
                 maxLength: 100
             },{
                 xtype:'combo',
-                store: topicstore,
+                id: 'topicfield',
+                store: Crdppf.topicstore,
                 fieldLabel: 'Identifiant du thème',
                 displayField:'topicname',
                 valueField: 'topicid',
+                hiddenName: 'topicfk',
                 triggerAction: 'all',
                 labelStyle: 'white-space: nowrap;font-weight: bold;',
                 name: 'topicfk',
@@ -205,9 +235,17 @@ Ext.onReady(function(){
                 maxLength: 25
             },{
                 xtype:'textfield',
-                fieldLabel: 'Lien vers le document',
+                fieldLabel: 'Lien web du document',
                 labelStyle: 'white-space: nowrap;font-weight: bold;',
                 name: 'url',
+                allowBlank: false,
+                width: 500,
+                maxLength: 500
+            },{
+                xtype:'textfield',
+                fieldLabel: 'Chemin vers le document',
+                labelStyle: 'white-space: nowrap;font-weight: bold;',
+                name: 'localurl',
                 allowBlank: false,
                 width: 500,
                 maxLength: 500
@@ -280,7 +318,7 @@ Ext.onReady(function(){
         buttons: [{
             text: 'Enregistrer',
             handler: function(){
-                //~ add form validation
+                 //add form validation
                 var formvalues =formulaire.getForm().getValues();
                 winWait.show();
                 var transaction =Ext.Ajax.request({
@@ -303,6 +341,39 @@ Ext.onReady(function(){
             text: 'Cancel'
         }]
     });
+  
+    return formulaire;
+};
 
+    // create the header panel containing the page banner
+    var headerPanel = new Ext.Panel({
+        region: 'north',
+        height: 55,
+        border: false,
+        contentEl: 'header'
+    });
+  
+    // Container for the map and legal documents display
+    var contentPanel = new Ext.Panel({
+        region: 'center',
+        margins: '5 5 0 0',
+        layout: 'fit',
+        items: [
+            Crdppf.documentsForm(Crdppf.labels)        
+        ],
+        tbar: Crdppf.adminToolbar(Crdppf.labels)
+    });
+    
+    // Main window layout
+    var crdppf = new Ext.Viewport({
+        layout: 'border',
+        renderTo:'main',
+        id:'viewPort',
+        border:true,
+        items: [
+            headerPanel,
+            contentPanel
+        ]
+    });
     
 });

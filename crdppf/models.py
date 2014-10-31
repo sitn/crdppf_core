@@ -59,6 +59,10 @@ class Documents(Base):
     __tablename__ = 'documents_saisies'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     
+class ReferenceLinks(Base):
+    __tablename__ = 'origin_reference'
+    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+    
 class Authority(Base):
     __tablename__ = 'authority'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
