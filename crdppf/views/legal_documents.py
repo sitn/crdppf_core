@@ -114,31 +114,9 @@ def createNewDocEntry(request):
 def getLegalDocuments(request):
     """Gets all the legal documents related to a feature.
     """
-    session = request.session    
 
     doclist = []
 
-    #~ documents = {}
-    #~ documents = DBSession.query(Documents).order_by(Documents.idobj.asc()).all()
-    
-    #~ for document in documents :
-        #~ doclist.append({
-            #~ 'documentid':document.idobj,
-            #~ 'doctype':document.doctype,
-            #~ 'numcom':document.nocom, 
-            #~ 'nocad':document.nocad, 
-            #~ 'topicfk':document.topicfk, 
-            #~ 'title':document.title, 
-            #~ 'officialtitle':document.officialtitle, 
-            #~ 'abreviation':document.abreviation, 
-            #~ 'officialnb':document.officialnb,
-            #~ 'canton':document.canton,
-            #~ 'commune':document.commune,
-            #~ 'documenturl':document.legalbaseurl,
-            #~ 'legalstate':document.legalstate,
-            #~ 'publishedsince':document.publishedsince.isoformat()
-        #~ })
-    
     legalbases = {}
     legalbases = DBSession.query(LegalBases).order_by(LegalBases.legalbaseid.asc()).all()
     
