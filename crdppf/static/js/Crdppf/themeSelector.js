@@ -1,5 +1,5 @@
 ﻿Ext.namespace('Crdppf');
-    
+
 // create layer tree and append nodes & subnodes to it
 Crdppf.ThemeSelector = function(labels, layerList) {
        var myReader = new Ext.data.JsonReader({
@@ -10,7 +10,7 @@ Crdppf.ThemeSelector = function(labels, layerList) {
             {name: 'image', mapping: 'image'}
         ]
     });
-        
+
     var myStore = new Ext.data.Store({
         reader: myReader
     });

@@ -3,7 +3,6 @@ from pyramid.view import view_config
 from pyramid.response import Response
 
 import types
-import simplejson
 
 from crdppf.models import DBSession, Translations
 
@@ -11,12 +10,11 @@ from crdppf.models import DBSession, Translations
 def get_translations_list(request):
     """Loads the translations for all the multilingual labels
     """
-    session = request.session
-    
     limit = int(request.params['limit'])
     start = int(request.params['start'])
+    
     if request.params['sort'] == 'id':
-        sort = 'Translations.id'
+        sort = 'Translations.Id'
     else:
         sort = request.params['sort']
     sort += ' '+request.params['dir']
@@ -33,7 +31,7 @@ def get_translations_list(request):
         totalCount =  int(DBSession.query(Translations).count())
     else:
         totalCount =  '999'
-    translationslist = DBSession.query(Translations).order_by(sort).offset(start).limit(limit).all()
+    translationslist = DBSession.query(Translations).order_by(Translations.Id).offset(start).limit(limit).all()
 
     #~ if filter_params is not None :
         #~ for filterparam in filter_params :
@@ -85,9 +83,8 @@ def get_translations_list(request):
         'translations': list,
         'totalCount':totalCount
     }
-    
-    json= simplejson.dumps(translations)
-    return Response(json,content_type='application/json; charset=utf-8')
+
+    return translations
     
 #~ def get_translations_list(request):
     #~ session = request.session

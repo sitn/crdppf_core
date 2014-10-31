@@ -2,10 +2,7 @@
 Ext.onReady(function() {
 
     Ext.namespace('Crdppf');
-    //Crdppf.labels = '' ;
-    Crdppf.topics = '' ;
-    //Crdppf.baseLayersList = '';
-    
+   
     var loadingCounter = 0;
     
  // Load the interface's Crdppf.labels
@@ -30,11 +27,7 @@ Ext.onReady(function() {
                 ],
                 data: data_array
             });
-            
-            console.log(Crdppf.topicstore);
             loadingCounter += 1;
-            
-            
             Crdppf.documentsForm(Crdppf.labels);            
         },
         method: 'POST',
@@ -70,30 +63,6 @@ Ext.onReady(function() {
     }); 
 
     var topicslist = [];
-    
-    //~ var topicstore = new Ext.data.JsonStore({
-        //~ autoDestroy: true,
-        //~ autoLoad: true,
-        //~ url: 'getTopicsList',
-        //~ idProperty: 'topicid',
-        //~ fields:[
-            //~ {name: 'topicid'},
-            //~ {name: 'topicname'},
-            //~ {name: 'authorityfk', type:'integer'},
-            //~ {name: 'topicorder',type:'integer'}
-        //~ ],
-        //~ listeners: {
-            //~ load: function(st, records, opt) {
-                //~ st.data.each(function (record) {
-                    //~ topicslist.push({
-                        //~ boxLabel: record.data.topicname,
-                        //~ name: record.data.topicid
-                    //~ });
-                //~ });
-            //~ }
-        //~ }
-    //~ });
-    //~ console.log(topicslist);
 
     var cantons = new Ext.data.SimpleStore({
         autoDestroy: true,

@@ -8,7 +8,7 @@ Crdppf.translationsPanel = function(labels) {
     // configure whether filter query is encoded or not (initially)
     var encode = true;
     
-    var translationsproxy=new Ext.data.HttpProxy({url: Crdppf.getTranslationListUrl});
+    var translationsproxy = new Ext.data.HttpProxy({url: Crdppf.getTranslationListUrl});
 
     var myPageSize = 30;  // server script should only send back 30 items at a time
         
@@ -25,7 +25,7 @@ Crdppf.translationsPanel = function(labels) {
             totalProperty: 'totalCount',
             id:'id'
             },
-            // Definition des attributs à récuperer de la base de données des commandes
+            //definition of the columns to fetch in the DB
             [
             {name: 'id', type: 'numeric'},
             {name: 'varstr'},
@@ -76,7 +76,7 @@ Crdppf.translationsPanel = function(labels) {
         }
     });
     
-    // Définition de la structure de l'affichage de la grille des données
+    // Definition of the column model for grid representation
     var colModel = new Ext.grid.ColumnModel([
         {header: "Id", width: 30, dataIndex: 'id', sortable: true, filtrable: true},
         {header: "Nom de la variable", width: 50, dataIndex: 'varstr', sortable: true, filtrable: true},
