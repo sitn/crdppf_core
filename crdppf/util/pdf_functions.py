@@ -13,7 +13,8 @@ from xml.dom.minidom import parseString
 from crdppf.models import DBSession
 from crdppf.models import Translations, PaperFormats
 from crdppf.models import Town, Property, LocalName
-from crdppf.models import CHAirportSecurityZonesPDF, CHAirportProjectZonesPDF, CHPollutedSitesPublicTransportsPDF
+from crdppf.models import CHAirportSecurityZonesPDF, CHAirportProjectZonesPDF
+from crdppf.models import CHPollutedSitesCivilAirportsPDF, CHPollutedSitesPublicTransportsPDF
 
 def geom_from_coordinates(coords):
     """ Function to convert a list of coordinates in a geometry
@@ -95,6 +96,7 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
     xml_layers = {
         '103':'ch.bazl.projektierungszonen-flughafenanlagen.oereb',
         '108':'ch.bazl.sicherheitszonenplan.oereb',
+        '118':'ch.bazl.kataster-belasteter-standorte-zivilflugplaetze.oereb',
         '119':'ch.bav.kataster-belasteter-standorte-oev.oereb'
         }
     
@@ -267,6 +269,10 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
                 xml_model = CHAirportSecurityZonesPDF()
                 xml_model.theme = translations['CHAirportSecurityZonesThemeLabel'] # u'Plan de la zone de sécurité des aéroports' 
                 xml_model.teneur = translations['CHAirportSecurityZonesContentLabel'] # u'Limitation de la hauteur des bâtiments et autres obstacles'
+            elif topicid ==  u'118':
+                xml_model = CHPollutedSitesCivilAirportsPDF()
+                xml_model.theme = translations['CHPollutedSitesCivilAirportsThemeLabel'] # u'Cadastre des sites pollués - domaine des transports publics'
+                xml_model.teneur = translations['CHPollutedSitesCivilAirportsContentLabel'] # u'Sites pollués' 
             elif topicid ==  u'119':
                 xml_model = CHPollutedSitesPublicTransportsPDF()
                 xml_model.theme = translations['CHPollutedSitesPublicTransportsThemeLabel'] # u'Cadastre des sites pollués - domaine des transports publics'
