@@ -110,7 +110,7 @@ class AppendixFile(FPDF):
         try:
             self.image(self.municipalitylogopath, 170, 8, 10, 10.7)
         except:
-            self.image(self.appconfig.imagesbasedir+'ecussons\Placeholder.jpg', 170, 8, 10, 10.7)
+            self.image(self.appconfig.imagesbasedir+'ecussons/Placeholder.jpg', 170, 8, 10, 10.7)
         # This lines are not necessary if the community name is already contained in the picture
         self.set_xy(170, 19.5)
         self.set_font(*self.pdfconfig.textstyles['small'])
@@ -244,7 +244,7 @@ class Extract(FPDF):
         try:
             self.image(self.municipalitylogopath, 170, 8, 10, 10.7)
         except:
-            self.image(self.appconfig.imagesbasedir+'ecussons\Placeholder.jpg', 170, 8, 10, 10.7)
+            self.image(self.appconfig.imagesbasedir+'ecussons/Placeholder.jpg', 170, 8, 10, 10.7)
         # This lines are not necessary if the community name is already contained in the picture
         self.set_xy(170, 19.5)
         self.set_font(*self.pdfconfig.textstyles['small'])
