@@ -21,5 +21,4 @@ class Config(object):
         d = {
             'debug': self.debug
         }
-
         return d

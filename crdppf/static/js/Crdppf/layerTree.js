@@ -71,7 +71,6 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
             checked: false,
             listeners: {
                 'checkchange': function(node, checked){
-                    //Crdppf.legalDocuments.store.filter({'property':'topicfk','value': themeId});
                     MapO.disableInfoControl();
                     if (checked){
                         var filter = {}
