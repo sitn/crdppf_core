@@ -71,16 +71,20 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
             checked: false,
             listeners: {
                 'checkchange': function(node, checked){
-                    Crdppf.legalDocuments.store.filter({'property':'topicfk','value': themeId});
+                    //Crdppf.legalDocuments.store.filter({'property':'topicfk','value': themeId});
                     MapO.disableInfoControl();
                     if (checked){
-                        Crdppf.docfilters(node.id, checked);
+                        var filter = {}
+                        filter[node.id] = checked;
+                        Crdppf.docfilters({'topicfk':filter});
                         node.expand();
                         for (k=0; k < node.childNodes.length; k++){
                             node.childNodes[k].getUI().toggleCheck(true);
                         }
                     } else {
-                        Crdppf.docfilters(node.id, checked);                        
+                        var filter = {}
+                        filter[node.id] = checked;
+                        Crdppf.docfilters({'topicfk':filter});                
                         node.collapse();
                         for (k=0; k < node.childNodes.length; k++){
                             node.childNodes[k].getUI().toggleCheck(false);

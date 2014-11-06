@@ -1,14 +1,26 @@
  // MAIN USER INTERFACE
 Ext.onReady(function() {
 
+    
+    Ext.namespace('Crdppf');
+    Crdppf.labels = '' ;
+    Crdppf.topicstore = '';
+    
+    var formtrigger = 0;
+    
+    Ext.QuickTips.init();
+    var winWait = new Ext.LoadMask(
+        Ext.getBody(),
+        {msg:"Veuillez patienter... chargement du formulaire."}
+    );
 
     // Load the interface's Crdppf.labels
     Ext.Ajax.request({
         url: Crdppf.getTranslationDictionaryUrl,
         success: function(response) {
             Crdppf.labels = Ext.decode(response.responseText);
-            formtrigger = 1;
-            triggerFunction(formtrigger);
+            formtrigger += 1;
+            triggerFunction(formtrigger);      
         },
         method: 'POST',
         failure: function () {
@@ -16,25 +28,22 @@ Ext.onReady(function() {
         }
     });
     
-    Ext.namespace('Crdppf');
-   
-    var loadingCounter = 0;
-    
- // Load the interface's Crdppf.labels
+ // Load the topic list 
     Ext.Ajax.request({
         url: 'getTopicsList',
         success: function(response) {           
+            var data = Ext.decode(response.responseText);           
+            var data_array = [];
             
-            var data = Ext.decode(response.responseText);
-            var data_array = []
             for (var i = 0; i < data.length; i++) {
                 data_array.push([
-                    data[i].topicid,
+                    data[i].topicid.toString(),
                     data[i].topicname
                 ]);
             }
             
             Crdppf.topicstore = new Ext.data.ArrayStore({
+                storeId: 'topicstore',
                 idIndex: 0,  
                 fields: [
                     {name: 'topicid', type: 'string'},
@@ -42,25 +51,14 @@ Ext.onReady(function() {
                 ],
                 data: data_array
             });
-            loadingCounter += 1;
-            Crdppf.documentsForm(Crdppf.labels);            
+            formtrigger += 1;
+            triggerFunction(formtrigger);          
         },
         method: 'POST',
         failure: function () {
             Ext.Msg.alert(Crdppf.topics.serverErrorMessage);
         }
     });
-    
-    Ext.QuickTips.init();
-    var winWait = new Ext.LoadMask(
-        Ext.getBody(),
-        {msg:"Veuillez patienter... chargement du formulaire."}
-    );
-    
-     var fillform = function(response) {
-        var results = Ext.decode(response.responseText);
-        combostore.add(results); 
-    };
  
     var combostore = new Ext.data.JsonStore({
         autoDestroy: true,
@@ -115,7 +113,7 @@ Ext.onReady(function() {
  
     // create the empty form, then fill it with values
     Crdppf.documentsForm = function() {
-    
+
     var formulaire = new Ext.FormPanel({
         id: 'formulaire_saisie',
         title: 'Saisie des règlements',
@@ -151,12 +149,12 @@ Ext.onReady(function() {
                 maxLength: 75,
                 listeners : {
                     'select' : function(combo, record){
-                    Ext.getCmp('formulaire_saisie').getForm().setValues(
-                        {numcad:record.data.numcad,
-                        numcom:record.data.numcom,
-                        nufeco:record.data.nufeco,
-                        comnom:record.data.comnom}
-                        );
+                        formulaire.getForm().setValues({
+                            numcad:record.data.numcad,
+                            numcom:record.data.numcom,
+                            nufeco:record.data.nufeco,
+                            comnom:record.data.comnom
+                        });
                     }
                 }
             },{
@@ -164,6 +162,7 @@ Ext.onReady(function() {
                 fieldLabel: 'Numéro de commune cantonal',
                 labelStyle: 'white-space: nowrap;font-weight: bold;',
                 name: 'numcom',
+                id: 'numcom',
                 allowBlank: true,
                 width: 100,
                 maxLength: 2
@@ -186,7 +185,7 @@ Ext.onReady(function() {
             },{
                 xtype:'combo',
                 fieldLabel: 'Type de texte légal',
-                store: new Ext.data.SimpleStore({
+                store: new Ext.data.ArrayStore({
                     fields: ['doctype'],
                     data: [
                         ['Base légale'],
@@ -195,8 +194,10 @@ Ext.onReady(function() {
                     ]
                 }),
                 displayField: 'doctype',   
-                selectOnFocus: true,
+                //selectOnFocus: true,
                 mode: 'local',
+                editable: false,
+                triggerAction: 'all',
                 labelStyle: 'white-space: nowrap;font-weight: bold;',
                 name: 'doctype',
                 allowBlank: false,
@@ -204,15 +205,16 @@ Ext.onReady(function() {
                 maxLength: 100
             },{
                 xtype:'combo',
-                id: 'topicfield',
+                //id: 'topicfield',
+                name: 'topicfk',
                 store: Crdppf.topicstore,
+                mode: 'local',
+                triggerAction: 'all',
                 fieldLabel: 'Identifiant du thème',
                 displayField:'topicname',
                 valueField: 'topicid',
                 hiddenName: 'topicfk',
-                triggerAction: 'all',
                 labelStyle: 'white-space: nowrap;font-weight: bold;',
-                name: 'topicfk',
                 allowBlank: false,
                 width: 500,
                 maxLength: 75
@@ -362,7 +364,8 @@ Ext.onReady(function() {
 
 
     var triggerFunction = function(counter) {
-        if (counter == 1) {
+        
+        if (counter == 2) {
             // create the header panel containing the page banner
             var headerPanel = new Ext.Panel({
                 region: 'north',
