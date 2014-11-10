@@ -22,6 +22,23 @@ Crdppf.docfilters = function(filter) {
             }
         }
     }
+    console.log(filter);
+    
+    if (filter['municipalitynb']) {
+        console.log(filter['municipalitynb']);
+        //~ for (key in filter['municipalitynb']){
+            //~ if (filter['municipalitynb'][key] == true) {
+                //~ // function to add a filter criteria
+                //~ if ( !(isInArray(key, Crdppf.filterlist['municipalitynb']))){
+                    //~ Crdppf.filterlist['topic'].push(key);
+                //~ }
+            //~ } else {
+                //~ if (isInArray(key, Crdppf.filterlist['municipalitynb'])){
+                    //~ Crdppf.filterlist['municipalitynb'].splice(Crdppf.filterlist['municipalitynb'].indexOf(key), 1);
+                //~ }
+            //~ }
+        //~ }
+    }
 
     Crdppf.legalDocuments.store.clearFilter();
     Crdppf.legalDocuments.store.filterBy(function (record) {

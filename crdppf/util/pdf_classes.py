@@ -81,6 +81,7 @@ class PDFConfig(object):
         self.CHlogopath = 'ecussons/Logo_Schweiz_Eidgen.png'
         # cantonlogopath : Path to the header logo of the canton
         self.cantonlogopath = 'ecussons/06ne_ch_RVB.jpg'
+        self.placeholderpath = 'ecussons/Placeholder.jpg'
 
 class AppendixFile(FPDF):
     def __init__(self):
@@ -110,7 +111,7 @@ class AppendixFile(FPDF):
         try:
             self.image(self.municipalitylogopath, 170, 8, 10, 10.7)
         except:
-            self.image(self.appconfig.imagesbasedir+'ecussons/Placeholder.jpg', 170, 8, 10, 10.7)
+            self.image(self.appconfig.imagesbasedir+ self.placeholderpath, 170, 8, 10, 10.7)
         # This lines are not necessary if the community name is already contained in the picture
         self.set_xy(170, 19.5)
         self.set_font(*self.pdfconfig.textstyles['small'])
