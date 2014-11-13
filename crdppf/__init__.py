@@ -80,6 +80,7 @@ def includeme(config):
     config.add_route('map', 'map')
     config.add_route('configpanel', 'configpanel')
     
+    config.add_route('initjs', '/init.js')
     config.add_route('globalsjs', '/globals.js')
 
     config.add_route('ogcproxy', '/ogcproxy')
