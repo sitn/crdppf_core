@@ -1,6 +1,9 @@
 # -*- coding: UTF-8 -*-
 from pyramid.view import view_config
-from crdppf.models import DBSession, Translations
+from json import dumps
+
+from crdppf.models import DBSession, Translations, Layers
+from crdppf.util.pdf_functions import get_translations
 
 @view_config(route_name='initjs', renderer='crdppf:templates/derived/init.js')
 def initjs(request):
@@ -12,29 +15,47 @@ def initjs(request):
         lang = request.registry.settings['default_language'].lower()
     else : 
         lang = session['lang'].lower()
-        
-    # GO into DB
-    # Get translations
-    # Add to d
-    locals = {}
+
     lang_dict = {
         'fr': Translations.fr,
         'de': Translations.de,
         'it': Translations.it,
         'en': Translations.en
     }
+    
+    locals = {}
+    
     translations = DBSession.query(Translations.varstr, lang_dict[lang]).all()
     for key, value in translations :
-        locals[str(key)] = value
-        
-    sdf
-    d = {
-        'crdppf_fr_car': 'voiture',
-    }
-    
+        if value is not None:
+            locals[str(key)] = value
+        else:
+            locals[str(key)] = value
+   
+    layerlist = []
+    # get all layers
+    layers = DBSession.query(Layers).all()
+    for layer in layers:
+        layerlist.append({
+            'layerid': layer.layerid,
+            'layername': layer.layername,
+            'layerdescription': layer.layerdescription,
+            'layeravailability': layer.layeravailability,
+            'wmtsname' : layer.wmtsname,
+            'layermetadata' : layer.layermetadata,
+            'assentdate' : layer.assentdate,
+            'baselayer' : layer.baselayer,
+            'image' : layer.image,
+            'publicationdate' : layer.publicationdate,
+            'theme_id' :  layer.theme_id,
+            'updatedate' : layer.updatedate,
+            'topicfk': layer.topicfk
+        })
+
+    init = {'fr': locals,'layerlist': layerlist}
     request.response.content = 'application/javascript'
     
-    return locals
+    return init
     
     
 @view_config(route_name='globalsjs', renderer='crdppf:templates/derived/globals.js')

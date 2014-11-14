@@ -82,19 +82,19 @@ Ext.onReady(function() {
         }
     }); 
     
-    //~ // Load the interface's Crdppf.labels
-    //~ Ext.Ajax.request({
-        //~ url: Crdppf.getTranslationDictionaryUrl,
-        //~ success: function(response) {
-            //~ Crdppf.labels = Ext.decode(response.responseText);
-            //~ Crdppf.loadingCounter += 1; 
-            //~ triggerFunction(Crdppf.loadingCounter);            
-        //~ },
-        //~ method: 'POST',
-        //~ failure: function () {
-            //~ Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
-        //~ }
-    //~ });
+    // Load the interface's Crdppf.labels
+    Ext.Ajax.request({
+        url: Crdppf.getTranslationDictionaryUrl,
+        success: function(response) {
+            Crdppf.labels = Ext.decode(response.responseText);
+            Crdppf.loadingCounter += 1; 
+            triggerFunction(Crdppf.loadingCounter);            
+        },
+        method: 'POST',
+        failure: function () {
+            Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
+        }
+    });
 
     // Load base layers configuration
     Ext.Ajax.request({
