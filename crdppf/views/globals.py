@@ -66,7 +66,6 @@ def initjs(request):
     
     return init
     
-    
 @view_config(route_name='globalsjs', renderer='crdppf:templates/derived/globals.js')
 def globalsjs(request):
     request.response.content = 'application/javascript'
