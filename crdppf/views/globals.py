@@ -28,31 +28,40 @@ def initjs(request):
     translations = DBSession.query(Translations.varstr, lang_dict[lang]).all()
     for key, value in translations :
         if value is not None:
-            locals[str(key)] = value
+            locals[str(key)] = value.replace("'","\\'").replace("\n","\\n")
         else:
-            locals[str(key)] = value
-   
+            locals[str(key)] = ''
+
     layerlist = []
+    baselayers = []
     # get all layers
     layers = DBSession.query(Layers).all()
     for layer in layers:
-        layerlist.append({
-            'layerid': layer.layerid,
-            'layername': layer.layername,
-            'layerdescription': layer.layerdescription,
-            'layeravailability': layer.layeravailability,
-            'wmtsname' : layer.wmtsname,
-            'layermetadata' : layer.layermetadata,
-            'assentdate' : layer.assentdate,
-            'baselayer' : layer.baselayer,
-            'image' : layer.image,
-            'publicationdate' : layer.publicationdate,
-            'theme_id' :  layer.theme_id,
-            'updatedate' : layer.updatedate,
-            'topicfk': layer.topicfk
-        })
+        if layer.baselayer == True:
+            layerDico = {}
+            layerDico['id'] = layer.layerid
+            layerDico['image'] = layer.image
+            layerDico['name'] = layer.layername
+            layerDico['wmtsname'] = layer.wmtsname
+            baselayers.append(layerDico)
+        else:
+            layerlist.append({
+                'layerid': layer.layerid,
+                'layername': layer.layername.replace("'","\\'"),
+                'layerdescription': layer.layerdescription.replace("'","\\'"),
+                'layeravailability': layer.layeravailability.replace("'","\\'"),
+                'wmtsname' : layer.wmtsname,
+                'layermetadata' : layer.layermetadata,
+                'assentdate' : layer.assentdate,
+                'baselayer' : layer.baselayer,
+                'image' : layer.image,
+                'publicationdate' : layer.publicationdate,
+                'theme_id' :  layer.theme_id,
+                'updatedate' : layer.updatedate,
+                'topicfk': layer.topicfk
+            })
 
-    init = {'fr': locals,'layerlist': layerlist}
+    init = {'fr': locals,'layerlist': layerlist, 'baseLayers': baselayers}
     request.response.content = 'application/javascript'
     
     return init

@@ -18,7 +18,6 @@ Ext.onReady(function() {
     
     Ext.namespace('Crdppf');
     Crdppf.layerList = '';
-    Crdppf.baseLayersList = '';
     
     // set the application language to the user session settings
     var lang = ''; // The current session language
@@ -26,7 +25,7 @@ Ext.onReady(function() {
     Crdppf.loadingCounter = 0;
     
     var triggerFunction = function(counter) {
-        if (counter == 4) {
+        if (counter == 3) {
             Ext.MessageBox.buttonText.yes = Crdppf.labels.disclaimerAcceptance;
             Ext.MessageBox.buttonText.no = Crdppf.labels.diclaimerRefusal;
             var dlg = Ext.MessageBox.getDialog();
@@ -80,36 +79,8 @@ Ext.onReady(function() {
         failure: function () {
             Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
         }
-    }); 
-    
-    // Load the interface's Crdppf.labels
-    Ext.Ajax.request({
-        url: Crdppf.getTranslationDictionaryUrl,
-        success: function(response) {
-            Crdppf.labels = Ext.decode(response.responseText);
-            Crdppf.loadingCounter += 1; 
-            triggerFunction(Crdppf.loadingCounter);            
-        },
-        method: 'POST',
-        failure: function () {
-            Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
-        }
     });
 
-    // Load base layers configuration
-    Ext.Ajax.request({
-        url: Crdppf.getBaselayerConfigUrl,
-        success: function(response) {
-            Crdppf.baseLayersList = Ext.decode(response.responseText);
-            Crdppf.loadingCounter += 1; 
-            triggerFunction(Crdppf.loadingCounter);            
-        },
-        method: 'POST',
-        failure: function () {
-            Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
-        }
-    });     
-    
     // Load the interface configuration
     Ext.Ajax.request({
         url: Crdppf.getInterfaceConfigUrl,
