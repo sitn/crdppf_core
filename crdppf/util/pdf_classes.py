@@ -78,10 +78,12 @@ class PDFConfig(object):
         self.fitratio = config['fitratio']
         self.pdfpath = pkg_resources.resource_filename('crdppfportal', 'static/public/pdf/')
         # CHlogopath : Path to the header logo of the Swiss Confederation
-        self.CHlogopath = 'ecussons/Logo_Schweiz_Eidgen.png'
+        self.CHlogopath = config['CHlogopath']
         # cantonlogopath : Path to the header logo of the canton
-        self.cantonlogopath = 'ecussons/06ne_ch_RVB.jpg'
-        self.placeholderpath = 'ecussons/Placeholder.jpg'
+        self.cantonlogopath = config['cantonlogo']['path']
+        self.cantonlogoheight = config['cantonlogo']['height']
+        self.cantonlogowidth = config['cantonlogo']['width']
+        self.placeholder = config['placeholder']
 
 class AppendixFile(FPDF):
     def __init__(self):
@@ -107,11 +109,12 @@ class AppendixFile(FPDF):
         self.line(165, 0, 165, 35)
         # Add the logos if existing else put a placeholder
         self.image(self.appconfig.imagesbasedir+self.pdfconfig.CHlogopath, 10, 8, 55, 14.42)
-        self.image(self.appconfig.imagesbasedir+self.pdfconfig.cantonlogopath, 110, 8, 43.4, 13.8)
+        self.image(self.appconfig.imagesbasedir+self.pdfconfig.cantonlogopath, 110, 8, self.pdfconfig.cantonlogowidth, self.pdfconfig.cantonlogoheight)
         try:
             self.image(self.municipalitylogopath, 170, 8, 10, 10.7)
         except:
-            self.image(self.appconfig.imagesbasedir+ self.placeholderpath, 170, 8, 10, 10.7)
+            self.image(self.appconfig.municipalitylogodir+self.pdfconfig.placeholder, 170, 8, 10, 10.7)
+
         # This lines are not necessary if the community name is already contained in the picture
         self.set_xy(170, 19.5)
         self.set_font(*self.pdfconfig.textstyles['small'])
@@ -241,11 +244,11 @@ class Extract(FPDF):
         self.line(165, 0, 165, 35)
         # Add the logos if existing else put a placeholder
         self.image(self.appconfig.imagesbasedir+self.pdfconfig.CHlogopath, 10, 8, 55, 14.42)
-        self.image(self.appconfig.imagesbasedir+self.pdfconfig.cantonlogopath, 110, 8, 43.4, 13.8)
+        self.image(self.appconfig.imagesbasedir+self.pdfconfig.cantonlogopath, 110, 8, self.pdfconfig.cantonlogowidth, self.pdfconfig.cantonlogoheight)
         try:
             self.image(self.municipalitylogopath, 170, 8, 10, 10.7)
         except:
-            self.image(self.appconfig.imagesbasedir+'ecussons/Placeholder.jpg', 170, 8, 10, 10.7)
+            self.image(self.appconfig.municipalitylogodir+self.pdfconfig.placeholder, 170, 8, 10, 10.7)
         # This lines are not necessary if the community name is already contained in the picture
         self.set_xy(170, 19.5)
         self.set_font(*self.pdfconfig.textstyles['small'])
