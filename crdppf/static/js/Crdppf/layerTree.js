@@ -131,7 +131,6 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
     });
     
     // create nodes for base layers
-    
     var baseLayers = baseLayersList.baseLayers;
     
     // iterate over base layers and create nodes
