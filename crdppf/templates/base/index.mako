@@ -18,6 +18,7 @@
     ${self.js()}
 
     <!-- Load globals -->
+    <script type="text/javascript" src="${request.route_url('initjs')}"></script>
     <script type="text/javascript" src="${request.route_url('globalsjs')}"></script>
     
 
@@ -40,10 +41,9 @@
     <script src="${request.static_url('crdppf:static/lib/ext/adapter/ext/ext-base-debug.js')}" type="text/javascript"></script>
     <script src="${request.static_url('crdppf:static/lib/ext/ext-all-debug.js')}" type="text/javascript"></script>
 
-  <!--  <script src="${request.static_url('crdppf:static/lib/ext/adapter/ext/ext-base.js')}" type="text/javascript"></script>-->
-   <!-- <script src="${request.static_url('crdppf:static/lib/ext/ext-all.js')}" type="text/javascript"></script> -->
+    <!-- <script src="${request.static_url('crdppf:static/lib/ext/adapter/ext/ext-base.js')}" type="text/javascript"></script>-->
+    <!-- <script src="${request.static_url('crdppf:static/lib/ext/ext-all.js')}" type="text/javascript"></script> -->
 
-  
     <script src="${request.static_url('crdppf:static/lib/ext/src/locale/ext-lang-fr.js')}" type="text/javascript"></script>
     
     <!-- <script src="${request.static_url('crdppf:static/lib/ext/resources/ux/statusbar/statusBar.js')}" type="text/javascript"></script> -->
