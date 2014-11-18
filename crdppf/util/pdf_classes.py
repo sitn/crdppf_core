@@ -355,10 +355,7 @@ class Extract(FPDF):
         self.set_font(*pdfconfig.textstyles['bold'])
         self.cell(35, 5, translations['EGRIDlabel'], 0, 0, 'L')
         self.set_font(*pdfconfig.textstyles['normal'])
-        if 'no_EGRID' in feature_info:
-            self.cell(50, 5, feature_info['no_EGRID'].encode('iso-8859-1'), 0, 1, 'L')
-        else: 
-            self.cell(50, 5, self.translations['noEGRIDtext'], 0, 1, 'L')
+        self.cell(50, 5, feature_info['no_egrid'].encode('iso-8859-1'), 0, 1, 'L')
 
         # Third infoline : Adresse/localisation
         self.set_font(*pdfconfig.textstyles['bold'])

@@ -15,7 +15,7 @@ def get_interface_config(request):
         layerDico = {}
         for layer in layers:
             layerDico[layer.layername] = layer.layername
-        themeList.append({'id': theme.id, 'image': theme.image, 'name': theme.varstr, 'layers': layerDico})        
+        themeList.append({'id': theme.id, 'image': theme.image, 'name': theme.varstr, 'layers': layerDico})
     return {"type": "ThemesCollection", "themes": themeList}
     
 @view_config(route_name='get_baselayers_config', renderer='json')

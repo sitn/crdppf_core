@@ -347,6 +347,11 @@ def get_feature_info(request, translations):
     parcelInfo['nummai'] = queryresult.nummai # Parcel number
     parcelInfo['type'] = queryresult.typimm # Parcel type
     parcelInfo['source'] = queryresult.source # Parcel type
+    if 'no_egrid' in queryresult.__table__.columns.keys():
+        parcelInfo['no_egrid'] = queryresult.no_egrid
+    else:
+        parcelInfo['no_egrid'] = translations['noEGRIDtext']
+        
     if parcelInfo['type'] == None :
         parcelInfo['type'] = translations['UndefinedPropertyType']
 
