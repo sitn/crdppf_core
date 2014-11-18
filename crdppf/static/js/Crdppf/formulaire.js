@@ -3,7 +3,6 @@ Ext.onReady(function() {
 
     
     Ext.namespace('Crdppf');
-    Crdppf.labels = '' ;
     Crdppf.topicstore = '';
     
     var formtrigger = 0;
@@ -13,21 +12,7 @@ Ext.onReady(function() {
         Ext.getBody(),
         {msg:"Veuillez patienter... chargement du formulaire."}
     );
-
-    // Load the interface's Crdppf.labels
-    Ext.Ajax.request({
-        url: Crdppf.getTranslationDictionaryUrl,
-        success: function(response) {
-            Crdppf.labels = Ext.decode(response.responseText);
-            formtrigger += 1;
-            triggerFunction(formtrigger);      
-        },
-        method: 'POST',
-        failure: function () {
-            Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
-        }
-    });
-    
+   
  // Load the topic list 
     Ext.Ajax.request({
         url: 'getTopicsList',
@@ -363,7 +348,7 @@ Ext.onReady(function() {
 
     var triggerFunction = function(counter) {
         
-        if (counter == 2) {
+        if (counter == 1) {
             // create the header panel containing the page banner
             var headerPanel = new Ext.Panel({
                 region: 'north',
