@@ -1,29 +1,54 @@
 Ext.namespace('Crdppf');
 
-Crdppf.filterlist = [];
+Crdppf.filterlist = {'topic' : [], 'municipalitynb': 0};
 
-Crdppf.docfilters = function(themeid, checked) {
+Crdppf.docfilters = function(filter) {
 
     function isInArray(value, array) {
         return array.indexOf(value) > -1;
     }
 
-    if (checked) {
-        // function to add a filter criteria
-        if ( !(isInArray(themeid, Crdppf.filterlist))){
-            Crdppf.filterlist.push(themeid);
+    // if a topicid is passed in the filter, check if it exists already in the array
+    // if not, add it - else remove it
+    if ('topicfk' in filter) {
+        if (filter['topicfk']) {
+            for (key in filter['topicfk']){
+                if (filter['topicfk'][key] == true) {
+                    // function to add a filter criteria
+                    if ( !(isInArray(key, Crdppf.filterlist['topic']))){
+                        Crdppf.filterlist['topic'].push(key);
+                    }
+                } else {
+                    if (isInArray(key, Crdppf.filterlist['topic'])){
+                        Crdppf.filterlist['topic'].splice(Crdppf.filterlist['topic'].indexOf(key), 1);
+                    }
+                }
+            }
         }
-    } else {
-        if (isInArray(themeid, Crdppf.filterlist)){
-            Crdppf.filterlist.splice(Crdppf.filterlist.indexOf(themeid), 1);
+    }
+    
+    if ('municipalitynb' in filter) {
+        if (filter['municipalitynb'] > 0) {
+            Crdppf.filterlist['municipalitynb'] = filter['municipalitynb'];
+        } else {
+            Crdppf.filterlist['municipalitynb'] = 0;
         }
     }
 
     Crdppf.legalDocuments.store.clearFilter();
     Crdppf.legalDocuments.store.filterBy(function (record) {
-        for (var i = 0; i < Crdppf.filterlist.length; i++){
-        // if the topicid is in the filterlist show the corresponding documents
-         if (record.get('topicfk') == Crdppf.filterlist[i].toString()) return record;
+        if (Crdppf.filterlist['municipalitynb'] > 0){
+            if (record.get('numcad') == Crdppf.filterlist['municipalitynb'] || record.get('numcad') == 0) {
+                for (var i = 0; i < Crdppf.filterlist['topic'].length; i++){
+                // if the topicid is in the filterlist show the corresponding documents
+                 if (record.get('topicfk') == Crdppf.filterlist['topic'][i].toString()) return record;
+                }
+            }
+        } else {
+            for (var i = 0; i < Crdppf.filterlist['topic'].length; i++){
+            // if the topicid is in the filterlist show the corresponding documents
+             if (record.get('topicfk') == Crdppf.filterlist['topic'][i].toString()) return record;
+            }
         }
     });
     return Crdppf.filterlist;
@@ -60,7 +85,7 @@ Crdppf.legalDocuments = function() {
             {name: 'documentid'},
             {name: 'doctype'},
             {name: 'numcom'},
-            {name: 'numcad'},
+            {name: 'numcad', type: 'numeric'},
             {name: 'topicfk'},
             {name: 'title'},
             {name: 'officialtitle'},

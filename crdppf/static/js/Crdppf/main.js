@@ -151,6 +151,7 @@ Crdppf.init_main = function(lang) {
                 var selectionLayer = MapO.map.getLayer('selectionLayer');
                 selectionLayer.removeAllFeatures();
                 MapO.disableInfoControl();
+                Crdppf.docfilters({'municipalitynb':0});
                 infoButton.toggle(false);
             }                  
         }
