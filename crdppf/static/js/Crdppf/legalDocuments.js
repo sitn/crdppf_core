@@ -52,7 +52,6 @@ Crdppf.docfilters = function(filter) {
         }
     });
     return Crdppf.filterlist;
-    console.log(Crdppf.legalDocuments.store);
 };
     
 

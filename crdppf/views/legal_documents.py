@@ -61,7 +61,6 @@ def getTopicsList(request):
 @view_config(route_name='createNewDocEntry', renderer='json')
 def createNewDocEntry(request):
     # Attention il faut que l'utilisateur puisse écrire dans la table et d'1, mais aussi qu'il ait le droit sur la SEQUENCE dans PG
-    session = request.session
     data = sloads(request.POST['data'])
     
     document = Documents()

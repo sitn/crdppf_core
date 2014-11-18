@@ -73,7 +73,7 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
                 'checkchange': function(node, checked){
                     MapO.disableInfoControl();
                     if (checked){
-                        var filter = {}
+                        var filter = {};
                         filter[node.id] = checked;
                         Crdppf.docfilters({'topicfk':filter});
                         node.expand();
@@ -81,7 +81,7 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
                             node.childNodes[k].getUI().toggleCheck(true);
                         }
                     } else {
-                        var filter = {}
+                        var filter = {};
                         filter[node.id] = checked;
                         Crdppf.docfilters({'topicfk':filter});                
                         node.collapse();
