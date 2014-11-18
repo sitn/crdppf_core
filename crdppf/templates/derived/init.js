@@ -53,7 +53,7 @@ Crdppf.layers = [
     nblayers = len(baseLayers)
 %>
             
-baselayers = [
+Crdppf.baseLayersList = {'baseLayers': [
     % for baselayer in baseLayers :
         <%
             i = 1
@@ -77,5 +77,4 @@ baselayers = [
             j += 1
         %>
     % endfor
-];
-Crdppf.baseLayersList = {'baseLayers': baselayers};
+]};

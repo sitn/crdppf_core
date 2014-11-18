@@ -1,9 +1,7 @@
 # -*- coding: UTF-8 -*-
 from pyramid.view import view_config
-from json import dumps
 
 from crdppf.models import DBSession, Translations, Layers
-from crdppf.util.pdf_functions import get_translations
 
 @view_config(route_name='initjs', renderer='crdppf:templates/derived/init.js')
 def initjs(request):
@@ -50,14 +48,14 @@ def initjs(request):
                 'layername': layer.layername.replace("'","\\'"),
                 'layerdescription': layer.layerdescription.replace("'","\\'"),
                 'layeravailability': layer.layeravailability.replace("'","\\'"),
-                'wmtsname' : layer.wmtsname,
-                'layermetadata' : layer.layermetadata,
-                'assentdate' : layer.assentdate,
-                'baselayer' : layer.baselayer,
-                'image' : layer.image,
-                'publicationdate' : layer.publicationdate,
-                'theme_id' :  layer.theme_id,
-                'updatedate' : layer.updatedate,
+                'wmtsname': layer.wmtsname,
+                'layermetadata': layer.layermetadata,
+                'assentdate': layer.assentdate,
+                'baselayer': layer.baselayer,
+                'image': layer.image,
+                'publicationdate': layer.publicationdate,
+                'theme_id':  layer.theme_id,
+                'updatedate': layer.updatedate,
                 'topicfk': layer.topicfk
             })
 
