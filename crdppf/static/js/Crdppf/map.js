@@ -80,7 +80,7 @@ var setInfoControl = function setInfoControl(){
         intersect.removeAllFeatures();
         select.addFeatures([e.feature]);
         var parcelId = e.feature.attributes.idemai;
-        Crdppf.legalDocuments.store.filter({property:'numcad',value:parcelId.split('_',1)});
+        Crdppf.docfilters({'municipalitynb':parseInt(parcelId.split('_',1)[0])});
         if(overlaysList.length === 0){
             var top =  new Ext.tree.TreeNode({
                 text: Crdppf.labels.noActiveLayertxt,

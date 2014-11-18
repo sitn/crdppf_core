@@ -1,6 +1,6 @@
 Ext.namespace('Crdppf');
 
-Crdppf.filterlist = {'topic' : [], 'municipalitynb': []};
+Crdppf.filterlist = {'topic' : [], 'municipalitynb': 0};
 
 Crdppf.docfilters = function(filter) {
 
@@ -8,46 +8,51 @@ Crdppf.docfilters = function(filter) {
         return array.indexOf(value) > -1;
     }
 
-    if (filter['topicfk']) {
-        for (key in filter['topicfk']){
-            if (filter['topicfk'][key] == true) {
-                // function to add a filter criteria
-                if ( !(isInArray(key, Crdppf.filterlist['topic']))){
-                    Crdppf.filterlist['topic'].push(key);
-                }
-            } else {
-                if (isInArray(key, Crdppf.filterlist['topic'])){
-                    Crdppf.filterlist['topic'].splice(Crdppf.filterlist['topic'].indexOf(key), 1);
+    // if a topicid is passed in the filter, check if it exists already in the array
+    // if not, add it - else remove it
+    if ('topicfk' in filter) {
+        if (filter['topicfk']) {
+            for (key in filter['topicfk']){
+                if (filter['topicfk'][key] == true) {
+                    // function to add a filter criteria
+                    if ( !(isInArray(key, Crdppf.filterlist['topic']))){
+                        Crdppf.filterlist['topic'].push(key);
+                    }
+                } else {
+                    if (isInArray(key, Crdppf.filterlist['topic'])){
+                        Crdppf.filterlist['topic'].splice(Crdppf.filterlist['topic'].indexOf(key), 1);
+                    }
                 }
             }
         }
     }
-    console.log(filter);
     
-    if (filter['municipalitynb']) {
-        console.log(filter['municipalitynb']);
-        //~ for (key in filter['municipalitynb']){
-            //~ if (filter['municipalitynb'][key] == true) {
-                //~ // function to add a filter criteria
-                //~ if ( !(isInArray(key, Crdppf.filterlist['municipalitynb']))){
-                    //~ Crdppf.filterlist['topic'].push(key);
-                //~ }
-            //~ } else {
-                //~ if (isInArray(key, Crdppf.filterlist['municipalitynb'])){
-                    //~ Crdppf.filterlist['municipalitynb'].splice(Crdppf.filterlist['municipalitynb'].indexOf(key), 1);
-                //~ }
-            //~ }
-        //~ }
+    if ('municipalitynb' in filter) {
+        if (filter['municipalitynb'] > 0) {
+            Crdppf.filterlist['municipalitynb'] = filter['municipalitynb'];
+        } else {
+            Crdppf.filterlist['municipalitynb'] = 0;
+        }
     }
 
     Crdppf.legalDocuments.store.clearFilter();
     Crdppf.legalDocuments.store.filterBy(function (record) {
-        for (var i = 0; i < Crdppf.filterlist['topic'].length; i++){
-        // if the topicid is in the filterlist show the corresponding documents
-         if (record.get('topicfk') == Crdppf.filterlist['topic'][i].toString()) return record;
+        if (Crdppf.filterlist['municipalitynb'] > 0){
+            if (record.get('numcad') == Crdppf.filterlist['municipalitynb'] || record.get('numcad') == 0) {
+                for (var i = 0; i < Crdppf.filterlist['topic'].length; i++){
+                // if the topicid is in the filterlist show the corresponding documents
+                 if (record.get('topicfk') == Crdppf.filterlist['topic'][i].toString()) return record;
+                }
+            }
+        } else {
+            for (var i = 0; i < Crdppf.filterlist['topic'].length; i++){
+            // if the topicid is in the filterlist show the corresponding documents
+             if (record.get('topicfk') == Crdppf.filterlist['topic'][i].toString()) return record;
+            }
         }
     });
     return Crdppf.filterlist;
+    console.log(Crdppf.legalDocuments.store);
 };
     
 
@@ -81,7 +86,7 @@ Crdppf.legalDocuments = function() {
             {name: 'documentid'},
             {name: 'doctype'},
             {name: 'numcom'},
-            {name: 'numcad'},
+            {name: 'numcad', type: 'numeric'},
             {name: 'topicfk'},
             {name: 'title'},
             {name: 'officialtitle'},
