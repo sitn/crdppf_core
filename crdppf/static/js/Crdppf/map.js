@@ -78,8 +78,9 @@ var setInfoControl = function setInfoControl(){
     control.events.register("featureselected", this, function(e) {
         featureTree.expand(true);
         intersect.removeAllFeatures();
-        select.addFeatures([e.feature]); 
+        select.addFeatures([e.feature]);
         var parcelId = e.feature.attributes.idemai;
+        Crdppf.docfilters({'municipalitynb':parseInt(parcelId.split('_',1)[0])});
         if(overlaysList.length === 0){
             var top =  new Ext.tree.TreeNode({
                 text: Crdppf.labels.noActiveLayertxt,

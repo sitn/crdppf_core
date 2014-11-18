@@ -114,6 +114,7 @@ class AppendixFile(FPDF):
             self.image(self.municipalitylogopath, 170, 8, 10, 10.7)
         except:
             self.image(self.appconfig.municipalitylogodir+self.pdfconfig.placeholder, 170, 8, 10, 10.7)
+
         # This lines are not necessary if the community name is already contained in the picture
         self.set_xy(170, 19.5)
         self.set_font(*self.pdfconfig.textstyles['small'])
