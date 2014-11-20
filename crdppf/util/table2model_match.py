@@ -1,12 +1,12 @@
 # -*- coding: UTF-8 -*-
 from crdppf.models import PrimaryLandUseZones, SecondaryLandUseZones
 from crdppf.models import ComplementaryLandUsePerimeters, LandUseLinearConstraints
-from crdppf.models import LandUsePointConstraints, CHAirportProjectZones
+from crdppf.models import LandUsePointConstraints, PollutedSites
 from crdppf.models import CHAirportSecurityZones, CHAirportSecurityZonesPDF 
-from crdppf.models import PollutedSites, Zoneprotection, CHAirportProjectZonesPDF
+from crdppf.models import CHAirportProjectZones, CHAirportProjectZonesPDF
 from crdppf.models import CHPollutedSitesCivilAirports, CHPollutedSitesCivilAirportsPDF
 from crdppf.models import CHPollutedSitesPublicTransports, CHPollutedSitesPublicTransportsPDF
-from crdppf.models import Zoneprotection, WaterProtectionPerimeters
+from crdppf.models import WaterProtectionZones, WaterProtectionPerimeters
 from crdppf.models import RoadNoise, ForestLimits, ForestDistances
 
 # Matching dictionnary model-table name
@@ -25,7 +25,7 @@ table2model = {
     'r118_bazl_belastete_standorte_zivilflugplaetze_pdf': CHPollutedSitesCivilAirportsPDF,
     'r119_bav_belastete_standorte_oev': CHPollutedSitesPublicTransports,
     'r119_bav_belastete_standorte_oev_pdf': CHPollutedSitesPublicTransportsPDF,
-    'r131_zone_prot_eau': Zoneprotection,
+    'r131_zone_prot_eau': WaterProtectionZones,
     'r132_perimetre_prot_eau': WaterProtectionPerimeters,
     'r145_sens_bruit': RoadNoise,
     'r157_lim_foret': ForestLimits,

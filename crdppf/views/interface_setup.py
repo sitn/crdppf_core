@@ -8,7 +8,7 @@ def get_interface_config(request):
     """Return a JSON file including all the parameters required to configure the interface
     """    
     
-    themes = DBSession.query(Themes).filter_by(publish = True).order_by(Themes.order).all()
+    themes = DBSession.query(Themes).filter_by(publish = True).order_by(Themes.displayorder).all()
     themeList = []
     for theme in themes :
         layers = DBSession.query(Layers).filter_by(theme_id = theme.id).filter_by(baselayer = False).all()
@@ -29,6 +29,6 @@ def get_baselayers_config(request):
         layerDico['id'] = layer.layerid
         layerDico['image'] = layer.image
         layerDico['name'] = layer.layername
-        layerDico['wmtsname'] = layer.wmtsname
+        layerDico['wmtsname'] = layer.fsname
         layerList.append(layerDico)
     return {'baseLayers': layerList}
