@@ -7,7 +7,7 @@ import csv
 import math
 
 from crdppf.models import DBSession
-from crdppf.util.table2model_match import table2model
+from crdppf.util.table2model_match import table2model_match
 
 def get_features_function(parcelGeom, params):
 
@@ -23,7 +23,7 @@ def get_features_function(parcelGeom, params):
     test = 'empty'
     # retrieve models from table2model
     for layer in layerList:
-        model = table2model[layer]
+        model = table2model_match(layer)
 
     # spatial analysis
     featureList = []
