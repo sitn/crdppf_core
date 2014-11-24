@@ -5,11 +5,9 @@ from crdppf.models import DBSession, Table2model
 #@view_config(route_name='table2model_match', renderer='json') 
 def table2model_match(layername):
     """Associates a PG tablename with a modelname"""
-
-    tables = DBSession.query(Table2model.layername = layer).first()
+    tables = []
+    
+    tables = DBSession.query(Table2model).filter(Table2model.layername)all()
     sdf
-    table2model = {}
-    for table in tables:
-        table2model[table.layername] = table.modelname
 
-    return table2model
+    return model
