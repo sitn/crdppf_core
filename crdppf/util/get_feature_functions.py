@@ -7,7 +7,7 @@ import csv
 import math
 
 from crdppf.models import DBSession
-from crdppf.util.table2model_match import table2model
+from crdppf.util.table2model_match import table2model_match
 
 def get_features_function(parcelGeom, params):
 
@@ -23,12 +23,12 @@ def get_features_function(parcelGeom, params):
     test = 'empty'
     # retrieve models from table2model
     for layer in layerList:
-        model = table2model[layer]
+        model = table2model_match(layer)
 
     # spatial analysis
     featureList = []
     for layer in layerList:
-        targetModel = table2model[layer]
+        targetModel = table2model_match(layer)
         intersectResult = DBSession.query(targetModel).filter(or_(targetModel.geom.intersects(parcelGeom), targetModel.geom.within(parcelGeom))).all()
         if intersectResult:
             # create geojson output with custom attributes

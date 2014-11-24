@@ -39,9 +39,9 @@ class AppConfig(Base):
     
 # START models used for static extraction and general models
 class Topics(Base):
-    __tablename__ = 'topic'
+    __tablename__ = 'topics'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    layers = relationship("Layers", backref=backref("layers"),lazy="joined")
+    layers = relationship("Layers", backref=backref("layer"),lazy="joined")
     authorityfk = Column(Integer, ForeignKey('crdppf.authority.authorityid'))
     authority = relationship("Authority", backref=backref("authority"),lazy="joined")
     legalbases = relationship("LegalBases", backref=backref("legalbases"),lazy="joined")
@@ -50,9 +50,9 @@ class Topics(Base):
     references = relationship("References", backref=backref("references"),lazy="joined")
     
 class Layers(Base):
-    __tablename__ = 'layers'
+    __tablename__ = 'layer'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    topicfk = Column(String(10), ForeignKey('crdppf.topic.topicid'))
+    topicfk = Column(String(10), ForeignKey('crdppf.topics.topicid'))
     topic = relationship("Topics", backref=backref("topic"),lazy="joined")
 
 class Documents(Base):
@@ -70,33 +70,37 @@ class Authority(Base):
 class LegalBases(Base):
     __tablename__ = 'legalbases'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    topicfk = Column(String(10), ForeignKey('crdppf.topic.topicid'))
+    topicfk = Column(String(10), ForeignKey('crdppf.topics.topicid'))
 
 class LegalProvisions(Base):
     __tablename__ = 'legalprovisions'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    topicfk = Column(String(10), ForeignKey('crdppf.topic.topicid')) 
+    topicfk = Column(String(10), ForeignKey('crdppf.topics.topicid')) 
 
 class TemporaryProvisions(Base):
     __tablename__ = 'temporaryprovisions'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    topicfk = Column(String(10), ForeignKey('crdppf.topic.topicid'))
+    topicfk = Column(String(10), ForeignKey('crdppf.topics.topicid'))
 
 class References(Base):
     __tablename__ = 'references'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    topicfk = Column(String(10), ForeignKey('crdppf.topic.topicid'))
+    topicfk = Column(String(10), ForeignKey('crdppf.topics.topicid'))
 
 class PaperFormats(Base):
     __tablename__ = 'paperformats'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-
-class Translations(Base):
-    __tablename__ = 'translations'
+     
+class Table2model(Base):
+    __tablename__ = 'table2model'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     
 class Themes(Base):
-    __tablename__ = 'themes'
+    __tablename__ = 'theme'
+    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+
+class Translations(Base):
+    __tablename__ = 'translations'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
 
 
@@ -290,7 +294,7 @@ class RoadNoise(GeoInterface,Base):
 
 # models for water protection
 
-class Zoneprotection(GeoInterface,Base):
+class WaterProtectionZones(GeoInterface,Base):
     __tablename__ = 'r131_zone_prot_eau'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     idobj = Column(String(40), primary_key=True)
