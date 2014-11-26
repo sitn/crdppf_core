@@ -197,11 +197,48 @@ class LandUsePointConstraints(GeoInterface,Base):
 
 # models for the topic national roads
 
-# None yet
+if 'highways_project_zones' in db_config['restrictions']:
+    class CHHighwaysProjectZones(GeoInterface,Base):
+        __tablename__ = 'r87_astra_projektierungszonen_nationalstrassen'
+        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom =GeometryColumn(Geometry(2,srid=srid_))
+else:
+    class CHHighwaysProjectZones():
+        pass
+        
+if 'highways_construction_limits' in db_config['restrictions']:
+    class CHHighwaysConstructionLimits(GeoInterface,Base):
+        __tablename__ = 'r88_astra_baulinien_nationalstrassen'
+        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom =GeometryColumn(Geometry(2,srid=srid_))
+else:
+    class CHHighwaysConstructionLimits():
+        pass
 
 # models for the national railways
 
-# None yet
+if 'railways_project_zones' in db_config['restrictions']:
+    class CHRailwaysProjectZones(GeoInterface,Base):
+        __tablename__ = 'r96_bav_projektierungszonen_eisenbahnanlagen'
+        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom =GeometryColumn(Geometry(2,srid=srid_))
+else:
+    class CHRailwaysProjectZones():
+        pass
+        
+if 'railways_construction_limits' in db_config['restrictions']:
+    class CHRailwaysConstructionLimits(GeoInterface,Base):
+        __tablename__ = 'r97_bav_baulinien_eisenbahnanlagen'
+        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom =GeometryColumn(Geometry(2,srid=srid_))
+else:
+    class CHRailwaysConstructionLimits():
+        pass
+
 
 # models for airports
 
