@@ -7,7 +7,7 @@ def table2model_match(layername):
     """Associates a PG tablename with a modelname"""
     tables = []
     
-    tables = DBSession.query(Table2model).filter(Table2model.layername)all()
+    tables = DBSession.query(Table2model).filter(Table2model.layername).all()
     sdf
 
     return model

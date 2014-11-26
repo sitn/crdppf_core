@@ -307,16 +307,24 @@ class WaterProtectionPerimeters(GeoInterface,Base):
     geom = GeometryColumn(Geometry(srid=srid_))
 
 # models for the topic Forest
-class ForestLimits(GeoInterface,Base):
-    __tablename__ = 'r157_lim_foret'
-    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    idobj = Column(Integer, primary_key=True)
-    geom =GeometryColumn(Geometry(2,srid=srid_))
-    
-class ForestDistances(GeoInterface,Base):
-    __tablename__ = 'r159_dist_foret'
-    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    idobj = Column(Integer, primary_key=True)
-    geom =GeometryColumn(Geometry(2,srid=srid_))
+if 'forestlimits' in db_config['restrictions']:
+    class ForestLimits(GeoInterface,Base):
+        __tablename__ = 'r157_lim_foret'
+        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom =GeometryColumn(Geometry(2,srid=srid_))
+else:
+    class ForestLimits():
+        pass
+        
+if 'forestdistances' in db_config['restrictions']:
+    class ForestDistances(GeoInterface,Base):
+        __tablename__ = 'r159_dist_foret'
+        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom =GeometryColumn(Geometry(2,srid=srid_))
+else:
+    class ForestDistances():
+        pass
 
 # STOP models used for GetFeature queries
