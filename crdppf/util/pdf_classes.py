@@ -44,6 +44,7 @@ class AppConfig(object):
         self.wms_version = config['wms_version']
         self.wms_transparency = config['wms_transparency']
         self.wms_imageformat = config['wms_imageformat']
+        self.emptytopics = config['emptytopics']
 
 class PDFConfig(object):
     """A class to define the configuration of the PDF extract to simplify changes.
@@ -576,8 +577,12 @@ class Extract(FPDF):
                 self.add_layer(layer)
             self.get_topic_map(topic.layers,topic.topicid)
         else:
-            self.topiclist[str(topic.topicid)]['layers'] = None
-            self.topiclist[str(topic.topicid)]['categorie']=0
+            if str(topic.topicid) in self.appconfig.emptytopics:
+                self.topiclist[str(topic.topicid)]['layers'] = None
+                self.topiclist[str(topic.topicid)]['categorie'] = 1
+            else:
+                self.topiclist[str(topic.topicid)]['layers'] = None
+                self.topiclist[str(topic.topicid)]['categorie'] = 0
 
         # if legal bases are defined for a topic the attributes are compiled in a list
         if topic.legalbases:
