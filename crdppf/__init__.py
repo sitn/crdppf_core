@@ -19,11 +19,9 @@ def read_app_config(settings):
     
     results = {}
     results = DBSession.query(AppConfig).all()
-    appconfig = {}
     
     for result in results :
-        appconfig[str(result.parameter)] = str(result.paramvalue)
-    settings['app_config'].update(appconfig)
+        settings['app_config'].update({str(result.parameter):str(result.paramvalue)})
     
     return True
    
