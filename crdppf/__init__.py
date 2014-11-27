@@ -19,9 +19,11 @@ def read_app_config(settings):
     
     results = {}
     results = DBSession.query(AppConfig).all()
-
+    appconfig = {}
+    
     for result in results :
-        settings.update({str(result.parameter):str(result.paramvalue)})
+        appconfig[str(result.parameter)] = str(result.paramvalue)
+    settings['app_config'].update(appconfig)
     
     return True
    
@@ -49,7 +51,7 @@ def includeme(config):
     config.add_renderer('geojson', GeoJSON())
 
     # add app configuration from db
-    #read_app_config(settings)
+    read_app_config(settings)
 
     specific_tmp_path = os.path.join(settings['specific_root_dir'], 'templates')
     specific_static_path = os.path.join(settings['specific_root_dir'], 'static')
