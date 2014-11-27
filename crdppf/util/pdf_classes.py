@@ -85,6 +85,8 @@ class PDFConfig(object):
         self.cantonlogoheight = config['cantonlogo']['height']
         self.cantonlogowidth = config['cantonlogo']['width']
         self.placeholder = config['placeholder']
+        self.pdfbasename = config['pdfbasename']
+        self.siteplanbasename = config['siteplanbasename']
 
 class AppendixFile(FPDF):
     def __init__(self):
@@ -233,8 +235,8 @@ class Extract(FPDF):
         """ Sets the file name of the pdf extract based on the time and parcel id
         """
         self.filename = str(self.timestamp) + self.featureid
-        self.pdfconfig.pdfname = str(self.filename) + '_ExtraitCRDPPF'
-        self.pdfconfig.siteplanname = str(self.filename) + '_siteplan'
+        self.pdfconfig.pdfname = str(self.filename) + self.pdfconfig.pdfbasename
+        self.pdfconfig.siteplanname = str(self.filename) + self.pdfconfig.siteplanbasename
 
     def header(self):
         """Creates the document header with the logos and vertical lines."""
@@ -965,17 +967,17 @@ class Extract(FPDF):
         self.cell(15, 5, '', 'LB', 1, 'L')
 
         # List of all topics with a restriction for the selected parcel 
-        for entry, column in self.topiclist.iteritems():
-            if column['categorie'] == 3 :
+        for topic in self.topicorder.values():
+            if self.topiclist[topic]['categorie'] == 3 :
                 self.set_font(*pdfconfig.textstyles['bold'])
-                if column['no_page'] is not None:
-                    self.cell(12, 6, column['no_page'],'B', 0, 'L')
+                if self.topiclist[topic]['no_page'] is not None:
+                    self.cell(12, 6, self.topiclist[topic]['no_page'],'B', 0, 'L')
                 else:
                     self.cell(12, 6, '', 'B', 0, 'C')
-                self.cell(118, 6, column['topicname'], 'LB', 0, 'L')
-                if column['legalprovisions'] is not None :
+                self.cell(118, 6, self.topiclist[topic]['topicname'], 'LB', 0, 'L')
+                if self.topiclist[topic]['legalprovisions'] is not None :
                     pageslist = []
-                    for legalprovision in column['legalprovisions']:
+                    for legalprovision in self.topiclist[topic]['legalprovisions']:
                         pageslist.append(legalprovision['no_page'])
                     self.cell(15, 6, ', '.join(pageslist), 'LB', 0, 'C')
                 else:
@@ -988,10 +990,10 @@ class Extract(FPDF):
         self.multi_cell(0, 6, translations['notconcerndbyrestrictionlabel'], 'B', 1, 'L')
         self.ln()
 
-        for entry, column in self.topiclist.iteritems() :
-            if column['categorie'] == 1 :
+        for topic in self.topicorder.values():
+            if self.topiclist[topic]['categorie'] == 1 :
                 self.set_font(*pdfconfig.textstyles['tocbold'])
-                self.cell(118, 6, column['topicname'], '', 0, 'L')
+                self.cell(118, 6, self.topiclist[topic]['topicname'], '', 0, 'L')
                 self.cell(15, 6, '', '', 0, 'L')
                 self.cell(15, 6, '', '', 1, 'L')
 
@@ -1000,10 +1002,10 @@ class Extract(FPDF):
         self.multi_cell(0, 6, translations['restrictionnotavailablelabel'], 'B', 1, 'L')
         self.ln()
         
-        for entry, column in self.topiclist.iteritems() :
-            if column['categorie'] == 0 :
+        for topic in self.topicorder.values():
+            if self.topiclist[topic]['categorie'] == 0 :
                 self.set_font(*pdfconfig.textstyles['tocbold'])
-                self.cell(118, 6,column['topicname'],0,0,'L')
+                self.cell(118, 6,self.topiclist[topic]['topicname'],0,0,'L')
                 self.cell(15, 6,'',0,0,'L')
                 self.cell(15, 6,'',0,1,'L')
                 
