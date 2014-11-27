@@ -579,10 +579,10 @@ class Extract(FPDF):
         else:
             if str(topic.topicid) in self.appconfig.emptytopics:
                 self.topiclist[str(topic.topicid)]['layers'] = None
-                self.topiclist[str(topic.topicid)]['categorie']=1
+                self.topiclist[str(topic.topicid)]['categorie'] = 1
             else:
                 self.topiclist[str(topic.topicid)]['layers'] = None
-                self.topiclist[str(topic.topicid)]['categorie']=0
+                self.topiclist[str(topic.topicid)]['categorie'] = 0
 
         # if legal bases are defined for a topic the attributes are compiled in a list
         if topic.legalbases:
