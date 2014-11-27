@@ -16,13 +16,13 @@ def read_app_config(settings):
     Read the initial app config
     """
     from crdppf.models import DBSession, Base, AppConfig
-    
+
     results = {}
     results = DBSession.query(AppConfig).all()
-    
+
     for result in results :
         settings['app_config'].update({str(result.parameter):str(result.paramvalue)})
-    
+
     return True
    
 # INCLUDE THE CORE CONFIGURATION AND CREATE THE APPLICATION   
