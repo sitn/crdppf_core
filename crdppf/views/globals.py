@@ -40,7 +40,7 @@ def initjs(request):
             layerDico['id'] = layer.layerid
             layerDico['image'] = layer.image
             layerDico['name'] = layer.layername
-            layerDico['wmtsname'] = layer.fsname
+            layerDico['wmtsname'] = layer.wmtsname
             baselayers.append(layerDico)
         else:
             layerlist.append({
@@ -48,7 +48,7 @@ def initjs(request):
                 'layername': layer.layername.replace("'","\\'"),
                 'layerdescription': layer.layerdescription.replace("'","\\'"),
                 'layeravailability': layer.layeravailability.replace("'","\\'"),
-                'wmtsname': layer.fsname,
+                'wmtsname': layer.wmtsname,
                 'layermetadata': layer.layermetadata,
                 'assentdate': layer.assentdate,
                 'baselayer': layer.baselayer,

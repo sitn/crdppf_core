@@ -272,7 +272,10 @@ def create_extract(request):
             appendixfile.output(pdfconfig.pdfpath+pdfconfig.pdfname+'_a'+str(j)+'.pdf','F')
             appendicesfiles.append(pdfconfig.pdfpath+pdfconfig.pdfname+'_a'+str(j)+'.pdf')
             extract.cleanupfiles.append(pdfconfig.pdfpath+pdfconfig.pdfname+'_a'+str(j)+'.pdf')
-            appendicesfiles.append(appendix['url'])
+            if appendix['path'] is not None:
+                appendicesfiles.append(extract.appconfig.legaldocsdir+appendix['path'])
+            else:
+                appendicesfiles.append(exception)
             j += 1
         merger = PdfFileMerger()
         for appendixfile in appendicesfiles:

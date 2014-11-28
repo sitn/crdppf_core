@@ -148,7 +148,7 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
         var baseLayerItem =  new Ext.tree.TreeNode({
             text: labels[baseLayers[i].name],
             draggable:false,
-            id: baseLayers[i].fsname,
+            id: baseLayers[i].wmtsname,
             leaf: true,
             checked: isChecked,
             cls: 'baseLayerNodeCls',
