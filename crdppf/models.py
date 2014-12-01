@@ -45,7 +45,7 @@ class Topics(Base):
     authorityfk = Column(Integer, ForeignKey('crdppf.authority.authorityid'))
     authority = relationship("Authority", backref=backref("authority"),lazy="joined")
     legalbases = relationship("LegalBases", backref=backref("legalbases"),lazy="joined")
-    legalprovisions = relationship("LegalProvisions", backref=backref("legalprovision"),lazy="joined")
+    legalprovisions = relationship("LegalProvisions", backref=backref("legalprovisions"),lazy="joined")
     temporaryprovisions = relationship("TemporaryProvisions", backref=backref("temporaryprovisions"),lazy="joined")
     references = relationship("References", backref=backref("references"),lazy="joined")
     
@@ -73,7 +73,7 @@ class LegalBases(Base):
     topicfk = Column(String(10), ForeignKey('crdppf.topic.topicid'))
 
 class LegalProvisions(Base):
-    __tablename__ = 'legalprovision'
+    __tablename__ = 'legalprovisions'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     topicfk = Column(String(10), ForeignKey('crdppf.topic.topicid')) 
 
