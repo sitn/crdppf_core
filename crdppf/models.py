@@ -90,13 +90,13 @@ class References(Base):
 class PaperFormats(Base):
     __tablename__ = 'paperformats'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-
-class Translations(Base):
-    __tablename__ = 'translations'
-    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     
 class Themes(Base):
     __tablename__ = 'themes'
+    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+
+class Translations(Base):
+    __tablename__ = 'translations'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
 
 
@@ -193,11 +193,48 @@ class LandUsePointConstraints(GeoInterface,Base):
 
 # models for the topic national roads
 
-# None yet
+if 'highways_project_zones' in db_config['restrictions']:
+    class CHHighwaysProjectZones(GeoInterface,Base):
+        __tablename__ = 'r87_astra_projektierungszonen_nationalstrassen'
+        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom =GeometryColumn(Geometry(2,srid=srid_))
+else:
+    class CHHighwaysProjectZones():
+        pass
+        
+if 'highways_construction_limits' in db_config['restrictions']:
+    class CHHighwaysConstructionLimits(GeoInterface,Base):
+        __tablename__ = 'r88_astra_baulinien_nationalstrassen'
+        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom =GeometryColumn(Geometry(2,srid=srid_))
+else:
+    class CHHighwaysConstructionLimits():
+        pass
 
 # models for the national railways
 
-# None yet
+if 'railways_project_zones' in db_config['restrictions']:
+    class CHRailwaysProjectZones(GeoInterface,Base):
+        __tablename__ = 'r96_bav_projektierungszonen_eisenbahnanlagen'
+        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom =GeometryColumn(Geometry(2,srid=srid_))
+else:
+    class CHRailwaysProjectZones():
+        pass
+        
+if 'railways_construction_limits' in db_config['restrictions']:
+    class CHRailwaysConstructionLimits(GeoInterface,Base):
+        __tablename__ = 'r97_bav_baulinien_eisenbahnanlagen'
+        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom =GeometryColumn(Geometry(2,srid=srid_))
+else:
+    class CHRailwaysConstructionLimits():
+        pass
+
 
 # models for airports
 
@@ -290,7 +327,7 @@ class RoadNoise(GeoInterface,Base):
 
 # models for water protection
 
-class Zoneprotection(GeoInterface,Base):
+class WaterProtectionZones(GeoInterface,Base):
     __tablename__ = 'r131_zone_prot_eau'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     idobj = Column(String(40), primary_key=True)
@@ -303,16 +340,24 @@ class WaterProtectionPerimeters(GeoInterface,Base):
     geom = GeometryColumn(Geometry(srid=srid_))
 
 # models for the topic Forest
-class ForestLimits(GeoInterface,Base):
-    __tablename__ = 'r157_lim_foret'
-    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    idobj = Column(Integer, primary_key=True)
-    geom =GeometryColumn(Geometry(2,srid=srid_))
-    
-class ForestDistances(GeoInterface,Base):
-    __tablename__ = 'r159_dist_foret'
-    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    idobj = Column(Integer, primary_key=True)
-    geom =GeometryColumn(Geometry(2,srid=srid_))
+if 'forestlimits' in db_config['restrictions']:
+    class ForestLimits(GeoInterface,Base):
+        __tablename__ = 'r157_lim_foret'
+        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom =GeometryColumn(Geometry(2,srid=srid_))
+else:
+    class ForestLimits():
+        pass
+        
+if 'forestdistances' in db_config['restrictions']:
+    class ForestDistances(GeoInterface,Base):
+        __tablename__ = 'r159_dist_foret'
+        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom =GeometryColumn(Geometry(2,srid=srid_))
+else:
+    class ForestDistances():
+        pass
 
 # STOP models used for GetFeature queries

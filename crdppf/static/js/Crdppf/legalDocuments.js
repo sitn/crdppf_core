@@ -1,6 +1,6 @@
 Ext.namespace('Crdppf');
 
-Crdppf.filterlist = {'topic' : [], 'municipalitynb': 0};
+Crdppf.filterlist = {'theme':[], 'topic' : [], 'municipalitynb': 0};
 
 Crdppf.docfilters = function(filter) {
 

@@ -111,7 +111,6 @@ def createNewDocEntry(request):
 def getLegalDocuments(request):
     """Gets all the legal documents related to a feature.
     """
-
     doclist = []
 
     legalbases = {}
@@ -138,21 +137,40 @@ def getLegalDocuments(request):
     legalprovisions = DBSession.query(LegalProvisions).order_by(LegalProvisions.legalprovisionid.asc()).all()
 
     for legalprovision in legalprovisions :
-        doclist.append({
-            'documentid':legalprovision.legalprovisionid,
-            'doctype':'legalprovision',
-            #'numcom':legalprovision.numcom, 
-            'topicfk':legalprovision.topicfk, 
-            'title':legalprovision.title, 
-            'officialtitle':legalprovision.officialtitle, 
-            'abreviation':legalprovision.abreviation, 
-            'officialnb':legalprovision.officialnb,
-            'canton':legalprovision.canton,
-            'commune':legalprovision.commune,
-            'documenturl':legalprovision.legalprovisionurl,
-            'legalstate':legalprovision.legalstate,
-            'publishedsince':legalprovision.publishedsince.isoformat()
-        })
+        if legalprovision.publishedsince is not None:
+            doclist.append({
+                'documentid':legalprovision.legalprovisionid,
+                'doctype':'legalprovision',
+                'numcom':legalprovision.nocad, 
+                'topicfk':legalprovision.topicfk, 
+                'title':legalprovision.title, 
+                'officialtitle':legalprovision.officialtitle, 
+                'abreviation':legalprovision.abreviation, 
+                'officialnb':legalprovision.officialnb,
+                'canton':legalprovision.canton,
+                'commune':legalprovision.commune,
+                'documenturl':legalprovision.legalprovisionurl,
+                'filepath':legalprovision.localurl,
+                'legalstate':legalprovision.legalstate,
+                'publishedsince':legalprovision.publishedsince.isoformat()
+            })
+        else:
+            doclist.append({
+                'documentid':legalprovision.legalprovisionid,
+                'doctype':'legalprovision',
+                'numcom':legalprovision.nocad, 
+                'topicfk':legalprovision.topicfk, 
+                'title':legalprovision.title, 
+                'officialtitle':legalprovision.officialtitle, 
+                'abreviation':legalprovision.abreviation, 
+                'officialnb':legalprovision.officialnb,
+                'canton':legalprovision.canton,
+                'commune':legalprovision.commune,
+                'documenturl':legalprovision.legalprovisionurl,
+                'filepath':legalprovision.localurl,
+                'legalstate':legalprovision.legalstate,
+                'publishedsince': None
+            })
 
     temporaryprovisions = {}
     temporaryprovisions = DBSession.query(TemporaryProvisions).order_by(TemporaryProvisions.temporaryprovisionid.asc()).all()
@@ -170,6 +188,7 @@ def getLegalDocuments(request):
             'canton':temporaryprovision.canton,
             'commune':temporaryprovision.commune,
             'documenturl':temporaryprovision.temporaryprovisionurl,
+            #'filepath':temporaryprovision.localurl,
             'legalstate':temporaryprovision.legalstate,
             'publishedsince':temporaryprovision.publishedsince.isoformat()
         })
@@ -190,6 +209,7 @@ def getLegalDocuments(request):
             'canton':reference.canton,
             'commune':reference.commune,
             'documenturl':reference.referenceurl,
+             #'filepath':reference.localurl,
             'legalstate':reference.legalstate,
             'publishedsince':reference.publishedsince.isoformat()
         })

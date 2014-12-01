@@ -655,7 +655,7 @@ class Extract(FPDF):
         """
         self.legalprovisionslist[str(topicid)]=[]
         for provision in legalprovisions:
-            self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(provision.officialtitle).encode('iso-8859-1'), unicode(provision.legalprovisionurl).encode('iso-8859-1'))
+            self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(provision.officialtitle).encode('iso-8859-1'), unicode(provision.legalprovisionurl).encode('iso-8859-1'), provision.localurl)
             self.legalprovisionslist[str(topicid)].append({
                 'officialtitle':provision.officialtitle,
                 'title':provision.title,
@@ -689,6 +689,7 @@ class Extract(FPDF):
                 #'metadata':legalprovision.metadata
                 })
         self.topiclist[str(topicid)]['references'] = self.referenceslist[str(topicid)]
+
     def get_wms_bbox(self):
         """ Defines the bounding box of the wms request
         """
@@ -1229,8 +1230,8 @@ class Extract(FPDF):
             else:
                 self.multi_cell(0, 5, translations['placeholderlabel'])
 
-    def add_appendix(self, topicid, num, label,url):
-        self.appendix_entries.append({'topicid':topicid, 'no_page':num, 'title':label, 'url':url})
+    def add_appendix(self, topicid, num, label, url, filepath):
+        self.appendix_entries.append({'topicid':topicid, 'no_page':num, 'title':label, 'url':url, 'path':filepath})
         if self.toc_entries[str(topicid)] :
             self.toc_entries[topicid]['appendices'].add(num)
         else:

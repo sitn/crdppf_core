@@ -25,7 +25,7 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
         draggable:false,
         id:'rootLayerTree'});
     var ll = layerList.themes;
-
+        
     // create a node on top of tree to select all nodes
     var checkAllNode = new Ext.tree.TreeNode({
         text: labels.selectAllLayerLabel,
