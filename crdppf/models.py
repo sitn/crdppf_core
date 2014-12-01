@@ -90,10 +90,6 @@ class References(Base):
 class PaperFormats(Base):
     __tablename__ = 'paperformats'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-     
-class Table2model(Base):
-    __tablename__ = 'table2model'
-    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     
 class Themes(Base):
     __tablename__ = 'themes'
