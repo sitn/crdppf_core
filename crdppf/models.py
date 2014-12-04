@@ -268,17 +268,26 @@ class CHAirportProjectZonesPDF(GeoInterface,Base):
 
 GeometryDDL(CHAirportProjectZonesPDF.__table__)
 
-#~ class Corridors(GeoInterface,Base):
-    #~ __tablename__ = 'clo_couloirs'
-    #~ __table_args__ = {'schema': 'amenagement', 'autoload': True}
-    #~ idobj = Column(Integer, primary_key=True)
-    #~ geom =GeometryColumn(Geometry(2,srid=srid_))
-    
-#~ class AltitudeRatings(GeoInterface,Base):
-    #~ __tablename__ = 'clo_cotes_altitude_surfaces'
-    #~ __table_args__ = {'schema': 'amenagement', 'autoload': True}
-    #~ idobj = Column(Integer, primary_key=True)
-    #~ geom =GeometryColumn(Geometry(2,srid=srid_))
+if 'airport_construction_limits' in db_config['restrictions']:
+    class CHAirportConstructionLimits(GeoInterface,Base):
+        __tablename__ = 'r104_bazl_baulinien_flughafenanlagen'
+        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom = GeometryColumn(Geometry(2,srid=srid_))
+        
+    class CHAirportConstructionLimitsPDF(GeoInterface,Base):
+        __tablename__ = 'r104_bazl_baulinien_flughafenanlagen_pdf'
+        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom = GeometryColumn(Geometry(2,srid=srid_))
+        # ch.bazl.projektierungszonen-flughafenanlagen.oereb
+
+    GeometryDDL(CHAirportConstructionLimitsPDF.__table__)
+else:
+    class CHAirportConstructionLimits():
+        pass
+    class CHAirportConstructionLimitsPDF():
+        pass
 
 # models for theme: register of polluted sites
 
