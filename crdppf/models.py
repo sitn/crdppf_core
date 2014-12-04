@@ -268,7 +268,7 @@ class CHAirportProjectZonesPDF(GeoInterface,Base):
 
 GeometryDDL(CHAirportProjectZonesPDF.__table__)
 
-if 'airportconstructionlimits' in db_config['restrictions']:
+if 'airport_construction_limits' in db_config['restrictions']:
     class CHAirportConstructionLimits(GeoInterface,Base):
         __tablename__ = 'r104_bazl_baulinien_flughafenanlagen'
         __table_args__ = {'schema': db_config['schema'], 'autoload': True}

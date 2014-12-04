@@ -6,6 +6,7 @@ from crdppf.models import CHHighwaysProjectZones, CHHighwaysConstructionLimits
 from crdppf.models import CHRailwaysProjectZones, CHRailwaysConstructionLimits
 from crdppf.models import CHAirportSecurityZones, CHAirportSecurityZonesPDF
 from crdppf.models import CHAirportProjectZones, CHAirportProjectZonesPDF
+from crdppf.models import CHAirportConstructionLimits, CHAirportConstructionLimitsPDF
 from crdppf.models import CHPollutedSitesCivilAirports, CHPollutedSitesCivilAirportsPDF
 from crdppf.models import CHPollutedSitesPublicTransports, CHPollutedSitesPublicTransportsPDF
 from crdppf.models import WaterProtectionZones, WaterProtectionPerimeters
