@@ -233,7 +233,6 @@ else:
     class CHRailwaysConstructionLimits():
         pass
 
-
 # models for airports
 if 'airport_security_zones' in db_config['restrictions']:
     class CHAirportSecurityZones(GeoInterface,Base):
