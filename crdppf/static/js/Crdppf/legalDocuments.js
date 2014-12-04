@@ -63,7 +63,7 @@ Crdppf.legalDocuments = function() {
     */
 
     var proxy = new Ext.data.HttpProxy({
-        url:'getLegalDocuments'
+        url: Crdppf.getLegalDocumentsUrl
     });
         
     // definition of datastore
