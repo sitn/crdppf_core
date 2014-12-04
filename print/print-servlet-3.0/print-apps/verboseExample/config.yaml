@@ -1,0 +1,86 @@
+pdfConfig: !pdfConfig
+  compressed: false
+  author: "Mapfish Print"
+  subject: "Mapfish Print Verbose example"
+  creator: "Mapfish Print"
+
+throwErrorOnExtraParameters: true
+
+templates:
+  A4 portrait: !template
+    pdfConfig: !pdfConfig
+      title: "Verbose A4 Portrait"
+      keywords: ["legend", "table", "tablelist", "map", "verbose"]
+    reportTemplate: simpleReport.jrxml
+    tableData: jrDataSource
+    attributes:
+      number: !integer {}
+      name: !string {}
+      description: !string {}
+      length: !float {}
+      map: !map
+        maxDpi: 400
+        dpiSuggestions: [72, 91, 128, 254, 300, 400]
+        width: 400
+        height: 200
+      legend: !legend {}
+      table: !table {}
+      datasource: !datasource
+        attributes:
+          displayName: !string {}
+          table: !table {}
+      scalebarDef: !scalebar
+        width: 230
+        height: 40
+    processors:
+    - !restrictUris
+      matchers:
+        - !localMatch
+          port : 9876
+          pathRegex : /.+
+    - !reportBuilder # compile all reports in current directory
+      directory: '.'
+    - !createMap
+      inputMapper: {map: map}
+      outputMapper: {mapSubReport: mapSubReport}
+    - !createScalebar
+      inputMapper: {map: map, scalebarDef: scalebar}
+      outputMapper: {subReport: scalebarSubReport}
+    - !prepareLegend # create a datasource for the report with the 'legend' attribute
+      template: legend.jrxml
+      inputMapper: {legend: legend}
+      outputMapper:
+        legend: legend
+        legendSubReport: legendSubReport
+        numberOfLegendRows: numberOfLegendRows
+    - !prepareTable
+      inputMapper: {table: table}
+      outputMapper: {table: table}
+    - !createDataSource
+      reportTemplate: table.jrxml
+      reportKey: reportTemplate
+      processors:
+        - !prepareTable {}
+
+  A4 portrait old api: !template
+    pdfConfig: !pdfConfig
+      title: "Verbose A4 Portrait old api"
+      keywords: ["map", "verbose", "old-api"]
+    reportTemplate: simpleReport-old-api.jrxml
+    attributes:
+      map: !map
+        maxDpi: 400
+        dpiSuggestions: [90, 200, 300, 400]
+        width: 780
+        height: 330
+    processors:
+    - !restrictUris
+      matchers:
+        - !localMatch
+          port : 9876
+          pathRegex : .+
+    - !reportBuilder # compile all reports in current directory
+      directory: '.'
+    - !createMap
+      inputMapper: {map: map}
+      outputMapper: {mapSubReport: map}
