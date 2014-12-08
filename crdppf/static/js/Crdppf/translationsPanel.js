@@ -76,18 +76,21 @@ Crdppf.translationsPanel = function(labels) {
         }
     });
     
+    var fm = Ext.form;
+    var commonTextField = new fm.TextField({});
+        
     // Définition de la structure de l'affichage de la grille des données
     var colModel = new Ext.grid.ColumnModel([
         {header: "Id", width: 30, dataIndex: 'id', sortable: true, filtrable: true},
-        {header: "Nom de la variable", width: 50, dataIndex: 'varstr', sortable: true, filtrable: true},
-        {header: "Deutsch", width: 50, dataIndex: 'de', sortable: true, filtrable: true},
-        {header: "Français", width: 50, dataIndex: 'fr', sortable: true, filtrable: true},
-        {header: "Italiano", width: 50, dataIndex: 'it', sortable: true, filtrable: true},
-        {header: "Rumantsch", width: 50, dataIndex: 'ro', sortable: true, filtrable: true},
-        {header: "English", width: 50, dataIndex: 'en',  sortable: true, filtrable: true}
+        {header: "Nom de la variable", width: 50, dataIndex: 'varstr', sortable: true, filtrable: true, editor: commonTextField},
+        {header: "Deutsch", width: 50, dataIndex: 'de', sortable: true, filtrable: true, editor: commonTextField},
+        {header: "Français", width: 50, dataIndex: 'fr', sortable: true, filtrable: true, editor: commonTextField},
+        {header: "Italiano", width: 50, dataIndex: 'it', sortable: true, filtrable: true, editor: commonTextField},
+        {header: "Rumantsch", width: 50, dataIndex: 'ro', sortable: true, filtrable: true, editor: commonTextField},
+        {header: "English", width: 50, dataIndex: 'en',  sortable: true, filtrable: true, editor: commonTextField}
     ]);
     
-    var translationpanel = new Ext.grid.GridPanel({
+    var translationpanel = new Ext.grid.EditorGridPanel({
         layout: 'fit',
         border: false,
         store: translationsstore,
@@ -98,6 +101,7 @@ Crdppf.translationsPanel = function(labels) {
         viewConfig: {
             forceFit:true
         },
+        sm: new Ext.grid.RowSelectionModel({singleSelect: true}),
         bbar: new Ext.PagingToolbar({
                 pageSize: myPageSize,
                 store: translationsstore,       // grid and PagingToolbar using same store
@@ -107,8 +111,7 @@ Crdppf.translationsPanel = function(labels) {
                 emptyMsg: "Pas de résultat trouvé"
         })
     });
-
-    
+            
     //pass along browser window resize events to the panel
     Ext.EventManager.onWindowResize(translationpanel.doLayout, translationpanel);
     
