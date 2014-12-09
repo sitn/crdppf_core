@@ -58,7 +58,17 @@ class Layers(Base):
 class Documents(Base):
     __tablename__ = 'documents_saisies'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+
+class OriginReference(Base):
+    __tablename__ = 'origin_reference'
+    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+    #legaldocuments = Column(String(10), ForeignKey('crdppf.documents.idobj'))
     
+class LegalDocuments(Base):
+    __tablename__ = 'documents'
+    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+    #originreference = relationship("OriginReference", backref=backref("origin_reference"),lazy="joined")
+
 class ReferenceLinks(Base):
     __tablename__ = 'origin_reference'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}

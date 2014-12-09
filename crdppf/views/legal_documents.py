@@ -4,8 +4,7 @@ from pyramid.view import view_config
 from simplejson import loads as sloads
 
 from crdppf.models import DBSession
-from crdppf.models import Topics, LegalBases, LegalProvisions, References
-from crdppf.models import TemporaryProvisions, Documents
+from crdppf.models import Topics, Documents, LegalDocuments
 from crdppf.models import Town
 
 @view_config(route_name='getTownList', renderer='json')
@@ -108,110 +107,35 @@ def createNewDocEntry(request):
     return {'success':True}
 
 @view_config(route_name='getLegalDocuments', renderer='json')
-def getLegalDocuments(request):
+def getLegalDocuments(request, filters):
     """Gets all the legal documents related to a feature.
     """
     doclist = []
 
-    legalbases = {}
-    legalbases = DBSession.query(LegalBases).order_by(LegalBases.legalbaseid.asc()).all()
+    documents = {}
     
-    for legalbase in legalbases :
+    #~ if filters is not None:
+        #~ for key in filters.keys():
+            #~ documents = DBSession.query(LegalDocuments).filter_by(key=filters['key']).all()
+    #~ else:
+    documents = DBSession.query(LegalDocuments).order_by(LegalDocuments.idobj.asc()).all()
+
+    for document in documents :
+        sddf
         doclist.append({
-            'documentid':legalbase.legalbaseid,
-            'doctype':'legalbase',
+            'documentid':document.idobj,
+            'doctype':document.doctype,
             #'numcom':legalbase.numcom, 
-            'topicfk':legalbase.topicfk, 
-            'title':legalbase.title, 
-            'officialtitle':legalbase.officialtitle, 
-            'abreviation':legalbase.abreviation, 
-            'officialnb':legalbase.officialnb,
-            'canton':legalbase.canton,
-            'commune':legalbase.commune,
-            'documenturl':legalbase.legalbaseurl,
-            'legalstate':legalbase.legalstate,
-            'publishedsince':legalbase.publishedsince.isoformat()
+            'topicfk':document.topicfk, 
+            'title':document.title, 
+            'officialtitle':document.officialtitle, 
+            'abreviation':document.abreviation, 
+            'officialnb':document.officialnb,
+            'canton':document.canton,
+            'commune':document.commune,
+            'documenturl':document.legalbaseurl,
+            'legalstate':document.legalstate,
+            'publishedsince':document.publishedsince.isoformat()
         })
-
-    legalprovisions = {}
-    legalprovisions = DBSession.query(LegalProvisions).order_by(LegalProvisions.legalprovisionid.asc()).all()
-
-    for legalprovision in legalprovisions :
-        if legalprovision.publishedsince is not None:
-            doclist.append({
-                'documentid':legalprovision.legalprovisionid,
-                'doctype':'legalprovision',
-                'numcom':legalprovision.nocad, 
-                'topicfk':legalprovision.topicfk, 
-                'title':legalprovision.title, 
-                'officialtitle':legalprovision.officialtitle, 
-                'abreviation':legalprovision.abreviation, 
-                'officialnb':legalprovision.officialnb,
-                'canton':legalprovision.canton,
-                'commune':legalprovision.commune,
-                'documenturl':legalprovision.legalprovisionurl,
-                'filepath':legalprovision.localurl,
-                'legalstate':legalprovision.legalstate,
-                'publishedsince':legalprovision.publishedsince.isoformat()
-            })
-        else:
-            doclist.append({
-                'documentid':legalprovision.legalprovisionid,
-                'doctype':'legalprovision',
-                'numcom':legalprovision.nocad, 
-                'topicfk':legalprovision.topicfk, 
-                'title':legalprovision.title, 
-                'officialtitle':legalprovision.officialtitle, 
-                'abreviation':legalprovision.abreviation, 
-                'officialnb':legalprovision.officialnb,
-                'canton':legalprovision.canton,
-                'commune':legalprovision.commune,
-                'documenturl':legalprovision.legalprovisionurl,
-                'filepath':legalprovision.localurl,
-                'legalstate':legalprovision.legalstate,
-                'publishedsince': None
-            })
-
-    temporaryprovisions = {}
-    temporaryprovisions = DBSession.query(TemporaryProvisions).order_by(TemporaryProvisions.temporaryprovisionid.asc()).all()
-
-    for temporaryprovision in temporaryprovisions :
-        doclist.append({
-            'documentid':temporaryprovision.temporaryprovisionid,
-            'doctype':'temporaryprovision',
-            #'numcom':temporaryprovision.numcom, 
-            'topicfk':temporaryprovision.topicfk, 
-            'title':temporaryprovision.title, 
-            'officialtitle':temporaryprovision.officialtitle, 
-            'abreviation':temporaryprovision.abreviation, 
-            'officialnb':temporaryprovision.officialnb,
-            'canton':temporaryprovision.canton,
-            'commune':temporaryprovision.commune,
-            'documenturl':temporaryprovision.temporaryprovisionurl,
-            #'filepath':temporaryprovision.localurl,
-            'legalstate':temporaryprovision.legalstate,
-            'publishedsince':temporaryprovision.publishedsince.isoformat()
-        })
-
-    references = {}
-    references = DBSession.query(References).order_by(References.referenceid.asc()).all()
-
-    for reference in references :
-        doclist.append({
-            'documentid':reference.referenceid,
-            'doctype':'reference',
-            #'numcom':reference.numcom, 
-            'topicfk':reference.topicfk, 
-            'title':reference.title, 
-            'officialtitle':reference.officialtitle, 
-            'abreviation':reference.abreviation, 
-            'officialnb':reference.officialnb,
-            'canton':reference.canton,
-            'commune':reference.commune,
-            'documenturl':reference.referenceurl,
-             #'filepath':reference.localurl,
-            'legalstate':reference.legalstate,
-            'publishedsince':reference.publishedsince.isoformat()
-        })
-
+        
     return {'docs': doclist}
