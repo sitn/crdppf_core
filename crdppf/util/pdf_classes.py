@@ -20,6 +20,7 @@ from crdppf.models import DBSession
 from crdppf.models import AppConfig
 
 from crdppf.views.get_features import get_features_function
+from crdppf.views.legal_documents import getLegalDocuments
 from crdppf.util.pdf_functions import geom_from_coordinates
 
 class AppConfig(object):
@@ -630,6 +631,12 @@ class Extract(FPDF):
             if self.topiclist[str(layer.topicfk)]['categorie'] != 3:
                 self.topiclist[str(layer.topicfk)]['categorie']=1
 
+    def get_documents(self, topicid):
+        """ """
+        filters = {}
+        docs = getLegalDocuments(topicid)
+        sdf
+        
     def get_legalbases(self, legalbases, topicid):
         """Decomposes the object containing all legalbases related to a topic in a list
         """

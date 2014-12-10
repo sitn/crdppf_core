@@ -111,31 +111,35 @@ def getLegalDocuments(request, filters):
     """Gets all the legal documents related to a feature.
     """
     doclist = []
-
     documents = {}
     
-    #~ if filters is not None:
-        #~ for key in filters.keys():
-            #~ documents = DBSession.query(LegalDocuments).filter_by(key=filters['key']).all()
-    #~ else:
-    documents = DBSession.query(LegalDocuments).order_by(LegalDocuments.idobj.asc()).all()
+    if filters is not None:
+        for key in filters.keys():
+            documents = DBSession.query(LegalDocuments).filter_by(key=filters['key']).all()
+    else:
+        documents = DBSession.query(LegalDocuments).order_by(LegalDocuments.idobj.asc()).all()
 
     for document in documents :
-        sddf
+        #sddf
         doclist.append({
             'documentid':document.idobj,
             'doctype':document.doctype,
-            #'numcom':legalbase.numcom, 
-            'topicfk':document.topicfk, 
+            'municipalitynb':document.municipalitynb, 
+            'municipalityname':document.municipalityname, 
+            'fedmunicipalitynb':document.fedmunicipalitynb, 
+            'cadastrenb':document.cadastrenb, 
             'title':document.title, 
             'officialtitle':document.officialtitle, 
-            'abreviation':document.abreviation, 
+            'abreviation':document.abbreviation, 
             'officialnb':document.officialnb,
             'canton':document.canton,
-            'commune':document.commune,
-            'documenturl':document.legalbaseurl,
-            'legalstate':document.legalstate,
-            'publishedsince':document.publishedsince.isoformat()
+            'remoteurl':document.remoteurl,
+            'localurl':document.localurl,
+            #'acquisitiondate':document.acquisitiondate.isoformat(),
+            #'sanctiondate':document.sanctiondate.isoformat(),
+            #'abolishingdate':document.abolishing.dateisoformat(),
+            'operator':document.operator
+            #'publishedsince':document.publishedsince.isoformat()
         })
         
     return {'docs': doclist}
