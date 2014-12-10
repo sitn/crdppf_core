@@ -113,33 +113,36 @@ def getLegalDocuments(request, filters):
     doclist = []
     documents = {}
     
-    if filters is not None:
-        for key in filters.keys():
-            documents = DBSession.query(LegalDocuments).filter_by(key=filters['key']).all()
-    else:
-        documents = DBSession.query(LegalDocuments).order_by(LegalDocuments.idobj.asc()).all()
+    #~ sdf
+    #~ if filters is not None:
+        #~ for key in filters.keys():
+            #~ documents = DBSession.query(LegalDocuments).filter_by(key=filters['key']).all()
+    #~ else:
+    documents = DBSession.query(LegalDocuments).order_by(LegalDocuments.docid.asc()).all()
 
     for document in documents :
-        #sddf
         doclist.append({
-            'documentid':document.idobj,
+            'documentid':document.docid,
             'doctype':document.doctype,
+            'lang':document.lang,
+            'state':document.state,
+            'chmunicipalitynb':document.chmunicipalitynb, 
             'municipalitynb':document.municipalitynb, 
             'municipalityname':document.municipalityname, 
-            'fedmunicipalitynb':document.fedmunicipalitynb, 
             'cadastrenb':document.cadastrenb, 
             'title':document.title, 
             'officialtitle':document.officialtitle, 
-            'abreviation':document.abbreviation, 
+            'abbreviation':document.abbreviation, 
             'officialnb':document.officialnb,
-            'canton':document.canton,
+            'legalstate':document.legalstate,
             'remoteurl':document.remoteurl,
             'localurl':document.localurl,
-            #'acquisitiondate':document.acquisitiondate.isoformat(),
-            #'sanctiondate':document.sanctiondate.isoformat(),
-            #'abolishingdate':document.abolishing.dateisoformat(),
+            'sanctiondate':document.sanctiondate.isoformat() if document.sanctiondate else None,
+            'abolishingdate':document.abolishingdate.isoformat() if document.abolishingdate else None,
+            'entrydate':document.entrydate.isoformat() if document.entrydate else None,
+            'publicationdate':document.publicationdate.isoformat() if document.publicationdate else None,
+            #'revisiondate':document.revisiondate.isoformat() if document.revisiondate else None,
             'operator':document.operator
-            #'publishedsince':document.publishedsince.isoformat()
         })
         
     return {'docs': doclist}

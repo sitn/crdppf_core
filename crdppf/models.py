@@ -69,6 +69,12 @@ class LegalDocuments(Base):
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     #originreference = relationship("OriginReference", backref=backref("origin_reference"),lazy="joined")
 
+class Legalstates(Base):
+    __tablename__ = 'vl_legalstate'
+    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+    legalstatefk = Column(Integer, ForeignKey('crdppf.documents.legalstate'))
+    legalstate = relationship("Legalstates", backref=backref("legalstate"),lazy="joined")
+    
 class ReferenceLinks(Base):
     __tablename__ = 'origin_reference'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
