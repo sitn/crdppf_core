@@ -205,7 +205,7 @@ function makeMap(mapOptions, labels){
         url: Crdppf.mapproxyUrl,
         layer: Crdppf.tileNames.plan_cadastral_name,
         matrixSet: Crdppf.mapMatrixSet,
-        format: 'image/png',
+        format: Crdppf.tilesImageFormat,
         isBaseLayer: true,
         style: 'default',
         fixedLayer: true,
