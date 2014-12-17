@@ -20,8 +20,12 @@
 
     <script type="text/javascript">
         OpenLayers.Util.extend(OpenLayers.Lang.fr, {
-            'plan_ville_${request.tile_date[1]}': 'Plan de ville',
-            'plan_cadastral_${request.tile_date[0]}': 'Plan cadastral'
+% if plan_ville:            
+            '${plan_ville}': 'Plan de ville',
+% endif
+% if plan_cadastral:
+            '${plan_cadastral}': 'Plan cadastral'
+% endif
         });
     </script>
     
