@@ -123,7 +123,7 @@ def getLegalDocuments(request, filters):
     for document in documents :
         doclist.append({
             'documentid':document.docid,
-            'doctype':document.doctype,
+            'doctype':document.doctypes.value,
             'lang':document.lang,
             'state':document.state,
             'chmunicipalitynb':document.chmunicipalitynb, 
@@ -134,7 +134,7 @@ def getLegalDocuments(request, filters):
             'officialtitle':document.officialtitle, 
             'abbreviation':document.abbreviation, 
             'officialnb':document.officialnb,
-            'legalstate':document.legalstate,
+            'legalstate':document.legalstates.value,
             'remoteurl':document.remoteurl,
             'localurl':document.localurl,
             'sanctiondate':document.sanctiondate.isoformat() if document.sanctiondate else None,

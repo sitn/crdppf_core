@@ -63,18 +63,24 @@ class Documents(Base):
 class OriginReference(Base):
     __tablename__ = 'origin_reference'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    #legaldocuments = Column(String(10), ForeignKey('crdppf.documents.idobj'))
     
 class LegalDocuments(Base):
     __tablename__ = 'documents'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    legalstate = Column(Integer, ForeignKey('crdppf.vl_legalstate.value'))
-    legalstates = relationship("Legalstates", backref=backref("legalstates"),lazy="joined")
+    legalstate = Column(Integer, ForeignKey('crdppf.vl_legalstate.id'))
+    legalstates = relationship("Legalstates", lazy="joined")
+    doctype = Column(Integer, ForeignKey('crdppf.vl_doctype.id'))
+    doctypes = relationship("DocumentType", lazy="joined")
+    #~ docid = Column(Integer, ForeignKey('crdppf.origin_reference.fkobj'))
+    #~ refereence = relationship("ReferenceLinks", lazy="joined")
 
 class Legalstates(Base):
     __tablename__ = 'vl_legalstate'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    #legalstate = relationship("Legalstates", backref=backref("legalstate"),lazy="joined")
+
+class DocumentType(Base):
+    __tablename__ = 'vl_doctype'
+    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     
 class ReferenceLinks(Base):
     __tablename__ = 'origin_reference'
@@ -366,7 +372,7 @@ class WaterProtectionPerimeters(GeoInterface,Base):
     geom = GeometryColumn(Geometry(srid=srid_))
 
 # models for the topic Forest
-if 'forestlimits' in db_config['restrictions']:
+if 'forest_limits' in db_config['restrictions']:
     class ForestLimits(GeoInterface,Base):
         __tablename__ = 'r157_lim_foret'
         __table_args__ = {'schema': db_config['schema'], 'autoload': True}
@@ -376,7 +382,7 @@ else:
     class ForestLimits():
         pass
         
-if 'forestdistances' in db_config['restrictions']:
+if 'forest_distances' in db_config['restrictions']:
     class ForestDistances(GeoInterface,Base):
         __tablename__ = 'r159_dist_foret'
         __table_args__ = {'schema': db_config['schema'], 'autoload': True}

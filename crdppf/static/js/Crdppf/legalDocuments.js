@@ -82,37 +82,36 @@ Crdppf.legalDocuments = function() {
             },
             // definition of the column model
             [
-            {name: 'documentid'},
+            {name: 'docid'},
             {name: 'doctype'},
-            {name: 'numcom'},
-            {name: 'numcad', type: 'numeric'},
-            {name: 'topicfk'},
+            {name: 'lang'},
+            {name: 'state'},
+            {name: 'chmunicipalitynb', type: 'numeric'},
+            {name: 'municipalitynb', type: 'numeric'},
+            {name: 'municipalityname'},
+            {name: 'cadastrenb', type: 'numeric'},
             {name: 'title'},
             {name: 'officialtitle'},
-            {name: 'abreviation'}, 
+            {name: 'abbreviation'}, 
             {name: 'officialnb'},
-            {name: 'canton'},
-            {name: 'commune'},
-            {name: 'lang'},
-            {name: 'permalink'},
+            {name: 'remoteurl'},
             {name: 'localurl'},
-            {name: 'documenturl'},
-            //{name: 'remoteurl'},
             {name: 'legalstate'},
-            {name: 'enteredby'},
-            {name: 'digitalisationdate', type:'date'}, // creation date
-            //{name: 'publicationdate', type:'date'}, 
-            {name: 'publishedsince', type:'date'}, 
-            {name: 'validationdate', type:'date'},  //date sanction
-            {name: 'modificationdate', type:'date'}, //date de modification
-            {name: 'modifiedby'},
+            {name: 'sanctiondate', type:'date'},
             {name: 'abolishingdate', type:'date'}, //date d'abrogation
-            {name: 'status'} //for historization P:provisory, V:valid; A:archived; D:deleted      
+            {name: 'entrydate', type:'date'}, // creation date
+            {name: 'publicationdate', type:'date'},
+            {name: 'revisiondate', type:'date'}, //date de modification
+            {name: 'operator'}, 
+            //{name: 'validationdate', type:'date'},  //date validation
+            //{name: 'modifiedby'},
+            //{name: 'status'} //for historization P:provisory, V:valid; A:archived; D:deleted      
             ]
         ), 
             listeners:{
                 load: function() {
                     Crdppf.loadingCounter += 1;
+                    //console.log(Crdppf.legalDocuments.store);
                 }
             }
     });
@@ -130,10 +129,10 @@ Crdppf.legalDocuments.createView = function(labels) {
                 '<div style="font-family:Arial;margin-left:10px;">',
                     '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
                     '<tpl for=".">',
-                        '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isFederal(canton, commune)">',
+                        '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
                             '<tpl for=".">',
                                 '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publishedsince:date("d.m.Y")}</h3>',
+                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
                                     '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
                                 '</div>',
                             '</tpl>',
@@ -142,21 +141,21 @@ Crdppf.legalDocuments.createView = function(labels) {
 
                     '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
                     '<tpl for=".">',
-                        '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isCantonal(canton, commune)">',
+                        '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
                             '<tpl for=".">',
                                 '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}"">',
-                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publishedsince:date("d.m.Y")}</h3>',
+                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
                                     '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
                                 '</div>',
                             '</tpl>',
                         '</tpl>',
             
                     '<tpl for=".">',
-                        '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isCommunal(canton, commune)">',
+                        '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
                             '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
                             '<tpl for=".">',
                                 '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
+                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
                                     '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
                                     '<br />',
                                 '</div>',
@@ -173,9 +172,9 @@ Crdppf.legalDocuments.createView = function(labels) {
             '<div style="font-family:Arial;margin-left:10px;">',
                 '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
                 '<tpl for=".">',
-                    '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isFederal(canton)">',
+                    '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isFederal(state)">',
                         '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publishedsince:date("d.m.Y")}</h3>',
+                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
                             '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
                             '<br />',
                         '</div>',
@@ -184,9 +183,9 @@ Crdppf.legalDocuments.createView = function(labels) {
 
                 '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
                 '<tpl for=".">',
-                    '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isCantonal(canton, commune)">',
+                    '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
                         '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
+                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
                             '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
                             '<br />',
                         '</div>',
@@ -197,7 +196,7 @@ Crdppf.legalDocuments.createView = function(labels) {
                 '<tpl for=".">',
                     '<tpl if="this.isLegalprovision(doctype)">',
                         '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
+                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
                             '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
                             '<br />',
                         '</div>',
@@ -212,9 +211,9 @@ Crdppf.legalDocuments.createView = function(labels) {
             '<div style="font-family:Arial;margin-left:10px;">',
                 '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
                 '<tpl for=".">',
-                    '<tpl if="this.isReference(doctype) &amp;&amp; this.isFederal(canton)">',
+                    '<tpl if="this.isReference(doctype) &amp;&amp; this.isFederal(state)">',
                         '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publishedsince:date("d.m.Y")}</h3>',
+                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
                             '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
                             '<br />',
                         '</div>',
@@ -223,9 +222,9 @@ Crdppf.legalDocuments.createView = function(labels) {
 
                 '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
                 '<tpl for=".">',
-                    '<tpl if="this.isReference(doctype) &amp;&amp; this.isCantonal(canton, commune)">',
+                    '<tpl if="this.isReference(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
                         '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
+                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
                             '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
                             '<br />',
                         '</div>',
@@ -236,7 +235,7 @@ Crdppf.legalDocuments.createView = function(labels) {
                 '<tpl for=".">',
                     '<tpl if="this.isReference(doctype)">',
                         '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
+                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
                             '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
                             '<br />',
                         '</div>',
@@ -251,9 +250,9 @@ Crdppf.legalDocuments.createView = function(labels) {
             '<div style="font-family:Arial;margin-left:10px;">',
                 '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
                 '<tpl for=".">',
-                    '<tpl if="this.isTemporaryprovision(doctype) &amp;&amp; this.isFederal(canton)">',
+                    '<tpl if="this.isTemporaryprovision(doctype) &amp;&amp; this.isFederal(state)">',
                         '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publishedsince:date("d.m.Y")}</h3>',
+                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
                             '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
                             '<br />',
                         '</div>',
@@ -262,9 +261,9 @@ Crdppf.legalDocuments.createView = function(labels) {
 
                 '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
                 '<tpl for=".">',
-                    '<tpl if="this.isTemporaryprovision(doctype) &amp;&amp; this.isCantonal(canton, commune)">',
+                    '<tpl if="this.isTemporaryprovision(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
                         '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
+                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
                             '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
                             '<br />',
                         '</div>',
@@ -275,7 +274,7 @@ Crdppf.legalDocuments.createView = function(labels) {
                 '<tpl for=".">',
                     '<tpl if="this.isTemporaryprovision(doctype)">',
                         '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle}<span style="padding-left:15px;">Date de publication:</b> {publishedsince:date("d.m.Y")}<span></h3>',
+                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
                             '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{documenturl}\');" target="_blank">{documenturl}</a></p>',
                             '<br />',
                         '</div>',
@@ -300,14 +299,14 @@ Crdppf.legalDocuments.createView = function(labels) {
             isOther: function(doctype){
                 return doctype == 'other';
             },
-            isFederal: function(canton){
-                return canton == null;
+            isFederal: function(state){
+                return state == null;
             },
-            isCantonal: function(canton, commune){
-                return canton != null && commune == null;
+            isCantonal: function(state, municipalityname){
+                return state != null && municipalityname == null;
             },
-            isCommunal: function(canton, commune){
-                return canton != null && commune != null;
+            isCommunal: function(state, municipalityname){
+                return state != null && municipalityname != null;
             }
         }
         );
