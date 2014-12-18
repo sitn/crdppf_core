@@ -18,9 +18,12 @@
     <script type="text/javascript" src="${request.static_url('crdppf:static/build/crdppf.js')}"></script>
 % endif
 
+% if plan_ville:
+    ${plan_ville};
+% endif
     <script type="text/javascript">
         OpenLayers.Util.extend(OpenLayers.Lang.fr, {
-% if plan_ville:            
+% if plan_ville:
             '${plan_ville}': 'Plan de ville',
 % endif
 % if plan_cadastral:

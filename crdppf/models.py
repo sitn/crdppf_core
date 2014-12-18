@@ -68,8 +68,8 @@ class OriginReference(Base):
 class LegalDocuments(Base):
     __tablename__ = 'documents'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    legalstatefk = Column(Integer, ForeignKey('crdppf.vl_legalstate.id'))
-    #legalstates = relationship("Legalstates", backref=backref("legalstates"),lazy="joined")
+    legalstate = Column(Integer, ForeignKey('crdppf.vl_legalstate.value'))
+    legalstates = relationship("Legalstates", backref=backref("legalstates"),lazy="joined")
 
 class Legalstates(Base):
     __tablename__ = 'vl_legalstate'

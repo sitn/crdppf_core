@@ -23,10 +23,16 @@ class Entry(object):
         tiles = DBSession.query(Tiles).all()
         if len(tiles) > 0:
             for tile in tiles:
-                tilesconfig.append({str(tile.baselayer): tile.tile_date})
+                d[str(tile.baselayer)] = {
+                    'tile_date':tile.baselayer+u'_'+tile.tile_date,
+                    'tile_format': tile.tile_format
+                    }
         else:
-            d['plan_cadastral'] = 'plan_cadastral_c2c'
-            d['plan_ville'] = 'plan_ville_c2c'
+            d['plan_cadastral'] = {
+                'tile_date':'plan_cadastral_c2c',
+                'tile_format':'image/png'}
+            d['plan_ville'] = {'tile_date':'plan_ville_c2c',
+                'tile_format':'image/png'}
     #~ except:
         #~ pass
 
