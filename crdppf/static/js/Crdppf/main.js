@@ -299,6 +299,7 @@ Crdppf.init_main = function(lang) {
                             timeout : 300000,
                             failure: function () {
                                 Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
+                                pdfMask.hide();
                             }
                         }); 
                     }
