@@ -113,12 +113,12 @@ def getLegalDocuments(request, filters):
     doclist = []
     documents = {}
     
-    #~ sdf
-    #~ if filters is not None:
-        #~ for key in filters.keys():
-            #~ documents = DBSession.query(LegalDocuments).filter_by(key=filters['key']).all()
-    #~ else:
+    # get all the keys to filter by
+    keys = ['topic','municipalitynb','theme','featureid']
     documents = DBSession.query(LegalDocuments).order_by(LegalDocuments.docid.asc()).all()
+    for key in keys:
+        if key in filters.keys() and key=='municipalitynb':
+            documents = DBSession.query(LegalDocuments).filter_by(municipalitynb=filters[key]).all()
 
     for document in documents :
         doclist.append({

@@ -138,6 +138,8 @@ class AppendixFile(FPDF):
             self.cell(60, 5, self.translations['nosignaturetext'], 0, 0, 'C')
         self.cell(55, 5, str(self.current_page), 0, 0, 'R')
 
+
+# MAIN DOCUMENT
 class Extract(FPDF):
     """The main class for the ectract object which collects all the data, then writes the pdf report."""
     # HINTS #
@@ -634,8 +636,12 @@ class Extract(FPDF):
     def get_documents(self, topicid):
         """ """
         filters = {}
-        docs = getLegalDocuments(topicid)
-        sdf
+        filters['municipalitynb'] = self.featureInfo['numcom']
+        filters['featureid'] = self.featureInfo['featureid']
+        filters['topic'] = topicid
+        self.docs = getLegalDocuments(self.request, filters)
+        
+        return self.docs
         
     def get_legalbases(self, legalbases, topicid):
         """Decomposes the object containing all legalbases related to a topic in a list
