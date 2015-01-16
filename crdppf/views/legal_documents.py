@@ -106,6 +106,50 @@ def createNewDocEntry(request):
 
     return {'success':True}
 
+@view_config(route_name='getLegalbases', renderer='json')
+def getLegalbases(params):
+    """Gets all the legal bases related to a feature.
+    Input: dict with params : topic, canton, municipalitynb, cadastrenb
+    Output: legalbases
+    """
+
+    doclist = []
+    filterparams = {
+        'request': None,
+        'topic': None,
+        'layer': None,
+        'canton': None,
+        'muncipalitynb': None,
+        'cadastrenb': None
+    }
+    
+    for param in params:
+        if params[param] is not None and param in filterparams.keys():
+            filterparams[param] = params[param]
+    
+    sdf
+            
+    legalbases = {}
+    legalbases = DBSession.query(LegalBases).order_by(LegalBases.legalbaseid.asc()).all()
+    for legalbase in legalbases :
+        doclist.append({
+            'documentid':legalbase.legalbaseid,
+            'doctype':'legalbase',
+            #'numcom':legalbase.numcom,
+            'topicfk':legalbase.topicfk,
+            'title':legalbase.title,
+            'officialtitle':legalbase.officialtitle,
+            'abreviation':legalbase.abreviation,
+            'officialnb':legalbase.officialnb,
+            'canton':legalbase.canton,
+            'commune':legalbase.commune,
+            'documenturl':legalbase.legalbaseurl,
+            'legalstate':legalbase.legalstate,
+            'publishedsince':legalbase.publishedsince.isoformat()
+        })
+
+    return {'legalbases': doclist}
+    
 @view_config(route_name='getLegalDocuments', renderer='json')
 def getLegalDocuments(request, filters):
     """Gets all the legal documents related to a feature.

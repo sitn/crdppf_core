@@ -21,6 +21,7 @@ from crdppf.models import AppConfig
 
 from crdppf.views.get_features import get_features_function
 from crdppf.views.legal_documents import getLegalDocuments
+from crdppf.views.legal_documents import getLegalbases
 from crdppf.util.pdf_functions import geom_from_coordinates
 
 class AppConfig(object):
@@ -549,7 +550,7 @@ class Extract(FPDF):
             categorie = 1 : restriction not touching the feature - layers, but no features (check geo availability)
             categorie = 2 : restriction touching the feature - layers and features
             categorie = 3 : restriction not legally binding - layers, features and complementary information
-            default to 0 - restriction is not available
+            defaults to 0 - restriction is not available
         """
         self.topiclist[str(topic.topicid)]={
             'categorie':0,
@@ -578,8 +579,17 @@ class Extract(FPDF):
                     'layerprovisions':None,
                     'features':None
                     }
+                # intersects a given layer with the feature and adds the results to the topiclist- see method add_layer
                 self.add_layer(layer)
             self.get_topic_map(topic.layers,topic.topicid)
+            legalbases = getLegalbases({
+                'topic': topic.topicid,
+                'layer': layer.layername,
+                'canton': None,
+                #'muncipalitynb': self.featureInfo['municipalitynb'],
+                'cadastrenb': None
+            })
+            dfg
         else:
             if str(topic.topicid) in self.appconfig.emptytopics:
                 self.topiclist[str(topic.topicid)]['layers'] = None
@@ -590,7 +600,7 @@ class Extract(FPDF):
 
         # if legal bases are defined for a topic the attributes are compiled in a list
         if topic.legalbases:
-            self.get_legalbases(topic.legalbases,topic.topicid)
+            self.getLegalbases(topic.legalbases,topic.topicid)
         else:
             self.topiclist[str(topic.topicid)]['legalbases']=None
 

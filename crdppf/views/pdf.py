@@ -171,7 +171,6 @@ def create_extract(request):
         log.warning('get XML from CH feature service')
         
     for topic in extract.topics:
-        documents = extract.get_documents(topic.topicid)
         # for the federal data layers we get the restrictions calling the feature service and store the result in the DB
         if topic.topicid in extract.appconfig.ch_topics:
             xml_layers = []
