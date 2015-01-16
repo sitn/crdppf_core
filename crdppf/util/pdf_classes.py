@@ -548,8 +548,7 @@ class Extract(FPDF):
             categorie = 0 : restriction not available - no layers
             categorie = 1 : restriction not touching the feature - layers, but no features (check geo availability)
             categorie = 2 : restriction touching the feature - layers and features
-            categorie = 3 : restriction not legally binding - layers and features and 
-                complementary information
+            categorie = 3 : restriction not legally binding - layers, features and complementary information
             default to 0 - restriction is not available
         """
         self.topiclist[str(topic.topicid)]={
