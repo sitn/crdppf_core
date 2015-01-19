@@ -39,7 +39,9 @@ class AppConfig(object):
         # legaldocsdir : Path to the folder where the legal documents are stored that may or may not be included
         self.legaldocsdir = pkg_resources.resource_filename('crdppfportal', 'static/public/reglements/') 
         self.ch_wms_layers = []
+        # ch_topics : Restrictions on federal level
         self.ch_topics = config['ch_topics']
+        # ch_legend_layers: Mapping between internal layer name and layer name used for the feature and web service call
         self.ch_legend_layers = config['ch_legend_layers']
         self.crdppf_wms_layers = config['crdppf_wms_layers']
         self.wms_srs = config['wms_srs']
@@ -54,13 +56,17 @@ class PDFConfig(object):
     def __init__(self, config):
     # PDF Configuration
         self.defaultlanguage = config['defaultlanguage'].lower()
+        # default size of the PDF document A4, A3, A2, A1 - fixed by the pilot project to A4
         self.pdfformat = config['pdfformat']
+        # default orientation of the PDF document - fixed to portrait by the group
         self.pdforientation = config['pdforientation']
+        # left margin of the PDF's content block
         self.leftmargin = config['leftmargin']
         self.rightmargin = config['rightmargin']
         self.topmargin = config['topmargin']
         self.headermargin = config['headermargin']
         self.footermargin = config['footermargin']
+        # Grouped margin values for an easy access
         self.pdfmargins = [
             self.leftmargin,
             self.topmargin,
@@ -91,17 +97,22 @@ class PDFConfig(object):
         self.siteplanbasename = config['siteplanbasename']
 
 class AppendixFile(FPDF):
+    """The helper class to create the appendices files with the same corporate
+    design and attach them to the main document if needed"""
+    
     def __init__(self):
         FPDF.__init__(self)
         self.pdfconfig = {}
         
     def load_app_config(self, config):
-        """Initialises the basic parameters of the application.
+        """Initialises the basic parameters of the application, like the language or the working
+        directories. For details look also at the AppConfig class.
         """
         self.appconfig = AppConfig(config)
 
     def set_pdf_config(self, config):
-        """Loads the initial configuration of the PDF page.
+        """Loads the initial configuration of the PDF page, like the format, orientation, styles and so on.
+        for details look at the PDFConfig class.
         """
         self.pdfconfig = PDFConfig(config)
 
@@ -184,8 +195,9 @@ class Extract(FPDF):
         self.cleanupfiles = []
         self.basemap = ''
 
+    # gets the basemap to display the selected property  in the cadastral context
     def get_basemap(self):
-
+        # defines the corrners and the center point of the bbox for the wms call of the map
         wmsBBOX, wmsbbox = self.get_wms_bbox()
 
         params = {
@@ -643,7 +655,9 @@ class Extract(FPDF):
                 self.topiclist[str(layer.topicfk)]['categorie']=1
 
     def get_documents(self, topicid):
-        """ """
+        """ Function to fetch the documents related to the restriction:
+        legal provisions, temporary provisions, references 
+        """
         filters = {}
         filters['municipalitynb'] = self.featureInfo['numcom']
         filters['featureid'] = self.featureInfo['featureid']
