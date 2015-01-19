@@ -594,14 +594,14 @@ class Extract(FPDF):
                 # intersects a given layer with the feature and adds the results to the topiclist- see method add_layer
                 self.add_layer(layer)
             self.get_topic_map(topic.layers,topic.topicid)
+            # Get the list of legalbases related to a theme
             legalbases = getLegalbases({
                 'topic': topic.topicid,
                 'layer': layer.layername,
-                'canton': None,
-                #'muncipalitynb': self.featureInfo['municipalitynb'],
+                #'canton': None,
+                'muncipalitynb': self.featureInfo['numcom'],
                 'cadastrenb': None
             })
-            dfg
         else:
             if str(topic.topicid) in self.appconfig.emptytopics:
                 self.topiclist[str(topic.topicid)]['layers'] = None
@@ -642,8 +642,12 @@ class Extract(FPDF):
             self.layerlist[str(layer.layerid)]={'layername':layer.layername,'features':[]}
             for result in results:
                 self.layerlist[str(layer.layerid)]['features'].append(result['properties'])
+                docfilters = [layer.layername, result['id']]
+                documentlist = self.get_documents(docfilters)
+                sdfasdfgr
                 #~ if result['properties']['url_regl']:
                     #~ self.topiclist[str(layer.topicfk)]['legalprovisions'].append(result['properties']['url_regl'])
+                    
             ## reglements
             #legaldocsdir
             self.topiclist[str(layer.topicfk)]['categorie']=3

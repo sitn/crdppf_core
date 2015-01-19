@@ -4,7 +4,7 @@ from pyramid.view import view_config
 from simplejson import loads as sloads
 
 from crdppf.models import DBSession
-from crdppf.models import Topics, Documents, LegalDocuments
+from crdppf.models import Topics, Documents, LegalDocuments, LegalBases
 from crdppf.models import Town
 
 @view_config(route_name='getTownList', renderer='json')
@@ -122,17 +122,21 @@ def getLegalbases(params):
         'muncipalitynb': None,
         'cadastrenb': None
     }
+            
+    legalbases = {}
     
     for param in params:
         if params[param] is not None and param in filterparams.keys():
             filterparams[param] = params[param]
     
-    sdf
-            
-    legalbases = {}
-    legalbases = DBSession.query(LegalBases).order_by(LegalBases.legalbaseid.asc()).all()
+    if param == 'topic':
+        legalbases = DBSession.query(LegalBases).filter_by(topic=params[param]).all()
+    else:
+        sdf
+        legalbases = DBSession.query(LegalBases).order_by(LegalBases.legalbaseid.asc()).all()
+
     for legalbase in legalbases :
-        doclist.append({
+        doclist.append({legalbase.legalbaseid:{
             'documentid':legalbase.legalbaseid,
             'doctype':'legalbase',
             #'numcom':legalbase.numcom,
@@ -146,7 +150,7 @@ def getLegalbases(params):
             'documenturl':legalbase.legalbaseurl,
             'legalstate':legalbase.legalstate,
             'publishedsince':legalbase.publishedsince.isoformat()
-        })
+        }})
 
     return {'legalbases': doclist}
     
