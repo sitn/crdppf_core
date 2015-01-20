@@ -644,9 +644,6 @@ class Extract(FPDF):
                 self.layerlist[str(layer.layerid)]['features'].append(result['properties'])
                 docfilters = [layer.layername, result['id']]
                 documentlist = self.get_documents(docfilters)
-                sdfasdfgr
-                #~ if result['properties']['url_regl']:
-                    #~ self.topiclist[str(layer.topicfk)]['legalprovisions'].append(result['properties']['url_regl'])
                     
             ## reglements
             #legaldocsdir
@@ -658,15 +655,17 @@ class Extract(FPDF):
             if self.topiclist[str(layer.topicfk)]['categorie'] != 3:
                 self.topiclist[str(layer.topicfk)]['categorie']=1
 
-    def get_documents(self, topicid):
+    def get_documents(self, docfilters):
         """ Function to fetch the documents related to the restriction:
         legal provisions, temporary provisions, references 
         """
-        filters = {}
-        filters['municipalitynb'] = self.featureInfo['numcom']
-        filters['featureid'] = self.featureInfo['featureid']
-        filters['topic'] = topicid
-        self.docs = getLegalDocuments(self.request, filters)
+
+        if len(docfilters) > 0:
+            for filtercriteria in docfilters:
+                references = get_document_references(filtercriteria)
+                for document in documents:
+                    asd
+                    #docs.append(refid)
         
         return self.docs
         

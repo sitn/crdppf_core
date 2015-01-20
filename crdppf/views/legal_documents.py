@@ -194,3 +194,12 @@ def getLegalDocuments(request, filters):
         })
         
     return {'docs': doclist}
+
+    
+@view_config(route_name='get_document_references', renderer='json')
+def get_document_references(request, filters):
+    """Gets all the legal documents related to a feature.
+    """
+    doclist = []
+    documents = {}
+    
