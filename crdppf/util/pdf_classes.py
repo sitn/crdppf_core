@@ -22,6 +22,7 @@ from crdppf.models import AppConfig
 from crdppf.views.get_features import get_features_function
 from crdppf.views.legal_documents import getLegalDocuments
 from crdppf.views.legal_documents import getLegalbases
+from crdppf.views.legal_documents import getDocumentReferences
 from crdppf.util.pdf_functions import geom_from_coordinates
 
 class AppConfig(object):
@@ -573,10 +574,10 @@ class Extract(FPDF):
             #'references':topic.references,
             'legalbases':[],
             'legalprovisions':[],
-            #'legalprovisions':topic.legalprovisions, 
+            'legalprovisions':[], 
             #'temporaryprovisions':topic.temporaryprovisions, 
             'authorityfk':topic.authorityfk,
-            'publicationdate':topic.publicationdate,
+            'publicationdate':topic.publicationdate
             }
  
         # if geographic layers are defined for the topic, get the list of all layers and then
@@ -594,14 +595,14 @@ class Extract(FPDF):
                 # intersects a given layer with the feature and adds the results to the topiclist- see method add_layer
                 self.add_layer(layer)
             self.get_topic_map(topic.layers,topic.topicid)
-            # Get the list of legalbases related to a theme
-            legalbases = getLegalbases({
-                'topic': topic.topicid,
-                'layer': layer.layername,
-                #'canton': None,
-                'muncipalitynb': self.featureInfo['numcom'],
-                'cadastrenb': None
-            })
+            #~ # Get the list of legalbases related to a layer
+            #~ legalbases = getLegalbases({
+                #~ 'topic': topic.topicid,
+                #~ 'layer': layer.layername,
+                #~ #'canton': None,
+                #~ 'muncipalitynb': self.featureInfo['numcom'],
+                #~ 'cadastrenb': None
+            #~ })
         else:
             if str(topic.topicid) in self.appconfig.emptytopics:
                 self.topiclist[str(topic.topicid)]['layers'] = None
@@ -610,9 +611,9 @@ class Extract(FPDF):
                 self.topiclist[str(topic.topicid)]['layers'] = None
                 self.topiclist[str(topic.topicid)]['categorie'] = 0
 
-        # if legal bases are defined for a topic the attributes are compiled in a list
+        # if legal bases are defined for a topic (join in models.py) the attributes are compiled in a list
         if topic.legalbases:
-            self.getLegalbases(topic.legalbases,topic.topicid)
+            self.get_legalbases(topic.legalbases,topic.topicid)
         else:
             self.topiclist[str(topic.topicid)]['legalbases']=None
 
@@ -641,12 +642,12 @@ class Extract(FPDF):
         if results :
             self.layerlist[str(layer.layerid)]={'layername':layer.layername,'features':[]}
             for result in results:
+                # for each object we check for related documents
+                docfilters = [layer.layername, str(result['id'])]
+                docidlist = getDocumentReferences(docfilters)
+                result['properties']['references'] = self.set_documents(docidlist)
                 self.layerlist[str(layer.layerid)]['features'].append(result['properties'])
-                docfilters = [layer.layername, result['id']]
-                documentlist = self.get_documents(docfilters)
-                    
-            ## reglements
-            #legaldocsdir
+                
             self.topiclist[str(layer.topicfk)]['categorie']=3
             self.topiclist[str(layer.topicfk)]['no_page']='tocpg_'+str(layer.topicfk)
             self.topiclist[str(layer.topicfk)]['layers'][layer.layerid]['features']=self.layerlist[str(layer.layerid)]['features']
@@ -655,19 +656,19 @@ class Extract(FPDF):
             if self.topiclist[str(layer.topicfk)]['categorie'] != 3:
                 self.topiclist[str(layer.topicfk)]['categorie']=1
 
-    def get_documents(self, docfilters):
+    def set_documents(self, docids):
         """ Function to fetch the documents related to the restriction:
         legal provisions, temporary provisions, references 
         """
 
-        if len(docfilters) > 0:
-            for filtercriteria in docfilters:
-                references = get_document_references(filtercriteria)
-                for document in documents:
-                    asd
-                    #docs.append(refid)
+        docs = {}
+        legalprovisions = []
+        if len(docids) > 0:
+            docs = getLegalDocuments(self.request,{'docids':docids})
+        else:
+            docs['docs'] = []
         
-        return self.docs
+        return docs['docs']
         
     def get_legalbases(self, legalbases, topicid):
         """Decomposes the object containing all legalbases related to a topic in a list

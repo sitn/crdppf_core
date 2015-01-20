@@ -68,15 +68,13 @@ class OriginReference(Base):
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     
 class LegalDocuments(Base):
-    __tablename__ = 'v_documents'
+    __tablename__ = 'documents'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     docid = Column(Integer, primary_key=True)
     legalstate = Column(Integer, ForeignKey('crdppf.vl_legalstate.id'))
     legalstates = relationship("Legalstates", lazy="joined")
     doctype = Column(Integer, ForeignKey('crdppf.vl_doctype.id'))
     doctypes = relationship("DocumentType", lazy="joined")
-    #fkobj = Column(Integer, ForeignKey('crdppf.origin_reference.fkobj'))
-    #originreference = relationship("OriginReference",lazy="joined")
 
 class Legalstates(Base):
     __tablename__ = 'vl_legalstate'

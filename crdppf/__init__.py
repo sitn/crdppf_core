@@ -76,6 +76,7 @@ def includeme(config):
     config.add_route('getTownList', 'getTownList')
     config.add_route('getTopicsList', 'getTopicsList')
     config.add_route('createNewDocEntry', 'createNewDocEntry')
+    config.add_route('getDocumentReferences', 'getDocumentReferences')
     config.add_route('getLegalDocuments', 'getLegalDocuments')
     config.add_route('getLegalbases', 'getLegalbases')
     config.add_route('map', 'map')

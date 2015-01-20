@@ -4,8 +4,8 @@ from pyramid.view import view_config
 from simplejson import loads as sloads
 
 from crdppf.models import DBSession
-from crdppf.models import Topics, Documents, LegalDocuments, LegalBases
-from crdppf.models import Town
+from crdppf.models import Topics, Town, OriginReference
+from crdppf.models import Documents, LegalDocuments, LegalBases
 
 @view_config(route_name='getTownList', renderer='json')
 def getTownList(request):
@@ -153,6 +153,54 @@ def getLegalbases(params):
         }})
 
     return {'legalbases': doclist}
+
+@view_config(route_name='getDocumentReferences', renderer='json')
+def getDocumentReferences(docfilters):
+    """Gets all the id's of the documents referenced by an object, layer, topic or document.
+    """
+    referenceslist = set()
+    referencedocs = []
+    
+    if len(docfilters) > 0:
+        for filtercriteria in docfilters:
+            #filtercriteria = '14'
+            references = DBSession.query(OriginReference).filter_by(fkobj=filtercriteria).all()
+            if references is not None:
+                for reference in references:
+                    referenceslist.add(reference.docid)
+    else:
+        references = DBSession.query(OriginReference).all()
+        for reference in references:
+            referenceslist.add(reference.docid)
+    
+    #~ referencedocs = []
+    #~ legals = DBSession.query(LegalDocuments).filter(LegalDocuments.docid.in_(referenceslist)).all()
+    #~ for document in legals:
+        #~ referencedocs.append({
+            #~ 'documentid':document.docid,
+            #~ 'doctype':document.doctypes.value,
+            #~ 'lang':document.lang,
+            #~ 'state':document.state,
+            #~ 'chmunicipalitynb':document.chmunicipalitynb, 
+            #~ 'municipalitynb':document.municipalitynb, 
+            #~ 'municipalityname':document.municipalityname, 
+            #~ 'cadastrenb':document.cadastrenb, 
+            #~ 'title':document.title, 
+            #~ 'officialtitle':document.officialtitle, 
+            #~ 'abbreviation':document.abbreviation, 
+            #~ 'officialnb':document.officialnb,
+            #~ 'legalstate':document.legalstates.value,
+            #~ 'remoteurl':document.remoteurl,
+            #~ 'localurl':document.localurl,
+            #~ 'sanctiondate':document.sanctiondate.isoformat() if document.sanctiondate else None,
+            #~ 'abolishingdate':document.abolishingdate.isoformat() if document.abolishingdate else None,
+            #~ 'entrydate':document.entrydate.isoformat() if document.entrydate else None,
+            #~ 'publicationdate':document.publicationdate.isoformat() if document.publicationdate else None,
+            #~ #'revisiondate':document.revisiondate.isoformat() if document.revisiondate else None,
+            #~ 'operator':document.operator
+        #~ }) 
+    
+    return referenceslist
     
 @view_config(route_name='getLegalDocuments', renderer='json')
 def getLegalDocuments(request, filters):
@@ -162,11 +210,12 @@ def getLegalDocuments(request, filters):
     documents = {}
     
     # get all the keys to filter by
-    keys = ['topic','municipalitynb','theme','featureid']
-    documents = DBSession.query(LegalDocuments).order_by(LegalDocuments.docid.asc()).all()
-    for key in keys:
-        if key in filters.keys() and key=='municipalitynb':
-            documents = DBSession.query(LegalDocuments).filter_by(municipalitynb=filters[key]).all()
+    #~ keys = ['topic','municipalitynb','theme','featureid']
+
+    if 'docids' in filters.keys() and filters['docids'] is not None:
+        documents = DBSession.query(LegalDocuments).filter(LegalDocuments.docid.in_(filters['docids'])).order_by(LegalDocuments.docid.asc()).all()
+    else:
+        documents = DBSession.query(LegalDocuments).order_by(LegalDocuments.docid.asc()).all()
 
     for document in documents :
         doclist.append({
@@ -195,11 +244,4 @@ def getLegalDocuments(request, filters):
         
     return {'docs': doclist}
 
-    
-@view_config(route_name='get_document_references', renderer='json')
-def get_document_references(request, filters):
-    """Gets all the legal documents related to a feature.
-    """
-    doclist = []
-    documents = {}
     
