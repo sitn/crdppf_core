@@ -1,9 +1,11 @@
 Ext.namespace('Crdppf');
 
-Crdppf.filterlist = {'theme':[], 'topic' : [], 'municipalitynb': 0};
+Crdppf.filterlist = {'theme':[], 'topic' : [], 'layers':[], 'municipalitynb': 0};
 
 Crdppf.docfilters = function(filter) {
 
+    console.log(filter);
+    
     function isInArray(value, array) {
         return array.indexOf(value) > -1;
     }

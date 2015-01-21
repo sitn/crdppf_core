@@ -31,6 +31,7 @@ class AppConfig(object):
     def __init__(self, config):
         # tempdir : Path to the working directory where the temporary files will be stored
         self.tempdir = pkg_resources.resource_filename('crdppfportal', 'static/public/temp_files/') 
+        self.slddir = pkg_resources.resource_filename('crdppfportal', 'static/public/') 
         # pdfbasedir : Path to the directory where the generated pdf's will be stored
         self.pdfbasedir = pkg_resources.resource_filename('crdppfportal', 'static/public/pdf/') 
         # imagesbasedir : Path to the directory where the images resources are stored
@@ -203,6 +204,7 @@ class Extract(FPDF):
         self.legalbaselist = {}
         self.legalprovisionslist = {}
         self.referenceslist = {}
+        self.doclist = []
         # dict used to store the entries of the table of content
         self.toc_entries = {}
         # dict to store the values of the appendix list
@@ -334,7 +336,7 @@ class Extract(FPDF):
             self.wms_url = self.crdppf_wms
 
     def get_title_page(self):
-        """Creates the title page of the PDF extract with the abstract and a situation map of the property.
+        """Creates the title page of the PDF extract with the summary and a situation map of the property.
         """
         today= datetime.now()
 
@@ -351,6 +353,7 @@ class Extract(FPDF):
         # PageTitle
         self.set_y(45)
         self.set_font(*self.pdfconfig.textstyles['title1'])
+        # write document title in function of the selected extract type
         if self.reportInfo['type'] =='certified':
             self.multi_cell(0, 9, self.translations["certifiedextracttitlelabel"])
         elif self.reportInfo['type'] =='reduced':
@@ -514,7 +517,9 @@ class Extract(FPDF):
         </sld:UserStyle>
         </sld:NamedLayer>
         </sld:StyledLayerDescriptor>"""
-
+        #~ sldfile2 = open(self.appconfig.slddir+'property_overlay.sld', 'r')
+        #~ sld2 = sldfile2.read()
+        #~ sdf
 
         sldfile = open(self.appconfig.tempdir+self.pdfconfig.siteplanname+'_sld.xml', 'w')
         self.cleanupfiles.append(self.appconfig.tempdir+self.pdfconfig.siteplanname+'_sld.xml')
@@ -617,14 +622,10 @@ class Extract(FPDF):
                 # intersects a given layer with the feature and adds the results to the topiclist- see method add_layer
                 self.add_layer(layer)
             self.get_topic_map(topic.layers,topic.topicid)
-            #~ # Get the list of legalbases related to a layer
-            #~ legalbases = getLegalbases({
-                #~ 'topic': topic.topicid,
-                #~ 'layer': layer.layername,
-                #~ #'canton': None,
-                #~ 'muncipalitynb': self.featureInfo['numcom'],
-                #~ 'cadastrenb': None
-            #~ })
+            # Get the list of documents related to a layer
+            docfilters = [layer.layername]
+            docidlist = getDocumentReferences(docfilters)
+            self.set_documents(docidlist)
         else:
             if str(topic.topicid) in self.appconfig.emptytopics:
                 self.topiclist[str(topic.topicid)]['layers'] = None
@@ -689,6 +690,10 @@ class Extract(FPDF):
             docs = getLegalDocuments(self.request,{'docids':docids})
         else:
             docs['docs'] = []
+        # store the documents in a list
+        for doc in docs['docs']:
+            if doc['documentid'] not in self.doclist:
+                self.doclist.append(doc)
         
         return docs['docs']
         
@@ -1168,32 +1173,35 @@ class Extract(FPDF):
             y = self.get_y()
             self.set_y(y+5)
             if self.topiclist[topic]['layers']:
+                # for each layer we check if there are features
                 for layer in self.topiclist[topic]['layers']:
                     if self.topiclist[topic]['layers'][layer]['features']:
+                        self.set_font(*pdfconfig.textstyles['bold'])
+                        self.cell(55, 5, translations['contentlabel'].encode('iso-8859-1'), 0, 0, 'L')
+                        self.set_font(*pdfconfig.textstyles['normal'])
                         for feature in self.topiclist[topic]['layers'][layer]['features']:
+                            content = ''
                             if 'teneur' in feature.keys():
-                                self.set_font(*pdfconfig.textstyles['bold'])
-                                self.cell(55, 5, translations['contentlabel'].encode('iso-8859-1'), 0, 0, 'L')
-                                self.set_font(*pdfconfig.textstyles['normal'])
                                 if feature['statutjuridique'] is None:
                                     feature['statutjuridique'] = 'None'
                                 if feature['teneur'] is None:
                                     feature['teneur'] = 'None'
                                 if feature['geomType'] == 'area':
-                                    self.multi_cell(100, 5, feature['teneur'].encode('iso-8859-1') \
-                                        +'\t('+feature['intersectionMeasure'].replace(' : ','Surface : ').encode('iso-8859-1')+')', 0, 1, 'L')
+                                    content += feature['teneur'].encode('iso-8859-1') \
+                                        +' \t('+feature['intersectionMeasure'].replace(' : ','Surface : ').encode('iso-8859-1')+')\n'
                                 else: 
-                                    self.multi_cell(100, 5, feature['teneur'].encode('iso-8859-1') \
-                                        +'\t('+feature['intersectionMeasure'].replace(' - ','').encode('iso-8859-1')+')', 0, 1, 'L')
+                                    content += feature['teneur'].encode('iso-8859-1') \
+                                        +' \t('+feature['intersectionMeasure'].replace(' - ','').encode('iso-8859-1')+')\n'
+                                if feature['references'] is not None:
+                                    for reference in feature['references']:
+                                        content += reference['officialtitle'].encode('iso-8859-1')+'\n'
                             else:
                                 for property,value in feature.iteritems():
                                     if value is not None and property != 'featureClass':
-                                        self.set_font(*pdfconfig.textstyles['bold'])
-                                        self.cell(55, 5, translations['contentlabel'].encode('iso-8859-1'), 0, 0, 'L')
-                                        self.set_font(*pdfconfig.textstyles['normal'])
                                         if isinstance(value, float) or isinstance(value, int):
                                             value = str(value)
-                                        self.multi_cell(100, 5, value.encode('iso-8859-1'), 0, 1, 'L')
+                                        content += value.encode('iso-8859-1')
+                        self.multi_cell(100, 5, content, 0, 1, 'L')
             else:
                 self.multi_cell(100, 5, 'Error in line 818', 0, 1, 'L')
 
@@ -1203,9 +1211,12 @@ class Extract(FPDF):
             self.set_font(*pdfconfig.textstyles['bold'])
             self.cell(55, 5, translations['legalprovisionslabel'], 0, 0, 'L')
             self.set_font(*pdfconfig.textstyles['normal'])
-            if self.topiclist[topic]['legalprovisions']:
+            #~ if self.topiclist[topic]['legalprovisions']:
+                #~ count = 0 
+                #~ for provision in self.topiclist[topic]['legalprovisions']:
+            if self.doclist is not None:
                 count = 0 
-                for provision in self.topiclist[topic]['legalprovisions']:
+                for provision in self.doclist:
                     self.set_x(80)
                     if provision['officialnb'] is not None:
                         self.multi_cell(0, 5, provision['officialnb']+' : '+provision['officialtitle'], 0, 1, 'L')
@@ -1214,7 +1225,10 @@ class Extract(FPDF):
                     self.set_x(80)
                     self.set_font(*self.pdfconfig.textstyles['url'])
                     self.set_text_color(*self.pdfconfig.urlcolor)
-                    self.multi_cell(0, 4, 'URL : '+str(provision['legalprovisionurl']))
+                    if provision['localurl'] is not None:
+                        self.multi_cell(0, 4, 'URL : '+str(provision['localurl'].encode('iso-8859-1')))
+                    else:
+                        self.multi_cell(0, 4, 'URL : '+str('None'))
                     self.set_text_color(*self.pdfconfig.defaultcolor)
                     self.set_font(*self.pdfconfig.textstyles['normal'])
             else:
