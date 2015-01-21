@@ -159,35 +159,55 @@ class Extract(FPDF):
     # to get vars defined in the buildout  use : request.registry.settings['key']
     
     def __init__(self, request, log):
+        # loading the PDF library
         FPDF.__init__(self)
+        # assigning the request variables
         self.request = request
+        # fetch the base URL for the local WMS calls
         self.crdppf_wms = request.registry.settings['crdppf_wms']
+        # fetching the base URL for the remote WMS calls (confederation)
         self.ch_wms = request.registry.settings['ch_wms']
+        # fetching the base URL for the confederation's feature service
         self.chfs_baseurl = request.registry.settings['chfs_baseurl']
+        # gets the local path to the working directory for temporary files
         self.sld_url = request.static_url('crdppfportal:static/public/temp_files/')
+        # gets the path of the folter with the legend files
         self.topiclegenddir = request.static_url('crdppfportal:static/public/legend/')
+        # sets the creation date of the PDF instance
         self.creationdate = datetime.now().strftime("%d.%m.%Y-%H:%M:%S")
+        # same same but different use
         self.timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        # initializes an empty array for the calculated pdf/print configuration paraameters
         self.printformat = {}
+        # empty array for all the dynamic wms parameters like the bbox, center coords
         self.wms_params = {}
+        # setting the GetLegendGraphic option for a dynamic composition of the WMS URL
         self.wms_get_legend = {
             'REQUEST': 'GetLegendGraphic'
         }
+        # setting the GetStyles option
         self.wms_get_styles = {
             'REQUEST': 'GetStyles'
         }
+        # setting the GetMap option for the WMS
         self.wms_get_map = {
             'REQUEST': 'GetMap'
         }
+        # initialize an empty dict for the topic related data
         self.topicdata = {}
+        # setting the default  root filename of the PDF and temporary files
         self.filename = 'thefilename'
+        # empty dict for a list of  the topics and it's depending values
         self.topiclist = {}
         self.layerlist = {}
         self.legalbaselist = {}
         self.legalprovisionslist = {}
         self.referenceslist = {}
+        # dict used to store the entries of the table of content
         self.toc_entries = {}
+        # dict to store the values of the appendix list
         self.appendix_entries = []
+        # dict to store the refernces data
         self.reference_entries = []
         self.appendix_links = []
         self.topicorder = {}
@@ -506,7 +526,9 @@ class Extract(FPDF):
 
         scale = self.printformat['scale']*2
         # SitePlan/Plan de situation/Situationsplan
+        # first we set the pdf's map canavas dimensions in cm
         sitemapparams = {'width':self.printformat['mapWidth'],'height':self.printformat['mapHeight']}
+        # then the center coordinates of the bbox are determined based on the feature's bbox
         sitemapparams['bboxCenterX'] = (self.featureInfo['BBOX']['maxX']+self.featureInfo['BBOX']['minX'])/2
         sitemapparams['bboxCenterY'] = (self.featureInfo['BBOX']['maxY']+self.featureInfo['BBOX']['minY'])/2
         #to recenter the map on the bbox of the feature, with the right scale and add at least 10% of space we calculate a wmsBBOX
