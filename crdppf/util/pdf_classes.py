@@ -630,7 +630,11 @@ class Extract(FPDF):
             # Get the list of documents related to a layer
             docfilters = [layer.layername]
             docidlist = getDocumentReferences(docfilters)
-            self.set_documents(docidlist)
+            self.set_documents(docidlist, topic.topicid)
+            docfilters = [topic.topicid]
+            docidlist = getDocumentReferences(docfilters)
+            sdf
+            self.topiclist[str(topic.topicid)]['legalprovisions'] = self.set_documents(docidlist, topic.topicid)
         else:
             if str(topic.topicid) in self.appconfig.emptytopics:
                 self.topiclist[str(topic.topicid)]['layers'] = None
@@ -673,7 +677,7 @@ class Extract(FPDF):
                 # for each object we check for related documents
                 docfilters = [layer.layername, str(result['id'])]
                 docidlist = getDocumentReferences(docfilters)
-                result['properties']['references'] = self.set_documents(docidlist)
+                result['properties']['references'] = self.set_documents(docidlist, str(layer.topicfk))
                 self.layerlist[str(layer.layerid)]['features'].append(result['properties'])
                 
             self.topiclist[str(layer.topicfk)]['categorie']=3
@@ -684,7 +688,7 @@ class Extract(FPDF):
             if self.topiclist[str(layer.topicfk)]['categorie'] != 3:
                 self.topiclist[str(layer.topicfk)]['categorie']=1
 
-    def set_documents(self, docids):
+    def set_documents(self, docids, topicid):
         """ Function to fetch the documents related to the restriction:
         legal provisions, temporary provisions, references 
         """
@@ -699,6 +703,8 @@ class Extract(FPDF):
         for doc in docs['docs']:
             if doc['documentid'] not in self.doclist:
                 self.doclist.append(doc)
+            if doc['doctype'] == u'legalprovision' and doc['documentid'] not in self.doclist:
+                self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'])
         
         return docs['docs']
         

@@ -159,11 +159,11 @@ def getDocumentReferences(docfilters):
     """Gets all the id's of the documents referenced by an object, layer, topic or document.
     """
     referenceslist = set()
+    rereferenceslist = set()
     referencedocs = []
     
     if len(docfilters) > 0:
         for filtercriteria in docfilters:
-            filtercriteria = '14'
             references = DBSession.query(OriginReference).filter_by(fkobj=filtercriteria).all()
             if references is not None:
                 for reference in references:
@@ -172,6 +172,19 @@ def getDocumentReferences(docfilters):
         references = DBSession.query(OriginReference).all()
         for reference in references:
             referenceslist.add(reference.docid)
+    
+    # check if a referenced document references an other one
+    if referenceslist is not None:
+        for reference in referenceslist:
+            rereferences = DBSession.query(OriginReference).filter_by(fkobj=str(reference)).all()
+            if rereferences is not None:
+                for rereference in rereferences:
+                    rereferenceslist.add(rereference.docid)
+    
+    if rereferenceslist is not None:
+        for rereference in rereferenceslist:
+            if rereference not in referenceslist:
+                referenceslist.add(rereference)
     
     #~ referencedocs = []
     #~ legals = DBSession.query(LegalDocuments).filter(LegalDocuments.docid.in_(referenceslist)).all()
