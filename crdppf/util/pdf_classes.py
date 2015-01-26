@@ -218,43 +218,6 @@ class Extract(FPDF):
         self.cleanupfiles = []
         self.basemap = ''
 
-    # gets the basemap to display the selected property  in the cadastral context
-    def get_basemap(self):
-        # defines the corrners and the center point of the bbox for the wms call of the map
-        wmsBBOX, wmsbbox = self.get_wms_bbox()
-
-        params = {
-            'REQUEST': 'GetMap',
-            'VERSION': self.appconfig.wms_version,
-            'LAYERS': ",".join(self.appconfig.crdppf_wms_layers),
-            'SRS': self.appconfig.wms_srs,
-            'BBOX': ",".join([str(wmsBBOX['minX']), str(wmsBBOX['minY']), str(wmsBBOX['maxX']), str(wmsBBOX['maxY'])]),
-            'WIDTH': self.mapconfig['width'],
-            'HEIGHT': self.mapconfig['height'],
-            'FORMAT': 'image/png',
-            'TRANSPARENT': 'false'
-        }
-
-        getmapurl = self.crdppf_wms
-
-        if getmapurl.find('?') < 0:
-            getmapurl += '?'
-        getmapurl = getmapurl + '&'.join(['%s=%s' % (key, value) for (key, value) in params.items()])
-
-        http = httplib2.Http()
-
-        h = dict(self.request.headers)
-        if urlparse(getmapurl).hostname != 'localhost': # pragma: no cover
-            h.pop('Host')
-
-        try:
-            resp, content = http.request(getmapurl, method='GET', headers=h)
-        except: # pragma: no cover
-            self.log.error("Unable to do GetMap request for url %s" % getmapurl)
-            return None
-
-        self.basemap = Image.open(StringIO(content))
-
     def alias_no_page(self, alias='{no_pg}'):
         """Define an alias for total number of pages"""
         self.str_alias_no_page = alias
@@ -285,6 +248,7 @@ class Extract(FPDF):
         self.line(105, 0, 105, 35)
         self.line(165, 0, 165, 35)
         # Add the logos if existing else put a placeholder
+        # to put ch-logo dimensions in variable
         self.image(self.appconfig.imagesbasedir+self.pdfconfig.CHlogopath, 10, 8, 55, 14.42)
         self.image(self.appconfig.imagesbasedir+self.pdfconfig.cantonlogopath, 110, 8, self.pdfconfig.cantonlogowidth, self.pdfconfig.cantonlogoheight)
         try:
@@ -335,6 +299,43 @@ class Extract(FPDF):
         else:
             self.wms_url = self.crdppf_wms
 
+    # gets the basemap to display the selected property  in the cadastral context
+    def get_basemap(self):
+        # defines the corrners and the center point of the bbox for the wms call of the map
+        wmsBBOX, wmsbbox = self.get_wms_bbox()
+
+        params = {
+            'REQUEST': 'GetMap',
+            'VERSION': self.appconfig.wms_version,
+            'LAYERS': ",".join(self.appconfig.crdppf_wms_layers),
+            'SRS': self.appconfig.wms_srs,
+            'BBOX': ",".join([str(wmsBBOX['minX']), str(wmsBBOX['minY']), str(wmsBBOX['maxX']), str(wmsBBOX['maxY'])]),
+            'WIDTH': self.mapconfig['width'],
+            'HEIGHT': self.mapconfig['height'],
+            'FORMAT': 'image/png',
+            'TRANSPARENT': 'false'
+        }
+
+        getmapurl = self.crdppf_wms
+
+        if getmapurl.find('?') < 0:
+            getmapurl += '?'
+        getmapurl = getmapurl + '&'.join(['%s=%s' % (key, value) for (key, value) in params.items()])
+
+        http = httplib2.Http()
+
+        h = dict(self.request.headers)
+        if urlparse(getmapurl).hostname != 'localhost': # pragma: no cover
+            h.pop('Host')
+
+        try:
+            resp, content = http.request(getmapurl, method='GET', headers=h)
+        except: # pragma: no cover
+            self.log.error("Unable to do GetMap request for url %s" % getmapurl)
+            return None
+
+        self.basemap = Image.open(StringIO(content))
+        
     def get_title_page(self):
         """Creates the title page of the PDF extract with the summary and a situation map of the property.
         """
@@ -367,9 +368,11 @@ class Extract(FPDF):
         self.multi_cell(0, 7, self.translations['extractsubtitlelabel'])
         self.ln()
 
+        # placing the map - mapsize to put in variable
         map = self.image(self.sitemappath, 25, 80, 160, 90)
 
         y=self.get_y()
+        # rectangle size to put in variable
         self.rect(25, 80, 160, 90, '')
         self.set_y(y+105)
 
@@ -449,16 +452,17 @@ class Extract(FPDF):
         # END TITLEPAGE
 
     def get_map_format(self):
-        """ Define the center and the bounding box of the map request to the wms
+        """ Function to define the center and the bounding box of the map request to the wms
         """
         self.mapconfig = {'width':self.printformat['mapWidth'], 'height':self.printformat['mapHeight']}
         self.mapconfig['bboxCenterX'] = (self.featureInfo['BBOX']['maxX']+self.featureInfo['BBOX']['minX'])/2
         self.mapconfig['bboxCenterY'] = (self.featureInfo['BBOX']['maxY']+self.featureInfo['BBOX']['minY'])/2
 
     def get_legend_classes(self, bbox, layername):
-        """ Collects all the features in the map perimeter into a liste to create a dynamic legend
+        """ Collects all the features in the map perimeter into a list to create a dynamic legend
         """
         geom = geom_from_coordinates(bbox)
+        # transform coordinates from wkt to SpatialElement for intersection
         polygon = WKTSpatialElement(geom.wkt, 21781)
         mapfeatures = get_features_function(polygon, {'layerList':layername, 'translations':self.translations})
         if mapfeatures is not None:
@@ -517,6 +521,7 @@ class Extract(FPDF):
         </sld:UserStyle>
         </sld:NamedLayer>
         </sld:StyledLayerDescriptor>"""
+
         #~ sldfile2 = open(self.appconfig.slddir+'property_overlay.sld', 'r')
         #~ sld2 = sldfile2.read()
         #~ sdf
