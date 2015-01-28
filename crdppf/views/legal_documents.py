@@ -164,7 +164,8 @@ def getDocumentReferences(docfilters):
     
     if len(docfilters) > 0:
         for filtercriteria in docfilters:
-            references = DBSession.query(OriginReference).filter_by(fkobj=filtercriteria).all()
+            filtercriteria = '13'
+            references = DBSession.query(OriginReference).filter_by(fkobj = filtercriteria).all()
             if references is not None:
                 for reference in references:
                     referenceslist.add(reference.docid)
@@ -221,9 +222,6 @@ def getLegalDocuments(request, filters):
     """
     doclist = []
     documents = {}
-    
-    # get all the keys to filter by
-    #~ keys = ['topic','municipalitynb','theme','featureid']
 
     if 'docids' in filters.keys() and filters['docids'] is not None:
         documents = DBSession.query(LegalDocuments).filter(LegalDocuments.docid.in_(filters['docids'])).order_by(LegalDocuments.docid.asc()).all()

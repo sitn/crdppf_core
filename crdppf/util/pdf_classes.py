@@ -217,6 +217,7 @@ class Extract(FPDF):
         self.log = log
         self.cleanupfiles = []
         self.basemap = ''
+        self.doctypes = [u'legalbase',u'legalprovision',u'reference',u'temporaryprovision',u'map',u'other']
 
     def alias_no_page(self, alias='{no_pg}'):
         """Define an alias for total number of pages"""
@@ -627,9 +628,10 @@ class Extract(FPDF):
                 self.add_layer(layer)
             self.get_topic_map(topic.layers,topic.topicid)
             # Get the list of documents related to a topic with layers
-            docfilters = []
-            for doctype in self.doctypes:
-                self.topiclist[str(topic.topicid)][doctype] = self.set_documents(topic.topicid, doctype, docfilters)
+            #~ docfilters = [str(topic.topicid)]
+            #~ for doctype in self.doctypes:
+                #~ docidlist = getDocumentReferences(docfilters)
+                #~ self.topiclist[str(topic.topicid)][doctype] = self.set_documents(str(topic.topicid), doctype, docidlist)
         else:
             if str(topic.topicid) in self.appconfig.emptytopics:
                 self.topiclist[str(topic.topicid)]['layers'] = None
@@ -670,10 +672,18 @@ class Extract(FPDF):
             self.layerlist[str(layer.layerid)]={'layername':layer.layername,'features':[]}
             for result in results:
                 # for each object we check for related documents
-                docfilters = [layer.layername, str(result['id'])]
+                docfilters = [str(result['id'])]
                 for doctype in self.doctypes:
-                    result['properties'][doctype]= self.set_documents(str(layer.topicfk), doctype, docfilters)
+                    docidlist = getDocumentReferences(docfilters)
+                    result['properties'][doctype] = self.set_documents(str(layer.topicfk), doctype, docidlist)
                 self.layerlist[str(layer.layerid)]['features'].append(result['properties'])
+
+            # we also check for documents on the layer level - if there are any results - wlse we don't need to bother
+            docfilters = [layer.layername]
+            for doctype in self.doctypes:
+                docidlist = getDocumentReferences(docfilters)
+                result['properties'][doctype] = self.set_documents(str(layer.topicfk), doctype, docidlist)
+            self.layerlist[str(layer.layerid)]['features'].append(result['properties'])
                 
             self.topiclist[str(layer.topicfk)]['categorie']=3
             self.topiclist[str(layer.topicfk)]['no_page']='tocpg_'+str(layer.topicfk)
@@ -683,25 +693,29 @@ class Extract(FPDF):
             if self.topiclist[str(layer.topicfk)]['categorie'] != 3:
                 self.topiclist[str(layer.topicfk)]['categorie']=1
 
-    def set_documents(self, docids, topicid):
+    def set_documents(self, topicid, doctype, docids):
         """ Function to fetch the documents related to the restriction:
         legal provisions, temporary provisions, references 
         """
 
         docs = {}
-        legalprovisions = []
+        documents = []
         if len(docids) > 0:
             docs = getLegalDocuments(self.request,{'docids':docids})
         else:
             docs['docs'] = []
+        references = []
+        
         # store the documents in a list
         for doc in docs['docs']:
-            if doc['documentid'] not in self.doclist:
-                self.doclist.append(doc)
+            if doc['doctype'] == doctype:
+                references.append(doc)
             if doc['doctype'] != u'legalbase' and doc['documentid'] not in self.doclist:
                 self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'])
+            if doc['documentid'] not in self.doclist:
+                self.doclist.append(doc)
         
-        return docs['docs']
+        return references
         
     def get_legalbases(self, legalbases, topicid):
         """Decomposes the object containing all legalbases related to a topic in a list
@@ -1198,8 +1212,8 @@ class Extract(FPDF):
                                 else: 
                                     content += feature['teneur'].encode('iso-8859-1') \
                                         +' \t('+feature['intersectionMeasure'].replace(' - ','').encode('iso-8859-1')+')\n'
-                                if feature['references'] is not None:
-                                    for reference in feature['references']:
+                                if feature['reference'] is not None:
+                                    for reference in feature['reference']:
                                         content += reference['officialtitle'].encode('iso-8859-1')+'\n'
                             else:
                                 for property,value in feature.iteritems():
