@@ -606,12 +606,11 @@ class Extract(FPDF):
             #'references':topic.references,
             'legalbases':[],
             'legalprovisions':[],
-            'legalprovisions':[], 
             #'temporaryprovisions':topic.temporaryprovisions, 
             'authorityfk':topic.authorityfk,
             'publicationdate':topic.publicationdate
             }
- 
+        
         # if geographic layers are defined for the topic, get the list of all layers and then
         # check for each layer the information regarding the features touching the property
         if topic.layers:
@@ -627,14 +626,10 @@ class Extract(FPDF):
                 # intersects a given layer with the feature and adds the results to the topiclist- see method add_layer
                 self.add_layer(layer)
             self.get_topic_map(topic.layers,topic.topicid)
-            # Get the list of documents related to a layer
-            docfilters = [layer.layername]
-            docidlist = getDocumentReferences(docfilters)
-            self.set_documents(docidlist, topic.topicid)
-            docfilters = [topic.topicid]
-            docidlist = getDocumentReferences(docfilters)
-            sdf
-            self.topiclist[str(topic.topicid)]['legalprovisions'] = self.set_documents(docidlist, topic.topicid)
+            # Get the list of documents related to a topic with layers
+            docfilters = []
+            for doctype in self.doctypes:
+                self.topiclist[str(topic.topicid)][doctype] = self.set_documents(topic.topicid, doctype, docfilters)
         else:
             if str(topic.topicid) in self.appconfig.emptytopics:
                 self.topiclist[str(topic.topicid)]['layers'] = None
@@ -676,8 +671,8 @@ class Extract(FPDF):
             for result in results:
                 # for each object we check for related documents
                 docfilters = [layer.layername, str(result['id'])]
-                docidlist = getDocumentReferences(docfilters)
-                result['properties']['references'] = self.set_documents(docidlist, str(layer.topicfk))
+                for doctype in self.doctypes:
+                    result['properties'][doctype]= self.set_documents(str(layer.topicfk), doctype, docfilters)
                 self.layerlist[str(layer.layerid)]['features'].append(result['properties'])
                 
             self.topiclist[str(layer.topicfk)]['categorie']=3
@@ -703,7 +698,7 @@ class Extract(FPDF):
         for doc in docs['docs']:
             if doc['documentid'] not in self.doclist:
                 self.doclist.append(doc)
-            if doc['doctype'] == u'legalprovision' and doc['documentid'] not in self.doclist:
+            if doc['doctype'] != u'legalbase' and doc['documentid'] not in self.doclist:
                 self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'])
         
         return docs['docs']

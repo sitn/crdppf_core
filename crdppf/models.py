@@ -22,8 +22,7 @@ from geoalchemy import (
     Geometry, 
     Polygon,
     WKTSpatialElement,
-    GeometryDDL#,
-#    WKBSpatialElement
+    GeometryDDL
     )
 
 from crdppf import db_config
