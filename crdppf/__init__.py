@@ -71,6 +71,7 @@ def includeme(config):
     config.add_route('get_translations_list', 'get_translations_list')
     config.add_route('get_interface_config', 'get_interface_config')
     config.add_route('get_baselayers_config', 'get_baselayers_config')
+    #config.add_route('get_basemap_sld', 'get_basemap_sld')
     config.add_route('test', 'test')
     config.add_route('formulaire_reglements', 'formulaire_reglements')
     config.add_route('getTownList', 'getTownList')

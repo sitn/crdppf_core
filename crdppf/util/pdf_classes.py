@@ -604,10 +604,6 @@ class Extract(FPDF):
             'layers':{},
             'authority':topic.authority, 
             'topicorder':topic.topicorder,
-            #'references':topic.references,
-            'legalbases':[],
-            'legalprovisions':[],
-            #'temporaryprovisions':topic.temporaryprovisions, 
             'authorityfk':topic.authorityfk,
             'publicationdate':topic.publicationdate
             }
@@ -619,19 +615,17 @@ class Extract(FPDF):
             for layer in topic.layers:
                 self.topiclist[str(topic.topicid)]['layers'][layer.layerid]={
                     'layername':layer.layername,
-                    'layerlegalbases':None,
-                    'layerreference':None,
-                    'layerprovisions':None,
                     'features':None
                     }
                 # intersects a given layer with the feature and adds the results to the topiclist- see method add_layer
                 self.add_layer(layer)
             self.get_topic_map(topic.layers,topic.topicid)
             # Get the list of documents related to a topic with layers
-            #~ docfilters = [str(topic.topicid)]
-            #~ for doctype in self.doctypes:
-                #~ docidlist = getDocumentReferences(docfilters)
-                #~ self.topiclist[str(topic.topicid)][doctype] = self.set_documents(str(topic.topicid), doctype, docidlist)
+            docfilters = [str(topic.topicid)]
+            for doctype in self.doctypes:
+                docidlist = getDocumentReferences(docfilters)
+                self.topiclist[str(topic.topicid)][doctype] = self.set_documents(str(topic.topicid), doctype, docidlist)
+                
         else:
             if str(topic.topicid) in self.appconfig.emptytopics:
                 self.topiclist[str(topic.topicid)]['layers'] = None
@@ -678,13 +672,12 @@ class Extract(FPDF):
                     result['properties'][doctype] = self.set_documents(str(layer.topicfk), doctype, docidlist)
                 self.layerlist[str(layer.layerid)]['features'].append(result['properties'])
 
-            # we also check for documents on the layer level - if there are any results - wlse we don't need to bother
+            # we also check for documents on the layer level - if there are any results - else we don't need to bother
             docfilters = [layer.layername]
             for doctype in self.doctypes:
                 docidlist = getDocumentReferences(docfilters)
-                result['properties'][doctype] = self.set_documents(str(layer.topicfk), doctype, docidlist)
-            self.layerlist[str(layer.layerid)]['features'].append(result['properties'])
-                
+                self.topiclist[str(layer.topicfk)]['layers'][layer.layerid][doctype] = self.set_documents(str(layer.topicfk), doctype, docidlist)
+
             self.topiclist[str(layer.topicfk)]['categorie']=3
             self.topiclist[str(layer.topicfk)]['no_page']='tocpg_'+str(layer.topicfk)
             self.topiclist[str(layer.topicfk)]['layers'][layer.layerid]['features']=self.layerlist[str(layer.layerid)]['features']
@@ -708,13 +701,13 @@ class Extract(FPDF):
         
         # store the documents in a list
         for doc in docs['docs']:
-            if doc['doctype'] == doctype:
+            if doc['doctype'] == doctype and (doc['municipalitynb'] == None or doc['cadastrenb'] == self.featureInfo['numcom']):
                 references.append(doc)
-            if doc['doctype'] != u'legalbase' and doc['documentid'] not in self.doclist:
-                self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'])
-            if doc['documentid'] not in self.doclist:
-                self.doclist.append(doc)
-        
+                if doc['doctype'] != u'legalbase' and doc['documentid'] not in self.doclist:
+                    self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'])
+                if doc['documentid'] not in self.doclist:
+                    self.doclist.append(doc)
+
         return references
         
     def get_legalbases(self, legalbases, topicid):
@@ -1193,14 +1186,19 @@ class Extract(FPDF):
             y = self.get_y()
             self.set_y(y+5)
             if self.topiclist[topic]['layers']:
+                i = 0
                 # for each layer we check if there are features
                 for layer in self.topiclist[topic]['layers']:
                     if self.topiclist[topic]['layers'][layer]['features']:
+                        i += 1
                         self.set_font(*pdfconfig.textstyles['bold'])
-                        self.cell(55, 5, translations['contentlabel'].encode('iso-8859-1'), 0, 0, 'L')
+                        if i == 1:
+                            self.cell(55, 5, translations['contentlabel'].encode('iso-8859-1'), 0, 0, 'L')
+                        else:
+                            self.cell(55, 5, '', 0, 0, 'L')
                         self.set_font(*pdfconfig.textstyles['normal'])
+                        content = ''
                         for feature in self.topiclist[topic]['layers'][layer]['features']:
-                            content = ''
                             if 'teneur' in feature.keys():
                                 if feature['statutjuridique'] is None:
                                     feature['statutjuridique'] = 'None'
@@ -1208,64 +1206,89 @@ class Extract(FPDF):
                                     feature['teneur'] = 'None'
                                 if feature['geomType'] == 'area':
                                     content += feature['teneur'].encode('iso-8859-1') \
-                                        +' \t('+feature['intersectionMeasure'].replace(' : ','Surface : ').encode('iso-8859-1')+')\n'
+                                        +str(' \t(')+feature['intersectionMeasure'].replace(' : ','Surface : ').encode('iso-8859-1')+str(')\n')
                                 else: 
                                     content += feature['teneur'].encode('iso-8859-1') \
-                                        +' \t('+feature['intersectionMeasure'].replace(' - ','').encode('iso-8859-1')+')\n'
-                                if feature['reference'] is not None:
-                                    for reference in feature['reference']:
-                                        content += reference['officialtitle'].encode('iso-8859-1')+'\n'
+                                        +str(' \t(')+feature['intersectionMeasure'].replace(' - ','').encode('iso-8859-1')+str(')\n')
+                                for doctype in self.doctypes:
+                                    if len(feature[doctype]) > 0:
+                                        for document in feature[doctype]:
+                                            content += document['officialtitle'].encode('iso-8859-1')+'\n'
                             else:
                                 for property,value in feature.iteritems():
                                     if value is not None and property != 'featureClass':
                                         if isinstance(value, float) or isinstance(value, int):
                                             value = str(value)
                                         content += value.encode('iso-8859-1')
+                        for doctype in self.doctypes:
+                            if len(self.topiclist[topic]['layers'][layer][doctype]) > 0:
+                                for document in self.topiclist[topic]['layers'][layer][doctype]:
+                                    content += document['officialtitle'].encode('iso-8859-1')+'\n'
                         self.multi_cell(100, 5, content, 0, 1, 'L')
             else:
                 self.multi_cell(100, 5, 'Error in line 818', 0, 1, 'L')
+                
 
-            # Legal Provisions/Dispositions juridiques/Gesetzliche Bestimmungen
-            y = self.get_y()
-            self.set_y(y+5)
-            self.set_font(*pdfconfig.textstyles['bold'])
-            self.cell(55, 5, translations['legalprovisionslabel'], 0, 0, 'L')
-            self.set_font(*pdfconfig.textstyles['normal'])
+            #~ y = self.get_y()
+            #~ self.set_y(y+5)
+            #~ self.set_font(*pdfconfig.textstyles['bold'])
+            #~ self.cell(55, 5, translations['legalprovisionslabel'], 0, 0, 'L')
+            #~ self.set_font(*pdfconfig.textstyles['normal'])
             #~ if self.topiclist[topic]['legalprovisions']:
                 #~ count = 0 
                 #~ for provision in self.topiclist[topic]['legalprovisions']:
-            if self.doclist is not None:
-                count = 0 
-                for provision in self.doclist:
-                    self.set_x(80)
-                    if provision['officialnb'] is not None:
-                        self.multi_cell(0, 5, provision['officialnb']+' : '+provision['officialtitle'], 0, 1, 'L')
-                    else: 
-                        self.multi_cell(0, 5, provision['officialtitle'], 0, 1, 'L')
-                    self.set_x(80)
-                    self.set_font(*self.pdfconfig.textstyles['url'])
-                    self.set_text_color(*self.pdfconfig.urlcolor)
-                    if provision['localurl'] is not None:
-                        self.multi_cell(0, 4, 'URL : '+str(provision['localurl'].encode('iso-8859-1')))
+                #~ if self.doclist is not None:
+                    #~ count = 0 
+                    #~ for provision in self.doclist:
+                        #~ self.set_x(80)
+                        #~ if provision['officialnb'] is not None:
+                            #~ self.multi_cell(0, 5, provision['officialnb']+' : '+provision['officialtitle'], 0, 1, 'L')
+                        #~ else: 
+                            #~ self.multi_cell(0, 5, provision['officialtitle'], 0, 1, 'L')
+                        #~ self.set_x(80)
+                        #~ self.set_font(*self.pdfconfig.textstyles['url'])
+                        #~ self.set_text_color(*self.pdfconfig.urlcolor)
+                        #~ if provision['localurl'] is not None:
+                            #~ self.multi_cell(0, 4, 'URL : '+str(provision['localurl'].encode('iso-8859-1')))
+                        #~ else:
+                            #~ self.multi_cell(0, 4, 'URL : '+str('None'))
+                        #~ self.set_text_color(*self.pdfconfig.defaultcolor)
+                        #~ self.set_font(*self.pdfconfig.textstyles['normal'])
+            #~ else:
+                    #~ self.multi_cell(0, 4, translations['nodocumenttext'])
+
+            # For all document types we get the references and list them:
+            # legalprovisions = Legal Provisions/Dispositions juridiques/Gesetzliche Bestimmungen
+            # references = References and complementary information/Informations et renvois supplémentaires/Verweise und Zusatzinformationen
+            for doctype in self.doctypes:
+                # for now we ignore different document types
+                if doctype not in [u'legalbase']:
+                    y = self.get_y()
+                    self.set_y(y+5)
+                    self.set_font(*pdfconfig.textstyles['bold'])
+                    doctypelabel = doctype+'slabel'
+                    self.cell(55, 5, translations[doctypelabel], 0, 0, 'L')
+                    self.set_font(*pdfconfig.textstyles['normal'])
+                    if doctype in self.topiclist[topic].keys() and self.topiclist[topic][doctype] > 0:
+                        for document in self.topiclist[topic][doctype]:
+                            self.set_x(80)
+                            self.multi_cell(0, 5, unicode(document['officialtitle']).encode('iso-8859-1'))
                     else:
-                        self.multi_cell(0, 4, 'URL : '+str('None'))
-                    self.set_text_color(*self.pdfconfig.defaultcolor)
-                    self.set_font(*self.pdfconfig.textstyles['normal'])
-            else:
-                    self.multi_cell(0, 4, translations['nodocumenttext'])
+                        self.set_x(80)
+                        self.multi_cell(0, 5, translations['nodocumenttext'])
 
             # References and complementary information/Informations et renvois supplémentaires/Verweise und Zusatzinformationen
-            y = self.get_y()
-            self.set_y(y+5)
-            self.set_font(*pdfconfig.textstyles['bold'])
-            self.cell(55, 5, translations['referenceslabel'], 0, 0, 'L')
-            self.set_font(*pdfconfig.textstyles['normal'])
-            if self.topiclist[topic]['references']:
-                for reference in self.topiclist[topic]['references']:
-                    self.set_x(80)
-                    self.multi_cell(0, 5, unicode(reference['officialtitle']).encode('iso-8859-1'))
-            else:
-                    self.multi_cell(0, 4, translations['nodocumenttext'])
+            #~ y = self.get_y()
+            #~ self.set_y(y+5)
+            #~ self.set_font(*pdfconfig.textstyles['bold'])
+            #~ self.cell(55, 5, translations['referenceslabel'], 0, 0, 'L')
+            #~ self.set_font(*pdfconfig.textstyles['normal'])
+            #~ if self.topiclist[topic]['references']:
+                #~ for reference in self.topiclist[topic]['references']:
+                    #~ self.set_x(80)
+                    #~ self.multi_cell(0, 5, unicode(reference['officialtitle']).encode('iso-8859-1'))
+            #~ else:
+                    #~ self.multi_cell(0, 4, translations['nodocumenttext'])
 
             # -- KEEP FOR FURTHER USE
             

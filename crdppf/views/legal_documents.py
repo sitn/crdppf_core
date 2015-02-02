@@ -164,7 +164,6 @@ def getDocumentReferences(docfilters):
     
     if len(docfilters) > 0:
         for filtercriteria in docfilters:
-            filtercriteria = '13'
             references = DBSession.query(OriginReference).filter_by(fkobj = filtercriteria).all()
             if references is not None:
                 for reference in references:
