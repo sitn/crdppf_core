@@ -624,7 +624,7 @@ class Extract(FPDF):
             docfilters = [str(topic.topicid)]
             for doctype in self.doctypes:
                 docidlist = getDocumentReferences(docfilters)
-                self.topiclist[str(topic.topicid)][doctype] = self.set_documents(str(topic.topicid), doctype, docidlist, 'cadastrenb':self.featureInfo['cadastrenb'])                
+                self.topiclist[str(topic.topicid)][doctype] = self.set_documents(str(topic.topicid), doctype, docidlist, True)                
         else:
             if str(topic.topicid) in self.appconfig.emptytopics:
                 self.topiclist[str(topic.topicid)]['layers'] = None
@@ -668,14 +668,14 @@ class Extract(FPDF):
                 docfilters = [str(result['id'])]
                 for doctype in self.doctypes:
                     docidlist = getDocumentReferences(docfilters)
-                    result['properties'][doctype] = self.set_documents(str(layer.topicfk), doctype, docidlist)
+                    result['properties'][doctype] = self.set_documents(str(layer.topicfk), doctype, docidlist, False)
                 self.layerlist[str(layer.layerid)]['features'].append(result['properties'])
 
             # we also check for documents on the layer level - if there are any results - else we don't need to bother
             docfilters = [layer.layername]
             for doctype in self.doctypes:
                 docidlist = getDocumentReferences(docfilters)
-                self.topiclist[str(layer.topicfk)]['layers'][layer.layerid][doctype] = self.set_documents(str(layer.topicfk), doctype, docidlist)
+                self.topiclist[str(layer.topicfk)]['layers'][layer.layerid][doctype] = self.set_documents(str(layer.topicfk), doctype, docidlist, True)
 
             self.topiclist[str(layer.topicfk)]['categorie']=3
             self.topiclist[str(layer.topicfk)]['no_page']='tocpg_'+str(layer.topicfk)
@@ -685,28 +685,45 @@ class Extract(FPDF):
             if self.topiclist[str(layer.topicfk)]['categorie'] != 3:
                 self.topiclist[str(layer.topicfk)]['categorie']=1
 
-    def set_documents(self, topicid, doctype, docids, geoids):
+    def set_documents(self, topicid, doctype, docids, geofilter):
         """ Function to fetch the documents related to the restriction:
         legal provisions, temporary provisions, references 
         """
 
         docs = {}
         documents = []
+        
+        if geofilter is True:
+            filters = {
+                'docids':docids,
+                'topicid':topicid,
+                'cadastrenb':self.featureInfo['numcom'],
+                'chmunicipalitynb':self.featureInfo['nufeco']
+            }
+        else:
+            filters = {'docids':docids}
+
         if len(docids) > 0:
-            docs = getLegalDocuments(self.request,{'docids':docids})
+            docs = getLegalDocuments(self.request,filters)
         else:
             docs['docs'] = []
+
         references = []
-        
         # store the documents in a list
         for doc in docs['docs']:
-            if doc['doctype'] == doctype and (doc['municipalitynb'] == None or doc['cadastrenb'] == self.featureInfo['numcom']):
+            if doc['doctype'] == doctype and doc['documentid'] in docids:
                 references.append(doc)
                 if doc['doctype'] != u'legalbase' and doc['documentid'] not in self.doclist:
                     self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'])
                 if doc['documentid'] not in self.doclist:
                     self.doclist.append(doc)
-
+            if doc['doctype'] == doctype and geofilter is True and doc['documentid'] not in docids:
+                references.append(doc)
+                if doc['doctype'] != u'legalbase' and doc['documentid'] not in self.doclist:
+                    self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'])
+                if doc['documentid'] not in self.doclist:
+                    self.doclist.append(doc)
+                    
         return references
         
     def get_legalbases(self, legalbases, topicid):

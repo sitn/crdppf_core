@@ -223,12 +223,18 @@ def getLegalDocuments(request, filters):
     documents = {}
 
     if 'docids' in filters.keys() and filters['docids'] is not None:
-        documents = DBSession.query(LegalDocuments).filter(LegalDocuments.docid.in_(filters['docids'])).order_by(LegalDocuments.docid.asc()).all()
-    elif 'cadatrenb' in filters.keys() and filters['cadatrenb'] is not None :
-        documents = DBSession.query(LegalDocuments).filter(LegalDocuments.cadatrenb.in_(filters['cadatrenb'])).order_by(LegalDocuments.docid.asc()).all()
+        documents = DBSession.query(LegalDocuments).filter(LegalDocuments.docid.in_(filters['docids']))
+        if 'cadastrenb' in filters.keys() :
+            documents = documents.filter(LegalDocuments.cadastrenb==filters['cadastrenb'] or LegalDocuments.cadastrenb==None)
     else:
-        documents = DBSession.query(LegalDocuments).order_by(LegalDocuments.docid.asc()).all()
-
+        if len(filters) > 0:
+            documents = DBSession.query(LegalDocuments).order_by(LegalDocuments.docid.asc())
+            if 'cadastrenb' in filters.keys() :
+                documents = documents.filter(LegalDocuments.cadastrenb==filters['cadastrenb'] or LegalDocuments.cadastrenb==None)
+            #~ if 'chmunicipalitynb' in filters.keys() and filters['chmunicipalitynb'] is not None:
+                #~ documents = documents.filter(LegalDocuments.cadastrenb==filters['chmunicipalitynb'])
+    documents = documents.order_by(LegalDocuments.docid.asc()).all()
+        
     for document in documents :
         doclist.append({
             'documentid':document.docid,
