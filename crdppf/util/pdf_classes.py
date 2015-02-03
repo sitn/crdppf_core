@@ -624,8 +624,7 @@ class Extract(FPDF):
             docfilters = [str(topic.topicid)]
             for doctype in self.doctypes:
                 docidlist = getDocumentReferences(docfilters)
-                self.topiclist[str(topic.topicid)][doctype] = self.set_documents(str(topic.topicid), doctype, docidlist)
-                
+                self.topiclist[str(topic.topicid)][doctype] = self.set_documents(str(topic.topicid), doctype, docidlist, 'cadastrenb':self.featureInfo['cadastrenb'])                
         else:
             if str(topic.topicid) in self.appconfig.emptytopics:
                 self.topiclist[str(topic.topicid)]['layers'] = None
@@ -686,7 +685,7 @@ class Extract(FPDF):
             if self.topiclist[str(layer.topicfk)]['categorie'] != 3:
                 self.topiclist[str(layer.topicfk)]['categorie']=1
 
-    def set_documents(self, topicid, doctype, docids):
+    def set_documents(self, topicid, doctype, docids, geoids):
         """ Function to fetch the documents related to the restriction:
         legal provisions, temporary provisions, references 
         """

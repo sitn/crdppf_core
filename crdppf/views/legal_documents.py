@@ -224,6 +224,8 @@ def getLegalDocuments(request, filters):
 
     if 'docids' in filters.keys() and filters['docids'] is not None:
         documents = DBSession.query(LegalDocuments).filter(LegalDocuments.docid.in_(filters['docids'])).order_by(LegalDocuments.docid.asc()).all()
+    elif 'cadatrenb' in filters.keys() and filters['cadatrenb'] is not None :
+        documents = DBSession.query(LegalDocuments).filter(LegalDocuments.cadatrenb.in_(filters['cadatrenb'])).order_by(LegalDocuments.docid.asc()).all()
     else:
         documents = DBSession.query(LegalDocuments).order_by(LegalDocuments.docid.asc()).all()
 
