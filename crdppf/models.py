@@ -63,17 +63,17 @@ class Documents(Base):
     doctypes = relationship("DocumentType", lazy="joined")
     
 #~ class ReferenceLinks(Base):
-    #~ __tablename__ = 'origin_reference_test'
+    #~ __tablename__ = 'origin_reference'
     #~ __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     
 class OriginReference(Base):
-    __tablename__ = 'origin_reference_test'
+    __tablename__ = 'origin_reference'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    docid = Column(Integer, ForeignKey('crdppf.documents_test.docid'))
-    documents = relationship("LegalDocuments", backref=backref("documents_test"),lazy="joined")
+    docid = Column(Integer, ForeignKey('crdppf.documents.docid'))
+    documents = relationship("LegalDocuments", backref=backref("documents"),lazy="joined")
     
 class LegalDocuments(Base):
-    __tablename__ = 'documents_test'
+    __tablename__ = 'documents'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     docid = Column(Integer, primary_key=True)
     legalstate = Column(Integer, ForeignKey('crdppf.vl_legalstate.id'))
@@ -260,7 +260,6 @@ if 'railways_construction_limits' in db_config['restrictions']:
 else:
     class CHRailwaysConstructionLimits():
         pass
-
 
 # models for airports
 

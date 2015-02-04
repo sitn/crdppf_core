@@ -2,6 +2,7 @@
 from pyramid.view import view_config
 
 from simplejson import loads as sloads
+from sqlalchemy import or_
 
 from crdppf.models import DBSession
 from crdppf.models import Topics, Town, OriginReference
@@ -186,33 +187,6 @@ def getDocumentReferences(docfilters):
             if rereference not in referenceslist:
                 referenceslist.add(rereference)
     
-    #~ referencedocs = []
-    #~ legals = DBSession.query(LegalDocuments).filter(LegalDocuments.docid.in_(referenceslist)).all()
-    #~ for document in legals:
-        #~ referencedocs.append({
-            #~ 'documentid':document.docid,
-            #~ 'doctype':document.doctypes.value,
-            #~ 'lang':document.lang,
-            #~ 'state':document.state,
-            #~ 'chmunicipalitynb':document.chmunicipalitynb, 
-            #~ 'municipalitynb':document.municipalitynb, 
-            #~ 'municipalityname':document.municipalityname, 
-            #~ 'cadastrenb':document.cadastrenb, 
-            #~ 'title':document.title, 
-            #~ 'officialtitle':document.officialtitle, 
-            #~ 'abbreviation':document.abbreviation, 
-            #~ 'officialnb':document.officialnb,
-            #~ 'legalstate':document.legalstates.value,
-            #~ 'remoteurl':document.remoteurl,
-            #~ 'localurl':document.localurl,
-            #~ 'sanctiondate':document.sanctiondate.isoformat() if document.sanctiondate else None,
-            #~ 'abolishingdate':document.abolishingdate.isoformat() if document.abolishingdate else None,
-            #~ 'entrydate':document.entrydate.isoformat() if document.entrydate else None,
-            #~ 'publicationdate':document.publicationdate.isoformat() if document.publicationdate else None,
-            #~ #'revisiondate':document.revisiondate.isoformat() if document.revisiondate else None,
-            #~ 'operator':document.operator
-        #~ }) 
-    
     return referenceslist
     
 @view_config(route_name='getLegalDocuments', renderer='json')
@@ -224,15 +198,17 @@ def getLegalDocuments(request, filters):
 
     if 'docids' in filters.keys() and filters['docids'] is not None:
         documents = DBSession.query(LegalDocuments).filter(LegalDocuments.docid.in_(filters['docids']))
-        if 'cadastrenb' in filters.keys() :
-            documents = documents.filter(LegalDocuments.cadastrenb==filters['cadastrenb'] or LegalDocuments.cadastrenb==None)
+        if 'cadastrenb' in filters.keys():
+            documents = documents.filter(or_(LegalDocuments.cadastrenb==filters['cadastrenb'], LegalDocuments.cadastrenb==None))
+        if 'chmunicipalitynb' in filters.keys():
+            documents = documents.filter(or_(LegalDocuments.chmunicipalitynb==filters['chmunicipalitynb'], LegalDocuments.chmunicipalitynb==None))
     else:
         if len(filters) > 0:
             documents = DBSession.query(LegalDocuments).order_by(LegalDocuments.docid.asc())
-            if 'cadastrenb' in filters.keys() :
-                documents = documents.filter(LegalDocuments.cadastrenb==filters['cadastrenb'] or LegalDocuments.cadastrenb==None)
-            #~ if 'chmunicipalitynb' in filters.keys() and filters['chmunicipalitynb'] is not None:
-                #~ documents = documents.filter(LegalDocuments.cadastrenb==filters['chmunicipalitynb'])
+            if 'cadastrenb' in filters.keys():
+                documents = documents.filter(LegalDocuments.cadastrenb==filters['cadastrenb'])
+            if 'chmunicipalitynb' in filters.keys() and filters['chmunicipalitynb'] is not None:
+                documents = documents.filter(LegalDocuments.cadastrenb==filters['chmunicipalitynb'])
     documents = documents.order_by(LegalDocuments.docid.asc()).all()
         
     for document in documents :

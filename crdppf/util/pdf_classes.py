@@ -620,11 +620,12 @@ class Extract(FPDF):
                 # intersects a given layer with the feature and adds the results to the topiclist- see method add_layer
                 self.add_layer(layer)
             self.get_topic_map(topic.layers,topic.topicid)
-            # Get the list of documents related to a topic with layers
-            docfilters = [str(topic.topicid)]
-            for doctype in self.doctypes:
-                docidlist = getDocumentReferences(docfilters)
-                self.topiclist[str(topic.topicid)][doctype] = self.set_documents(str(topic.topicid), doctype, docidlist, True)                
+            # Get the list of documents related to a topic with layers and results
+            if self.topiclist[str(layer.topicfk)]['categorie']== 3:
+                docfilters = [str(topic.topicid)]
+                for doctype in self.doctypes:
+                    docidlist = getDocumentReferences(docfilters)
+                    self.topiclist[str(topic.topicid)][doctype] = self.set_documents(str(topic.topicid), doctype, docidlist, True)                
         else:
             if str(topic.topicid) in self.appconfig.emptytopics:
                 self.topiclist[str(topic.topicid)]['layers'] = None
@@ -1244,38 +1245,11 @@ class Extract(FPDF):
             else:
                 self.multi_cell(100, 5, 'Error in line 818', 0, 1, 'L')
                 
-
-            #~ y = self.get_y()
-            #~ self.set_y(y+5)
-            #~ self.set_font(*pdfconfig.textstyles['bold'])
-            #~ self.cell(55, 5, translations['legalprovisionslabel'], 0, 0, 'L')
-            #~ self.set_font(*pdfconfig.textstyles['normal'])
-            #~ if self.topiclist[topic]['legalprovisions']:
-                #~ count = 0 
-                #~ for provision in self.topiclist[topic]['legalprovisions']:
-                #~ if self.doclist is not None:
-                    #~ count = 0 
-                    #~ for provision in self.doclist:
-                        #~ self.set_x(80)
-                        #~ if provision['officialnb'] is not None:
-                            #~ self.multi_cell(0, 5, provision['officialnb']+' : '+provision['officialtitle'], 0, 1, 'L')
-                        #~ else: 
-                            #~ self.multi_cell(0, 5, provision['officialtitle'], 0, 1, 'L')
-                        #~ self.set_x(80)
-                        #~ self.set_font(*self.pdfconfig.textstyles['url'])
-                        #~ self.set_text_color(*self.pdfconfig.urlcolor)
-                        #~ if provision['localurl'] is not None:
-                            #~ self.multi_cell(0, 4, 'URL : '+str(provision['localurl'].encode('iso-8859-1')))
-                        #~ else:
-                            #~ self.multi_cell(0, 4, 'URL : '+str('None'))
-                        #~ self.set_text_color(*self.pdfconfig.defaultcolor)
-                        #~ self.set_font(*self.pdfconfig.textstyles['normal'])
-            #~ else:
-                    #~ self.multi_cell(0, 4, translations['nodocumenttext'])
-
             # For all document types we get the references and list them:
             # legalprovisions = Legal Provisions/Dispositions juridiques/Gesetzliche Bestimmungen
             # references = References and complementary information/Informations et renvois supplémentaires/Verweise und Zusatzinformationen
+            # temporaryprovisions = Ongoing amendments/Modifications en cours/Laufende Änderungen
+            # map = Maps and plans/Cartes et plans/Karten und Pläne
             for doctype in self.doctypes:
                 # for now we ignore different document types
                 if doctype not in [u'legalbase']:
@@ -1285,45 +1259,13 @@ class Extract(FPDF):
                     doctypelabel = doctype+'slabel'
                     self.cell(55, 5, translations[doctypelabel], 0, 0, 'L')
                     self.set_font(*pdfconfig.textstyles['normal'])
-                    if doctype in self.topiclist[topic].keys() and self.topiclist[topic][doctype] > 0:
+                    if doctype in self.topiclist[topic].keys() and len(self.topiclist[topic][doctype]) > 0:
                         for document in self.topiclist[topic][doctype]:
                             self.set_x(80)
                             self.multi_cell(0, 5, unicode(document['officialtitle']).encode('iso-8859-1'))
                     else:
                         self.set_x(80)
                         self.multi_cell(0, 5, translations['nodocumenttext'])
-
-            # References and complementary information/Informations et renvois supplémentaires/Verweise und Zusatzinformationen
-            #~ y = self.get_y()
-            #~ self.set_y(y+5)
-            #~ self.set_font(*pdfconfig.textstyles['bold'])
-            #~ self.cell(55, 5, translations['referenceslabel'], 0, 0, 'L')
-            #~ self.set_font(*pdfconfig.textstyles['normal'])
-            #~ if self.topiclist[topic]['references']:
-                #~ for reference in self.topiclist[topic]['references']:
-                    #~ self.set_x(80)
-                    #~ self.multi_cell(0, 5, unicode(reference['officialtitle']).encode('iso-8859-1'))
-            #~ else:
-                    #~ self.multi_cell(0, 4, translations['nodocumenttext'])
-
-            # -- KEEP FOR FURTHER USE
-            
-            # Ongoing amendments/Modifications en cours/Laufende Änderungen
-            #~ y = self.get_y()
-            #~ self.set_y(y+5)
-            #~ self.set_font(*pdfconfig.textstyles['bold'])
-            #~ self.cell(55, 5, translations['temporaryprovisionslabel'], 0, 0, 'L')
-            #~ self.set_font(*pdfconfig.textstyles['normal'])
-            #~ if self.topiclist[topic]['temporaryprovisions']:
-                #~ for temp_provision in self.topiclist[topic]['temporaryprovisions']:
-                    #~ self.multi_cell(0, 5, unicode(temp_provision.officialtitle).encode('iso-8859-1'), 0, 1, 'L')
-                    #~ if temp_provision.temporaryprovisionurl :
-                        #~ self.set_x(80)
-                        #~ self.multi_cell(0, 5, unicode(temp_provision.temporaryprovisionurl).encode('iso-8859-1'))
-            #~ else:
-                    #~ self.multi_cell(0, 5, unicode('None','utf-8').encode('iso-8859-1'), 0, 1, 'L')
-
-            # --  END KEEP
 
             # Competent Authority/Service competent/Zuständige Behörde
             y = self.get_y()
