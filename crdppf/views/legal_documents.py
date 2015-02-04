@@ -203,15 +203,13 @@ def getLegalDocuments(request, filters):
         if 'chmunicipalitynb' in filters.keys():
             documents = documents.filter(or_(LegalDocuments.chmunicipalitynb==filters['chmunicipalitynb'], LegalDocuments.chmunicipalitynb==None))
     else:
-        if len(filters) > 0:
-            documents = DBSession.query(LegalDocuments).order_by(LegalDocuments.docid.asc())
-            if 'cadastrenb' in filters.keys():
-                documents = documents.filter(LegalDocuments.cadastrenb==filters['cadastrenb'])
-            if 'chmunicipalitynb' in filters.keys() and filters['chmunicipalitynb'] is not None:
-                documents = documents.filter(LegalDocuments.cadastrenb==filters['chmunicipalitynb'])
+        documents = DBSession.query(LegalDocuments)
     documents = documents.order_by(LegalDocuments.docid.asc()).all()
-        
+    
     for document in documents :
+        origins = []
+        for origin in document.origins:
+            origins.append(origin.fkobj)
         doclist.append({
             'documentid':document.docid,
             'doctype':document.doctypes.value,
@@ -232,8 +230,9 @@ def getLegalDocuments(request, filters):
             'abolishingdate':document.abolishingdate.isoformat() if document.abolishingdate else None,
             'entrydate':document.entrydate.isoformat() if document.entrydate else None,
             'publicationdate':document.publicationdate.isoformat() if document.publicationdate else None,
-            #'revisiondate':document.revisiondate.isoformat() if document.revisiondate else None,
-            'operator':document.operator
+            'revisiondate':document.revisiondate.isoformat() if document.revisiondate else None,
+            'operator':document.operator,
+            'origins': origins
         })
         
     return {'docs': doclist}

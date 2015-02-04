@@ -1,15 +1,13 @@
 Ext.namespace('Crdppf');
 
-Crdppf.filterlist = {'theme':[], 'topic' : [], 'layers':[], 'municipalitynb': 0};
+Crdppf.filterlist = {'topic' : [], 'layers':[], 'municipalitynb': 0};
 
 Crdppf.docfilters = function(filter) {
-
-    console.log(filter);
     
     function isInArray(value, array) {
         return array.indexOf(value) > -1;
     }
-
+    
     // if a topicid is passed in the filter, check if it exists already in the array
     // if not, add it - else remove it
     if ('topicfk' in filter) {
@@ -40,16 +38,20 @@ Crdppf.docfilters = function(filter) {
     Crdppf.legalDocuments.store.clearFilter();
     Crdppf.legalDocuments.store.filterBy(function (record) {
         if (Crdppf.filterlist['municipalitynb'] > 0){
-            if (record.get('numcad') == Crdppf.filterlist['municipalitynb'] || record.get('numcad') == 0) {
-                for (var i = 0; i < Crdppf.filterlist['topic'].length; i++){
-                // if the topicid is in the filterlist show the corresponding documents
-                 if (record.get('topicfk') == Crdppf.filterlist['topic'][i].toString()) return record;
+            if (record.get('cadastrenb') == Crdppf.filterlist['municipalitynb'] || record.get('cadastrenb') == 0) {
+                if (Crdppf.filterlist['topic'].length > 0) {
+                    for (var i = 0; i < Crdppf.filterlist['topic'].length; i++){
+                    // if the topicid is in the filterlist show the corresponding documents
+                        if (record.get('origins').indexOf(Crdppf.filterlist['topic'][i].toString()) > -1) return record;
+                    }
+                } else {
+                    return record;
                 }
             }
         } else {
             for (var i = 0; i < Crdppf.filterlist['topic'].length; i++){
             // if the topicid is in the filterlist show the corresponding documents
-             if (record.get('topicfk') == Crdppf.filterlist['topic'][i].toString()) return record;
+                if (record.get('origins').indexOf(Crdppf.filterlist['topic'][i].toString()) > -1)  return record;
             }
         }
     });
@@ -105,6 +107,7 @@ Crdppf.legalDocuments = function() {
             {name: 'publicationdate', type:'date'},
             {name: 'revisiondate', type:'date'}, //date de modification
             {name: 'operator'}, 
+            {name: 'origins'}, 
             //{name: 'validationdate', type:'date'},  //date validation
             //{name: 'modifiedby'},
             //{name: 'status'} //for historization P:provisory, V:valid; A:archived; D:deleted      
@@ -127,81 +130,83 @@ Crdppf.legalDocuments.createView = function(labels) {
         var templates = new Ext.XTemplate(
         // Bases légales/legal bases
         '<div style="font-family:Arial;padding:5px;">',
-            '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">Bases légales</h1>',
-                '<div style="font-family:Arial;margin-left:10px;">',
-                    '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
-                    '<tpl for=".">',
-                        '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
-                            '<tpl for=".">',
-                                '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
-                                    '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
-                                '</div>',
-                            '</tpl>',
+            '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">'+labels.legalbaseslabel+'</h1>',
+            '<div style="font-family:Arial;margin-left:10px;">',
+                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
+                '<tpl for=".">',
+                    '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
                         '</tpl>',
                     '</tpl>',
+                '</tpl>',
 
-                    '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
-                    '<tpl for=".">',
-                        '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
-                            '<tpl for=".">',
-                                '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}"">',
-                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
-                                    '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
-                                '</div>',
-                            '</tpl>',
+                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
+                '<tpl for=".">',
+                    '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}"">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
                         '</tpl>',
-            
-                    '<tpl for=".">',
-                        '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
-                            '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
-                            '<tpl for=".">',
-                                '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
-                                    '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
-                                    '<br />',
-                                '</div>',
-                            '</tpl>',
+                    '</tpl>',
+                '</tpl>',
+        
+                '<tpl for=".">',
+                    '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
+                        '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
                         '</tpl>',
                     '</tpl>',
                 '</tpl>',
             '</div>',
         '</div>',
         
-        // Dispositions légales/legal provisions
+        // Dispositions juridiques/legal provisions
         '<div style="font-family:Arial;padding:5px;">',
-            '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;;">Dispositions juridiques</h1>',
+            '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">'+labels.legalprovisionslabel+'</h1>',
             '<div style="font-family:Arial;margin-left:10px;">',
                 '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
                 '<tpl for=".">',
-                    '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isFederal(state)">',
-                        '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
-                            '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
-                            '<br />',
-                        '</div>',
+                    '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFFFFF" : "#F5F5F5"]}">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
+                        '</tpl>',
                     '</tpl>',
                 '</tpl>',
 
                 '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
                 '<tpl for=".">',
                     '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
-                        '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
-                            '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
-                            '<br />',
-                        '</div>',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFFFFF" : "#F5F5F5"]}"">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
+                        '</tpl>',
                     '</tpl>',
                 '</tpl>',
-    
-                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+        
                 '<tpl for=".">',
-                    '<tpl if="this.isLegalprovision(doctype)">',
-                        '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
-                            '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
-                            '<br />',
-                        '</div>',
+                    '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
+                        '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFFFFF" : "#F5F5F5"]}">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
+                        '</tpl>',
                     '</tpl>',
                 '</tpl>',
             '</div>',
@@ -209,38 +214,41 @@ Crdppf.legalDocuments.createView = function(labels) {
 
         // references
         '<div style="font-family:Arial;padding:5px;">',
-            '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;;">Renvois et informations</h1>',
+            '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">'+labels.referenceslabel+'</h1>',
             '<div style="font-family:Arial;margin-left:10px;">',
                 '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
                 '<tpl for=".">',
-                    '<tpl if="this.isReference(doctype) &amp;&amp; this.isFederal(state)">',
-                        '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
-                            '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
-                            '<br />',
-                        '</div>',
+                    '<tpl if="this.isReference(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
+                        '</tpl>',
                     '</tpl>',
                 '</tpl>',
 
                 '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
                 '<tpl for=".">',
                     '<tpl if="this.isReference(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
-                        '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
-                            '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
-                            '<br />',
-                        '</div>',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}"">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
+                        '</tpl>',
                     '</tpl>',
                 '</tpl>',
-            
-                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+        
                 '<tpl for=".">',
-                    '<tpl if="this.isReference(doctype)">',
-                        '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
-                            '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
-                            '<br />',
-                        '</div>',
+                    '<tpl if="this.isReference(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
+                        '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
+                        '</tpl>',
                     '</tpl>',
                 '</tpl>',
             '</div>',
@@ -248,38 +256,125 @@ Crdppf.legalDocuments.createView = function(labels) {
 
         // temporary provisions
         '<div style="font-family:Arial;padding:5px;">',
-            '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;;">Dispositions transitoires</h1>',
+            '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">'+labels.temporaryprovisionslabel+'</h1>',
             '<div style="font-family:Arial;margin-left:10px;">',
                 '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
                 '<tpl for=".">',
-                    '<tpl if="this.isTemporaryprovision(doctype) &amp;&amp; this.isFederal(state)">',
-                        '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
-                            '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
-                            '<br />',
-                        '</div>',
+                    '<tpl if="this.isTemporaryprovision(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
+                        '</tpl>',
                     '</tpl>',
                 '</tpl>',
 
                 '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
                 '<tpl for=".">',
                     '<tpl if="this.isTemporaryprovision(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
-                        '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
-                            '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
-                            '<br />',
-                        '</div>',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}"">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
+                        '</tpl>',
+                    '</tpl>',
+                '</tpl>',
+        
+                '<tpl for=".">',
+                    '<tpl if="this.isTemporaryprovision(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
+                        '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
+                        '</tpl>',
+                    '</tpl>',
+                '</tpl>',
+            '</div>',
+        '</div>',
+
+        // Maps
+        '<div style="font-family:Arial;padding:5px;">',
+            '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">'+labels.mapslabel+'</h1>',
+            '<div style="font-family:Arial;margin-left:10px;">',
+                '<tpl for=".">',
+                    '<tpl if="this.isMap(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
+                    '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
+                        '</tpl>',
                     '</tpl>',
                 '</tpl>',
 
-                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
                 '<tpl for=".">',
-                    '<tpl if="this.isTemporaryprovision(doctype)">',
-                        '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#EEE"]}">',
-                            '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
-                            '<p class="docurl">URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
-                            '<br />',
-                        '</div>',
+                    '<tpl if="this.isMap(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}"">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
+                        '</tpl>',
+                    '</tpl>',
+                '</tpl>',
+        
+                '<tpl for=".">',
+                    '<tpl if="this.isMap(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
+                        '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
+                        '</tpl>',
+                    '</tpl>',
+                '</tpl>',
+            '</div>',
+        '</div>',
+
+        // Other documents
+        '<div style="font-family:Arial;padding:5px;">',
+            '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">'+labels.otherslabel+'</h1>',
+            '<div style="font-family:Arial;margin-left:10px;">',
+                '<tpl for=".">',
+                    '<tpl if="this.isOther(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
+                    '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
+                        '</tpl>',
+                    '</tpl>',
+                '</tpl>',
+
+                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
+                '<tpl for=".">',
+                    '<tpl if="this.isOther(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}"">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
+                        '</tpl>',
+                    '</tpl>',
+                '</tpl>',
+        
+                '<tpl for=".">',
+                    '<tpl if="this.isOther(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
+                        '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+                        '<tpl for=".">',
+                            '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
+                                '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                            '</div>',
+                        '</tpl>',
                     '</tpl>',
                 '</tpl>',
             '</div>',
@@ -298,6 +393,9 @@ Crdppf.legalDocuments.createView = function(labels) {
             isReference: function(doctype){
                 return doctype == 'reference';
             },
+            isMap: function(doctype){
+                return doctype == 'map';
+            },
             isOther: function(doctype){
                 return doctype == 'other';
             },
@@ -305,7 +403,7 @@ Crdppf.legalDocuments.createView = function(labels) {
                 return state == null;
             },
             isCantonal: function(state, municipalityname){
-                return state != null && municipalityname == null;
+                return state != null && (municipalityname == null || municipalityname == '');
             },
             isCommunal: function(state, municipalityname){
                 return state != null && municipalityname != null;
