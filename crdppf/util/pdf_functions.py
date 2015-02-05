@@ -249,6 +249,17 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
                                     geom = splMultiPolygon(multipolygon)
                                 else:
                                     geom = polygon
+            elif xtfgeom.getElementsByTagName("Punkt"):
+                point = xtfgeom.getElementsByTagName("Punkt")[0]
+                coordlist = []
+                for coords in point.childNodes:
+                    coordlist.append((
+                        float(coords.getElementsByTagName("C1")[0].firstChild.data), 
+                        float(coords.getElementsByTagName("C2")[0].firstChild.data)
+                        ))
+                geom = splPoint(coordlist)
+            else:
+                geom = None
 
             geometries.append({
                 'tid':xtfgeom.getAttributeNode("TID").value,
