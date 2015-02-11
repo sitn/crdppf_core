@@ -1,12 +1,27 @@
 Ext.namespace('Crdppf');
 
-Crdppf.filterlist = {'topic' : [], 'layers':[], 'municipalitynb': 0};
+Crdppf.filterlist = {'topic' : [], 'layers':[], 'cadastrenb': 0, 'objectids':[]};
 
 Crdppf.docfilters = function(filter) {
     
     function isInArray(value, array) {
         return array.indexOf(value) > -1;
     }
+
+    if ('objectids' in filter) {
+        if (filter['objectids'].length > 0) {
+            for (var i = 0; i < filter['objectids'].length; i++){
+                if (!(isInArray(filter['objectids'][i], Crdppf.filterlist['objectids']))){
+                    Crdppf.filterlist['objectids'].push(filter['objectids'][i]);
+                } else {
+                    if (isInArray(filter['objectids'][i], Crdppf.filterlist['objectids'])){
+                        Crdppf.filterlist['objectids'].splice(Crdppf.filterlist['objectids'].indexOf(filter['objectids'][i]), 1);
+                    }
+                }
+            }
+        }
+    }
+
     
     // if a topicid is passed in the filter, check if it exists already in the array
     // if not, add it - else remove it
@@ -27,18 +42,18 @@ Crdppf.docfilters = function(filter) {
         }
     }
     
-    if ('municipalitynb' in filter) {
-        if (filter['municipalitynb'] > 0) {
-            Crdppf.filterlist['municipalitynb'] = filter['municipalitynb'];
+    if ('cadastrenb' in filter) {
+        if (filter['cadastrenb'] > 0) {
+            Crdppf.filterlist['cadastrenb'] = filter['cadastrenb'];
         } else {
-            Crdppf.filterlist['municipalitynb'] = 0;
+            Crdppf.filterlist['cadastrenb'] = 0;
         }
     }
 
     Crdppf.legalDocuments.store.clearFilter();
     Crdppf.legalDocuments.store.filterBy(function (record) {
-        if (Crdppf.filterlist['municipalitynb'] > 0){
-            if (record.get('cadastrenb') == Crdppf.filterlist['municipalitynb'] || record.get('cadastrenb') == 0) {
+        if (Crdppf.filterlist['cadastrenb'] > 0){
+            if (record.get('cadastrenb') == Crdppf.filterlist['cadastrenb'] || record.get('cadastrenb') == 0) {
                 if (Crdppf.filterlist['topic'].length > 0) {
                     for (var i = 0; i < Crdppf.filterlist['topic'].length; i++){
                     // if the topicid is in the filterlist show the corresponding documents
