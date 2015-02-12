@@ -76,6 +76,10 @@ var setInfoControl = function setInfoControl(){
         
     Crdppf.PropertySelection = function(features, labels) {
         
+        if (store) {
+            store.removeAll();
+        }
+        
         if (features.length > 1) {
             var properties = []
             for (var i = 0; i < features.length; i++){
@@ -85,7 +89,6 @@ var setInfoControl = function setInfoControl(){
                 features[i].data.source
                 ]
             }
-
 
             var store = new Ext.data.ArrayStore({
                 fields: ['index','displaytxt','idemai','idemai'],
@@ -98,9 +101,8 @@ var setInfoControl = function setInfoControl(){
                 valueField: 'index',
                 typeAhead: true,
                 mode: 'local',
-                autoDestroy: true,
                 triggerAction: 'all',
-                emptyText:'Select a property...',
+                emptyText: labels.choosePropertyMsg,
                 selectOnFocus:true,
                 listeners: {
                     select: function(combo, record, index) {
@@ -108,14 +110,17 @@ var setInfoControl = function setInfoControl(){
                         property = features[index];
                         Crdppf.featureSelection(property);
                         Ext.getCmp('propertySelectionWindow').hide();
-                        store.removeAll();
                     }
                 }
             });
 
+            if (Ext.getCmp('propertySelectionWindow')) {
+                Ext.getCmp('propertySelectionWindow').destroy();
+            }
+                
             var propertySelectionWindow = new Ext.Window({
                 id: 'propertySelectionWindow',
-                title: Crdppf.labels.choosePropertyMsg,
+                title: Crdppf.labels.choosePropertyLabel,
                 width: 300,
                 autoHeight: true,
                 layout:'fit',
@@ -124,6 +129,7 @@ var setInfoControl = function setInfoControl(){
                 listeners: {
                     hide: function() {
                         Ext.getCmp('propertySelectionWindow').hide();
+                        store.removeAll();
                     }
                 }
             });
@@ -135,9 +141,11 @@ var setInfoControl = function setInfoControl(){
     }
 
     Crdppf.featureSelection = function(property) {
+
         featureTree.expand(true);
         intersect.removeAllFeatures();
         select.addFeatures([property]);
+        
         var parcelId = property.attributes.idemai;
         Crdppf.docfilters({'cadastrenb':parseInt(parcelId.split('_',1)[0])});
         if(overlaysList.length === 0){
