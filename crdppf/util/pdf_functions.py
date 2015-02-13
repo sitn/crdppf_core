@@ -249,7 +249,7 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
                                     geom = splMultiPolygon(multipolygon)
                                 else:
                                     geom = polygon
-            elif xtfgeom.getElementsByTagName("Punkt"):
+            elif xtfgeom.getElementsByTagName("Punkt") and not xtfgeom.getElementsByTagName("Flaeche"):
                 point = xtfgeom.getElementsByTagName("Punkt")[0]
                 coordlist = []
                 for coords in point.childNodes:
