@@ -1,16 +1,16 @@
 Ext.namespace('Crdppf');
 
-Crdppf.filterlist = {'topic' : [], 'layers':[], 'cadastrenb': 0, 'objectids':[]};
+Crdppf.filterlist = {'topic' : [], 'layers': [], 'cadastrenb': 0, 'objectids': []};
 
 Crdppf.docfilters = function(filter) {
-    
+    // little helper function to check for the existence of an value in an array
     function isInArray(value, array) {
         return array.indexOf(value) > -1;
     }
 
     if ('objectids' in filter) {
         if (filter['objectids'].length > 0) {
-            for (var i = 0; i < filter['objectids'].length; i++){
+            for (var i=0; i < filter['objectids'].length; i++){
                 if (!(isInArray(filter['objectids'][i], Crdppf.filterlist['objectids']))){
                     Crdppf.filterlist['objectids'].push(filter['objectids'][i]);
                 } else {
@@ -21,7 +21,6 @@ Crdppf.docfilters = function(filter) {
             }
         }
     }
-
     
     // if a topicid is passed in the filter, check if it exists already in the array
     // if not, add it - else remove it
@@ -57,16 +56,20 @@ Crdppf.docfilters = function(filter) {
                 if (Crdppf.filterlist['topic'].length > 0) {
                     for (var i = 0; i < Crdppf.filterlist['topic'].length; i++){
                     // if the topicid is in the filterlist show the corresponding documents
-                        if (record.get('origins').indexOf(Crdppf.filterlist['topic'][i].toString()) > -1) return record;
+                        if (record.get('origins').indexOf(Crdppf.filterlist['topic'][i].toString()) > -1) {
+                            return record;
+                        }
                     }
                 } else {
                     return record;
                 }
             }
         } else {
-            for (var i = 0; i < Crdppf.filterlist['topic'].length; i++){
+            for (var i=0; i < Crdppf.filterlist['topic'].length; i++){
             // if the topicid is in the filterlist show the corresponding documents
-                if (record.get('origins').indexOf(Crdppf.filterlist['topic'][i].toString()) > -1)  return record;
+                if (record.get('origins').indexOf(Crdppf.filterlist['topic'][i].toString()) > -1) {
+                    return record;
+                }
             }
         }
     });
@@ -131,7 +134,6 @@ Crdppf.legalDocuments = function() {
             listeners:{
                 load: function() {
                     Crdppf.loadingCounter += 1;
-                    //console.log(Crdppf.legalDocuments.store);
                 }
             }
     });
@@ -147,7 +149,7 @@ Crdppf.legalDocuments.createView = function(labels) {
         '<div style="font-family:Arial;padding:5px;">',
             '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">'+labels.legalbaseslabel+'</h1>',
             '<div style="font-family:Arial;margin-left:10px;">',
-                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
+                '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.federalLevelTxt+'</h2>',
                 '<tpl for=".">',
                     '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
                         '<tpl for=".">',
@@ -159,7 +161,7 @@ Crdppf.legalDocuments.createView = function(labels) {
                     '</tpl>',
                 '</tpl>',
 
-                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
+                '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.cantonalLevelTxt+'</h2>',
                 '<tpl for=".">',
                     '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
                         '<tpl for=".">',
@@ -173,7 +175,7 @@ Crdppf.legalDocuments.createView = function(labels) {
         
                 '<tpl for=".">',
                     '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
-                        '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+                        '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                         '<tpl for=".">',
                             '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
                                 '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
@@ -189,7 +191,7 @@ Crdppf.legalDocuments.createView = function(labels) {
         '<div style="font-family:Arial;padding:5px;">',
             '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">'+labels.legalprovisionslabel+'</h1>',
             '<div style="font-family:Arial;margin-left:10px;">',
-                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
+                '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.federalLevelTxt+'</h2>',
                 '<tpl for=".">',
                     '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
                         '<tpl for=".">',
@@ -201,7 +203,7 @@ Crdppf.legalDocuments.createView = function(labels) {
                     '</tpl>',
                 '</tpl>',
 
-                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
+                '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.cantonalLevelTxt+'</h2>',
                 '<tpl for=".">',
                     '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
                         '<tpl for=".">',
@@ -215,7 +217,7 @@ Crdppf.legalDocuments.createView = function(labels) {
         
                 '<tpl for=".">',
                     '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
-                        '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+                        '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                         '<tpl for=".">',
                             '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFFFFF" : "#F5F5F5"]}">',
                                 '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
@@ -231,7 +233,7 @@ Crdppf.legalDocuments.createView = function(labels) {
         '<div style="font-family:Arial;padding:5px;">',
             '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">'+labels.referenceslabel+'</h1>',
             '<div style="font-family:Arial;margin-left:10px;">',
-                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
+                '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.federalLevelTxt+'</h2>',
                 '<tpl for=".">',
                     '<tpl if="this.isReference(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
                         '<tpl for=".">',
@@ -243,7 +245,7 @@ Crdppf.legalDocuments.createView = function(labels) {
                     '</tpl>',
                 '</tpl>',
 
-                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
+                '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.cantonalLevelTxt+'</h2>',
                 '<tpl for=".">',
                     '<tpl if="this.isReference(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
                         '<tpl for=".">',
@@ -257,7 +259,7 @@ Crdppf.legalDocuments.createView = function(labels) {
         
                 '<tpl for=".">',
                     '<tpl if="this.isReference(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
-                        '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+                        '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                         '<tpl for=".">',
                             '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
                                 '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
@@ -273,7 +275,7 @@ Crdppf.legalDocuments.createView = function(labels) {
         '<div style="font-family:Arial;padding:5px;">',
             '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">'+labels.temporaryprovisionslabel+'</h1>',
             '<div style="font-family:Arial;margin-left:10px;">',
-                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
+                '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.federalLevelTxt+'</h2>',
                 '<tpl for=".">',
                     '<tpl if="this.isTemporaryprovision(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
                         '<tpl for=".">',
@@ -285,7 +287,7 @@ Crdppf.legalDocuments.createView = function(labels) {
                     '</tpl>',
                 '</tpl>',
 
-                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
+                '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.cantonalLevelTxt+'</h2>',
                 '<tpl for=".">',
                     '<tpl if="this.isTemporaryprovision(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
                         '<tpl for=".">',
@@ -299,7 +301,7 @@ Crdppf.legalDocuments.createView = function(labels) {
         
                 '<tpl for=".">',
                     '<tpl if="this.isTemporaryprovision(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
-                        '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+                        '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                         '<tpl for=".">',
                             '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
                                 '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
@@ -317,7 +319,7 @@ Crdppf.legalDocuments.createView = function(labels) {
             '<div style="font-family:Arial;margin-left:10px;">',
                 '<tpl for=".">',
                     '<tpl if="this.isMap(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
-                    '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
+                    '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.federalLevelTxt+'</h2>',
                         '<tpl for=".">',
                             '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
                                 '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
@@ -327,7 +329,7 @@ Crdppf.legalDocuments.createView = function(labels) {
                     '</tpl>',
                 '</tpl>',
 
-                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
+                '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.cantonalLevelTxt+'</h2>',
                 '<tpl for=".">',
                     '<tpl if="this.isMap(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
                         '<tpl for=".">',
@@ -341,7 +343,7 @@ Crdppf.legalDocuments.createView = function(labels) {
         
                 '<tpl for=".">',
                     '<tpl if="this.isMap(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
-                        '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+                        '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                         '<tpl for=".">',
                             '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
                                 '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
@@ -359,7 +361,7 @@ Crdppf.legalDocuments.createView = function(labels) {
             '<div style="font-family:Arial;margin-left:10px;">',
                 '<tpl for=".">',
                     '<tpl if="this.isOther(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
-                    '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau fédéral</h2>',
+                    '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.federalLevelTxt+'</h2>',
                         '<tpl for=".">',
                             '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
                                 '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
@@ -369,7 +371,7 @@ Crdppf.legalDocuments.createView = function(labels) {
                     '</tpl>',
                 '</tpl>',
 
-                '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau cantonal</h2>',
+                '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.cantonalLevelTxt+'</h2>',
                 '<tpl for=".">',
                     '<tpl if="this.isOther(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
                         '<tpl for=".">',
@@ -383,7 +385,7 @@ Crdppf.legalDocuments.createView = function(labels) {
         
                 '<tpl for=".">',
                     '<tpl if="this.isOther(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
-                        '<h2 style="margin-top:10px;margin-bottom:5px;">Niveau communal</h2>',
+                        '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                         '<tpl for=".">',
                             '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
                                 '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
@@ -439,9 +441,9 @@ Crdppf.legalDocuments.createView = function(labels) {
           
     } else {
         var nodocs = ('<div style="font-family:Arial;padding:5px;">'+
-        '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">Documents légaux</h1>'+
+        '<h1 class="title" style="margin-bottom:10px;padding-left:10px;font-size:14pt;">'+labels.legalbaseslabel+'</h1>'+
             '<div style="font-family:Arial;margin-left:10px;">'+
-                '<h2 style="margin-top:10px;margin-bottom:5px;">Pour cette séléction aucun document n\'a été trouvé.</h2>'+
+                '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.noDocumentsTxt+'</h2>'+
             '</div>'+
         '</div>');
 

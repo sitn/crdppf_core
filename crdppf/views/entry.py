@@ -18,22 +18,25 @@ class Entry(object):
             'debug': self.debug
             }
 
-    #~ try:
-        from crdppfportal.models import Tiles
-        tiles = DBSession.query(Tiles).all()
-        if len(tiles) > 0:
-            for tile in tiles:
-                d[str(tile.baselayer)] = {
-                    'tile_date':tile.baselayer+u'_'+tile.tile_date,
-                    'tile_format': tile.tile_format
+        try:
+            from crdppfportal.models import Tiles
+            tiles = DBSession.query(Tiles).all()
+            if len(tiles) > 0:
+                for tile in tiles:
+                    d[str(tile.baselayer)] = {
+                        'tile_date': tile.baselayer+u'_'+tile.tile_date,
+                        'tile_format': tile.tile_format
+                        }
+            else:
+                d['plan_cadastral'] = {
+                    'tile_date': 'plan_cadastral_c2c',
+                    'tile_format': 'image/png'
                     }
-        else:
-            d['plan_cadastral'] = {
-                'tile_date':'plan_cadastral_c2c',
-                'tile_format':'image/png'}
-            d['plan_ville'] = {'tile_date':'plan_ville_c2c',
-                'tile_format':'image/png'}
-    #~ except:
-        #~ pass
+                d['plan_ville'] = {
+                    'tile_date': 'plan_ville_c2c',
+                    'tile_format': 'image/png'
+                    }
+        except:
+            pass
 
         return d

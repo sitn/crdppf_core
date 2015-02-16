@@ -76,6 +76,8 @@ var setInfoControl = function setInfoControl(){
         
     Crdppf.PropertySelection = function(features, labels) {
         
+        var propertySelectionWindow;
+        
         if (store) {
             store.removeAll();
         }
@@ -83,7 +85,8 @@ var setInfoControl = function setInfoControl(){
         if (features.length > 1) {
             var properties = []
             for (var i = 0; i < features.length; i++){
-                properties[i] = [i,
+                properties[i] = [
+                i,
                 features[i].data.typimm+': '+features[i].data.nummai+' '+features[i].data.cadastre,
                 features[i].data.idemai,
                 features[i].data.source
@@ -92,7 +95,7 @@ var setInfoControl = function setInfoControl(){
 
             var store = new Ext.data.ArrayStore({
                 fields: ['index','displaytxt','idemai','idemai'],
-                data : properties 
+                data: properties 
             });
             
             var combo = new Ext.form.ComboBox({
@@ -103,32 +106,31 @@ var setInfoControl = function setInfoControl(){
                 mode: 'local',
                 triggerAction: 'all',
                 emptyText: labels.choosePropertyMsg,
-                selectOnFocus:true,
+                selectOnFocus: true,
                 listeners: {
                     select: function(combo, record, index) {
                         // the index of the selected feature is returned and used to highlight the geom
                         property = features[index];
                         Crdppf.featureSelection(property);
-                        Ext.getCmp('propertySelectionWindow').hide();
+                        propertySelectionWindow.hide();
                     }
                 }
             });
 
-            if (Ext.getCmp('propertySelectionWindow')) {
-                Ext.getCmp('propertySelectionWindow').destroy();
+            if (propertySelectionWindow) {
+                propertySelectionWindow.destroy();
             }
                 
-            var propertySelectionWindow = new Ext.Window({
-                id: 'propertySelectionWindow',
+            propertySelectionWindow = new Ext.Window({
                 title: Crdppf.labels.choosePropertyLabel,
                 width: 300,
                 autoHeight: true,
-                layout:'fit',
+                layout: 'fit',
                 closeAction: 'hide',
                 items: [combo],
                 listeners: {
                     hide: function() {
-                        Ext.getCmp('propertySelectionWindow').hide();
+                        this.hide();
                         store.removeAll();
                     }
                 }
@@ -147,11 +149,11 @@ var setInfoControl = function setInfoControl(){
         select.addFeatures([property]);
         
         var parcelId = property.attributes.idemai;
-        Crdppf.docfilters({'cadastrenb':parseInt(parcelId.split('_',1)[0])});
+        Crdppf.docfilters({'cadastrenb': parseInt(parcelId.split('_',1)[0])});
         if(overlaysList.length === 0){
             var top =  new Ext.tree.TreeNode({
                 text: Crdppf.labels.noActiveLayertxt,
-                draggable:false,
+                draggable: false,
                 leaf: true,
                 expanded: true
             });
@@ -168,13 +170,13 @@ var setInfoControl = function setInfoControl(){
                     featureTree.setTitle(Crdppf.labels.restrictionPanelTxt + parcelId);
                     lList = [];
                     // iterate over the restriction found
-                    for (i=0; i<jsonData.length;i++) {
+                    for (var i=0; i<jsonData.length;i++) {
                         lName = jsonData[i].attributes.layerName;
                         // create node for layer if not already created
                         if(!contains(lName,lList)){
                             var fullName = '';
                             var ll = Crdppf.layerList.themes;
-                            for (l=0;l<ll.length;l++){
+                            for (var l=0;l<ll.length;l++){
                                 for (var key in ll[l].layers){
                                     if(lName==key){
                                         fullName = Crdppf.labels[key]; 
@@ -184,16 +186,16 @@ var setInfoControl = function setInfoControl(){
                             // create layer node (level 1, root is level 0 in the hierarchy)
                             var layerChild =  new Ext.tree.TreeNode({
                                 text: fullName,
-                                draggable:false,
-                                id:guid(),
+                                draggable: false,
+                                id: guid(),
                                 leaf: false,
                                 expanded: true
                             });
                             
                             // iterate over all features: create a node for each restriction and group them by their owning layer
-                            for (j=0; j<jsonData.length; j++) {
+                            for (var j=0; j<jsonData.length; j++) {
                                 if (jsonData[j].attributes.layerName == lName){
-                                    Crdppf.docfilters({'objectids':[jsonData[i].fid]})
+                                    Crdppf.docfilters({'objectids': [jsonData[i].fid]})
                                     featureClass = jsonData[j].attributes.featureClass;
                                     html = '';
                                     // Attribute keys are: statutjuridique, teneur, layerName, datepublication
@@ -213,7 +215,7 @@ var setInfoControl = function setInfoControl(){
                                         singleClickExpand: true,
                                         attributes: jsonData[j],
                                         text: Crdppf.labels.restrictionFoundTxt + (j+1) + ' : ' + String(jsonData[j].data.intersectionMeasure),
-                                        draggable:false,
+                                        draggable: false,
                                         leaf: false,
                                         expanded: false,
                                         id: guid(),
@@ -228,9 +230,9 @@ var setInfoControl = function setInfoControl(){
                                     });
                                     // create node containing the feature attributes (level 3)
                                     var contentNode = new Ext.tree.TreeNode({
-                                        cls:'contentNodeCls',
-                                        text:html,
-                                        draggable:false,
+                                        cls: 'contentNodeCls',
+                                        text: html,
+                                        draggable: false,
                                         leaf: false,
                                         expanded: false,
                                         id: guid()
@@ -242,7 +244,18 @@ var setInfoControl = function setInfoControl(){
                             }
                             lList.push(lName);
                         }
-                    }               
+                    }
+                    if (jsonData.length === 0){
+                        // create layer node (level 1, root is level 0 in the hierarchy)
+                        var layerChild =  new Ext.tree.TreeNode({
+                            text: Crdppf.labels.noRestrictionFoundTxt,
+                            draggable: false,
+                            id: guid(),
+                            leaf: false,
+                            expanded: true
+                        });
+                        root.appendChild(layerChild);
+                    }
             }
             // define an request object to the interection route
             
@@ -291,7 +304,7 @@ function makeMap(mapOptions, labels){
 
     // base layer: topographic layer
     var layer = new OpenLayers.Layer.WMTS({
-        name: "Base layer",
+        name: 'Base layer',
         url: Crdppf.mapproxyUrl,
         layer: Crdppf.tileNames.plan_cadastral_name,
         matrixSet: Crdppf.mapMatrixSet,

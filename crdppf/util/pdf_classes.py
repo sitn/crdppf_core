@@ -326,12 +326,12 @@ class Extract(FPDF):
         http = httplib2.Http()
 
         h = dict(self.request.headers)
-        if urlparse(getmapurl).hostname != 'localhost': # pragma: no cover
+        if urlparse(getmapurl).hostname != 'localhost': 
             h.pop('Host')
 
         try:
             resp, content = http.request(getmapurl, method='GET', headers=h)
-        except: # pragma: no cover
+        except: 
             self.log.error("Unable to do GetMap request for url %s" % getmapurl)
             return None
 
@@ -573,12 +573,12 @@ class Extract(FPDF):
         http = httplib2.Http()
 
         h = dict(self.request.headers)
-        if urlparse(getmapurl).hostname != 'localhost': # pragma: no cover
+        if urlparse(getmapurl).hostname != 'localhost': 
             h.pop('Host')
 
         try:
             resp, content = http.request(getmapurl, method='GET', headers=h)
-        except: # pragma: no cover
+        except: 
             self.log.error("Unable to do GetMap request for url %s" % getmapurl)
             return None
 
@@ -588,7 +588,6 @@ class Extract(FPDF):
         out.close()
 
         self.sitemappath = self.appconfig.tempdir+self.pdfconfig.siteplanname+'.png'
-    
 
     def add_topic(self, topic):
         """Adds a new entry to the topic list and sets it's category from:
@@ -607,7 +606,7 @@ class Extract(FPDF):
             'authorityfk':topic.authorityfk,
             'publicationdate':topic.publicationdate
             }
-        
+
         # if geographic layers are defined for the topic, get the list of all layers and then
         # check for each layer the information regarding the features touching the property
         if topic.layers:
@@ -621,7 +620,7 @@ class Extract(FPDF):
                 self.add_layer(layer)
             self.get_topic_map(topic.layers,topic.topicid)
             # Get the list of documents related to a topic with layers and results
-            if self.topiclist[str(layer.topicfk)]['categorie']== 3:
+            if self.topiclist[str(layer.topicfk)]['categorie'] == 3:
                 docfilters = [str(topic.topicid)]
                 for doctype in self.doctypes:
                     docidlist = getDocumentReferences(docfilters)
@@ -871,7 +870,7 @@ class Extract(FPDF):
             http = httplib2.Http()
 
             h = dict(self.request.headers)
-            if urlparse(getstylesurl).hostname != 'localhost': # pragma: no cover
+            if urlparse(getstylesurl).hostname != 'localhost': 
                 h.pop('Host')
 
             if self.log:
@@ -881,7 +880,7 @@ class Extract(FPDF):
 
             try:
                 resp, content = http.request(getstylesurl, method='GET', headers=h)
-            except: # pragma: no cover
+            except:
                 self.log.error("Unable to do GetStyles request for url %s" % getstylesurl)
                 return None
 
@@ -933,12 +932,12 @@ class Extract(FPDF):
             http = httplib2.Http()
 
             h = dict(self.request.headers)
-            if urlparse(getsldurl).hostname != 'localhost': # pragma: no cover
+            if urlparse(getsldurl).hostname != 'localhost':
                 h.pop('Host')
 
             try:
                 resp, content = http.request(getsldurl, method='GET', headers=h)
-            except: # pragma: no cover
+            except:
                 self.log.error("Unable to do GetMap request for url %s" % getsldurl)
                 return None
 
@@ -985,12 +984,12 @@ class Extract(FPDF):
         http = httplib2.Http()
 
         h = dict(self.request.headers)
-        if urlparse(getmapurl).hostname != 'localhost': # pragma: no cover
+        if urlparse(getmapurl).hostname != 'localhost':
             h.pop('Host')
 
         try:
             resp, content = http.request(getmapurl, method='GET', headers=h)
-        except: # pragma: no cover
+        except:
             self.log.error("Unable to do GetMap request for url %s" % getmapurl)
             return None
 
