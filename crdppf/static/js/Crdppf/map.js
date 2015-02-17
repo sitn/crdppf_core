@@ -304,7 +304,6 @@ function makeMap(mapOptions, labels){
 
     // base layer: topographic layer
     var layer = new OpenLayers.Layer.WMTS({
-        name: 'Base layer',
         url: Crdppf.mapproxyUrl,
         layer: Crdppf.tileNames.plan_cadastral_name,
         matrixSet: Crdppf.mapMatrixSet,
