@@ -62,25 +62,20 @@ class Documents(Base):
     doctype = Column(Integer, ForeignKey('crdppf.vl_doctype.id'))
     doctypes = relationship("DocumentType", lazy="joined")
     
-#~ class ReferenceLinks(Base):
-    #~ __tablename__ = 'origin_reference'
-    #~ __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    
 class OriginReference(Base):
-    __tablename__ = 'origin_reference_test'
+    __tablename__ = 'origin_reference'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    docid = Column(Integer, ForeignKey('crdppf.documents_test.docid'))
-    documents = relationship("LegalDocuments", backref=backref("documents_test"),lazy="joined")
+    docid = Column(Integer, ForeignKey('crdppf.documents.docid'))
     
 class LegalDocuments(Base):
-    __tablename__ = 'documents_test'
+    __tablename__ = 'documents'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     docid = Column(Integer, primary_key=True)
     legalstate = Column(Integer, ForeignKey('crdppf.vl_legalstate.id'))
     legalstates = relationship("Legalstates", lazy="joined")
     doctype = Column(Integer, ForeignKey('crdppf.vl_doctype.id'))
     doctypes = relationship("DocumentType", lazy="joined")
-    origins = relationship("OriginReference", backref="documents_test",lazy="joined")
+    origins = relationship("OriginReference", backref="documents",lazy="joined")
 
 class Legalstates(Base):
     __tablename__ = 'vl_legalstate'
