@@ -523,10 +523,6 @@ class Extract(FPDF):
         </sld:NamedLayer>
         </sld:StyledLayerDescriptor>"""
 
-        #~ sldfile2 = open(self.appconfig.slddir+'property_overlay.sld', 'r')
-        #~ sld2 = sldfile2.read()
-        #~ sdf
-
         sldfile = open(self.appconfig.tempdir+self.pdfconfig.siteplanname+'_sld.xml', 'w')
         self.cleanupfiles.append(self.appconfig.tempdir+self.pdfconfig.siteplanname+'_sld.xml')
         sldfile.write(sld)
