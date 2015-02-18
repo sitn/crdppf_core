@@ -62,7 +62,7 @@ var setInfoControl = function setInfoControl(){
             autoconfig: false
         }
     });
-    
+
     // create infoControl with our WFS protocol
    var control = new OpenLayers.Control.GetFeature({
         protocol: protocol,
@@ -70,21 +70,90 @@ var setInfoControl = function setInfoControl(){
         box: false,
         hover: false,
         single: false,
-        maxFeatures: 1,
+        maxFeatures: 4,
         clickTolerance: 15
     });
-    
-    // define actions on feature selection
-    control.events.register("featureselected", this, function(e) {
+        
+    Crdppf.PropertySelection = function(features, labels) {
+        
+        var propertySelectionWindow;
+        
+        if (store) {
+            store.removeAll();
+        }
+        
+        if (features.length > 1) {
+            var properties = []
+            for (var i = 0; i < features.length; i++){
+                properties[i] = [
+                i,
+                features[i].data.typimm+': '+features[i].data.nummai+' '+features[i].data.cadastre,
+                features[i].data.idemai,
+                features[i].data.source
+                ]
+            }
+
+            var store = new Ext.data.ArrayStore({
+                fields: ['index','displaytxt','idemai','idemai'],
+                data: properties 
+            });
+            
+            var combo = new Ext.form.ComboBox({
+                store: store,
+                displayField: 'displaytxt',
+                valueField: 'index',
+                typeAhead: true,
+                mode: 'local',
+                triggerAction: 'all',
+                emptyText: labels.choosePropertyMsg,
+                selectOnFocus: true,
+                listeners: {
+                    select: function(combo, record, index) {
+                        // the index of the selected feature is returned and used to highlight the geom
+                        property = features[index];
+                        Crdppf.featureSelection(property);
+                        propertySelectionWindow.hide();
+                    }
+                }
+            });
+
+            if (propertySelectionWindow) {
+                propertySelectionWindow.destroy();
+            }
+                
+            propertySelectionWindow = new Ext.Window({
+                title: Crdppf.labels.choosePropertyLabel,
+                width: 300,
+                autoHeight: true,
+                layout: 'fit',
+                closeAction: 'hide',
+                items: [combo],
+                listeners: {
+                    hide: function() {
+                        this.hide();
+                        store.removeAll();
+                    }
+                }
+            });
+            
+            propertySelectionWindow.show();
+        } else {
+            return 0;
+        }
+    }
+
+    Crdppf.featureSelection = function(property) {
+
         featureTree.expand(true);
         intersect.removeAllFeatures();
-        select.addFeatures([e.feature]);
-        var parcelId = e.feature.attributes.idemai;
-        Crdppf.docfilters({'municipalitynb':parseInt(parcelId.split('_',1)[0])});
+        select.addFeatures([property]);
+        
+        var parcelId = property.attributes.idemai;
+        Crdppf.docfilters({'cadastrenb': parseInt(parcelId.split('_',1)[0])});
         if(overlaysList.length === 0){
             var top =  new Ext.tree.TreeNode({
                 text: Crdppf.labels.noActiveLayertxt,
-                draggable:false,
+                draggable: false,
                 leaf: true,
                 expanded: true
             });
@@ -93,17 +162,21 @@ var setInfoControl = function setInfoControl(){
         else { // send intersection request and process results
                 function handler(request) {
                     var geojson_format = new OpenLayers.Format.GeoJSON();
+                    // jsonData will contain the object with
+                    // fid = objectid in the database = restrictionid
+                    // attributes/data = [codegenre, datepublication, geomType, intersectionMeasure, layername, statutjuridique, teneur, theme]
+                    // geometry = OpenLayers geometry type
                     var jsonData = geojson_format.read(request.responseText);
                     featureTree.setTitle(Crdppf.labels.restrictionPanelTxt + parcelId);
                     lList = [];
                     // iterate over the restriction found
-                    for (i=0; i<jsonData.length;i++) {
+                    for (var i=0; i<jsonData.length;i++) {
                         lName = jsonData[i].attributes.layerName;
                         // create node for layer if not already created
                         if(!contains(lName,lList)){
                             var fullName = '';
                             var ll = Crdppf.layerList.themes;
-                            for (l=0;l<ll.length;l++){
+                            for (var l=0;l<ll.length;l++){
                                 for (var key in ll[l].layers){
                                     if(lName==key){
                                         fullName = Crdppf.labels[key]; 
@@ -113,20 +186,27 @@ var setInfoControl = function setInfoControl(){
                             // create layer node (level 1, root is level 0 in the hierarchy)
                             var layerChild =  new Ext.tree.TreeNode({
                                 text: fullName,
-                                draggable:false,
-                                id:guid(),
+                                draggable: false,
+                                id: guid(),
                                 leaf: false,
                                 expanded: true
                             });
                             
                             // iterate over all features: create a node for each restriction and group them by their owning layer
-                            for (j=0; j<jsonData.length; j++) {
+                            for (var j=0; j<jsonData.length; j++) {
                                 if (jsonData[j].attributes.layerName == lName){
+                                    Crdppf.docfilters({'objectids': [jsonData[i].fid]})
                                     featureClass = jsonData[j].attributes.featureClass;
                                     html = '';
+                                    // Attribute keys are: statutjuridique, teneur, layerName, datepublication
                                     for (var value in jsonData[j].attributes){
                                         if (value !== 'geomType' && value !=='theme' && value!=='codegenre' && value!=='intersectionMeasure'){
-                                            html += '<p class=featureAttributeStyle><b>' + Crdppf.labels[value] + ' : </b>' + jsonData[j].attributes[value] +'</p>' ;
+                                            if (value === 'layerName'){
+                                                // Replace the layername as defined in the database by it's display name
+                                                html += '<p class=featureAttributeStyle><b>' + Crdppf.labels[value] + ' : </b>' + Crdppf.labels[jsonData[j].attributes[value]] +'</p>' ;
+                                            } else {
+                                                html += '<p class=featureAttributeStyle><b>' + Crdppf.labels[value] + ' : </b>' + jsonData[j].attributes[value] +'</p>' ;
+                                            }
                                         }
                                     }
                                     html += '';
@@ -135,7 +215,7 @@ var setInfoControl = function setInfoControl(){
                                         singleClickExpand: true,
                                         attributes: jsonData[j],
                                         text: Crdppf.labels.restrictionFoundTxt + (j+1) + ' : ' + String(jsonData[j].data.intersectionMeasure),
-                                        draggable:false,
+                                        draggable: false,
                                         leaf: false,
                                         expanded: false,
                                         id: guid(),
@@ -150,9 +230,9 @@ var setInfoControl = function setInfoControl(){
                                     });
                                     // create node containing the feature attributes (level 3)
                                     var contentNode = new Ext.tree.TreeNode({
-                                        cls:'contentNodeCls',
-                                        text:html,
-                                        draggable:false,
+                                        cls: 'contentNodeCls',
+                                        text: html,
+                                        draggable: false,
                                         leaf: false,
                                         expanded: false,
                                         id: guid()
@@ -164,7 +244,18 @@ var setInfoControl = function setInfoControl(){
                             }
                             lList.push(lName);
                         }
-                    }               
+                    }
+                    if (jsonData.length === 0){
+                        // create layer node (level 1, root is level 0 in the hierarchy)
+                        var layerChild =  new Ext.tree.TreeNode({
+                            text: Crdppf.labels.noRestrictionFoundTxt,
+                            draggable: false,
+                            id: guid(),
+                            leaf: false,
+                            expanded: true
+                        });
+                        root.appendChild(layerChild);
+                    }
             }
             // define an request object to the interection route
             
@@ -186,7 +277,19 @@ var setInfoControl = function setInfoControl(){
                 },
                 proxy: null
             });
-        }       
+        }   
+        
+        }
+    // define actions on feature selection
+    control.events.register("featuresselected", this, function(e) {
+        // if there is more than one feature, we present the user with a selection window
+        if (e.features.length > 1) {
+            Crdppf.PropertySelection(e.features, Crdppf.labels);
+        // else the selected feature ist highlighted 
+        } else {
+            property= e.features[0];
+            Crdppf.featureSelection(property);
+        }
     });
     control.events.register("featureunselected", this, function(e) {
         select.removeFeatures([e.feature]);
@@ -201,11 +304,10 @@ function makeMap(mapOptions, labels){
 
     // base layer: topographic layer
     var layer = new OpenLayers.Layer.WMTS({
-        name: "Base layer",
         url: Crdppf.mapproxyUrl,
         layer: Crdppf.tileNames.plan_cadastral_name,
         matrixSet: Crdppf.mapMatrixSet,
-        format: 'image/png',
+        format: Crdppf.tile_format,
         isBaseLayer: true,
         style: 'default',
         fixedLayer: true,

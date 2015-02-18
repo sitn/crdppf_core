@@ -19,9 +19,17 @@
 % endif
 
     <script type="text/javascript">
+% if plan_cadastral:
+    Crdppf.tileNames['plan_cadastral_name'] = "${plan_cadastral['tile_date']}";
+    Crdppf.tile_format = "${plan_cadastral['tile_format']}";
+% endif
         OpenLayers.Util.extend(OpenLayers.Lang.fr, {
-            'plan_ville_${request.tile_date[1]}': 'Plan de ville',
-            'plan_cadastral_${request.tile_date[0]}': 'Plan cadastral'
+% if plan_ville:
+            '${plan_ville}': 'Plan de ville',
+% endif
+% if plan_cadastral:
+            '${plan_cadastral}': 'Plan cadastral'
+% endif
         });
     </script>
     

@@ -22,8 +22,7 @@ from geoalchemy import (
     Geometry, 
     Polygon,
     WKTSpatialElement,
-    GeometryDDL#,
-#    WKBSpatialElement
+    GeometryDDL
     )
 
 from crdppf import db_config
@@ -52,15 +51,38 @@ class Topics(Base):
 class Layers(Base):
     __tablename__ = 'layers'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    topicfk = Column(String(10), ForeignKey('crdppf.topic.topicid'))
+    topicfk = Column(String, ForeignKey('crdppf.topic.topicid'))
     topic = relationship("Topics", backref=backref("topic"),lazy="joined")
 
 class Documents(Base):
     __tablename__ = 'documents_saisies'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+    legalstate = Column(Integer, ForeignKey('crdppf.vl_legalstate.id'))
+    legalstates = relationship("Legalstates", lazy="joined")
+    doctype = Column(Integer, ForeignKey('crdppf.vl_doctype.id'))
+    doctypes = relationship("DocumentType", lazy="joined")
     
-class ReferenceLinks(Base):
+class OriginReference(Base):
     __tablename__ = 'origin_reference'
+    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+    docid = Column(Integer, ForeignKey('crdppf.documents.docid'))
+    
+class LegalDocuments(Base):
+    __tablename__ = 'documents'
+    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+    docid = Column(Integer, primary_key=True)
+    legalstate = Column(Integer, ForeignKey('crdppf.vl_legalstate.id'))
+    legalstates = relationship("Legalstates", lazy="joined")
+    doctype = Column(Integer, ForeignKey('crdppf.vl_doctype.id'))
+    doctypes = relationship("DocumentType", lazy="joined")
+    origins = relationship("OriginReference", backref="documents",lazy="joined")
+
+class Legalstates(Base):
+    __tablename__ = 'vl_legalstate'
+    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+
+class DocumentType(Base):
+    __tablename__ = 'vl_doctype'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     
 class Authority(Base):

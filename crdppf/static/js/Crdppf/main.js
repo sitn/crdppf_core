@@ -151,7 +151,14 @@ Crdppf.init_main = function(lang) {
                 var selectionLayer = MapO.map.getLayer('selectionLayer');
                 selectionLayer.removeAllFeatures();
                 MapO.disableInfoControl();
-                Crdppf.docfilters({'municipalitynb':0});
+                // When unselecting the feature, we also reset the document filter criterias
+                // unset the cadastre and municipality number
+                Crdppf.docfilters({'cadastrenb':0});
+                //Crdppf.docfilters({'municipalitynb':0});
+                // unset the restrictionid list found for thre feature
+                for (var i = Crdppf.filterlist['objectids'].length; i > 0; i--){
+                    Crdppf.docfilters({'objectids':[Crdppf.filterlist['objectids'][i-1]]});
+                }
                 infoButton.toggle(false);
             }                  
         }
@@ -299,6 +306,7 @@ Crdppf.init_main = function(lang) {
                             timeout : 300000,
                             failure: function () {
                                 Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
+                                pdfMask.hide();
                             }
                         }); 
                     }

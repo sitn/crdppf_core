@@ -27,7 +27,4 @@ Crdppf.mapOverviewSizeW = "${request.registry.settings['mapOverviewSizeW']}";
 Crdppf.mapOverviewSizeH = "${request.registry.settings['mapOverviewSizeH']}";
 Crdppf.keymap= "${request.registry.settings['keymap']}";
 Crdppf.OLImgPath = "${request.static_url('crdppf:static/images/ol/')}";
-Crdppf.tileNames = {
-    'plan_ville_name': 'plan_ville_${request.tile_date[1]}',
-    'plan_cadastral_name': 'plan_cadastral_${request.tile_date[0]}'
-};
+Crdppf.tileNames = [];
