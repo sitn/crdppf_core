@@ -102,7 +102,6 @@ def createNewDocEntry(request):
     document.canton = data['canton']
 
     DBSession.add(document)
-
     DBSession.flush()
 
     return {'success':True}
