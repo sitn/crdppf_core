@@ -30,5 +30,6 @@ def get_baselayers_config(request):
         layerDico['image'] = layer.image
         layerDico['name'] = layer.layername
         layerDico['wmtsname'] = layer.wmtsname
+        layerDico['tile_format'] = layer.tile_format
         layerList.append(layerDico)
     return {'baseLayers': layerList}
