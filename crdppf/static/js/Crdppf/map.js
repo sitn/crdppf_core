@@ -305,9 +305,10 @@ function makeMap(mapOptions, labels){
     // base layer: topographic layer
     var layer = new OpenLayers.Layer.WMTS({
         url: Crdppf.mapproxyUrl,
-        layer: Crdppf.tileNames.plan_cadastral_name,
+        layer: Crdppf.defaultTiles.wmtsname,
         matrixSet: Crdppf.mapMatrixSet,
-        format: Crdppf.tile_format,
+        format: Crdppf.defaultTiles.tile_format,
+        formatSuffixMap: {'image/png':'png'},
         isBaseLayer: true,
         style: 'default',
         fixedLayer: true,

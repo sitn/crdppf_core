@@ -149,6 +149,7 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
             text: labels[baseLayers[i].name],
             draggable:false,
             id: baseLayers[i].wmtsname,
+            format: baseLayers[i].tile_format,
             leaf: true,
             checked: isChecked,
             cls: 'baseLayerNodeCls',
@@ -160,24 +161,28 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
                                 node.parentNode.childNodes[k].getUI().toggleCheck(false);
                             } else {
                                 // set new backgound layer
-                                 var theBaseLayer = MapO.map.getLayersBy('id', 'baseLayer')[0];
-                                 if(theBaseLayer) {
+                                var theBaseLayer = MapO.map.getLayersBy('id', 'baseLayer')[0];
+                                
+                                if(theBaseLayer) {
                                     theBaseLayer.destroy();
-                                 }
-                                var format = "image/png";
-                                var formatSuffixMap = {'image/png':'png'};
-                                
-                                if (node.id == 'ortho2011'){
-                                    format = "image/jpeg";
-                                    formatSuffixMap = {'image/jpeg':'jpeg'};
                                 }
-                                
+                                var formatSuffixMap;
+                                 
+                                if (node.attributes['format'] == 'image/png'){
+                                     formatSuffixMap = {'image/png':'png'};
+                                }
+                                if (node.attributes['format'] == 'image/jpg'){
+                                     formatSuffixMap = {'image/jpeg':'jpg'};
+                                }
+                                if (node.attributes['format'] == 'image/jpeg'){
+                                     formatSuffixMap = {'image/jpeg':'jpeg'};
+                                }
                                 var layer = new OpenLayers.Layer.WMTS({
                                     name: "Base layer",
                                     url: Crdppf.mapproxyUrl,
                                     layer: node.id,
                                     matrixSet: Crdppf.mapMatrixSet,
-                                    format: format,
+                                    format: node.attributes['format'],
                                     formatSuffixMap: formatSuffixMap,
                                     isBaseLayer: true,
                                     style: 'default',

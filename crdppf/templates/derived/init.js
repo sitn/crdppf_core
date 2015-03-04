@@ -8,7 +8,7 @@ if(!window.Crdppf) Crdppf = {};
 Crdppf.labels = {
     % for key in fr:
        '${key}' : '${fr[key] | n}'
-        % if counter < total :
+        % if counter < total:
             ,
         %endif
         <%
@@ -23,7 +23,7 @@ Crdppf.labels = {
 %>
 
 Crdppf.layers = [
-    % for layer in layerlist :
+    % for layer in layerlist:
         <%
             i = 1
             nbcols = len(layer)
@@ -54,7 +54,7 @@ Crdppf.layers = [
 %>
             
 Crdppf.baseLayersList = {'baseLayers': [
-    % for baselayer in baseLayers :
+    % for baselayer in baseLayers:
         <%
             i = 1
             nbcols = len(baselayer)
@@ -78,3 +78,12 @@ Crdppf.baseLayersList = {'baseLayers': [
         %>
     % endfor
 ]};
+Crdppf.defaultTiles = {}
+% if len(baseLayers) > 1:
+    Crdppf.defaultTiles = {
+        'wmtsname' : "${baseLayers[0]['wmtsname']}",
+        'tile_format' : "${baseLayers[0]['tile_format']}"
+    }
+% else:
+    Crdppf.defaultTiles = {'wmtsname' : None, 'tile_format': None};
+% endif

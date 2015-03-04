@@ -41,6 +41,7 @@ def initjs(request):
             layerDico['image'] = layer.image
             layerDico['name'] = layer.layername
             layerDico['wmtsname'] = layer.wmtsname
+            layerDico['tile_format'] = layer.tile_format
             baselayers.append(layerDico)
         else:
             layerlist.append({
