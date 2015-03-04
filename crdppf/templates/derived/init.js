@@ -29,9 +29,9 @@ Crdppf.layers = [
             nbcols = len(layer)
         %>
             {
-            % for key in layer:
+            % for key in layer :
                 '${key}' : '${layer[key]}'
-                % if i < nbcols:
+                % if i < nbcols :
                     ,
                 %endif
                 <%
@@ -39,7 +39,7 @@ Crdppf.layers = [
                 %>
             % endfor
             }
-        % if j < nblayers:
+        % if j < nblayers :
             ,
         %endif
         <%
@@ -60,9 +60,9 @@ Crdppf.baseLayersList = {'baseLayers': [
             nbcols = len(baselayer)
         %>
             {
-            % for key in baselayer:
+            % for key in baselayer :
                 '${key}' : '${baselayer[key]}'
-                % if i < nbcols:
+                % if i < nbcols :
                     ,
                 %endif
                 <%
@@ -70,7 +70,7 @@ Crdppf.baseLayersList = {'baseLayers': [
                 %>
             % endfor
             }
-        % if j < nblayers:
+        % if j < nblayers :
             ,
         %endif
         <%
@@ -78,3 +78,12 @@ Crdppf.baseLayersList = {'baseLayers': [
         %>
     % endfor
 ]};
+Crdppf.defaultTiles = {}
+% if len(baseLayers) > 1 :
+    Crdppf.defaultTiles = {
+        'wmtsname' : "${baseLayers[0]['wmtsname']}",
+        'tile_format' : "${baseLayers[0]['tile_format']}"
+    }
+% else :
+    Crdppf.defaultTiles = {'wmtsname' : None, 'tile_format': None};
+% endif

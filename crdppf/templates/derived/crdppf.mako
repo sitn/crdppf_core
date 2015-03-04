@@ -20,8 +20,8 @@
 
     <script type="text/javascript">
 % if plan_cadastral:
-    Crdppf.tileNames['plan_cadastral_name'] = "${plan_cadastral['tile_date']}";
-    Crdppf.tile_format = "${plan_cadastral['tile_format']}";
+    Crdppf.defaultTiles['wmtsname'] = "${plan_cadastral['tile_date']}";
+    Crdppf.defaultTiles['tile_format'] = "${plan_cadastral['tile_format']}";
 % endif
         OpenLayers.Util.extend(OpenLayers.Lang.fr, {
 % if plan_ville:
