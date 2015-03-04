@@ -33,7 +33,7 @@ Ext.onReady(function() {
         success: function(response) {
             Crdppf.labels = Ext.decode(response.responseText);
             loadingCounter += 1;
-            triggerFunction(loadingCounter);   
+            triggerFunction(loadingCounter);
         },
         method: 'POST',
         failure: function () {

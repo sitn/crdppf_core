@@ -161,12 +161,12 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
                                 node.parentNode.childNodes[k].getUI().toggleCheck(false);
                             } else {
                                 // set new backgound layer
-                                 var theBaseLayer = MapO.map.getLayersBy('id', 'baseLayer')[0];
+                                var theBaseLayer = MapO.map.getLayersBy('id', 'baseLayer')[0];
                                 
-                                 if(theBaseLayer) {
+                                if(theBaseLayer) {
                                     theBaseLayer.destroy();
-                                 }
-                                 var formatSuffixMap;
+                                }
+                                var formatSuffixMap;
                                  
                                 if (node.attributes['format'] == 'image/png'){
                                      formatSuffixMap = {'image/png':'png'};

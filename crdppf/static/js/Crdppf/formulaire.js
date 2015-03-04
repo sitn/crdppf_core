@@ -37,7 +37,7 @@ Ext.onReady(function() {
                 data: data_array
             });
             formtrigger += 1;
-            triggerFunction(formtrigger);          
+            triggerFunction(formtrigger);  
         },
         method: 'POST',
         failure: function () {
