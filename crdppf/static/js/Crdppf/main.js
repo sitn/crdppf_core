@@ -23,9 +23,10 @@ Ext.onReady(function() {
     var lang = ''; // The current session language
     // We need to ensure all json data are recieved by the client before starting the application
     Crdppf.loadingCounter = 0;
+    var sync = 0;
     
-    var triggerFunction = function(counter) {
-        if (counter == 3) {
+    var synchronize = function(sync) {
+        if (sync == 1){
             Ext.MessageBox.buttonText.yes = Crdppf.labels.disclaimerAcceptance;
             Ext.MessageBox.buttonText.no = Crdppf.labels.diclaimerRefusal;
             var dlg = Ext.MessageBox.getDialog();
@@ -42,6 +43,12 @@ Ext.onReady(function() {
                animEl: 'elId',
                icon: Ext.MessageBox.WARNING
             });
+        }
+    };
+        
+    var triggerFunction = function(counter) {
+        if (counter == 2) {
+            synchronize();
         }
     };
     
@@ -87,8 +94,8 @@ Ext.onReady(function() {
         success: function(response) {
             Crdppf.layerList = Ext.decode(response.responseText);
 
-            Crdppf.loadingCounter += 1;
-            triggerFunction(Crdppf.loadingCounter);        
+            sync += 1;
+            synchronize(sync);        
         },
         method: 'POST',
         failure: function () {
