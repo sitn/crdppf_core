@@ -82,7 +82,7 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
     feature = geometry
     #geomtype = 'geometryType=esriGeometryEnvelope'
     wktfeature = DBSession.scalar(geometry.wkt)
-    bbox = get_bbox_from_geometry(wktfeature)
+    bbox = get_bbox_from_geometry(DBSession.scalar(geometry.envelope.wkt))
     # geometrytype used for feature service call
     geomtype = 'esriGeometryPolygon'
     # geomtype = 'esriGeometryEnvelope' - BBOX
