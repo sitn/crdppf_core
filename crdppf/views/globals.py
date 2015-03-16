@@ -33,7 +33,7 @@ def initjs(request):
     layerlist = []
     baselayers = []
     # get all layers
-    layers = DBSession.query(Layers).all()
+    layers = DBSession.query(Layers).order_by(Layers.layerid).all()
     for layer in layers:
         if layer.baselayer == True:
             layerDico = {}
