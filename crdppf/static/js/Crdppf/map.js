@@ -301,7 +301,7 @@ var setInfoControl = function setInfoControl(){
 
 // Create OL map object, add base layer & zoom to max extent
 function makeMap(mapOptions, labels){
-    console.log(Crdppf.defaultTiles);
+
     // base layer: topographic layer
     var layer = new OpenLayers.Layer.WMTS({
         url: Crdppf.mapproxyUrl,
