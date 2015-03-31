@@ -55,74 +55,7 @@ var setInfoControl = function setInfoControl(){
         maxFeatures: 4,
         clickTolerance: 15
     });
-    
-    // On multiple property selection (DP case) the user is ask to select only one
-    Crdppf.PropertySelection = function(features, labels) {
 
-        var propertySelectionWindow;
-
-        if (store) {
-            store.removeAll();
-        }
-
-        if (features.length > 1) {
-            var properties = [];
-            for (var i = 0; i < features.length; i++){
-                properties[i] = [
-                i,
-                features[i].data.typimm+': '+features[i].data.nummai+' '+features[i].data.cadastre,
-                features[i].data.idemai,
-                features[i].data.source
-                ];
-            }
-
-            var store = new Ext.data.ArrayStore({
-                fields: ['index','displaytxt','idemai','idemai'],
-                data: properties 
-            });
-            
-            var combo = new Ext.form.ComboBox({
-                store: store,
-                displayField: 'displaytxt',
-                valueField: 'index',
-                typeAhead: true,
-                mode: 'local',
-                triggerAction: 'all',
-                emptyText: labels.choosePropertyMsg,
-                selectOnFocus: true,
-                listeners: {
-                    select: function(combo, record, index) {
-                        property = features[index];
-                        Crdppf.featureSelection(property);
-                        propertySelectionWindow.hide();
-                    }
-                }
-            });
-
-            if (propertySelectionWindow) {
-                propertySelectionWindow.destroy();
-            }
-
-            propertySelectionWindow = new Ext.Window({
-                title: Crdppf.labels.choosePropertyLabel,
-                width: 300,
-                autoHeight: true,
-                layout: 'fit',
-                closeAction: 'hide',
-                items: [combo],
-                listeners: {
-                    hide: function() {
-                        this.hide();
-                        store.removeAll();
-                    }
-                }
-            });
-
-            propertySelectionWindow.show();
-        } else {
-            return 0;
-        }
-    };
 
     // define actions on feature selection
     control.events.register("featuresselected", this, function(e) {
@@ -143,6 +76,74 @@ var setInfoControl = function setInfoControl(){
     control.activate();
 };
 
+    
+// On multiple property selection (DP case) the user is ask to select only one
+Crdppf.PropertySelection = function(features, labels) {
+
+    var propertySelectionWindow;
+
+    if (store) {
+        store.removeAll();
+    }
+
+    if (features.length > 1) {
+        var properties = [];
+        for (var i = 0; i < features.length; i++){
+            properties[i] = [
+            i,
+            features[i].data.typimm+': '+features[i].data.nummai+' '+features[i].data.cadastre,
+            features[i].data.idemai,
+            features[i].data.source
+            ];
+        }
+
+        var store = new Ext.data.ArrayStore({
+            fields: ['index','displaytxt','idemai','idemai'],
+            data: properties 
+        });
+        
+        var combo = new Ext.form.ComboBox({
+            store: store,
+            displayField: 'displaytxt',
+            valueField: 'index',
+            typeAhead: true,
+            mode: 'local',
+            triggerAction: 'all',
+            emptyText: labels.choosePropertyMsg,
+            selectOnFocus: true,
+            listeners: {
+                select: function(combo, record, index) {
+                    property = features[index];
+                    Crdppf.featureSelection(property);
+                    propertySelectionWindow.hide();
+                }
+            }
+        });
+
+        if (propertySelectionWindow) {
+            propertySelectionWindow.destroy();
+        }
+
+        propertySelectionWindow = new Ext.Window({
+            title: Crdppf.labels.choosePropertyLabel,
+            width: 300,
+            autoHeight: true,
+            layout: 'fit',
+            closeAction: 'hide',
+            items: [combo],
+            listeners: {
+                hide: function() {
+                    this.hide();
+                    store.removeAll();
+                }
+            }
+        });
+
+        propertySelectionWindow.show();
+    } else {
+        return 0;
+    }
+};
 
 Crdppf.featureSelection = function(property) {
 
