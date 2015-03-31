@@ -97,7 +97,7 @@ Crdppf.MeasureTool = function(map, measureLabelBox) {
                 "measure": this.handleMeasurements,
                 "measurepartial": this.handleMeasurements
             });
-            map.addControl(control);
+            Crdppf.Map.map.addControl(control);
         }
     };
 

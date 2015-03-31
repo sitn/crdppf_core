@@ -7,7 +7,39 @@ Crdppf.FeaturePanel = function Map() {
     this.description = 'Display info on feature query';       
     this.setInfoControl = setInfoControl;
     this.disableInfoControl = disableInfoControl;
+    this.root = root;
+    this.featureTree = featureTree;
 };
+
+
+// featureTree displayed in infoPanel as a global view 
+var featureTree = new Ext.tree.TreePanel({
+    title: Crdppf.labels.restrictionPanelTitle,
+    cls: 'featureTreeCls',
+    collapsed: false,
+    useArrows:false,
+    collapside: false,
+    animate:true,
+    lines: false,
+    enableDD:false,
+    rootVisible: false,
+    frame: false,
+    id: 'featureTree',
+    height:300,
+    autoScroll: true
+});
+
+var root = new Ext.tree.TreeNode({
+    text: 'Thèmes',
+    draggable:false,
+    id:'rootNode'
+});
+
+featureTree.setRootNode(root);
+
+var layerStore = new GeoExt.data.LayerStore({
+    map: Crdppf.Map.map
+});
 
 // Disable the existing infoControls
 var disableInfoControl = function disableInfoControl(){
@@ -17,7 +49,7 @@ var disableInfoControl = function disableInfoControl(){
     root.removeAll(true);
     var selectionLayer = Crdppf.Map.map.getLayer('selectionLayer');
     selectionLayer.removeAllFeatures();
-    infoControl = Crdppf.Map.map.getControl('infoControl001');
+    var infoControl = Crdppf.Map.map.getControl('infoControl001');
 
     if(infoControl){
         infoControl.destroy();
@@ -69,7 +101,7 @@ var setInfoControl = function setInfoControl(){
         }
     });
     control.events.register("featureunselected", this, function(e) {
-        select.removeFeatures([e.feature]);
+        Crdppf.Map.selectLayer.removeFeatures([e.feature]);
         root.removeAll(true);
     });
     Crdppf.Map.map.addControl(control);
@@ -149,7 +181,7 @@ Crdppf.featureSelection = function(property) {
 
     featureTree.expand(true);
     intersect.removeAllFeatures();
-    select.addFeatures([property]);
+    Crdppf.Map.selectLayer.addFeatures([property]);
 
     var parcelId = property.attributes.idemai;
     Crdppf.docfilters({'cadastrenb': parseInt(parcelId.split('_',1)[0])});

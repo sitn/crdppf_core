@@ -44,7 +44,7 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
                         }
                     }
                     Ext.getCmp('infoButton').toggle(true);
-                    MapO.setInfoControl();
+                    Crdppf.Map.setInfoControl();
                 }else{
                     for (n=1; n < rootLayerTree.childNodes.length; n++){
                         if( rootLayerTree.childNodes[n].id != 'baseLayers') {
@@ -107,12 +107,12 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
                         'checkchange': function(node, checked){
                             if(checked){
                                 overlaysList.push(node.id);
-                                MapO.setOverlays();
+                                Crdppf.Map.setOverlays();
                                 Ext.getCmp('infoButton').toggle(true);
                                 Crdppf.FeaturePanel.setInfoControl();
                             }else{
                                 overlaysList.remove(node.id);
-                                MapO.setOverlays();
+                                Crdppf.Map.setOverlays();
                                 Ext.getCmp('panButton').toggle(true);
                             }
                         }
@@ -161,7 +161,7 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
                                 node.parentNode.childNodes[k].getUI().toggleCheck(false);
                             } else {
                                 // set new backgound layer
-                                var theBaseLayer = MapO.map.getLayersBy('id', 'baseLayer')[0];
+                                var theBaseLayer = Crdppf.Map.map.getLayersBy('id', 'baseLayer')[0];
                                 
                                 if(theBaseLayer) {
                                     theBaseLayer.destroy();
@@ -191,7 +191,7 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
                                 }); 
 
                                 layer.id = 'baseLayer';
-                                MapO.map.addLayers([layer]);
+                                Crdppf.Map.map.addLayers([layer]);
                                 layer.redraw();
                             }
                         }

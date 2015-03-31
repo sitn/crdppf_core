@@ -289,7 +289,7 @@ Crdppf.init_main = function(lang) {
                     click: function(){
                         var pdfMask = new Ext.LoadMask(Ext.getCmp('pdfExtractWindow').body, {msg: Crdppf.labels.pdfLoadMessage});
                         pdfMask.show();
-                        var urlToOpen = Crdppf.printUrl + '?id=' + select.features[0].attributes.idemai;
+                        var urlToOpen = Crdppf.printUrl + '?id=' + Crdppf.Map.selectLayer.features[0].attributes.idemai;
                         var selectedRadio = Ext.getCmp('extractRadioGroup').getValue();
                         urlToOpen += '&type=' + selectedRadio.inputValue;
                         
@@ -358,7 +358,7 @@ Crdppf.init_main = function(lang) {
         iconCls: 'crdppf_printbutton',
         listeners:{
             click: function (){
-                if(select.features.length == 1){
+                if(Crdppf.Map.selectLayer.features.length == 1){
                     chooseExtract.show();
                 }
                 else {

@@ -37,7 +37,23 @@ Crdppf.Map = function Map(mapOptions, labels) {
     this.description = 'Manages all cartographic parameters and actions';       
     this.map = makeMap(mapOptions, labels);
     this.setOverlays = setOverlays;
+    this.selectLayer = select;
 };
+
+// selection layer: display selected features
+var select = new OpenLayers.Layer.Vector(
+    "Selection",
+    {
+        styleMap: new OpenLayers.Style({
+        'strokeColor':'#00ff00',
+        'fillOpacity': '0.5',
+        'fillColor': '#00ff00',
+        'strokeWidth':'3',
+        'pointRadius': '20'
+        }),
+        fixedLayer: true, 
+        displayInLayerSwitcher: false
+});
 
 // Create OL map object, add base layer & zoom to max extent
 function makeMap(mapOptions, labels){
@@ -56,24 +72,6 @@ function makeMap(mapOptions, labels){
     }); 
 
     layer.id = 'baseLayer';  
-
-    var selectStyle = new OpenLayers.Style({
-        'strokeColor':'#00ff00',
-        'fillOpacity': '0.5',
-        'fillColor': '#00ff00',
-        'strokeWidth':'3',
-        'pointRadius': '20'
-    });    
-
-    // selection layer: display selected features
-    select = new OpenLayers.Layer.Vector(
-        "Selection",
-        {
-            styleMap: selectStyle,
-            fixedLayer: true, 
-            displayInLayerSwitcher: false
-    });
-
     select.id = 'selectionLayer';
 
     var intersectStyle = new OpenLayers.Style({
@@ -168,7 +166,7 @@ function makeMap(mapOptions, labels){
 var setOverlays = function() {
 
     // remove existing infoControl
-    infoControl = this.map.getControl('infoControl001');
+    var infoControl = this.map.getControl('infoControl001');
     if(infoControl){
         infoControl.destroy();
     }
@@ -176,8 +174,8 @@ var setOverlays = function() {
     var selectionLayer = this.map.getLayer('selectionLayer');
     selectionLayer.removeAllFeatures();
 
-    layerName = 'Themes';
-    theLayer = this.map.getLayer('overlayLayer');
+    var layerName = 'Themes';
+    var theLayer = this.map.getLayer('overlayLayer');
     if(theLayer){
         this.map.removeLayer(theLayer);
     }
