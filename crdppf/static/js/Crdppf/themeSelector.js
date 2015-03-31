@@ -2,7 +2,9 @@
 
 // create layer tree and append nodes & subnodes to it
 Crdppf.ThemeSelector = function(labels, layerList) {
-       var myReader = new Ext.data.JsonReader({
+
+   // JsonReader for the theme selector's config
+   var myReader = new Ext.data.JsonReader({
         idProperty: 'id',
         root: 'themes',
         fields: [
@@ -11,12 +13,15 @@ Crdppf.ThemeSelector = function(labels, layerList) {
         ]
     });
 
-    var myStore = new Ext.data.Store({
+    // Store associated to the theme selector Json reader
+    var themeStore = new Ext.data.Store({
         reader: myReader
     });
+
     // load data and create listView
-    myStore.loadData(layerList);
+    themeStore.loadData(layerList);
     
+    // Template for the theme selector (list view)
     var themeTemplate = new Ext.XTemplate(
         '<p style="padding-top:6px">{[this.getTranslation(values.name)]}</p>',
         {
@@ -26,10 +31,11 @@ Crdppf.ThemeSelector = function(labels, layerList) {
              }
         }
     );
-    
+
+    // The theme selector: a list view
     var listView = new Ext.list.ListView({
         id: 'themeListView',
-        store: myStore,
+        store: themeStore,
         hideHeaders: true,
         autoWidth: true,
         boxMinWidth: 100,
@@ -58,13 +64,13 @@ Crdppf.ThemeSelector = function(labels, layerList) {
                     var ui = n.getUI();
                     ui.toggleCheck(false);
                 });
-                layerTree.getNodeById(myStore.getAt(index).id).getUI().toggleCheck(true);
+                layerTree.getNodeById(themeStore.getAt(index).id).getUI().toggleCheck(true);
                 Ext.getCmp('infoButton').toggle(true);
                 MapO.setInfoControl();
             }
         }
     });
-    
+
     // insert listView into a nice looking panel
     var themePanel = new Ext.Panel({
         id:'images-view',
