@@ -660,7 +660,6 @@ Crdppf.init_main = function(lang) {
         ]
     });
 
-	// Refait la mise en page si la fenêtre change de taille
-	//pass along browser window resize events to the panel
-	Ext.EventManager.onWindowResize(crdppf.doLayout,crdppf);
+    // Render the layout again on window resize event
+    Ext.EventManager.onWindowResize(crdppf.doLayout,crdppf);
 };
