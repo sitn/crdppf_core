@@ -3,6 +3,8 @@
  * @requires GeoExt/widgets/LegendPanel.js 
  * @requires GeoExt/widgets/WMSLegend.js
  * @include Crdppf/map.js
+ * @include Crdppf/featurePanel.js
+ * @include Crdppf/helpingFunctions.js
  * @include Crdppf/layerTree.js
  * @include OpenLayers/Control/MousePosition.js
  * @include Crdppf/searcher/searcher.js

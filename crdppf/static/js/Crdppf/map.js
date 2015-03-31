@@ -173,7 +173,7 @@ var setInfoControl = function setInfoControl(){
                     for (var i=0; i<jsonData.length;i++) {
                         lName = jsonData[i].attributes.layerName;
                         // create node for layer if not already created
-                        if(!contains(lName,lList)){
+                        if(!Crdppf.contains(lName,lList)){
                             var fullName = '';
                             var ll = Crdppf.layerList.themes;
                             for (var l=0;l<ll.length;l++){
@@ -187,7 +187,7 @@ var setInfoControl = function setInfoControl(){
                             var layerChild =  new Ext.tree.TreeNode({
                                 text: fullName,
                                 draggable: false,
-                                id: guid(),
+                                id: Crdppf.uuid(),
                                 leaf: false,
                                 expanded: true
                             });
@@ -218,7 +218,7 @@ var setInfoControl = function setInfoControl(){
                                         draggable: false,
                                         leaf: false,
                                         expanded: false,
-                                        id: guid(),
+                                        id: Crdppf.uuid(),
                                         listeners: {
                                             'click': function(node,e) {
                                                 intersect.removeAllFeatures();
@@ -235,7 +235,7 @@ var setInfoControl = function setInfoControl(){
                                         draggable: false,
                                         leaf: false,
                                         expanded: false,
-                                        id: guid()
+                                        id: Crdppf.uuid()
                                     });
                                     sameLayerNode.appendChild(contentNode);
                                     layerChild.appendChild(sameLayerNode);
@@ -250,7 +250,7 @@ var setInfoControl = function setInfoControl(){
                         var layerChild =  new Ext.tree.TreeNode({
                             text: Crdppf.labels.noRestrictionFoundTxt,
                             draggable: false,
-                            id: guid(),
+                            id: Crdppf.uuid(),
                             leaf: false,
                             expanded: true
                         });
@@ -489,26 +489,4 @@ var setOverlays = function() {
 
     }
     
-};
-
-// helping functions
-function s4() {
-  return Math.floor((1 + Math.random()) * 0x10000)
-             .toString(16)
-             .substring(1);
-}
-
-function guid() {
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-         s4() + '-' + s4() + s4() + s4();
-}
-
-// check if an element belongs to a list
-var contains = function contains(element,list){
-        for (var item in list) {
-            if(list[item]==element){
-                return true;
-            }
-        }
-    return false;
 };
