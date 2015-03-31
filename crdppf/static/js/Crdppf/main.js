@@ -15,16 +15,16 @@ var layerList;
 
 // MAIN USER INTERFACE
 Ext.onReady(function() {
-    
+
     Ext.namespace('Crdppf');
     Crdppf.layerList = '';
-    
+
     // set the application language to the user session settings
     var lang = ''; // The current session language
     // We need to ensure all json data are recieved by the client before starting the application
     Crdppf.loadingCounter = 0;
     var sync = 0;
-    
+
     var synchronize = function(sync) {
         if (sync == 1){
             Ext.MessageBox.buttonText.yes = Crdppf.labels.disclaimerAcceptance;
@@ -52,7 +52,7 @@ Ext.onReady(function() {
             synchronize();
         }
     };
-    
+
     var redirectAfterDisclaimer = function(userChoice){
         if (userChoice == 'yes'){
             Crdppf.init_main(lang);
@@ -63,7 +63,7 @@ Ext.onReady(function() {
 
     // Create LegalDocumentStore and load it
     Crdppf.legalDocuments();
-    
+
     // Get the current session language
     Ext.Ajax.request({
         url: Crdppf.getLanguageUrl,
@@ -178,7 +178,7 @@ Crdppf.init_main = function(lang) {
 
     var measureControls = new Crdppf.MeasureTool(map, measureLabelBox);
     measureControls.makeMeasureTool();
-    
+
     var measureToolsMenu = new Ext.SplitButton({
         text: Crdppf.labels.measureToolTxt,
         showText: true,
@@ -224,7 +224,7 @@ Crdppf.init_main = function(lang) {
             ]
         })
     });
- 
+
     // Panel to display the link to the PDF once generated
     var pdfDisplayPanel = new Ext.Panel({
         id:'pdfDisplayPanel',
@@ -326,7 +326,7 @@ Crdppf.init_main = function(lang) {
             }
         ]
     });
-        
+
     var chooseExtract = new Ext.Window({
         id: 'pdfExtractWindow',
         title: Crdppf.labels.chooseExtractTypeMsg,
@@ -345,7 +345,7 @@ Crdppf.init_main = function(lang) {
             }
         }
     });
-    
+
     // generate the pdf file of the current map
     var printButton = new Ext.Button({
         xtype: 'button',
@@ -510,7 +510,7 @@ Crdppf.init_main = function(lang) {
     var bottomToolBarHtml = '<span style="padding: 0 20px;">' + Crdppf.labels.mapBottomTxt + '</span>';
     bottomToolBarHtml += '<span id="mousepos" style="padding: 0 20px;"></span>';
     bottomToolBarHtml += '<div style="padding: 0 20px; margin-top: 3px;">'+ Crdppf.labels.disclaimerTxt + '</div>';
-    
+
     var bottomToolBar = new Ext.Toolbar({
         autoWidth: true,
         height: 50,
@@ -582,7 +582,7 @@ Crdppf.init_main = function(lang) {
         height:300,
         autoScroll: true
     });
-    
+
     root = new Ext.tree.TreeNode({
         text: 'Thèmes',
         draggable:false,
@@ -593,7 +593,7 @@ Crdppf.init_main = function(lang) {
     var layerStore = new GeoExt.data.LayerStore({
         map: MapO.map
     });
-    
+
     //legend panel in the lower east layout part - serves to display the layer legends
     var legendPanel = new GeoExt.LegendPanel({
         collapsible:true, 
@@ -610,7 +610,7 @@ Crdppf.init_main = function(lang) {
             }
         }
     });
-    
+
     //query info display panel in the upper east part of the layout - serves to display the feature info
     infoPanel = new Ext.Panel({
         header: false,
@@ -631,10 +631,10 @@ Crdppf.init_main = function(lang) {
             legendPanel
         ]
     });
-    
+
     // Create the inital view with the legal documents
     Crdppf.legalDocuments.dataView = Crdppf.legalDocuments.createView(Crdppf.labels);
-    
+
     // Container for the map and legal documents display
     centerPanel = new Ext.TabPanel({
         region: 'center',
@@ -645,7 +645,7 @@ Crdppf.init_main = function(lang) {
             Crdppf.legalDocuments.dataView
         ]
     });
-    
+
     // Main window layout
     var crdppf = new Ext.Viewport({
         layout: 'border',
