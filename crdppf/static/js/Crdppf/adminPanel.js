@@ -19,7 +19,7 @@ Ext.onReady(function() {
         url: Crdppf.getLanguageUrl,
         success: function(response) {
             var lang_json = Ext.decode(response.responseText);
-            lang = lang_json['lang'];
+            lang = lang_json.lang;
         },
         method: 'POST',
         failure: function () {
