@@ -83,14 +83,14 @@ var setInfoControl = function setInfoControl(){
         }
         
         if (features.length > 1) {
-            var properties = []
+            var properties = [];
             for (var i = 0; i < features.length; i++){
                 properties[i] = [
                 i,
                 features[i].data.typimm+': '+features[i].data.nummai+' '+features[i].data.cadastre,
                 features[i].data.idemai,
                 features[i].data.source
-                ]
+                ];
             }
 
             var store = new Ext.data.ArrayStore({
@@ -140,7 +140,7 @@ var setInfoControl = function setInfoControl(){
         } else {
             return 0;
         }
-    }
+    };
 
     Crdppf.featureSelection = function(property) {
 
@@ -195,7 +195,7 @@ var setInfoControl = function setInfoControl(){
                             // iterate over all features: create a node for each restriction and group them by their owning layer
                             for (var j=0; j<jsonData.length; j++) {
                                 if (jsonData[j].attributes.layerName == lName){
-                                    Crdppf.docfilters({'objectids': [jsonData[i].fid]})
+                                    Crdppf.docfilters({'objectids': [jsonData[i].fid]});
                                     featureClass = jsonData[j].attributes.featureClass;
                                     html = '';
                                     // Attribute keys are: statutjuridique, teneur, layerName, datepublication
@@ -279,7 +279,7 @@ var setInfoControl = function setInfoControl(){
             });
         }   
         
-        }
+        };
     // define actions on feature selection
     control.events.register("featuresselected", this, function(e) {
         // if there is more than one feature, we present the user with a selection window
