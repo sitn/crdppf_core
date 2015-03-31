@@ -9,13 +9,13 @@ Crdppf.docfilters = function(filter) {
     }
 
     if ('objectids' in filter) {
-        if (filter['objectids'].length > 0) {
-            for (var i=0; i < filter['objectids'].length; i++){
-                if (!(isInArray(filter['objectids'][i], Crdppf.filterlist['objectids']))){
-                    Crdppf.filterlist['objectids'].push(filter['objectids'][i]);
+        if (filter.objectids.length > 0) {
+            for (var i=0; i < filter.objectids.length; i++){
+                if (!(isInArray(filter.objectids[i], Crdppf.filterlist.objectids))){
+                    Crdppf.filterlist.objectids.push(filter.objectids[i]);
                 } else {
-                    if (isInArray(filter['objectids'][i], Crdppf.filterlist['objectids'])){
-                        Crdppf.filterlist['objectids'].splice(Crdppf.filterlist['objectids'].indexOf(filter['objectids'][i]), 1);
+                    if (isInArray(filter.objectids[i], Crdppf.filterlist.objectids)){
+                        Crdppf.filterlist.objectids.splice(Crdppf.filterlist.objectids.indexOf(filter.objectids[i]), 1);
                     }
                 }
             }
@@ -25,16 +25,16 @@ Crdppf.docfilters = function(filter) {
     // if a topicid is passed in the filter, check if it exists already in the array
     // if not, add it - else remove it
     if ('topicfk' in filter) {
-        if (filter['topicfk']) {
-            for (key in filter['topicfk']){
-                if (filter['topicfk'][key] == true) {
+        if (filter.topicfk) {
+            for (var key in filter.topicfk){
+                if (filter.topicfk[key] === true) {
                     // function to add a filter criteria
-                    if ( !(isInArray(key, Crdppf.filterlist['topic']))){
-                        Crdppf.filterlist['topic'].push(key);
+                    if ( !(isInArray(key, Crdppf.filterlist.topic))){
+                        Crdppf.filterlist.topic.push(key);
                     }
                 } else {
-                    if (isInArray(key, Crdppf.filterlist['topic'])){
-                        Crdppf.filterlist['topic'].splice(Crdppf.filterlist['topic'].indexOf(key), 1);
+                    if (isInArray(key, Crdppf.filterlist.topic)){
+                        Crdppf.filterlist.topic.splice(Crdppf.filterlist.topic.indexOf(key), 1);
                     }
                 }
             }
@@ -42,21 +42,21 @@ Crdppf.docfilters = function(filter) {
     }
     
     if ('cadastrenb' in filter) {
-        if (filter['cadastrenb'] > 0) {
-            Crdppf.filterlist['cadastrenb'] = filter['cadastrenb'];
+        if (filter.cadastrenb > 0) {
+            Crdppf.filterlist.cadastrenb = filter.cadastrenb;
         } else {
-            Crdppf.filterlist['cadastrenb'] = 0;
+            Crdppf.filterlist.cadastrenb = 0;
         }
     }
 
     Crdppf.legalDocuments.store.clearFilter();
     Crdppf.legalDocuments.store.filterBy(function (record) {
-        if (Crdppf.filterlist['cadastrenb'] > 0){
-            if (record.get('cadastrenb') == Crdppf.filterlist['cadastrenb'] || record.get('cadastrenb') == 0) {
-                if (Crdppf.filterlist['topic'].length > 0) {
-                    for (var i = 0; i < Crdppf.filterlist['topic'].length; i++){
+        if (Crdppf.filterlist.cadastrenb > 0){
+            if (record.get('cadastrenb') == Crdppf.filterlist.cadastrenb || record.get('cadastrenb') === 0) {
+                if (Crdppf.filterlist.topic.length > 0) {
+                    for (var i = 0; i < Crdppf.filterlist.topic.length; i++){
                     // if the topicid is in the filterlist show the corresponding documents
-                        if (record.get('origins').indexOf(Crdppf.filterlist['topic'][i].toString()) > -1) {
+                        if (record.get('origins').indexOf(Crdppf.filterlist.topic[i].toString()) > -1) {
                             return record;
                         }
                     }
@@ -65,9 +65,9 @@ Crdppf.docfilters = function(filter) {
                 }
             }
         } else {
-            for (var i=0; i < Crdppf.filterlist['topic'].length; i++){
+            for (var j=0; j < Crdppf.filterlist.topic.length; j++){
             // if the topicid is in the filterlist show the corresponding documents
-                if (record.get('origins').indexOf(Crdppf.filterlist['topic'][i].toString()) > -1) {
+                if (record.get('origins').indexOf(Crdppf.filterlist.topic[j].toString()) > -1) {
                     return record;
                 }
             }
@@ -125,7 +125,7 @@ Crdppf.legalDocuments = function() {
             {name: 'publicationdate', type:'date'},
             {name: 'revisiondate', type:'date'}, //date de modification
             {name: 'operator'}, 
-            {name: 'origins'}, 
+            {name: 'origins'} 
             //{name: 'validationdate', type:'date'},  //date validation
             //{name: 'modifiedby'},
             //{name: 'status'} //for historization P:provisory, V:valid; A:archived; D:deleted      
@@ -142,6 +142,8 @@ Crdppf.legalDocuments = function() {
 
 Crdppf.legalDocuments.createView = function(labels) {
 
+    var legalDocumentsStore = null;
+    
     if (Crdppf.legalDocuments.store.getTotalCount()> 0) {
         // Parse the legal documents and apply the corresponding template
         var templates = new Ext.XTemplate(
@@ -417,27 +419,18 @@ Crdppf.legalDocuments.createView = function(labels) {
                 return doctype == 'other';
             },
             isFederal: function(state){
-                return state == null;
+                return state === null;
             },
             isCantonal: function(state, municipalityname){
-                return state != null && (municipalityname == null || municipalityname == '');
+                return state !== null && (municipalityname === null || municipalityname === '');
             },
             isCommunal: function(state, municipalityname){
-                return state != null && municipalityname != null;
+                return state !== null && municipalityname !== null;
             }
         }
         );
-             
-        // Create the legal information container
-        var legalInfo = new Ext.DataView({
-            title: labels.legalBasisTab,
-            store: this.store,
-            tpl: templates,
-            autoHeight: true,
-            multiSelect: true,
-            //overClass: 'x-view-over', - not used yet, might be nice so I leave it for now
-            emptyText: labels.noDocumentsTxt
-        });
+
+        legalDocumentsStore = this.store;
           
     } else {
         var nodocs = ('<div style="font-family:Arial;padding:5px;">'+
@@ -446,20 +439,19 @@ Crdppf.legalDocuments.createView = function(labels) {
                 '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.noDocumentsTxt+'</h2>'+
             '</div>'+
         '</div>');
+    }
 
-        // Create the legal information container
-        var legalInfo = new Ext.DataView({
-            title: labels.legalBasisTab,
-            html: nodocs,
-            autoHeight: true,
-            multiSelect: true,
-            //overClass: 'x-view-over', - not used yet, might be nice so I leave it for now
-            emptyText: labels.noDocumentsTxt
-        });
-
-    };
+      // Create the legal information container
+    var legalInfo = new Ext.DataView({
+        title: labels.legalBasisTab,
+        store: legalDocumentsStore,
+        tpl: templates,
+        autoHeight: true,
+        multiSelect: true,
+        emptyText: labels.noDocumentsTxt
+    });
 
     return legalInfo;
-                
+
 };
 
