@@ -191,11 +191,11 @@ Crdppf.init_main = function(lang) {
                     id: 'distanceButton',
                     enableToggle: true,
                     toggleGroup: 'mapTools',
-                    listeners:{
+                    listeners: {
                         toggle: function (me, pressed){
                             if (pressed){
                                 measureControlO.toggleMeasureControl('line');
-                            } else if( !pressed && !Ext.getCmp('polygoneButton').pressed) {
+                            } else if(!pressed && !Ext.getCmp('polygoneButton').pressed) {
                                 measureControlO.disableMeasureControl();
                                 infoButton.toggle(true);
                             }
@@ -208,12 +208,11 @@ Crdppf.init_main = function(lang) {
                     id: 'polygoneButton',
                     enableToggle: true,
                     toggleGroup: 'mapTools',
-                    listeners:{
+                    listeners: {
                         toggle: function (me, pressed){
                             if (pressed) {
-                                console.log("polygon");
                                 measureControlO.toggleMeasureControl('polygon');
-                            } else if( !pressed && !Ext.getCmp('distanceButton').pressed) {
+                            } else if(!pressed && !Ext.getCmp('distanceButton').pressed) {
                                 measureControlO.disableMeasureControl();
                                 infoButton.toggle(true);
                             }
