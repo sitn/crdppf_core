@@ -107,7 +107,6 @@ Crdppf.translationsPanel = function(labels) {
         },
         sm: new Ext.grid.RowSelectionModel({singleSelect: true}),
         bbar: new Ext.PagingToolbar({
-                pageSize: myPageSize,
                 store: translationsstore,       // grid and PagingToolbar using same store
                 displayInfo: true,
                 pageSize: myPageSize,
