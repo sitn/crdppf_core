@@ -34,7 +34,6 @@ Ext.onReady(function() {
             for (var i = 0; i < buttons.length; i++){
                  buttons[i].addClass('msgButtonStyle'); 
             }
-            
             Ext.Msg.show({
                title: Crdppf.labels.disclaimerWindowTitle,
                msg: Crdppf.labels.disclaimerMsg,
@@ -68,7 +67,7 @@ Ext.onReady(function() {
         url: Crdppf.getLanguageUrl,
         success: function(response) {
             var lang_json = Ext.decode(response.responseText);
-            lang = lang_json['lang'];
+            lang = lang_json.lang;
             OpenLayers.Lang.setCode(lang);
             if (lang !== '' && lang == 'Fr'){
                 OpenLayers.Util.extend(OpenLayers.Lang.fr, Crdppf.labels);
@@ -163,8 +162,8 @@ Crdppf.init_main = function(lang) {
                 Crdppf.docfilters({'cadastrenb':0});
                 //Crdppf.docfilters({'municipalitynb':0});
                 // unset the restrictionid list found for thre feature
-                for (var i = Crdppf.filterlist['objectids'].length; i > 0; i--){
-                    Crdppf.docfilters({'objectids':[Crdppf.filterlist['objectids'][i-1]]});
+                for (var i = Crdppf.filterlist.objectids.length; i > 0; i--){
+                    Crdppf.docfilters({'objectids':[Crdppf.filterlist.objectids[i-1]]});
                 }
                 infoButton.toggle(false);
             }                  
@@ -178,57 +177,49 @@ Crdppf.init_main = function(lang) {
     var measureControlO = new Crdppf.MeasureTool(map, measureLabelBox);
     measureControlO.makeMeasureTool();
     
-    var lineMeasureButton = new Ext.Button({
-        xtype: 'button',
-        tooltip: Crdppf.labels.infoButtonTlp,
-        text: Crdppf.labels.measureToolDistanceTxt,
-        margins: '0 0 0 20',
-        id: 'distanceButton',
-        width: 40,
-        enableToggle: true,
-        toggleGroup: 'mapTools',
-        iconCls: 'crdppf_distancebutton',
-        listeners:{
-            toggle: function (me, pressed){
-                if (pressed){
-                    measureControlO.toggleMeasureControl('line');
-                } else if( !pressed && !polygonMeasureButton.pressed) {
-                    measureControlO.disableMeasureControl();
-                    infoButton.toggle(true);
-                }
-            }
-        }
-    });    
-    
-    var polygonMeasureButton = new Ext.Button({
-        xtype: 'button',
-        tooltip: Crdppf.labels.infoButtonTlp,
-        text: Crdppf.labels.measureToolSurfaceTxt,
-        margins: '0 0 0 20',
-        id: 'polygonButton',
-        width: 40,
-        enableToggle: true,
-        toggleGroup: 'mapTools',
-        iconCls: 'crdppf_polygonbutton',
-        listeners:{
-            toggle: function (me, pressed){
-                if (pressed) {
-                    measureControlO.toggleMeasureControl('polygon');
-                } else if( !pressed && !lineMeasureButton.pressed) {
-                    measureControlO.disableMeasureControl();
-                    infoButton.toggle(true);
-                }
-            }                  
-        }
-    });
-
     var measureToolsMenu = new Ext.SplitButton({
         text: Crdppf.labels.measureToolTxt,
         showText: true,
         menu: new Ext.menu.Menu({
             items: [
-                lineMeasureButton,
-                polygonMeasureButton
+                {
+                    xtype: 'button',
+                    width: 90,
+                    height: 22,
+                    iconCls: 'crdppf_distancebutton',
+                    text: Crdppf.labels.measureToolDistanceTxt,
+                    id: 'distanceButton',
+                    enableToggle: true,
+                    toggleGroup: 'mapTools',
+                    listeners:{
+                        toggle: function (me, pressed){
+                            if (pressed){
+                                measureControlO.toggleMeasureControl('line');
+                            } else if( !pressed && !Ext.getCmp('polygoneButton').pressed) {
+                                measureControlO.disableMeasureControl();
+                                infoButton.toggle(true);
+                            }
+                        }
+                    }
+                },{
+                    xtype: 'button',
+                    iconCls: 'crdppf_polygonbutton',
+                    text: Crdppf.labels.measureToolSurfaceTxt,
+                    id: 'polygoneButton',
+                    enableToggle: true,
+                    toggleGroup: 'mapTools',
+                    listeners:{
+                        toggle: function (me, pressed){
+                            if (pressed) {
+                                console.log("polygon");
+                                measureControlO.toggleMeasureControl('polygon');
+                            } else if( !pressed && !Ext.getCmp('distanceButton').pressed) {
+                                measureControlO.disableMeasureControl();
+                                infoButton.toggle(true);
+                            }
+                        }   
+                    }
+                }
             ]
         })
     });
@@ -302,7 +293,7 @@ Crdppf.init_main = function(lang) {
                             url: urlToOpen,
                             success: function(response) {
                                 var result = Ext.util.JSON.decode(response.responseText);
-                                var pdfurl = result['pdfurl'];
+                                var pdfurl = result.pdfurl;
                                 var button = Ext.getCmp('pdfDisplayButton');
                                 button.setHandler(function() {window.open(pdfurl);});
                                 Ext.getCmp('pdfDisplayPanel').show();
