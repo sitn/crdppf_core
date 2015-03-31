@@ -71,7 +71,7 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
             checked: false,
             listeners: {
                 'checkchange': function(node, checked){
-                    MapO.disableInfoControl();
+                    Crdppf.FeaturePanel.disableInfoControl();
                     if (checked){
                         var filter = {};
                         filter[node.id] = checked;
@@ -109,7 +109,7 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
                                 overlaysList.push(node.id);
                                 MapO.setOverlays();
                                 Ext.getCmp('infoButton').toggle(true);
-                                MapO.setInfoControl();
+                                Crdppf.FeaturePanel.setInfoControl();
                             }else{
                                 overlaysList.remove(node.id);
                                 MapO.setOverlays();

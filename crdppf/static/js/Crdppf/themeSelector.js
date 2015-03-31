@@ -66,7 +66,7 @@ Crdppf.ThemeSelector = function(labels, layerList) {
                 });
                 layerTree.getNodeById(themeStore.getAt(index).id).getUI().toggleCheck(true);
                 Ext.getCmp('infoButton').toggle(true);
-                MapO.setInfoControl();
+                Crdppf.FeaturePanel.setInfoControl();
             }
         }
     });

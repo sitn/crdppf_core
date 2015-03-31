@@ -126,7 +126,10 @@ Crdppf.init_main = function(lang) {
         divMousePosition: 'mousepos'
     };
     MapO = new Crdppf.Map(mapOptions,Crdppf.labels);
+    Crdppf.Map = MapO;
     var map = MapO.map;
+    
+    Crdppf.FeaturePanel = new Crdppf.FeaturePanel();
 
     // getFeatureInfo button: activates the Openlayers infoControl
     var infoButton = new Ext.Button({
@@ -141,7 +144,7 @@ Crdppf.init_main = function(lang) {
         listeners:{
             toggle: function (me, pressed){
                 if (pressed) {
-                    MapO.setInfoControl();
+                    Crdppf.FeaturePanel.setInfoControl();
                 }
             }                  
         }
