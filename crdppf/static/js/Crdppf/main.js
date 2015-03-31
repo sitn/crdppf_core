@@ -125,9 +125,11 @@ Crdppf.init_main = function(lang) {
     var mapOptions = {
         divMousePosition: 'mousepos'
     };
-    MapO = new Crdppf.Map(mapOptions,Crdppf.labels);
+    
+    // TODO: clean this
+    var MapO = new Crdppf.Map(mapOptions,Crdppf.labels);
     Crdppf.Map = MapO;
-    var map = MapO.map;
+    var map = Crdppf.Map.map;
     
     Crdppf.FeaturePanel = new Crdppf.FeaturePanel();
 
@@ -161,14 +163,10 @@ Crdppf.init_main = function(lang) {
         iconCls: 'crdppf_clearselectionbutton',
         listeners:{
             click: function (){
-                var selectionLayer = MapO.map.getLayer('selectionLayer');
+                var selectionLayer = Crdppf.Map.map.getLayer('selectionLayer');
                 selectionLayer.removeAllFeatures();
-                MapO.disableInfoControl();
-                // When unselecting the feature, we also reset the document filter criterias
-                // unset the cadastre and municipality number
+                Crdppf.Map.disableInfoControl();
                 Crdppf.docfilters({'cadastrenb':0});
-                //Crdppf.docfilters({'municipalitynb':0});
-                // unset the restrictionid list found for thre feature
                 for (var i = Crdppf.filterlist.objectids.length; i > 0; i--){
                     Crdppf.docfilters({'objectids':[Crdppf.filterlist.objectids[i-1]]});
                 }
@@ -385,7 +383,7 @@ Crdppf.init_main = function(lang) {
         iconCls: 'crdppf_panbutton',
         listeners:{
             click: function (){
-                MapO.disableInfoControl();
+                Crdppf.Map.disableInfoControl();
             }  
         }
     });
@@ -401,7 +399,7 @@ Crdppf.init_main = function(lang) {
         iconCls: 'crdppf_zoominbutton',
         listeners:{
             click: function (){
-                MapO.map.zoomIn();
+                Crdppf.Map.map.zoomIn();
             }  
         }
     });
@@ -417,7 +415,7 @@ Crdppf.init_main = function(lang) {
         iconCls: 'crdppf_zoomoutbutton',
         listeners:{
             click: function (){
-                MapO.map.zoomOut();
+                Crdppf.Map.map.zoomOut();
             }  
         }
     });
@@ -482,19 +480,17 @@ Crdppf.init_main = function(lang) {
 
     // create the mapPanel toolbar
     var mapToolbar = new Ext.Toolbar({
-    autoWidth: true,
-    height: 20,
-    cls: 'map-toolbar',
-    items: [
-        panButton,
-        infoButton,
-        clearSelectionButton,
-        printButton,
-        zoomInButton,
-        zoomOutButton,
-        measureToolsMenu,
-        measureLabelBox
-        ]
+        autoWidth: true,
+        height: 20,
+        cls: 'map-toolbar',
+        items: [panButton,
+            infoButton,
+            clearSelectionButton,
+            printButton,
+            zoomInButton,
+            zoomOutButton,
+            measureToolsMenu,
+            measureLabelBox]
    });
 
    // create the mapPanel
@@ -571,38 +567,10 @@ Crdppf.init_main = function(lang) {
         }
       });
 
-   // featureTree displayed in infoPanel as a global view 
-    featureTree = new Ext.tree.TreePanel({
-        title: Crdppf.labels.restrictionPanelTitle,
-        cls: 'featureTreeCls',
-        collapsed: false,
-        useArrows:false,
-        collapside: false,
-        animate:true,
-        lines: false,
-        enableDD:false,
-        rootVisible: false,
-        frame: false,
-        id: 'featureTree',
-        height:300,
-        autoScroll: true
-    });
-
-    root = new Ext.tree.TreeNode({
-        text: 'Thèmes',
-        draggable:false,
-        id:'rootNode'
-    });
-
-    featureTree.setRootNode(root);
-    var layerStore = new GeoExt.data.LayerStore({
-        map: MapO.map
-    });
-
     //legend panel in the lower east layout part - serves to display the layer legends
     var legendPanel = new GeoExt.LegendPanel({
         collapsible:true, 
-        map: MapO.map,
+        map: Crdppf.Map.map,
         cls:'legendPanelCls',
         title: Crdppf.labels.legendPanelTitle,
         autoScroll: true,
@@ -617,7 +585,7 @@ Crdppf.init_main = function(lang) {
     });
 
     //query info display panel in the upper east part of the layout - serves to display the feature info
-    infoPanel = new Ext.Panel({
+    var infoPanel = new Ext.Panel({
         header: false,
         layout: 'vbox',
         width: 300,
@@ -641,7 +609,7 @@ Crdppf.init_main = function(lang) {
     Crdppf.legalDocuments.dataView = Crdppf.legalDocuments.createView(Crdppf.labels);
 
     // Container for the map and legal documents display
-    centerPanel = new Ext.TabPanel({
+    var centerPanel = new Ext.TabPanel({
         region: 'center',
         activeTab: 0, // index or id
         autoScroll: true,
