@@ -34,14 +34,16 @@ Ext.onReady(function() {
             for (var i = 0; i < buttons.length; i++){
                  buttons[i].addClass('msgButtonStyle'); 
             }
-            Ext.Msg.show({
-               title: Crdppf.labels.disclaimerWindowTitle,
-               msg: Crdppf.labels.disclaimerMsg,
-               buttons: Ext.Msg.YESNO,
-               fn: redirectAfterDisclaimer,
-               animEl: 'elId',
-               icon: Ext.MessageBox.WARNING
-            });
+                        Crdppf.init_main(lang);
+
+            // Ext.Msg.show({
+               // title: Crdppf.labels.disclaimerWindowTitle,
+               // msg: Crdppf.labels.disclaimerMsg,
+               // buttons: Ext.Msg.YESNO,
+               // fn: redirectAfterDisclaimer,
+               // animEl: 'elId',
+               // icon: Ext.MessageBox.WARNING
+            // });
         }
     };
         
@@ -174,8 +176,8 @@ Crdppf.init_main = function(lang) {
         cls: 'measureOutput'
     });
 
-    var measureControlO = new Crdppf.MeasureTool(map, measureLabelBox);
-    measureControlO.makeMeasureTool();
+    var measureControls = new Crdppf.MeasureTool(map, measureLabelBox);
+    measureControls.makeMeasureTool();
     
     var measureToolsMenu = new Ext.SplitButton({
         text: Crdppf.labels.measureToolTxt,
@@ -194,9 +196,9 @@ Crdppf.init_main = function(lang) {
                     listeners: {
                         toggle: function (me, pressed){
                             if (pressed){
-                                measureControlO.toggleMeasureControl('line');
+                                measureControls.toggleMeasureControl('line');
                             } else if(!pressed && !Ext.getCmp('polygoneButton').pressed) {
-                                measureControlO.disableMeasureControl();
+                                measureControls.disableMeasureControl();
                                 infoButton.toggle(true);
                             }
                         }
@@ -211,9 +213,9 @@ Crdppf.init_main = function(lang) {
                     listeners: {
                         toggle: function (me, pressed){
                             if (pressed) {
-                                measureControlO.toggleMeasureControl('polygon');
+                                measureControls.toggleMeasureControl('polygon');
                             } else if(!pressed && !Ext.getCmp('distanceButton').pressed) {
-                                measureControlO.disableMeasureControl();
+                                measureControls.disableMeasureControl();
                                 infoButton.toggle(true);
                             }
                         }   
@@ -460,7 +462,7 @@ Crdppf.init_main = function(lang) {
     });
 
     // set the lang parameter in session when selected through the language buttons
-    function setLanguage(value){
+    var setLanguage = function(value){
         var request = OpenLayers.Request.GET({
             url: Crdppf.setLanguageUrl,
             params: {
