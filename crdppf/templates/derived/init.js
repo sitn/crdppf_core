@@ -78,12 +78,13 @@ Crdppf.baseLayersList = {'baseLayers': [
         %>
     % endfor
 ]};
-Crdppf.defaultTiles = {}
-% if len(baseLayers) > 1:
-    Crdppf.defaultTiles = {
-        'wmtsname' : "${baseLayers[0]['wmtsname']}",
-        'tile_format' : "${baseLayers[0]['tile_format']}"
-    }
+
+% if len(baseLayers) > 0:
+    Crdppf.defaultTiles = Crdppf.baseLayersList['baseLayers'][0];
 % else:
-    Crdppf.defaultTiles = {'wmtsname' : None, 'tile_format': None};
+    % if 'defaultTiles' in request.registry.settings.keys() :
+        Crdppf.defaultTiles = {${request.registry.settings['defaultTiles']|n}};
+    % else:
+        Crdppf.defaultTiles = {'wmtsname': 'undefined', 'tile_format': 'undefined'};
+    % endif
 % endif

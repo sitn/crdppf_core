@@ -97,6 +97,7 @@ class PDFConfig(object):
         self.placeholder = config['placeholder']
         self.pdfbasename = config['pdfbasename']
         self.siteplanbasename = config['siteplanbasename']
+        self.optionaltopics = config['optionaltopics']
 
 class AppendixFile(FPDF):
     """The helper class to create the appendices files with the same corporate
@@ -1101,16 +1102,17 @@ class Extract(FPDF):
                 self.cell(118, 6,self.topiclist[topic]['topicname'],0,0,'L')
                 self.cell(15, 6,'',0,0,'L')
                 self.cell(15, 6,'',0,1,'L')
-                
-        self.ln()
-        self.set_font(*pdfconfig.textstyles['tocbold'])
-        self.multi_cell(0, 5, translations['restrictionnotlegallybindinglabel'], 'B', 1, 'L')
-        self.ln()
 
-        self.set_font(*pdfconfig.textstyles['tocbold'])
-        self.cell(118, 6, translations['norestrictionlabel'], 0, 0, 'L')
-        self.cell(15, 6, str(''), 0, 0, 'L')
-        self.cell(15, 6, str(''), 0, 1, 'L')
+        if pdfconfig.optionaltopics == True :
+            self.ln()
+            self.set_font(*pdfconfig.textstyles['tocbold'])
+            self.multi_cell(0, 5, translations['restrictionnotlegallybindinglabel'], 'B', 1, 'L')
+            self.ln()
+
+            self.set_font(*pdfconfig.textstyles['tocbold'])
+            self.cell(118, 6, translations['norestrictionlabel'], 0, 0, 'L')
+            self.cell(15, 6, str(''), 0, 0, 'L')
+            self.cell(15, 6, str(''), 0, 1, 'L')
 
     def write_thematic_page(self, topic):
         """Writes the page for the given topic

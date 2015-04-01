@@ -27,4 +27,3 @@ Crdppf.mapOverviewSizeW = "${request.registry.settings['mapOverviewSizeW']}";
 Crdppf.mapOverviewSizeH = "${request.registry.settings['mapOverviewSizeH']}";
 Crdppf.keymap= "${request.registry.settings['keymap']}";
 Crdppf.OLImgPath = "${request.static_url('crdppf:static/images/ol/')}";
-Crdppf.defaultTiles = {${request.registry.settings['defaultTiles']|n}};

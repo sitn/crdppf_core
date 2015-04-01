@@ -34,8 +34,10 @@ def initjs(request):
     baselayers = []
     # get all layers
     layers = DBSession.query(Layers).order_by(Layers.layerid).all()
+    baselayerexists = False
     for layer in layers:
         if layer.baselayer == True:
+            baselayerexists = True
             layerDico = {}
             layerDico['id'] = layer.layerid
             layerDico['image'] = layer.image
@@ -59,10 +61,24 @@ def initjs(request):
                 'updatedate': layer.updatedate,
                 'topicfk': layer.topicfk
             })
+    if baselayerexists == False :
+        if request.registry.settings['defaultTiles']:
+            defaultTiles = {}
+            defaultlayer = str(request.registry.settings['defaultTiles']).split(',')
+            for param in defaultlayer:
+                key, value = param.replace("'",'').split(':')
+                defaultTiles[key] = value
+            layerDico = {}
+            layerDico['id'] = '9999'
+            layerDico['image'] = None
+            layerDico['name'] = 'default_layer'
+            layerDico['wmtsname'] = defaultTiles['wmtsname']
+            layerDico['tile_format'] = defaultTiles['tile_format']
+            baselayers.append(layerDico)
 
     init = {'fr': locals,'layerlist': layerlist, 'baseLayers': baselayers}
     request.response.content = 'application/javascript'
-    
+
     return init
     
 @view_config(route_name='globalsjs', renderer='crdppf:templates/derived/globals.js')
