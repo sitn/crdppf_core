@@ -32,12 +32,10 @@ Ext.namespace('Crdppf');
 OpenLayers.ImgPath = Crdppf.OLImgPath;  
 
 // Constructor
-Crdppf.Map = function Map(mapOptions, labels) {
-    this.title = 'Crdppf OpenLayers custom map object';
-    this.description = 'Manages all cartographic parameters and actions';       
+Crdppf.Map = function Map(mapOptions, labels) {    
     this.map = map(mapOptions, labels);
-    this.setOverlays = setOverlays;
     this.selectLayer = select;
+    console.log(this);
 };
 
 // selection layer: display selected features
@@ -163,7 +161,8 @@ var map = function (mapOptions, labels){
 * Parameters:
 * none
 */ 
-var setOverlays = function() {
+
+Crdppf.Map.prototype.setOverlays = function() {
 
     // remove existing infoControl
     var infoControl = this.map.getControl('infoControl001');
@@ -172,7 +171,7 @@ var setOverlays = function() {
     }
     // empty selection layer
     var selectionLayer = this.map.getLayer('selectionLayer');
-    selectionLayer.removeAllFeatures();
+    this.selectLayer.removeAllFeatures();
 
     var layerName = 'Themes';
     var theLayer = this.map.getLayer('overlayLayer');
