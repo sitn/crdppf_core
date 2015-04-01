@@ -1,9 +1,18 @@
 Ext.namespace('Crdppf');
 
-Crdppf.MeasureTool = function(map, measureLabelBox) {
+Crdppf.MeasureTool = function(map){
+    this.init(map);
+};
 
-    // Write measurement to Ext Window html
-    this.handleMeasurements = function(event) {
+Crdppf.MeasureTool.prototype = {
+    /***
+    * Object: the OL measure controls
+    ***/
+    measureControls: null,
+    /***
+    * Method: Print the measure to html component
+    ***/
+    handleMeasurements: function(event) {
         var geometry = event.geometry;
         var units = event.units;
         var order = event.order;
@@ -14,21 +23,26 @@ Crdppf.MeasureTool = function(map, measureLabelBox) {
         } else {
             out += measure.toFixed(3) + " " + units + "<sup>2</" + "sup>";
         }
-        measureLabelBox.setText(out, false);
-    };
-
-    this.toggleMeasureControl = function toggleMeasureControl(type) {
-        for(key in measureControls) {
-            var control = measureControls[key];
+        Ext.getCmp('measureLabelBox').setText(out, false);
+    },
+    /***
+    * Activate the measure control
+    ***/
+    toggleMeasureControl:function (type) {
+        for(var key in this.measureControls) {
+            var control = this.measureControls[key];
             if(type == key) {
                 control.activate();
             } else {
                 control.deactivate();
             }
         }
-    };
-
-    this.makeMeasureTool = function makeMeasureTool(){
+    },
+    /***
+    * Initialize the measure control
+    ***/
+    init: function (map, measureLabelBox){
+        this.measureLabelBox = measureLabelBox;
         // custom style
         var sketchSymbolizers = {
             "Point": {
@@ -65,7 +79,7 @@ Crdppf.MeasureTool = function(map, measureLabelBox) {
         renderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
 
         // Define the controls
-        measureControls = {
+        this.measureControls = {
             line: new OpenLayers.Control.Measure(
                 OpenLayers.Handler.Path, {
                     persist: true,
@@ -91,20 +105,22 @@ Crdppf.MeasureTool = function(map, measureLabelBox) {
         };
 
         var control;
-        for(var key in measureControls) {
-            control = measureControls[key];
+        for(var key in this.measureControls) {
+            control = this.measureControls[key];
             control.events.on({
                 "measure": this.handleMeasurements,
                 "measurepartial": this.handleMeasurements
             });
-            Crdppf.Map.map.addControl(control);
+            map.addControl(control);
         }
-    };
-
-    this.disableMeasureControl = function disableMeasureControl() {
-        for(key in measureControls) {
-            measureControls[key].deactivate();
+    },
+    /***
+    * Method: disable measure control
+    ***/
+    disableMeasureControl: function() {
+        for(var key in this.measureControls) {
+            this.measureControls[key].deactivate();
         }
-        measureLabelBox.setText('');
-    };
+        this.measureLabelBox.setText('');
+    }
 };

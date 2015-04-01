@@ -194,7 +194,7 @@ Crdppf.FeaturePanel.prototype = {
 
         var parcelId = property.attributes.idemai;
         Crdppf.docfilters({'cadastrenb': parseInt(parcelId.split('_',1)[0])});
-        if(overlaysList.length === 0){
+        if(Crdppf.LayerTreePanel.overlaysList.length === 0){
             var top =  new Ext.tree.TreeNode({
                 text: Crdppf.labels.noActiveLayertxt,
                 draggable: false,
@@ -209,7 +209,7 @@ Crdppf.FeaturePanel.prototype = {
                     var geojson_format = new OpenLayers.Format.GeoJSON();
                     var jsonData = geojson_format.read(request.responseText);
                     Crdppf.FeaturePanel.featureTree.setTitle(Crdppf.labels.restrictionPanelTxt + parcelId);
-                    lList = [];
+                    var lList = [];
                     // iterate over the restriction found
                     for (var i=0; i<jsonData.length;i++) {
                         lName = jsonData[i].attributes.layerName;
@@ -306,7 +306,7 @@ Crdppf.FeaturePanel.prototype = {
                 url: Crdppf.getFeatureUrl,
                 params: {
                     id: parcelId,
-                    layerList: overlaysList
+                    layerList: Crdppf.LayerTreePanel.overlaysList
                 },
                 callback: handler,
                 success: function(){

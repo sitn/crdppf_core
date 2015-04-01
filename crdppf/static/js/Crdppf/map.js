@@ -183,13 +183,13 @@ Crdppf.Map.prototype = {
             this.map.removeLayer(theLayer);
         }
         // add new overlays
-        if(overlaysList.length > 0){
+        if(Crdppf.LayerTreePanel.overlaysList.length > 0){
             var loadMask = new Ext.LoadMask(Crdppf.themeSelector.themePanel.body, {msg: Crdppf.labels.layerLoadingMaskMsg});
             var overlays = new OpenLayers.Layer.WMS(
                 layerName, 
                 Crdppf.wmsUrl,
                 {
-                    layers: overlaysList,
+                    layers: Crdppf.LayerTreePanel.overlaysList,
                     format: 'image/png',
                     singleTile: true,
                     transparent: 'true'

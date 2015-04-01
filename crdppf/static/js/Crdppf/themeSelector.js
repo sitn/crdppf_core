@@ -13,7 +13,6 @@ Crdppf.ThemeSelector.prototype = {
     * The theme selector initialization
     ***/
     init: function(labels, layerList) {
-        console.log('init');
        // JsonReader for the theme selector's config
        var themeSelectorReader = new Ext.data.JsonReader({
             idProperty: 'id',

@@ -13,8 +13,6 @@
  * @include Crdppf/measureTools.js
  */
 
-var layerList;
-
 // MAIN USER INTERFACE
 Ext.onReady(function() {
 
@@ -179,11 +177,11 @@ Crdppf.init_main = function(lang) {
     });
 
     var measureLabelBox = new Ext.form.Label({
+        id: 'measureLabelBox',
         cls: 'measureOutput'
     });
 
-    var measureControls = new Crdppf.MeasureTool(map, measureLabelBox);
-    measureControls.makeMeasureTool();
+    Crdppf.measureTool = new Crdppf.MeasureTool(Crdppf.Map.map, measureLabelBox);
 
     var measureToolsMenu = new Ext.SplitButton({
         text: Crdppf.labels.measureToolTxt,
@@ -202,9 +200,9 @@ Crdppf.init_main = function(lang) {
                     listeners: {
                         toggle: function (me, pressed){
                             if (pressed){
-                                measureControls.toggleMeasureControl('line');
+                                Crdppf.measureTool.toggleMeasureControl('line');
                             } else if(!pressed && !Ext.getCmp('polygoneButton').pressed) {
-                                measureControls.disableMeasureControl();
+                                Crdppf.measureTool.disableMeasureControl();
                                 infoButton.toggle(true);
                             }
                         }
@@ -219,9 +217,9 @@ Crdppf.init_main = function(lang) {
                     listeners: {
                         toggle: function (me, pressed){
                             if (pressed) {
-                                measureControls.toggleMeasureControl('polygon');
+                                Crdppf.measureTool.toggleMeasureControl('polygon');
                             } else if(!pressed && !Ext.getCmp('distanceButton').pressed) {
-                                measureControls.disableMeasureControl();
+                                Crdppf.measureTool.disableMeasureControl();
                                 infoButton.toggle(true);
                             }
                         }   
@@ -541,10 +539,12 @@ Crdppf.init_main = function(lang) {
         contentEl: 'header'
     });
 
-    layerTree = Crdppf.LayerTree(Crdppf.labels, Crdppf.layerList, Crdppf.baseLayersList);
+    Crdppf.LayerTreePanel = new Crdppf.LayerTreePanel(Crdppf.labels, Crdppf.layerList, Crdppf.baseLayersList);
+    var layerTree = Crdppf.LayerTreePanel.layerTree;
     Crdppf.themeSelector = new Crdppf.ThemeSelector(Crdppf.labels, Crdppf.layerList);
     var themePanel = Crdppf.themeSelector.themePanel;
 
+    
     // create the CGPX searchbox
     var searcher = new Crdppf.SearchBox({
         map: mapPanel.map,
