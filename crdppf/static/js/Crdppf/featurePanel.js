@@ -47,8 +47,7 @@ var disableInfoControl = function disableInfoControl(){
     intersect.removeAllFeatures();
     featureTree.setTitle(Crdppf.labels.restrictionPanelTitle);
     root.removeAll(true);
-    var selectionLayer = Crdppf.Map.map.getLayer('selectionLayer');
-    selectionLayer.removeAllFeatures();
+    Crdppf.Map.selectLayer.removeAllFeatures();
     var infoControl = Crdppf.Map.map.getControl('infoControl001');
 
     if(infoControl){

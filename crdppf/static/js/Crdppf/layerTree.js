@@ -44,7 +44,7 @@ Crdppf.LayerTree = function(labels, layerList, baseLayersList) {
                         }
                     }
                     Ext.getCmp('infoButton').toggle(true);
-                    Crdppf.Map.setInfoControl();
+                    Crdppf.FeaturePanel.setInfoControl();
                 }else{
                     for (n=1; n < rootLayerTree.childNodes.length; n++){
                         if( rootLayerTree.childNodes[n].id != 'baseLayers') {
