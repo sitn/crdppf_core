@@ -33,10 +33,14 @@ OpenLayers.ImgPath = Crdppf.OLImgPath;
 
 Crdppf.Map = function (){
     this.mapInit();
-}
+};
 
 Crdppf.Map.prototype = {
-    // the layer used to display feature query results
+    /**
+    * Object: OL layer to display feature query results
+    * Parameters:
+    * none
+    */
     selectLayer: new OpenLayers.Layer.Vector(
         "Selection",
         {
@@ -50,9 +54,13 @@ Crdppf.Map.prototype = {
             fixedLayer: true, 
             displayInLayerSwitcher: false
     }),
-    // the layer used to display intersection results
+    /**
+    * Object: OL layer to display intersection results
+    * Parameters:
+    * none
+    */
     intersectLayer: new OpenLayers.Layer.Vector(
-        "intersection result",
+        "Intersection result",
         {
             styleMap: new OpenLayers.Style({
                 'strokeColor':'#ff0000',
@@ -65,7 +73,11 @@ Crdppf.Map.prototype = {
             displayInLayerSwitcher: false
         }
     ),
-    // the base layer
+    /**
+    * Object: map base layer
+    * Parameters:
+    * none
+    */ 
     baseLayer: new OpenLayers.Layer.WMTS({
         url: Crdppf.mapproxyUrl,
         layer: Crdppf.defaultTiles.wmtsname,
@@ -77,7 +89,11 @@ Crdppf.Map.prototype = {
         fixedLayer: true,
         requestEncoding: 'REST'
     }),
-    // the OL2 map
+    /**
+    * Object: OpenLayers map object
+    * Parameters:
+    * none
+    */ 
     map: new OpenLayers.Map({
         projection: new OpenLayers.Projection(Crdppf.mapSRS),
         resolutions: Crdppf.mapResolutions,
@@ -123,9 +139,9 @@ Crdppf.Map.prototype = {
     // The map initialization function
     mapInit : function(){
 
-        // set events
+        // scope trick
         var me = this;
-        
+
         // Show coordinates on mouse move
         this.map.events.register("mousemove", me.map, function(e) {
             var pixel = new OpenLayers.Pixel(e.xy.x,e.xy.y);
@@ -133,12 +149,15 @@ Crdppf.Map.prototype = {
             OpenLayers.Util.getElement('mousepos').innerHTML = '<b>' + Crdppf.labels.olCoordinates + ' (ch1903) - Y : ' + Math.round(lonlat.lon) + ' m / X : ' + Math.round(lonlat.lat) + ' m</b>';
         });
 
-        // add layers
+        // Set layers'id
         this.intersectLayer.id = 'intersectLayer';    
         this.selectLayer.id = 'selectionLayer';  
         this.baseLayer.id = 'baseLayer';
-        this.map.addLayers([this.intersectLayer, this.selectLayer, this.baseLayer])
-        // set default zoom extent
+
+        // layers to map
+        this.map.addLayers([this.intersectLayer, this.selectLayer, this.baseLayer]);
+
+        // Zoom to max extent
         this.map.zoomToMaxExtent();
     },
     /**
@@ -191,9 +210,9 @@ Crdppf.Map.prototype = {
                 loadMask.show();
             });
             overlays.id = 'overlayLayer';
+            
             this.map.addLayer(overlays);
             this.map.raiseLayer(this.map.getLayersBy('id', 'selectionLayer')[0], this.map.layers.length);
-
         }
     }
-}
+};
