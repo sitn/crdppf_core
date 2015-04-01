@@ -37,16 +37,17 @@ var root = new Ext.tree.TreeNode({
 
 featureTree.setRootNode(root);
 
-var layerStore = new GeoExt.data.LayerStore({
-    map: Crdppf.Map.map
-});
+// var layerStore = new GeoExt.data.LayerStore({
+    // map: Crdppf.Map.map
+// });
 
 // Disable the existing infoControls
 var disableInfoControl = function disableInfoControl(){
     featureTree.collapse(false);
-    intersect.removeAllFeatures();
+    Crdppf.Map.intersectLayer.removeAllFeatures();
     featureTree.setTitle(Crdppf.labels.restrictionPanelTitle);
     root.removeAll(true);
+    var selectionLayer = Crdppf.Map.map.getLayer('selectionLayer');
     Crdppf.Map.selectLayer.removeAllFeatures();
     var infoControl = Crdppf.Map.map.getControl('infoControl001');
 
@@ -179,7 +180,7 @@ Crdppf.PropertySelection = function(features, labels) {
 Crdppf.featureSelection = function(property) {
 
     featureTree.expand(true);
-    intersect.removeAllFeatures();
+    Crdppf.Map.intersectLayer.removeAllFeatures();
     Crdppf.Map.selectLayer.addFeatures([property]);
 
     var parcelId = property.attributes.idemai;
@@ -255,9 +256,9 @@ Crdppf.featureSelection = function(property) {
                                     id: Crdppf.uuid(),
                                     listeners: {
                                         'click': function(node,e) {
-                                            intersect.removeAllFeatures();
+                                            Crdppf.Map.intersectLayer.removeAllFeatures();
                                             feature = node.attributes.attributes;
-                                            intersect.addFeatures(feature);
+                                            Crdppf.Map.intersectLayer.addFeatures(feature);
                                             Crdppf.Map.map.zoomToExtent(feature.geometry.bounds);
                                         }
                                     }

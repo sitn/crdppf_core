@@ -31,33 +31,42 @@
 Ext.namespace('Crdppf');
 OpenLayers.ImgPath = Crdppf.OLImgPath;  
 
-// Constructor
-Crdppf.Map = function Map(mapOptions, labels) {    
-    this.map = map(mapOptions, labels);
-    this.selectLayer = select;
-    console.log(this);
-};
+Crdppf.Map = function (){
+    this.mapInit();
+}
 
-// selection layer: display selected features
-var select = new OpenLayers.Layer.Vector(
-    "Selection",
-    {
-        styleMap: new OpenLayers.Style({
-        'strokeColor':'#00ff00',
-        'fillOpacity': '0.5',
-        'fillColor': '#00ff00',
-        'strokeWidth':'3',
-        'pointRadius': '20'
-        }),
-        fixedLayer: true, 
-        displayInLayerSwitcher: false
-});
-
-// Create OL map object, add base layer & zoom to max extent
-var map = function (mapOptions, labels){
-
-    // base layer: topographic layer
-    var layer = new OpenLayers.Layer.WMTS({
+Crdppf.Map.prototype = {
+    // the layer used to display feature query results
+    selectLayer: new OpenLayers.Layer.Vector(
+        "Selection",
+        {
+            styleMap: new OpenLayers.Style({
+            'strokeColor':'#00ff00',
+            'fillOpacity': '0.5',
+            'fillColor': '#00ff00',
+            'strokeWidth':'3',
+            'pointRadius': '20'
+            }),
+            fixedLayer: true, 
+            displayInLayerSwitcher: false
+    }),
+    // the layer used to display intersection results
+    intersectLayer: new OpenLayers.Layer.Vector(
+        "intersection result",
+        {
+            styleMap: new OpenLayers.Style({
+                'strokeColor':'#ff0000',
+                'fillOpacity': '0.5',
+                'fillColor': '#ff0000',
+                'strokeWidth':'2',
+                'pointRadius': '20'
+            }),
+            fixedLayer: true, 
+            displayInLayerSwitcher: false
+        }
+    ),
+    // the base layer
+    baseLayer: new OpenLayers.Layer.WMTS({
         url: Crdppf.mapproxyUrl,
         layer: Crdppf.defaultTiles.wmtsname,
         matrixSet: Crdppf.mapMatrixSet,
@@ -67,38 +76,9 @@ var map = function (mapOptions, labels){
         style: 'default',
         fixedLayer: true,
         requestEncoding: 'REST'
-    }); 
-
-    layer.id = 'baseLayer';  
-    select.id = 'selectionLayer';
-
-    var intersectStyle = new OpenLayers.Style({
-            'strokeColor':'#ff0000',
-            'fillOpacity': '0.5',
-            'fillColor': '#ff0000',
-            'strokeWidth':'2',
-            'pointRadius': '20'
-        });
-
-    intersect = new OpenLayers.Layer.Vector(
-            "intersection result",
-            {
-                styleMap: intersectStyle,
-                fixedLayer: true, 
-                displayInLayerSwitcher: false
-            }
-        );
-
-    intersect.id='intersectLayer';
-
-    var scalebar = new OpenLayers.Control.ScaleLine({
-        bottomOutUnits:'',
-        bottomInUnits: '',
-        maxWidth: 200
-    });
-
-    // THE OL map object
-    var map = new OpenLayers.Map({
+    }),
+    // the OL2 map
+    map: new OpenLayers.Map({
         projection: new OpenLayers.Projection(Crdppf.mapSRS),
         resolutions: Crdppf.mapResolutions,
         units: 'm',
@@ -112,103 +92,108 @@ var map = function (mapOptions, labels){
                 panIcons: false
             }),
             new OpenLayers.Control.Navigation(),
-            scalebar            
+            new OpenLayers.Control.ScaleLine({
+                bottomOutUnits:'',
+                bottomInUnits: '',
+                maxWidth: 200
+            }),
+            new OpenLayers.Control.OverviewMap({
+                layers: [
+                    new OpenLayers.Layer.Image(
+                        "overview",
+                        Crdppf.staticImagesDir + Crdppf.keymap,
+                        new OpenLayers.Bounds(Crdppf.mapOverviewExtent),
+                        new OpenLayers.Size(Crdppf.mapOverviewSizeW, Crdppf.mapOverviewSizeH)
+                    )
+                ],
+                size: new OpenLayers.Size(Crdppf.mapOverviewSizeW, Crdppf.mapOverviewSizeH),
+                maximized: true,
+                isSuitableOverview: function() {
+                    return true;
+                },
+                mapOptions: {
+                    projection: new OpenLayers.Projection(Crdppf.mapSRS),
+                    displayProjection: new OpenLayers.Projection(Crdppf.mapSRS),
+                    units: "m",
+                    theme: null
+                }
+            })
         ]
-    });   
+    }),
+    // The map initialization function
+    mapInit : function(){
 
-    // Event registering & Control setting on the Map Object
-    map.events.register("mousemove", map, function(e) {
-                var pixel = new OpenLayers.Pixel(e.xy.x,e.xy.y);
-                var lonlat = map.getLonLatFromPixel(pixel);
-                OpenLayers.Util.getElement(mapOptions.divMousePosition).innerHTML = '<b>' + labels.olCoordinates + ' (ch1903) - Y : ' + Math.round(lonlat.lon) + ' m / X : ' + Math.round(lonlat.lat) + ' m</b>';
-    });
-
-    // add base layers & selection layers
-    map.addLayers([intersect, select, layer]);
-
-    // create an overview map control and customize it
-    var overviewMap = new OpenLayers.Control.OverviewMap({
-            layers: [
-                new OpenLayers.Layer.Image(
-                    "overview",
-                    Crdppf.staticImagesDir + Crdppf.keymap,
-                    new OpenLayers.Bounds(Crdppf.mapOverviewExtent),
-                    new OpenLayers.Size(Crdppf.mapOverviewSizeW, Crdppf.mapOverviewSizeH)
-                )
-            ],
-            size: new OpenLayers.Size(Crdppf.mapOverviewSizeW, Crdppf.mapOverviewSizeH),
-            maximized: true,
-            isSuitableOverview: function() {
-                return true;
-            },
-            mapOptions: {
-                projection: new OpenLayers.Projection(Crdppf.mapSRS),
-                displayProjection: new OpenLayers.Projection(Crdppf.mapSRS),
-                units: "m",
-                theme: null
-            }
+        // set events
+        var me = this;
+        
+        // Show coordinates on mouse move
+        this.map.events.register("mousemove", me.map, function(e) {
+            var pixel = new OpenLayers.Pixel(e.xy.x,e.xy.y);
+            var lonlat = this.getLonLatFromPixel(pixel);
+            OpenLayers.Util.getElement('mousepos').innerHTML = '<b>' + Crdppf.labels.olCoordinates + ' (ch1903) - Y : ' + Math.round(lonlat.lon) + ' m / X : ' + Math.round(lonlat.lat) + ' m</b>';
         });
-    map.addControl(overviewMap);
-    map.zoomToMaxExtent(); 
 
-    return map;
+        // add layers
+        this.intersectLayer.id = 'intersectLayer';    
+        this.selectLayer.id = 'selectionLayer';  
+        this.baseLayer.id = 'baseLayer';
+        this.map.addLayers([this.intersectLayer, this.selectLayer, this.baseLayer])
+        // set default zoom extent
+        this.map.zoomToMaxExtent();
+    },
+    /**
+    * Method: setOverlays
+    * Set the layers to be added to the map depending on the crdppf thematic selected. All layer a group in one single WMS
+    *
+    * Parameters:
+    * none
+    */ 
+    setOverlays: function() {
+        // remove existing infoControl
+        var infoControl = this.map.getControl('infoControl001');
+        if(infoControl){
+            infoControl.destroy();
+        }
+        // empty selection layer
+        var selectionLayer = this.map.getLayer('selectionLayer');
+        this.selectLayer.removeAllFeatures();
+
+        var layerName = 'Themes';
+        var theLayer = this.map.getLayer('overlayLayer');
+        if(theLayer){
+            this.map.removeLayer(theLayer);
+        }
+        // add new overlays
+        if(overlaysList.length > 0){
+            var loadMask = new Ext.LoadMask(themeSelector.body, {msg: Crdppf.labels.layerLoadingMaskMsg});
+            var overlays = new OpenLayers.Layer.WMS(
+                layerName, 
+                Crdppf.wmsUrl,
+                {
+                    layers: overlaysList,
+                    format: 'image/png',
+                    singleTile: true,
+                    transparent: 'true'
+                },{
+                    singleTile: true,
+                    isBaseLayer: false
+                }
+            );
+
+            // Listen to layers events and show loading mask whenever necessary
+            overlays.events.register("loadstart", overlays, function() {
+                loadMask.show();
+            });        
+            overlays.events.register("loadend", overlays, function() {
+                loadMask.hide();
+            });        
+            overlays.events.register("tileloaded", overlays, function() {
+                loadMask.show();
+            });
+            overlays.id = 'overlayLayer';
+            this.map.addLayer(overlays);
+            this.map.raiseLayer(this.map.getLayersBy('id', 'selectionLayer')[0], this.map.layers.length);
+
+        }
+    }
 }
-
-/**
-* Method: setOverlays
-* Set the layers to be added to the map depending on the crdppf thematic selected. All layer a group in one single WMS
-*
-* Parameters:
-* none
-*/ 
-
-Crdppf.Map.prototype.setOverlays = function() {
-
-    // remove existing infoControl
-    var infoControl = this.map.getControl('infoControl001');
-    if(infoControl){
-        infoControl.destroy();
-    }
-    // empty selection layer
-    var selectionLayer = this.map.getLayer('selectionLayer');
-    this.selectLayer.removeAllFeatures();
-
-    var layerName = 'Themes';
-    var theLayer = this.map.getLayer('overlayLayer');
-    if(theLayer){
-        this.map.removeLayer(theLayer);
-    }
-    // add new overlays
-    if(overlaysList.length > 0){
-        var loadMask = new Ext.LoadMask(themeSelector.body, {msg: Crdppf.labels.layerLoadingMaskMsg});
-        var overlays = new OpenLayers.Layer.WMS(
-            layerName, 
-            Crdppf.wmsUrl,
-            {
-                layers: overlaysList,
-                format: 'image/png',
-                singleTile: true,
-                transparent: 'true'
-            },{
-                singleTile: true,
-                isBaseLayer: false
-            }
-        );
-
-        // Listen to layers events and show loading mask whenever necessary
-        overlays.events.register("loadstart", overlays, function() {
-            loadMask.show();
-        });        
-        overlays.events.register("loadend", overlays, function() {
-            loadMask.hide();
-        });        
-        overlays.events.register("tileloaded", overlays, function() {
-            loadMask.show();
-        });
-        overlays.id = 'overlayLayer';
-        this.map.addLayer(overlays);
-        this.map.raiseLayer(this.map.getLayersBy('id', 'selectionLayer')[0], this.map.layers.length);
-
-    }
-
-};

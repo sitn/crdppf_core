@@ -127,8 +127,11 @@ Crdppf.init_main = function(lang) {
     };
     
     // TODO: clean this
-    var MapO = new Crdppf.Map(mapOptions,Crdppf.labels);
-    Crdppf.Map = MapO;
+    // var MapO = new Crdppf.Map(mapOptions,Crdppf.labels);
+    // Crdppf.Map = MapO;
+   
+    Crdppf.Map = new Crdppf.Map();
+
     var map = Crdppf.Map.map;
     
     Crdppf.FeaturePanel = new Crdppf.FeaturePanel();
