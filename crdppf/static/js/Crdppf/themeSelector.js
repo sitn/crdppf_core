@@ -83,7 +83,7 @@ Crdppf.ThemeSelector.prototype = {
 
         // insert listView into a nice looking panel
         this.themePanel = new Ext.Panel({
-            id:'images-view',
+            id:'themePanel',
             collapsible:true,
             animate:true,
             layout:'fit',

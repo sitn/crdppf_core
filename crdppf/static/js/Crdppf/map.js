@@ -173,9 +173,6 @@ Crdppf.Map.prototype = {
         if(infoControl){
             infoControl.destroy();
         }
-        // empty selection layer
-        var selectionLayer = this.map.getLayer('selectionLayer');
-        this.selectLayer.removeAllFeatures();
 
         var layerName = 'Themes';
         var theLayer = this.map.getLayer('overlayLayer');
@@ -184,7 +181,7 @@ Crdppf.Map.prototype = {
         }
         // add new overlays
         if(Crdppf.LayerTreePanel.overlaysList.length > 0){
-            var loadMask = new Ext.LoadMask(Crdppf.themeSelector.themePanel.body, {msg: Crdppf.labels.layerLoadingMaskMsg});
+            var loadMask = new Ext.LoadMask(Ext.getCmp('themePanel').body, {msg: Crdppf.labels.layerLoadingMaskMsg});
             var overlays = new OpenLayers.Layer.WMS(
                 layerName, 
                 Crdppf.wmsUrl,
@@ -212,7 +209,7 @@ Crdppf.Map.prototype = {
             overlays.id = 'overlayLayer';
             
             this.map.addLayer(overlays);
-            this.map.raiseLayer(this.map.getLayersBy('id', 'selectionLayer')[0], this.map.layers.length);
+            this.map.raiseLayer(this.selectLayer, this.map.layers.length);
         }
     }
 };

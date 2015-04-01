@@ -47,7 +47,6 @@ Crdppf.FeaturePanel.prototype = {
         Crdppf.Map.intersectLayer.removeAllFeatures();
         this.featureTree.setTitle(Crdppf.labels.restrictionPanelTitle);
         this.root.removeAll(true);
-        var selectionLayer = Crdppf.Map.map.getLayer('selectionLayer');
         Crdppf.Map.selectLayer.removeAllFeatures();
         var infoControl = Crdppf.Map.map.getControl('infoControl001');
 
@@ -103,7 +102,7 @@ Crdppf.FeaturePanel.prototype = {
             }
         });
         control.events.register("featureunselected", this, function(e) {
-            Crdppf.Map.selectLayer.removeFeatures([e.feature]);
+            //Crdppf.Map.selectLayer.removeFeatures([e.feature]);
             this.root.removeAll(true);
         });
         Crdppf.Map.map.addControl(control);

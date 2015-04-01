@@ -83,7 +83,7 @@ Crdppf.LayerTreePanel.prototype = {
                 checked: false,
                 listeners: {
                     'checkchange': function(node, checked){
-                        Crdppf.FeaturePanel.disableInfoControl();
+                        //Crdppf.FeaturePanel.disableInfoControl();
                         var filter = {};
                         if (checked){
                             filter[node.id] = checked;

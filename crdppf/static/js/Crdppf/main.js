@@ -34,7 +34,7 @@ Ext.onReady(function() {
             for (var i = 0; i < buttons.length; i++){
                  buttons[i].addClass('msgButtonStyle'); 
             }
-                        Crdppf.init_main(lang);
+            Crdppf.init_main(lang);
 
             // Ext.Msg.show({
                // title: Crdppf.labels.disclaimerWindowTitle,
@@ -46,7 +46,7 @@ Ext.onReady(function() {
             // });
         }
     };
-        
+
     var triggerFunction = function(counter) {
         if (counter == 2) {
             synchronize();
@@ -94,7 +94,6 @@ Ext.onReady(function() {
         url: Crdppf.getInterfaceConfigUrl,
         success: function(response) {
             Crdppf.layerList = Ext.decode(response.responseText);
-
             sync += 1;
             synchronize(sync);        
         },
@@ -123,15 +122,10 @@ Crdppf.init_main = function(lang) {
     var mapOptions = {
         divMousePosition: 'mousepos'
     };
-    
-    // TODO: clean this
-    // var MapO = new Crdppf.Map(mapOptions,Crdppf.labels);
-    // Crdppf.Map = MapO;
-   
-    Crdppf.Map = new Crdppf.Map();
 
+    Crdppf.Map = new Crdppf.Map();
     var map = Crdppf.Map.map;
-    
+
     Crdppf.FeaturePanel = new Crdppf.FeaturePanel();
 
     // getFeatureInfo button: activates the Openlayers infoControl
@@ -164,8 +158,6 @@ Crdppf.init_main = function(lang) {
         iconCls: 'crdppf_clearselectionbutton',
         listeners:{
             click: function (){
-                var selectionLayer = Crdppf.Map.map.getLayer('selectionLayer');
-                selectionLayer.removeAllFeatures();
                 Crdppf.FeaturePanel.disableInfoControl();
                 Crdppf.docfilters({'cadastrenb':0});
                 for (var i = Crdppf.filterlist.objectids.length; i > 0; i--){
