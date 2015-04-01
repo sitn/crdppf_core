@@ -2,18 +2,18 @@ Ext.namespace('Crdppf');
 
 // create translations grid panel
 Crdppf.translationsPanel = function(labels) {
-    
+
     var translationsgrid = new Ext.grid.GridPanel();
-    
+
     // configure whether filter query is encoded or not (initially)
     var encode = true;
-    
+
     var translationsproxy = new Ext.data.HttpProxy({url: Crdppf.getTranslationListUrl});
 
     var myPageSize = 30;  // server script should only send back 30 items at a time
-        
+
     // definition of the data store containing the translations
-    var translationsstore=new Ext.data.Store({
+    var translationsstore = new Ext.data.Store({
         proxy: translationsproxy,
         remoteSort: true,
         baseParams:{
@@ -41,6 +41,7 @@ Crdppf.translationsPanel = function(labels) {
             ]
         )
     });
+
     translationsstore.setDefaultSort('id', 'ASC');
 
     var filters = new Ext.ux.grid.GridFilters({
@@ -70,7 +71,7 @@ Crdppf.translationsPanel = function(labels) {
             dataIndex: 'en'
         }]
     }); 
-    
+
     // load previously defined data source
     translationsstore.load({
         // specify params for the first page load if using paging
@@ -79,7 +80,7 @@ Crdppf.translationsPanel = function(labels) {
           limit: myPageSize
         }
     });
-    
+
     var fm = Ext.form;
     var commonTextField = new fm.TextField({});
 
@@ -93,7 +94,7 @@ Crdppf.translationsPanel = function(labels) {
         {header: "Rumantsch", width: 50, dataIndex: 'ro', sortable: true, filtrable: true, editor: commonTextField},
         {header: "English", width: 50, dataIndex: 'en',  sortable: true, filtrable: true, editor: commonTextField}
     ]);
-    
+
     var translationpanel = new Ext.grid.EditorGridPanel({
         layout: 'fit',
         border: false,
@@ -114,10 +115,10 @@ Crdppf.translationsPanel = function(labels) {
                 emptyMsg: "Pas de résultat trouvé"
         })
     });
-            
+
     //pass along browser window resize events to the panel
     Ext.EventManager.onWindowResize(translationpanel.doLayout, translationpanel);
-    
+
     return translationpanel;
-    
+
 };
