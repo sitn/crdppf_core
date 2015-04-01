@@ -295,7 +295,7 @@ Crdppf.FeaturePanel.prototype = {
                             leaf: false,
                             expanded: true
                         });
-                        this.root.appendChild(layerChild);
+                        Crdppf.FeaturePanel.root.appendChild(layerChild);
                     }
             }
             // define an request object to the interection route

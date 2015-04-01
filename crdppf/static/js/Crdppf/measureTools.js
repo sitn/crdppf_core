@@ -103,7 +103,6 @@ Crdppf.MeasureTool.prototype = {
                 }
             )
         };
-
         var control;
         for(var key in this.measureControls) {
             control = this.measureControls[key];
@@ -121,6 +120,6 @@ Crdppf.MeasureTool.prototype = {
         for(var key in this.measureControls) {
             this.measureControls[key].deactivate();
         }
-        this.measureLabelBox.setText('');
+        Ext.getCmp('measureLabelBox').setText('');
     }
 };

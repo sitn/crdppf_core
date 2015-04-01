@@ -1,7 +1,7 @@
 ﻿Ext.namespace('Crdppf');
 
-Crdppf.ThemeSelector = function (labels, layerList) {
-    this.init(labels, layerList);
+Crdppf.ThemeSelector = function (labels, layerList, layerTree) {
+    this.init(labels, layerList, layerTree);
 };
 
 Crdppf.ThemeSelector.prototype = {
@@ -12,7 +12,7 @@ Crdppf.ThemeSelector.prototype = {
     /***
     * The theme selector initialization
     ***/
-    init: function(labels, layerList) {
+    init: function(labels, layerList, layerTree) {
        // JsonReader for the theme selector's config
        var themeSelectorReader = new Ext.data.JsonReader({
             idProperty: 'id',
