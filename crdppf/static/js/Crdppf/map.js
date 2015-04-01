@@ -35,7 +35,7 @@ OpenLayers.ImgPath = Crdppf.OLImgPath;
 Crdppf.Map = function Map(mapOptions, labels) {
     this.title = 'Crdppf OpenLayers custom map object';
     this.description = 'Manages all cartographic parameters and actions';       
-    this.map = makeMap(mapOptions, labels);
+    this.map = map(mapOptions, labels);
     this.setOverlays = setOverlays;
     this.selectLayer = select;
 };
@@ -56,7 +56,7 @@ var select = new OpenLayers.Layer.Vector(
 });
 
 // Create OL map object, add base layer & zoom to max extent
-function makeMap(mapOptions, labels){
+var map = function (mapOptions, labels){
 
     // base layer: topographic layer
     var layer = new OpenLayers.Layer.WMTS({
