@@ -168,7 +168,7 @@ Crdppf.init_main = function(lang) {
             click: function (){
                 var selectionLayer = Crdppf.Map.map.getLayer('selectionLayer');
                 selectionLayer.removeAllFeatures();
-                Crdppf.Map.disableInfoControl();
+                Crdppf.FeaturePanel.disableInfoControl();
                 Crdppf.docfilters({'cadastrenb':0});
                 for (var i = Crdppf.filterlist.objectids.length; i > 0; i--){
                     Crdppf.docfilters({'objectids':[Crdppf.filterlist.objectids[i-1]]});
@@ -386,7 +386,7 @@ Crdppf.init_main = function(lang) {
         iconCls: 'crdppf_panbutton',
         listeners:{
             click: function (){
-                Crdppf.Map.disableInfoControl();
+                Crdppf.FeaturePanel.disableInfoControl();
             }  
         }
     });
@@ -479,7 +479,7 @@ Crdppf.init_main = function(lang) {
             async: false
         });
         window.location.reload();
-    }
+    };
 
     // create the mapPanel toolbar
     var mapToolbar = new Ext.Toolbar({
@@ -603,7 +603,7 @@ Crdppf.init_main = function(lang) {
             align: 'stretch'
         },
         items: [
-            featureTree,
+            Crdppf.FeaturePanel.featureTree,
             legendPanel
         ]
     });
