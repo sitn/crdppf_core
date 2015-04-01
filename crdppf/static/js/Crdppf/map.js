@@ -184,7 +184,7 @@ Crdppf.Map.prototype = {
         }
         // add new overlays
         if(overlaysList.length > 0){
-            var loadMask = new Ext.LoadMask(themeSelector.body, {msg: Crdppf.labels.layerLoadingMaskMsg});
+            var loadMask = new Ext.LoadMask(Crdppf.themeSelector.themePanel.body, {msg: Crdppf.labels.layerLoadingMaskMsg});
             var overlays = new OpenLayers.Layer.WMS(
                 layerName, 
                 Crdppf.wmsUrl,

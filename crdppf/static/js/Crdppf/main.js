@@ -542,7 +542,8 @@ Crdppf.init_main = function(lang) {
     });
 
     layerTree = Crdppf.LayerTree(Crdppf.labels, Crdppf.layerList, Crdppf.baseLayersList);
-    themeSelector = Crdppf.ThemeSelector(Crdppf.labels, Crdppf.layerList);
+    Crdppf.themeSelector = new Crdppf.ThemeSelector(Crdppf.labels, Crdppf.layerList);
+    var themePanel = Crdppf.themeSelector.themePanel;
 
     // create the CGPX searchbox
     var searcher = new Crdppf.SearchBox({
@@ -562,7 +563,7 @@ Crdppf.init_main = function(lang) {
         boxMinWidth: 225,
         items: [
             searcher, 
-            themeSelector, 
+            themePanel, 
             layerTree
         ],
         layoutConfig: {
