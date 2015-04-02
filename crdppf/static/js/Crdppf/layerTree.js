@@ -37,7 +37,7 @@ Crdppf.LayerTreePanel.prototype = {
             draggable:false,
             id:'rootLayerTree'});
         var ll = layerList.themes;
-            
+
         // create a node on top of tree to select all nodes
         var checkAllNode = new Ext.tree.TreeNode({
             text: labels.selectAllLayerLabel,
@@ -131,7 +131,7 @@ Crdppf.LayerTreePanel.prototype = {
             }
             rootLayerTree.appendChild(themeNode);
         }
-            
+
         // Top node of the base layers group
         var baseLayersNode = new Ext.tree.TreeNode({
             text: labels.baseLayerGroup,
@@ -141,10 +141,10 @@ Crdppf.LayerTreePanel.prototype = {
             leaf: false,
             expanded: true
         });
-        
+
         // create nodes for base layers
         var baseLayers = baseLayersList.baseLayers;
-        
+
         // iterate over base layers and create nodes
         for (var i=0;i<baseLayers.length;i++){
             // default: check first layer
@@ -152,7 +152,7 @@ Crdppf.LayerTreePanel.prototype = {
             if (i === 0){
                 isChecked = true;
             }
-            
+
             // fill tree with nodes relative to baseLayers
             var baseLayerItem =  new Ext.tree.TreeNode({
                 text: labels[baseLayers[i].name],
@@ -213,7 +213,7 @@ Crdppf.LayerTreePanel.prototype = {
 
         rootLayerTree.appendChild(baseLayersNode);
         layerTree.setRootNode(rootLayerTree);
-        
+
         return layerTree;
     }
 };
