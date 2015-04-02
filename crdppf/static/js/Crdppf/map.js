@@ -36,6 +36,57 @@ Crdppf.Map = function (){
 };
 
 Crdppf.Map.prototype = {
+    infoControl: null,
+    createInfoControl: function(){
+        OpenLayers.ProxyHost= Crdppf.ogcproxyUrl;
+        // OL WFS protocol
+        var protocol = new OpenLayers.Protocol.WFS({
+            url: Crdppf.ogcproxyUrl,
+            geometryName: this.geometryName,
+            srsName: this.map.getProjection(),
+            featureType: 'parcelles',
+            formatOptions: {
+                featureNS: 'http://mapserver.gis.umn.edu/mapserver',
+                autoconfig: false
+            }
+        });
+
+        // create infoControl with OL WFS protocol
+       var control = new OpenLayers.Control.GetFeature({
+            protocol: protocol,
+            box: false,
+            hover: false,
+            single: false,
+            maxFeatures: 4,
+            clickTolerance: 15
+        });
+
+        control.events.register("beforefeaturesselected", this, function(e) {
+            Crdppf.Map.selectLayer.removeAllFeatures();
+        });
+
+        control.events.register("beforefeatureselected", this, function(e) {
+            Crdppf.Map.selectLayer.removeAllFeatures();
+        });
+
+        // define actions on feature selection
+        control.events.register("featuresselected", this, function(e) {
+            // if there is more than one feature, we present the user with a selection window
+            if (e.features.length > 1) {
+                Crdppf.FeaturePanel.PropertySelection(e.features, Crdppf.labels);
+            // else the selected feature is highlighted 
+            } else {
+                property= e.features[0];
+                Crdppf.FeaturePanel.featureSelection(property);
+            }
+        });
+        control.events.register("featureunselected", this, function(e) {
+            Crdppf.FeaturePanel.root.removeAll(true);
+        });
+        this.infoControl = control;
+        this.map.addControl(this.infoControl);
+        this.infoControl.activate();
+    },
     /**
     * Object: OL layer to display feature query results
     * Parameters:
@@ -69,7 +120,7 @@ Crdppf.Map.prototype = {
                 'strokeWidth':'2',
                 'pointRadius': '20'
             }),
-            fixedLayer: true, 
+            fixedLayer: true,
             displayInLayerSwitcher: false
         }
     ),
@@ -159,6 +210,8 @@ Crdppf.Map.prototype = {
 
         // Zoom to max extent
         this.map.zoomToMaxExtent();
+
+        this.createInfoControl();
     },
     /**
     * Method: setOverlays
@@ -168,11 +221,8 @@ Crdppf.Map.prototype = {
     * none
     */ 
     setOverlays: function() {
-        // remove existing infoControl
-        var infoControl = this.map.getControl('infoControl001');
-        if(infoControl){
-            infoControl.destroy();
-        }
+        // Deactivate infoControl
+        this.infoControl.deactivate();
 
         var layerName = 'Themes';
         var theLayer = this.map.getLayer('overlayLayer');
@@ -207,7 +257,7 @@ Crdppf.Map.prototype = {
                 loadMask.show();
             });
             overlays.id = 'overlayLayer';
-            
+
             this.map.addLayer(overlays);
             this.map.raiseLayer(this.selectLayer, this.map.layers.length);
         }

@@ -44,15 +44,11 @@ Crdppf.FeaturePanel.prototype = {
     */
     disableInfoControl: function disableInfoControl(){
         this.featureTree.collapse(false);
-        Crdppf.Map.intersectLayer.removeAllFeatures();
-        this.featureTree.setTitle(Crdppf.labels.restrictionPanelTitle);
         this.root.removeAll(true);
+        this.featureTree.setTitle(Crdppf.labels.restrictionPanelTitle);
         Crdppf.Map.selectLayer.removeAllFeatures();
-        var infoControl = Crdppf.Map.map.getControl('infoControl001');
-
-        if(infoControl){
-            infoControl.destroy();
-        }
+        Crdppf.Map.intersectLayer.removeAllFeatures();
+        Crdppf.Map.infoControl.deactivate();
     },
     /**
     * Method: create the info control
@@ -60,65 +56,8 @@ Crdppf.FeaturePanel.prototype = {
     * none
     */
     setInfoControl: function setInfoControl(){
-
-        // avoid duplicating infoControls
-        //this.disableInfoControl();
-        var infoControl = Crdppf.Map.map.getControl('infoControl001');
-        if(infoControl){
-            infoControl.destroy();
-        }
-
-        // remove all features in featureTree rootNode
+        Crdppf.Map.infoControl.activate();
         this.root.removeAll(true);
-        OpenLayers.ProxyHost= Crdppf.ogcproxyUrl;
-        // create OL WFS protocol
-        var protocol = new OpenLayers.Protocol.WFS({
-            url: Crdppf.ogcproxyUrl,
-            geometryName: this.geometryName,
-            srsName: Crdppf.Map.map.getProjection(),
-            featureType: 'parcelles',
-            formatOptions: {
-                featureNS: 'http://mapserver.gis.umn.edu/mapserver',
-                autoconfig: false
-            }
-        });
-
-        // create infoControl with our WFS protocol
-       var control = new OpenLayers.Control.GetFeature({
-            protocol: protocol,
-            id: 'infoControl001',
-            box: false,
-            hover: false,
-            single: false,
-            maxFeatures: 4,
-            clickTolerance: 15
-        });
-        
-        control.events.register("beforefeaturesselected", this, function(e) {
-            Crdppf.Map.selectLayer.removeAllFeatures();
-        });
-        
-        control.events.register("beforefeatureselected", this, function(e) {
-            Crdppf.Map.selectLayer.removeAllFeatures();
-        });
-
-        // define actions on feature selection
-        control.events.register("featuresselected", this, function(e) {
-            // if there is more than one feature, we present the user with a selection window
-            if (e.features.length > 1) {
-                Crdppf.FeaturePanel.PropertySelection(e.features, Crdppf.labels);
-            // else the selected feature is highlighted 
-            } else {
-                property= e.features[0];
-                Crdppf.FeaturePanel.featureSelection(property);
-            }
-        });
-        control.events.register("featureunselected", this, function(e) {
-            //Crdppf.Map.selectLayer.removeFeatures([e.feature]);
-            this.root.removeAll(true);
-        });
-        Crdppf.Map.map.addControl(control);
-        control.activate();
     },
     /***
     * Method: On multiple property selection (DP case) the user is ask to select only one

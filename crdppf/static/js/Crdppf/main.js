@@ -376,7 +376,7 @@ Crdppf.init_main = function(lang) {
         iconCls: 'crdppf_panbutton',
         listeners:{
             click: function (){
-                Crdppf.FeaturePanel.disableInfoControl();
+                Crdppf.Map.infoControl.deactivate();
             }  
         }
     });
