@@ -565,15 +565,16 @@ Crdppf.init_main = function(lang) {
     var legendPanel = new GeoExt.LegendPanel({
         collapsible:true, 
         map: Crdppf.Map.map,
-        cls:'legendPanelCls',
         title: Crdppf.labels.legendPanelTitle,
         autoScroll: true,
         flex: 1.0,
         defaults: {
             style: 'padding:5px',
             baseParams: {
-            FORMAT: 'image/png',
-            LEGEND_OPTIONS: 'forceLabels:on'
+                FORMAT: 'image/png',
+                LEGEND_OPTIONS: 'forceLabels:on',
+                WIDTH: 200,
+                HEIGHT:100
             }
         }
     });
