@@ -10,7 +10,7 @@ Crdppf.docfilters = function(filter) {
 
     if ('objectids' in filter) {
         if (filter.objectids.length > 0) {
-            for (var i=0; i < filter.objectids.length; i++){
+            for (var i = 0; i < filter.objectids.length; i++) {
                 if (!(isInArray(filter.objectids[i], Crdppf.filterlist.objectids))){
                     Crdppf.filterlist.objectids.push(filter.objectids[i]);
                 } else {
@@ -52,7 +52,7 @@ Crdppf.docfilters = function(filter) {
     Crdppf.legalDocuments.store.clearFilter();
     Crdppf.legalDocuments.store.filterBy(function (record) {
         if (Crdppf.filterlist.cadastrenb > 0){
-            if (record.get('cadastrenb') == Crdppf.filterlist.cadastrenb || record.get('cadastrenb') === 0) {
+            if (record.get('cadastrenb') === Crdppf.filterlist.cadastrenb || record.get('cadastrenb') === 0) {
                 if (Crdppf.filterlist.topic.length > 0) {
                     for (var i = 0; i < Crdppf.filterlist.topic.length; i++){
                     // if the topicid is in the filterlist show the corresponding documents
@@ -65,7 +65,7 @@ Crdppf.docfilters = function(filter) {
                 }
             }
         } else {
-            for (var j=0; j < Crdppf.filterlist.topic.length; j++){
+            for (var j = 0; j < Crdppf.filterlist.topic.length; j++){
             // if the topicid is in the filterlist show the corresponding documents
                 if (record.get('origins').indexOf(Crdppf.filterlist.topic[j].toString()) > -1) {
                     return record;

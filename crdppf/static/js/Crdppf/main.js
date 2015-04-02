@@ -34,16 +34,15 @@ Ext.onReady(function() {
             for (var i = 0; i < buttons.length; i++){
                  buttons[i].addClass('msgButtonStyle'); 
             }
-            Crdppf.init_main(lang);
 
-            // Ext.Msg.show({
-               // title: Crdppf.labels.disclaimerWindowTitle,
-               // msg: Crdppf.labels.disclaimerMsg,
-               // buttons: Ext.Msg.YESNO,
-               // fn: redirectAfterDisclaimer,
-               // animEl: 'elId',
-               // icon: Ext.MessageBox.WARNING
-            // });
+            Ext.Msg.show({
+               title: Crdppf.labels.disclaimerWindowTitle,
+               msg: Crdppf.labels.disclaimerMsg,
+               buttons: Ext.Msg.YESNO,
+               fn: redirectAfterDisclaimer,
+               animEl: 'elId',
+               icon: Ext.MessageBox.WARNING
+            });
         }
     };
 
@@ -452,14 +451,14 @@ Crdppf.init_main = function(lang) {
         iconCls: 'crdppf_deButton',
         toggleGroup: 'langButton',
         listeners:{
-            click: function(){setLanguage('De');
+            click: function() {setLanguage('De');
             }
         }
     });
 
     // set the lang parameter in session when selected through the language buttons
     var setLanguage = function(value){
-        var request = OpenLayers.Request.GET({
+        OpenLayers.Request.GET({
             url: Crdppf.setLanguageUrl,
             params: {
                 lang:value,

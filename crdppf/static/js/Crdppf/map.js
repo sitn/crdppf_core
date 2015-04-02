@@ -38,7 +38,7 @@ Crdppf.Map = function (){
 Crdppf.Map.prototype = {
     infoControl: null,
     createInfoControl: function(){
-        OpenLayers.ProxyHost= Crdppf.ogcproxyUrl;
+        OpenLayers.ProxyHost = Crdppf.ogcproxyUrl;
         // OL WFS protocol
         var protocol = new OpenLayers.Protocol.WFS({
             url: Crdppf.ogcproxyUrl,
@@ -76,7 +76,7 @@ Crdppf.Map.prototype = {
                 Crdppf.FeaturePanel.PropertySelection(e.features, Crdppf.labels);
             // else the selected feature is highlighted 
             } else {
-                property= e.features[0];
+                property = e.features[0];
                 Crdppf.FeaturePanel.featureSelection(property);
             }
         });
@@ -96,11 +96,11 @@ Crdppf.Map.prototype = {
         "Selection",
         {
             styleMap: new OpenLayers.Style({
-            'strokeColor':'#00ff00',
-            'fillOpacity': '0.5',
-            'fillColor': '#00ff00',
-            'strokeWidth':'3',
-            'pointRadius': '20'
+                'strokeColor':'#00ff00',
+                'fillOpacity': '0.5',
+                'fillColor': '#00ff00',
+                'strokeWidth':'3',
+                'pointRadius': '20'
             }),
             fixedLayer: true, 
             displayInLayerSwitcher: false

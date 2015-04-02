@@ -252,7 +252,7 @@ Crdppf.FeaturePanel.prototype = {
             var featureMask = new Ext.LoadMask(this.featureTree.body, {msg: Crdppf.labels.restrictionLoadingMsg});
             featureMask.show();
 
-            var request = OpenLayers.Request.GET({
+            OpenLayers.Request.GET({
                 url: Crdppf.getFeatureUrl,
                 params: {
                     id: parcelId,

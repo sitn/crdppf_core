@@ -67,7 +67,7 @@ Crdppf.ThemeSelector.prototype = {
                     dataIndex: 'name',
                     tpl: themeTemplate
                 }
-                ],
+            ],
             listeners:{
                 click: function(view, index, node, e){
                     layerTree.getRootNode().cascade(function(n) {
@@ -84,7 +84,7 @@ Crdppf.ThemeSelector.prototype = {
         // insert listView into a nice looking panel
         this.themePanel = new Ext.Panel({
             id:'themePanel',
-            collapsible:true,
+            collapsible: true,
             animate:true,
             layout:'fit',
             title:labels.themeSelectorLabel,

@@ -1,6 +1,6 @@
 ﻿Ext.namespace('Crdppf');
 
-Crdppf.LayerTreePanel = function(labels, layerList, baseLayersList){
+Crdppf.LayerTreePanel = function(labels, layerList, baseLayersList) {
     this.layerTree = this.init(labels, layerList, baseLayersList);
 };
 
@@ -16,7 +16,7 @@ Crdppf.LayerTreePanel.prototype = {
     /***
     * Method: initialize the layerTree
     ***/
-    init: function(labels, layerList, baseLayersList){
+    init: function(labels, layerList, baseLayersList) {
         var layerTree = new Ext.tree.TreePanel({
             title: labels.layerTreeTitle,
             collapsible:true,
@@ -39,7 +39,7 @@ Crdppf.LayerTreePanel.prototype = {
         var ll = layerList.themes;
 
         // create a node on top of tree to select all nodes
-        var checkAllNode = new Ext.tree.TreeNode({
+        var checkAllNode = new Ext.tree.TreeNode ({
             text: labels.selectAllLayerLabel,
             id: 'selectAllNode',
             draggable: false,
@@ -50,15 +50,15 @@ Crdppf.LayerTreePanel.prototype = {
                 'checkchange': function(node,checked){
                     if(checked){
                         layerTree.expandAll();
-                        for (n=1; n < rootLayerTree.childNodes.length; n++){
+                        for (var n=1; n < rootLayerTree.childNodes.length; n++){
                             if( rootLayerTree.childNodes[n].id != 'baseLayers') {
                                 rootLayerTree.childNodes[n].getUI().toggleCheck(true);
                             }
                         }
                         Ext.getCmp('infoButton').toggle(true);
                         Crdppf.FeaturePanel.setInfoControl();
-                    }else{
-                        for (n=1; n < rootLayerTree.childNodes.length; n++){
+                    } else {
+                        for (var n=1; n < rootLayerTree.childNodes.length; n++){
                             if( rootLayerTree.childNodes[n].id != 'baseLayers') {
                                 rootLayerTree.childNodes[n].getUI().toggleCheck(false);
                             }
@@ -88,14 +88,14 @@ Crdppf.LayerTreePanel.prototype = {
                             filter[node.id] = checked;
                             Crdppf.docfilters({'topicfk':filter});
                             node.expand();
-                            for (k=0; k < node.childNodes.length; k++){
+                            for (var k=0; k < node.childNodes.length; k++){
                                 node.childNodes[k].getUI().toggleCheck(true);
                             }
                         } else {
                             filter[node.id] = checked;
                             Crdppf.docfilters({'topicfk':filter});                
                             node.collapse();
-                            for (k=0; k < node.childNodes.length; k++){
+                            for (var k=0; k < node.childNodes.length; k++){
                                 node.childNodes[k].getUI().toggleCheck(false);
                             }
                         }
@@ -103,9 +103,8 @@ Crdppf.LayerTreePanel.prototype = {
                 }
             });
             // fill each theme node with his contained node (level 2)
-            for (var keys in ll[i].layers)
-            {
-                var layerNode =  new Ext.tree.TreeNode({
+            for (var keys in ll[i].layers) {
+                var layerNode =  new Ext.tree.TreeNode ({
                     text: labels[keys],
                     draggable: false,
                     id: keys,
@@ -114,12 +113,12 @@ Crdppf.LayerTreePanel.prototype = {
                     checked:false,
                     listeners: {
                             'checkchange': function(node, checked){
-                                if(checked){
+                                if (checked){
                                     Crdppf.LayerTreePanel.overlaysList.push(node.id);
                                     Crdppf.Map.setOverlays();
                                     Ext.getCmp('infoButton').toggle(true);
                                     Crdppf.FeaturePanel.setInfoControl();
-                                }else{
+                                } else {
                                     Crdppf.LayerTreePanel.overlaysList.remove(node.id);
                                     Crdppf.Map.setOverlays();
                                     Ext.getCmp('panButton').toggle(true);
@@ -146,7 +145,7 @@ Crdppf.LayerTreePanel.prototype = {
         var baseLayers = baseLayersList.baseLayers;
 
         // iterate over base layers and create nodes
-        for (var i=0;i<baseLayers.length;i++){
+        for (var i=0; i<baseLayers.length; i++){
             // default: check first layer
             isChecked = false;
             if (i === 0){
@@ -154,7 +153,7 @@ Crdppf.LayerTreePanel.prototype = {
             }
 
             // fill tree with nodes relative to baseLayers
-            var baseLayerItem =  new Ext.tree.TreeNode({
+            var baseLayerItem =  new Ext.tree.TreeNode ({
                 text: labels[baseLayers[i].name],
                 draggable:false,
                 id: baseLayers[i].wmtsname,
