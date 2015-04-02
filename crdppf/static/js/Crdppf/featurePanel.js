@@ -62,7 +62,11 @@ Crdppf.FeaturePanel.prototype = {
     setInfoControl: function setInfoControl(){
 
         // avoid duplicating infoControls
-        this.disableInfoControl();
+        //this.disableInfoControl();
+        var infoControl = Crdppf.Map.map.getControl('infoControl001');
+        if(infoControl){
+            infoControl.destroy();
+        }
 
         // remove all features in featureTree rootNode
         this.root.removeAll(true);
@@ -88,6 +92,14 @@ Crdppf.FeaturePanel.prototype = {
             single: false,
             maxFeatures: 4,
             clickTolerance: 15
+        });
+        
+        control.events.register("beforefeaturesselected", this, function(e) {
+            Crdppf.Map.selectLayer.removeAllFeatures();
+        });
+        
+        control.events.register("beforefeatureselected", this, function(e) {
+            Crdppf.Map.selectLayer.removeAllFeatures();
         });
 
         // define actions on feature selection
