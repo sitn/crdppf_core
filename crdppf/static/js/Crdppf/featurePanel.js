@@ -12,7 +12,7 @@ Crdppf.FeaturePanel.prototype = {
     * Parameters:
     * none
     */
-    featureTree: new Ext.tree.TreePanel({
+    featureTree: new Ext.tree.TreePanel ({
         title: Crdppf.labels.restrictionPanelTitle,
         cls: 'featureTreeCls',
         collapsed: false,
@@ -32,7 +32,7 @@ Crdppf.FeaturePanel.prototype = {
     * Parameters:
     * none
     */
-    root: new Ext.tree.TreeNode({
+    root: new Ext.tree.TreeNode ({
         text: 'Thèmes',
         draggable:false,
         id:'rootNode'
@@ -76,10 +76,10 @@ Crdppf.FeaturePanel.prototype = {
             var properties = [];
             for (var i = 0; i < features.length; i++){
                 properties[i] = [
-                i,
-                features[i].data.typimm+': '+features[i].data.nummai+' '+features[i].data.cadastre,
-                features[i].data.idemai,
-                features[i].data.source
+                    i,
+                    features[i].data.typimm+': '+features[i].data.nummai+' '+features[i].data.cadastre,
+                    features[i].data.idemai,
+                    features[i].data.source
                 ];
             }
 
@@ -99,7 +99,7 @@ Crdppf.FeaturePanel.prototype = {
                 selectOnFocus: true,
                 listeners: {
                     select: function(combo, record, index) {
-                        property = features[index];
+                        var property = features[index];
                         Crdppf.FeaturePanel.featureSelection(property);
                         propertySelectionWindow.hide();
                     }
@@ -144,7 +144,7 @@ Crdppf.FeaturePanel.prototype = {
 
         var parcelId = property.attributes.idemai;
         Crdppf.docfilters({'cadastrenb': parseInt(parcelId.split('_',1)[0])});
-        if(Crdppf.LayerTreePanel.overlaysList.length === 0){
+        if (Crdppf.LayerTreePanel.overlaysList.length === 0) {
             var top =  new Ext.tree.TreeNode({
                 text: Crdppf.labels.noActiveLayertxt,
                 draggable: false,
@@ -161,21 +161,21 @@ Crdppf.FeaturePanel.prototype = {
                     Crdppf.FeaturePanel.featureTree.setTitle(Crdppf.labels.restrictionPanelTxt + parcelId);
                     var lList = [];
                     // iterate over the restriction found
-                    for (var i=0; i<jsonData.length;i++) {
+                    for (var i = 0; i < jsonData.length; i++) {
                         lName = jsonData[i].attributes.layerName;
                         // create node for layer if not already created
-                        if(!Crdppf.contains(lName,lList)){
+                        if (!Crdppf.contains(lName,lList)){
                             var fullName = '';
                             var ll = Crdppf.layerList.themes;
-                            for (var l=0;l<ll.length;l++){
+                            for (var l=0; l < ll.length; l++){
                                 for (var key in ll[l].layers){
-                                    if(lName==key){
+                                    if (lName == key){
                                         fullName = Crdppf.labels[key]; 
                                     }
                                 }
                             }
                             // create layer node (level 1, root is level 0 in the hierarchy)
-                            var layerChild =  new Ext.tree.TreeNode({
+                            var layerChild = new Ext.tree.TreeNode({
                                 text: fullName,
                                 draggable: false,
                                 id: Crdppf.uuid(),
