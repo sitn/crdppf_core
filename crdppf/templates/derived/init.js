@@ -88,3 +88,9 @@ Crdppf.baseLayersList = {'baseLayers': [
         Crdppf.defaultTiles = {'wmtsname': 'undefined', 'tile_format': 'undefined'};
     % endif
 % endif
+        
+% if disclaimer:
+    Crdppf.disclaimer = true;
+% else:
+    Crdppf.disclaimer = false;
+% endif
