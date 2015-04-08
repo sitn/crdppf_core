@@ -121,11 +121,16 @@ Crdppf.init_main = function(lang) {
     var mapOptions = {
         divMousePosition: 'mousepos'
     };
-
+    
+    // Instantiate the Map
     Crdppf.Map = new Crdppf.Map();
     var map = Crdppf.Map.map;
 
+    // Instantiate the FeaturePanel
     Crdppf.FeaturePanel = new Crdppf.FeaturePanel();
+    
+    // updateLayers: global static boolean variable to deal with IE
+    Crdppf.updateLayers = true;
 
     // getFeatureInfo button: activates the Openlayers infoControl
     var infoButton = new Ext.Button({

@@ -248,13 +248,16 @@ Crdppf.Map.prototype = {
 
             // Listen to layers events and show loading mask whenever necessary
             overlays.events.register("loadstart", overlays, function() {
-                loadMask.show();
+                if (Crdppf.LayerTreePanel.overlaysList.length > 0) {
+                    loadMask.show();
+                }
             });        
             overlays.events.register("loadend", overlays, function() {
                 loadMask.hide();
-            });        
+            });
+  
             overlays.events.register("tileloaded", overlays, function() {
-                loadMask.show();
+                loadMask.hide();
             });
             overlays.id = 'overlayLayer';
 

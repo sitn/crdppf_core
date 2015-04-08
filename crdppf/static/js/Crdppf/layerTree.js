@@ -35,7 +35,8 @@ Crdppf.LayerTreePanel.prototype = {
         var rootLayerTree = new Ext.tree.TreeNode({
             text: 'rootLayerTree',
             draggable:false,
-            id:'rootLayerTree'});
+            id:'rootLayerTree'
+        });
         var ll = layerList.themes;
 
         // create a node on top of tree to select all nodes
@@ -58,6 +59,7 @@ Crdppf.LayerTreePanel.prototype = {
                         Ext.getCmp('infoButton').toggle(true);
                         Crdppf.FeaturePanel.setInfoControl();
                     } else {
+                        Crdppf.LayerTreePanel.overlaysList.length = 0;
                         for (var n=1; n < rootLayerTree.childNodes.length; n++){
                             if( rootLayerTree.childNodes[n].id != 'baseLayers') {
                                 rootLayerTree.childNodes[n].getUI().toggleCheck(false);
@@ -114,14 +116,17 @@ Crdppf.LayerTreePanel.prototype = {
                     listeners: {
                             'checkchange': function(node, checked){
                                 if (checked){
-                                    Crdppf.LayerTreePanel.overlaysList.push(node.id);
-                                    Crdppf.Map.setOverlays();
-                                    Ext.getCmp('infoButton').toggle(true);
-                                    Crdppf.FeaturePanel.setInfoControl();
+                                    if(Crdppf.updateLayers) {
+                                        Crdppf.LayerTreePanel.overlaysList.push(node.id);
+                                        Crdppf.Map.setOverlays();
+                                        Ext.getCmp('infoButton').toggle(true);
+                                        Crdppf.FeaturePanel.setInfoControl();
+                                    }
                                 } else {
                                     Crdppf.LayerTreePanel.overlaysList.remove(node.id);
-                                    Crdppf.Map.setOverlays();
-                                    Ext.getCmp('panButton').toggle(true);
+                                    if(Crdppf.updateLayers) {
+                                        Crdppf.Map.setOverlays();
+                                    }
                                 }
                             }
                         }

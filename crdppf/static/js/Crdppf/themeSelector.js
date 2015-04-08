@@ -70,13 +70,23 @@ Crdppf.ThemeSelector.prototype = {
             ],
             listeners:{
                 click: function(view, index, node, e){
+
+                    Crdppf.LayerTreePanel.overlaysList.length = 0;
+                    Crdppf.updateLayers = false;
                     layerTree.getRootNode().cascade(function(n) {
                         var ui = n.getUI();
                         ui.toggleCheck(false);
                     });
                     layerTree.getNodeById(themeStore.getAt(index).id).getUI().toggleCheck(true);
+
+                    var layers = layerList.themes[index].layers;
+                    for (var key in layers){
+                         Crdppf.LayerTreePanel.overlaysList.push(key);
+                    }
+                    Crdppf.Map.setOverlays();
                     Ext.getCmp('infoButton').toggle(true);
                     Crdppf.FeaturePanel.setInfoControl();
+                    Crdppf.updateLayers = true;
                 }
             }
         });
