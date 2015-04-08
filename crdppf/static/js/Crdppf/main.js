@@ -397,7 +397,7 @@ Crdppf.init_main = function(lang) {
     });
 
     // zoom out Button
-        var zoomOutButton = new Ext.Button({
+    var zoomOutButton = new Ext.Button({
         pressed: false,
         tooltip: Crdppf.labels.zoomOutButtonTlp,
         xtype: 'button',
