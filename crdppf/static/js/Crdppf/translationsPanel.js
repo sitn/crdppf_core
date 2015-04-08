@@ -111,8 +111,8 @@ Crdppf.translationsPanel = function(labels) {
                 store: translationsstore,       // grid and PagingToolbar using same store
                 displayInfo: true,
                 pageSize: myPageSize,
-                displayMsg: 'Traductions {0} - {1} de {2}',
-                emptyMsg: "Pas de résultat trouvé"
+                displayMsg: labels.pagelabel+' {0} - {1} de {2}',
+                emptyMsg: labels.noresulttext
         })
     });
             
