@@ -63,10 +63,18 @@ Crdppf.Map.prototype = {
 
         control.events.register("beforefeaturesselected", this, function(e) {
             Crdppf.Map.selectLayer.removeAllFeatures();
+            var propertySelectionWindow = Ext.getCmp('propertySelectionWindow');
+            if (propertySelectionWindow) {
+                propertySelectionWindow.destroy();
+            }
         });
 
         control.events.register("beforefeatureselected", this, function(e) {
             Crdppf.Map.selectLayer.removeAllFeatures();
+            var propertySelectionWindow = Ext.getCmp('propertySelectionWindow');
+            if (propertySelectionWindow) {
+                propertySelectionWindow.destroy();
+            }
         });
 
         // define actions on feature selection
@@ -77,6 +85,7 @@ Crdppf.Map.prototype = {
             // else the selected feature is highlighted 
             } else {
                 property = e.features[0];
+                Crdppf.currentProperty = property;                
                 Crdppf.FeaturePanel.featureSelection(property);
             }
         });

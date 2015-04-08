@@ -122,6 +122,9 @@ Crdppf.init_main = function(lang) {
         divMousePosition: 'mousepos'
     };
     
+    // Global static variable that keeps track of the currently selected property
+    Crdppf.currentProperty = null;
+    
     // Instantiate the Map
     Crdppf.Map = new Crdppf.Map();
     var map = Crdppf.Map.map;

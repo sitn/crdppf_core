@@ -87,7 +87,9 @@ Crdppf.ThemeSelector.prototype = {
                     Crdppf.Map.setOverlays();
                     Ext.getCmp('infoButton').toggle(true);
                     Crdppf.FeaturePanel.setInfoControl();
-
+                    if(Crdppf.currentProperty){
+                        Crdppf.FeaturePanel.featureSelection(Crdppf.currentProperty);
+                    }
                 }
             }
         });

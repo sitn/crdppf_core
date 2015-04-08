@@ -8,6 +8,10 @@ Crdppf.FeaturePanel = function Map() {
 
 Crdppf.FeaturePanel.prototype = {
     /**
+    * Property: currently selected property
+    **/
+    currentProperty: null,
+    /**
     * Object: Feature tree to display intersection results
     * Parameters:
     * none
@@ -101,6 +105,7 @@ Crdppf.FeaturePanel.prototype = {
                     select: function(combo, record, index) {
                         var property = features[index];
                         Crdppf.FeaturePanel.featureSelection(property);
+                        Crdppf.currentProperty = property;
                         propertySelectionWindow.hide();
                     }
                 }
@@ -115,6 +120,7 @@ Crdppf.FeaturePanel.prototype = {
                 width: 300,
                 autoHeight: true,
                 layout: 'fit',
+                id: 'propertySelectionWindow',
                 closeAction: 'hide',
                 items: [combo],
                 listeners: {
