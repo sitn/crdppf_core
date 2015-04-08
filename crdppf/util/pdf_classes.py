@@ -1220,10 +1220,12 @@ class Extract(FPDF):
                                     feature['teneur'] = 'None'
                                 if feature['geomType'] == 'area':
                                     content += feature['teneur'].encode('iso-8859-1') \
-                                        +str(' \t(')+feature['intersectionMeasure'].replace(' : ','Surface : ').encode('iso-8859-1')+str(')\n')
-                                else: 
+                                        +str(' \t(')+feature['intersectionMeasure'].replace(' : ', translations['areaMeasureLabel']).encode('iso-8859-1')+str(')\n')
+                                elif feature['geomType'] == 'line': 
                                     content += feature['teneur'].encode('iso-8859-1') \
-                                        +str(' \t(')+feature['intersectionMeasure'].replace(' - ','').encode('iso-8859-1')+str(')\n')
+                                        +str(' \t(')+feature['intersectionMeasure'].replace(' : ', translations['distanceMeasureLabel']).encode('iso-8859-1')+str(')\n')
+                                else: 
+                                    content += feature['teneur'].encode('iso-8859-1')+str('\n')
                                 for doctype in self.doctypes:
                                     if len(feature[doctype]) > 0:
                                         for document in feature[doctype]:
