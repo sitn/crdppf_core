@@ -83,10 +83,11 @@ Crdppf.ThemeSelector.prototype = {
                     for (var key in layers){
                          Crdppf.LayerTreePanel.overlaysList.push(key);
                     }
+                    Crdppf.updateLayers = true;
                     Crdppf.Map.setOverlays();
                     Ext.getCmp('infoButton').toggle(true);
                     Crdppf.FeaturePanel.setInfoControl();
-                    Crdppf.updateLayers = true;
+
                 }
             }
         });
