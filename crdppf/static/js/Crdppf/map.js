@@ -247,7 +247,6 @@ Crdppf.Map.prototype = {
                 }
             );
             // Listen to layers events and show loading mask whenever necessary
-            console.log(Crdppf.LayerTreePanel.overlaysList);
             overlays.events.register("loadstart", overlays, function() {
                 if (Crdppf.LayerTreePanel.overlaysList.length > 0) {
                     loadMask.show();
