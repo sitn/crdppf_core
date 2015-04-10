@@ -510,13 +510,19 @@ class Extract(FPDF):
         <ogc:PropertyName>nummai</ogc:PropertyName>
         </sld:Label> 
         <sld:Font>
-        <sld:CssParameter name="font-family">pdfconfig.fontfamily</sld:CssParameter> 
+        <sld:CssParameter name="font-family">"""
+        sld += self.pdfconfig.fontfamily
+        sld += """</sld:CssParameter> 
         <sld:CssParameter name="font-weight">bold</sld:CssParameter> 
         <sld:CssParameter name="font-size">16</sld:CssParameter> 
         </sld:Font>
         <sld:Fill>
         <sld:CssParameter name="fill">#000000</sld:CssParameter> 
         </sld:Fill>
+        <sld:Halo>
+        <sld:Radius>3</sld:Radius>
+        <sld:Fill><sld:CssParameter name="fill">#FFFFFF</sld:CssParameter></sld:Fill>
+        </sld:Halo>
         </sld:TextSymbolizer>
         </sld:Rule>
         </sld:FeatureTypeStyle>
