@@ -70,12 +70,9 @@ Crdppf.FeaturePanel.prototype = {
     * labels: 
     */
     PropertySelection: function(features, labels) {
+
         var propertySelectionWindow;
-
-        if (store) {
-            store.removeAll();
-        }
-
+        
         if (features.length > 1) {
             var properties = [];
             for (var i = 0; i < features.length; i++){
@@ -87,13 +84,11 @@ Crdppf.FeaturePanel.prototype = {
                 ];
             }
 
-            var store = new Ext.data.ArrayStore({
-                fields: ['index','displaytxt','idemai','idemai'],
-                data: properties 
-            });
-
-            var combo = new Ext.form.ComboBox({
-                store: store,
+            var comboFeatureSelect = new Ext.form.ComboBox({
+                store: new Ext.data.ArrayStore({
+                    fields: ['index','displaytxt','idemai','idemai'],
+                    data: properties 
+                }),
                 displayField: 'displaytxt',
                 valueField: 'index',
                 typeAhead: true,
@@ -122,7 +117,7 @@ Crdppf.FeaturePanel.prototype = {
                 layout: 'fit',
                 id: 'propertySelectionWindow',
                 closeAction: 'hide',
-                items: [combo],
+                items: [comboFeatureSelect],
                 listeners: {
                     hide: function() {
                         this.hide();
