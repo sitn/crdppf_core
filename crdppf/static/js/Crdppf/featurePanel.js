@@ -51,6 +51,7 @@ Crdppf.FeaturePanel.prototype = {
         this.root.removeAll(true);
         this.featureTree.setTitle(Crdppf.labels.restrictionPanelTitle);
         Crdppf.Map.selectLayer.removeAllFeatures();
+        Crdppf.currentProperty = null;
         Crdppf.Map.intersectLayer.removeAllFeatures();
         Crdppf.Map.infoControl.deactivate();
     },

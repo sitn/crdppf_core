@@ -63,6 +63,7 @@ Crdppf.Map.prototype = {
 
         control.events.register("beforefeaturesselected", this, function(e) {
             Crdppf.Map.selectLayer.removeAllFeatures();
+            Crdppf.currentProperty = null;
             var propertySelectionWindow = Ext.getCmp('propertySelectionWindow');
             if (propertySelectionWindow) {
                 propertySelectionWindow.destroy();
@@ -71,6 +72,7 @@ Crdppf.Map.prototype = {
 
         control.events.register("beforefeatureselected", this, function(e) {
             Crdppf.Map.selectLayer.removeAllFeatures();
+            Crdppf.currentProperty = null;
             var propertySelectionWindow = Ext.getCmp('propertySelectionWindow');
             if (propertySelectionWindow) {
                 propertySelectionWindow.destroy();
@@ -105,7 +107,7 @@ Crdppf.Map.prototype = {
         "Selection",
         {
             styleMap: new OpenLayers.Style({
-                'strokeColor':'#00ff00',
+                'strokeColor': '#00ff00',
                 'fillOpacity': '0.5',
                 'fillColor': '#00ff00',
                 'strokeWidth': '3',
