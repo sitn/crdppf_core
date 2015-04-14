@@ -121,7 +121,6 @@ Crdppf.FeaturePanel.prototype = {
                 listeners: {
                     hide: function() {
                         this.hide();
-                        store.removeAll();
                     }
                 }
             });
@@ -138,7 +137,6 @@ Crdppf.FeaturePanel.prototype = {
     * labels: 
     */
     featureSelection: function(property) {
-
         this.featureTree.expand(true);
         Crdppf.Map.intersectLayer.removeAllFeatures();
         Crdppf.Map.selectLayer.addFeatures([property]);

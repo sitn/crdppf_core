@@ -94,7 +94,6 @@ Crdppf.LayerTreePanel.prototype = {
                             Crdppf.updateLayers = false;
                             for (var k=0; k < node.childNodes.length; k++){
                                 node.childNodes[k].getUI().toggleCheck(true);
-                                Crdppf.LayerTreePanel.overlaysList.push(node.childNodes[k].id);
                             }
                             Crdppf.updateLayers = true;
                             Crdppf.Map.setOverlays();
