@@ -275,5 +275,10 @@ Crdppf.Map.prototype = {
             this.map.addLayer(overlays);
             this.map.raiseLayer(this.selectLayer, this.map.layers.length);
         }
+        
+        //Update restrictions 
+        if(Crdppf.currentProperty){
+            Crdppf.FeaturePanel.featureSelection(Crdppf.currentProperty);
+        }
     }
 };
