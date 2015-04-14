@@ -19,12 +19,12 @@ Crdppf.LayerTreePanel.prototype = {
     init: function(labels, layerList, baseLayersList) {
         var layerTree = new Ext.tree.TreePanel({
             title: labels.layerTreeTitle,
-            collapsible:true,
+            collapsible: true,
             flex: 1.0,
-            useArrows:true,
-            animate:true,
+            useArrows: true,
+            animate: true,
             lines: true,
-            enableDD:false,
+            enableDD: false,
             autoScroll: true,
             rootVisible: false,
             frame: true,
@@ -34,7 +34,7 @@ Crdppf.LayerTreePanel.prototype = {
         // define root node
         var rootLayerTree = new Ext.tree.TreeNode({
             text: 'rootLayerTree',
-            draggable:false,
+            draggable: false,
             id:'rootLayerTree'
         });
 
@@ -45,7 +45,7 @@ Crdppf.LayerTreePanel.prototype = {
             text: labels.selectAllLayerLabel,
             id: 'selectAllNode',
             draggable: false,
-            cls:'checkAllNodeCls',
+            cls: 'checkAllNodeCls',
             checked: false,
             leaf: true,
             listeners: {
