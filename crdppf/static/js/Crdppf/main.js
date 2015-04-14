@@ -3,6 +3,8 @@
  * @requires GeoExt/widgets/LegendPanel.js 
  * @requires GeoExt/widgets/WMSLegend.js
  * @include Crdppf/map.js
+ * @include Crdppf/featurePanel.js
+ * @include Crdppf/helpingFunctions.js
  * @include Crdppf/layerTree.js
  * @include OpenLayers/Control/MousePosition.js
  * @include Crdppf/searcher/searcher.js
@@ -11,20 +13,18 @@
  * @include Crdppf/measureTools.js
  */
 
-var layerList;
-
 // MAIN USER INTERFACE
 Ext.onReady(function() {
-    
+
     Ext.namespace('Crdppf');
     Crdppf.layerList = '';
-    
+
     // set the application language to the user session settings
     var lang = ''; // The current session language
     // We need to ensure all json data are recieved by the client before starting the application
     Crdppf.loadingCounter = 0;
     var sync = 0;
-    
+
     var synchronize = function(sync) {
         if (sync == 1){
             Ext.MessageBox.buttonText.yes = Crdppf.labels.disclaimerAcceptance;
@@ -34,6 +34,7 @@ Ext.onReady(function() {
             for (var i = 0; i < buttons.length; i++){
                  buttons[i].addClass('msgButtonStyle'); 
             }
+
             Ext.Msg.show({
                title: Crdppf.labels.disclaimerWindowTitle,
                msg: Crdppf.labels.disclaimerMsg,
@@ -44,13 +45,13 @@ Ext.onReady(function() {
             });
         }
     };
-        
+
     var triggerFunction = function(counter) {
         if (counter == 2) {
             synchronize();
         }
     };
-    
+
     var redirectAfterDisclaimer = function(userChoice){
         if (userChoice == 'yes'){
             Crdppf.init_main(lang);
@@ -61,7 +62,7 @@ Ext.onReady(function() {
 
     // Create LegalDocumentStore and load it
     Crdppf.legalDocuments();
-    
+
     // Get the current session language
     Ext.Ajax.request({
         url: Crdppf.getLanguageUrl,
@@ -92,7 +93,6 @@ Ext.onReady(function() {
         url: Crdppf.getInterfaceConfigUrl,
         success: function(response) {
             Crdppf.layerList = Ext.decode(response.responseText);
-
             sync += 1;
             synchronize(sync);        
         },
@@ -121,8 +121,19 @@ Crdppf.init_main = function(lang) {
     var mapOptions = {
         divMousePosition: 'mousepos'
     };
-    MapO = new Crdppf.Map(mapOptions,Crdppf.labels);
-    var map = MapO.map;
+    
+    // Global static variable that keeps track of the currently selected property
+    Crdppf.currentProperty = null;
+    
+    // Instantiate the Map
+    Crdppf.Map = new Crdppf.Map();
+    var map = Crdppf.Map.map;
+
+    // Instantiate the FeaturePanel
+    Crdppf.FeaturePanel = new Crdppf.FeaturePanel();
+    
+    // updateLayers: global static boolean variable to deal with IE
+    Crdppf.updateLayers = true;
 
     // getFeatureInfo button: activates the Openlayers infoControl
     var infoButton = new Ext.Button({
@@ -137,7 +148,7 @@ Crdppf.init_main = function(lang) {
         listeners:{
             toggle: function (me, pressed){
                 if (pressed) {
-                    MapO.setInfoControl();
+                    Crdppf.FeaturePanel.setInfoControl();
                 }
             }                  
         }
@@ -154,14 +165,8 @@ Crdppf.init_main = function(lang) {
         iconCls: 'crdppf_clearselectionbutton',
         listeners:{
             click: function (){
-                var selectionLayer = MapO.map.getLayer('selectionLayer');
-                selectionLayer.removeAllFeatures();
-                MapO.disableInfoControl();
-                // When unselecting the feature, we also reset the document filter criterias
-                // unset the cadastre and municipality number
+                Crdppf.FeaturePanel.disableInfoControl();
                 Crdppf.docfilters({'cadastrenb':0});
-                //Crdppf.docfilters({'municipalitynb':0});
-                // unset the restrictionid list found for thre feature
                 for (var i = Crdppf.filterlist.objectids.length; i > 0; i--){
                     Crdppf.docfilters({'objectids':[Crdppf.filterlist.objectids[i-1]]});
                 }
@@ -171,12 +176,12 @@ Crdppf.init_main = function(lang) {
     });
 
     var measureLabelBox = new Ext.form.Label({
+        id: 'measureLabelBox',
         cls: 'measureOutput'
     });
 
-    var measureControlO = new Crdppf.MeasureTool(map, measureLabelBox);
-    measureControlO.makeMeasureTool();
-    
+    Crdppf.measureTool = new Crdppf.MeasureTool(Crdppf.Map.map, measureLabelBox);
+
     var measureToolsMenu = new Ext.SplitButton({
         text: Crdppf.labels.measureToolTxt,
         showText: true,
@@ -194,9 +199,9 @@ Crdppf.init_main = function(lang) {
                     listeners: {
                         toggle: function (me, pressed){
                             if (pressed){
-                                measureControlO.toggleMeasureControl('line');
+                                Crdppf.measureTool.toggleMeasureControl('line');
                             } else if(!pressed && !Ext.getCmp('polygoneButton').pressed) {
-                                measureControlO.disableMeasureControl();
+                                Crdppf.measureTool.disableMeasureControl();
                                 infoButton.toggle(true);
                             }
                         }
@@ -211,9 +216,9 @@ Crdppf.init_main = function(lang) {
                     listeners: {
                         toggle: function (me, pressed){
                             if (pressed) {
-                                measureControlO.toggleMeasureControl('polygon');
+                                Crdppf.measureTool.toggleMeasureControl('polygon');
                             } else if(!pressed && !Ext.getCmp('distanceButton').pressed) {
-                                measureControlO.disableMeasureControl();
+                                Crdppf.measureTool.disableMeasureControl();
                                 infoButton.toggle(true);
                             }
                         }   
@@ -222,7 +227,7 @@ Crdppf.init_main = function(lang) {
             ]
         })
     });
- 
+
     // Panel to display the link to the PDF once generated
     var pdfDisplayPanel = new Ext.Panel({
         id:'pdfDisplayPanel',
@@ -284,7 +289,7 @@ Crdppf.init_main = function(lang) {
                     click: function(){
                         var pdfMask = new Ext.LoadMask(Ext.getCmp('pdfExtractWindow').body, {msg: Crdppf.labels.pdfLoadMessage});
                         pdfMask.show();
-                        var urlToOpen = Crdppf.printUrl + '?id=' + select.features[0].attributes.idemai;
+                        var urlToOpen = Crdppf.printUrl + '?id=' + Crdppf.currentProperty.attributes.idemai;
                         var selectedRadio = Ext.getCmp('extractRadioGroup').getValue();
                         urlToOpen += '&type=' + selectedRadio.inputValue;
                         
@@ -324,7 +329,7 @@ Crdppf.init_main = function(lang) {
             }
         ]
     });
-        
+
     var chooseExtract = new Ext.Window({
         id: 'pdfExtractWindow',
         title: Crdppf.labels.chooseExtractTypeMsg,
@@ -343,7 +348,7 @@ Crdppf.init_main = function(lang) {
             }
         }
     });
-    
+
     // generate the pdf file of the current map
     var printButton = new Ext.Button({
         xtype: 'button',
@@ -353,7 +358,7 @@ Crdppf.init_main = function(lang) {
         iconCls: 'crdppf_printbutton',
         listeners:{
             click: function (){
-                if(select.features.length == 1){
+                if(Crdppf.currentProperty){
                     chooseExtract.show();
                 }
                 else {
@@ -378,7 +383,7 @@ Crdppf.init_main = function(lang) {
         iconCls: 'crdppf_panbutton',
         listeners:{
             click: function (){
-                MapO.disableInfoControl();
+                Crdppf.Map.infoControl.deactivate();
             }  
         }
     });
@@ -394,13 +399,13 @@ Crdppf.init_main = function(lang) {
         iconCls: 'crdppf_zoominbutton',
         listeners:{
             click: function (){
-                MapO.map.zoomIn();
+                Crdppf.Map.map.zoomIn();
             }  
         }
     });
 
     // zoom out Button
-        var zoomOutButton = new Ext.Button({
+    var zoomOutButton = new Ext.Button({
         pressed: false,
         tooltip: Crdppf.labels.zoomOutButtonTlp,
         xtype: 'button',
@@ -410,7 +415,7 @@ Crdppf.init_main = function(lang) {
         iconCls: 'crdppf_zoomoutbutton',
         listeners:{
             click: function (){
-                MapO.map.zoomOut();
+                Crdppf.Map.map.zoomOut();
             }  
         }
     });
@@ -454,14 +459,14 @@ Crdppf.init_main = function(lang) {
         iconCls: 'crdppf_deButton',
         toggleGroup: 'langButton',
         listeners:{
-            click: function(){setLanguage('De');
+            click: function() {setLanguage('De');
             }
         }
     });
 
     // set the lang parameter in session when selected through the language buttons
-    function setLanguage(value){
-        var request = OpenLayers.Request.GET({
+    var setLanguage = function(value){
+        OpenLayers.Request.GET({
             url: Crdppf.setLanguageUrl,
             params: {
                 lang:value,
@@ -471,23 +476,21 @@ Crdppf.init_main = function(lang) {
             async: false
         });
         window.location.reload();
-    }
+    };
 
     // create the mapPanel toolbar
     var mapToolbar = new Ext.Toolbar({
-    autoWidth: true,
-    height: 20,
-    cls: 'map-toolbar',
-    items: [
-        panButton,
-        infoButton,
-        clearSelectionButton,
-        printButton,
-        zoomInButton,
-        zoomOutButton,
-        measureToolsMenu,
-        measureLabelBox
-        ]
+        autoWidth: true,
+        height: 20,
+        cls: 'map-toolbar',
+        items: [panButton,
+            infoButton,
+            clearSelectionButton,
+            printButton,
+            zoomInButton,
+            zoomOutButton,
+            measureToolsMenu,
+            measureLabelBox]
    });
 
    // create the mapPanel
@@ -508,7 +511,7 @@ Crdppf.init_main = function(lang) {
     var bottomToolBarHtml = '<span style="padding: 0 20px;">' + Crdppf.labels.mapBottomTxt + '</span>';
     bottomToolBarHtml += '<span id="mousepos" style="padding: 0 20px;"></span>';
     bottomToolBarHtml += '<div style="padding: 0 20px; margin-top: 3px;">'+ Crdppf.labels.disclaimerTxt + '</div>';
-    
+
     var bottomToolBar = new Ext.Toolbar({
         autoWidth: true,
         height: 50,
@@ -535,8 +538,10 @@ Crdppf.init_main = function(lang) {
         contentEl: 'header'
     });
 
-    layerTree = Crdppf.LayerTree(Crdppf.labels, Crdppf.layerList, Crdppf.baseLayersList);
-    themeSelector = Crdppf.ThemeSelector(Crdppf.labels, Crdppf.layerList);
+    Crdppf.LayerTreePanel = new Crdppf.LayerTreePanel(Crdppf.labels, Crdppf.layerList, Crdppf.baseLayersList);
+    var layerTree = Crdppf.LayerTreePanel.layerTree;
+    Crdppf.themeSelector = new Crdppf.ThemeSelector(Crdppf.labels, Crdppf.layerList, layerTree);
+    var themePanel = Crdppf.themeSelector.themePanel;
 
     // create the CGPX searchbox
     var searcher = new Crdppf.SearchBox({
@@ -556,7 +561,7 @@ Crdppf.init_main = function(lang) {
         boxMinWidth: 225,
         items: [
             searcher, 
-            themeSelector, 
+            themePanel, 
             layerTree
         ],
         layoutConfig: {
@@ -564,53 +569,26 @@ Crdppf.init_main = function(lang) {
         }
       });
 
-   // featureTree displayed in infoPanel as a global view 
-    featureTree = new Ext.tree.TreePanel({
-        title: Crdppf.labels.restrictionPanelTitle,
-        cls: 'featureTreeCls',
-        collapsed: false,
-        useArrows:false,
-        collapside: false,
-        animate:true,
-        lines: false,
-        enableDD:false,
-        rootVisible: false,
-        frame: false,
-        id: 'featureTree',
-        height:300,
-        autoScroll: true
-    });
-    
-    root = new Ext.tree.TreeNode({
-        text: 'Thèmes',
-        draggable:false,
-        id:'rootNode'
-    });
-
-    featureTree.setRootNode(root);
-    var layerStore = new GeoExt.data.LayerStore({
-        map: MapO.map
-    });
-    
     //legend panel in the lower east layout part - serves to display the layer legends
     var legendPanel = new GeoExt.LegendPanel({
         collapsible:true, 
-        map: MapO.map,
-        cls:'legendPanelCls',
+        map: Crdppf.Map.map,
         title: Crdppf.labels.legendPanelTitle,
         autoScroll: true,
         flex: 1.0,
         defaults: {
             style: 'padding:5px',
             baseParams: {
-            FORMAT: 'image/png',
-            LEGEND_OPTIONS: 'forceLabels:on'
+                FORMAT: 'image/png',
+                LEGEND_OPTIONS: 'forceLabels:on',
+                WIDTH: 200,
+                HEIGHT:100
             }
         }
     });
-    
+
     //query info display panel in the upper east part of the layout - serves to display the feature info
-    infoPanel = new Ext.Panel({
+    var infoPanel = new Ext.Panel({
         header: false,
         layout: 'vbox',
         width: 300,
@@ -625,16 +603,16 @@ Crdppf.init_main = function(lang) {
             align: 'stretch'
         },
         items: [
-            featureTree,
+            Crdppf.FeaturePanel.featureTree,
             legendPanel
         ]
     });
-    
+
     // Create the inital view with the legal documents
     Crdppf.legalDocuments.dataView = Crdppf.legalDocuments.createView(Crdppf.labels);
-    
+
     // Container for the map and legal documents display
-    centerPanel = new Ext.TabPanel({
+    var centerPanel = new Ext.TabPanel({
         region: 'center',
         activeTab: 0, // index or id
         autoScroll: true,
@@ -643,7 +621,7 @@ Crdppf.init_main = function(lang) {
             Crdppf.legalDocuments.dataView
         ]
     });
-    
+
     // Main window layout
     var crdppf = new Ext.Viewport({
         layout: 'border',
@@ -658,7 +636,6 @@ Crdppf.init_main = function(lang) {
         ]
     });
 
-	// Refait la mise en page si la fenêtre change de taille
-	//pass along browser window resize events to the panel
-	Ext.EventManager.onWindowResize(crdppf.doLayout,crdppf);
+    // Render the layout again on window resize event
+    Ext.EventManager.onWindowResize(crdppf.doLayout,crdppf);
 };
