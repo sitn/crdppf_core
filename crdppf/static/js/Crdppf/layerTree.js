@@ -37,6 +37,7 @@ Crdppf.LayerTreePanel.prototype = {
             draggable:false,
             id:'rootLayerTree'
         });
+
         var ll = layerList.themes;
 
         // create a node on top of tree to select all nodes

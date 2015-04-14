@@ -108,7 +108,7 @@ Crdppf.Map.prototype = {
                 'strokeColor':'#00ff00',
                 'fillOpacity': '0.5',
                 'fillColor': '#00ff00',
-                'strokeWidth':'3',
+                'strokeWidth': '3',
                 'pointRadius': '20'
             }),
             fixedLayer: true, 
@@ -126,7 +126,7 @@ Crdppf.Map.prototype = {
                 'strokeColor':'#ff0000',
                 'fillOpacity': '0.5',
                 'fillColor': '#ff0000',
-                'strokeWidth':'2',
+                'strokeWidth': '2',
                 'pointRadius': '20'
             }),
             fixedLayer: true,
