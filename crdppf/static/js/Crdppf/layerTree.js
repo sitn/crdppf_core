@@ -57,7 +57,6 @@ Crdppf.LayerTreePanel.prototype = {
                                 rootLayerTree.childNodes[n].getUI().toggleCheck(true);
                             }
                         }
-                        Ext.getCmp('infoButton').toggle(true);
                         Crdppf.FeaturePanel.setInfoControl();
                     } else {
                         Crdppf.LayerTreePanel.overlaysList.length = 0;
@@ -94,9 +93,13 @@ Crdppf.LayerTreePanel.prototype = {
                             Crdppf.updateLayers = false;
                             for (var k=0; k < node.childNodes.length; k++){
                                 node.childNodes[k].getUI().toggleCheck(true);
+                                if (Crdppf.LayerTreePanel.overlaysList.indexOf(node.childNodes[k].id) == -1) {
+                                    Crdppf.LayerTreePanel.overlaysList.push(node.childNodes[k].id);
+                                }
                             }
                             Crdppf.updateLayers = true;
                             Crdppf.Map.setOverlays();
+                            Crdppf.FeaturePanel.setInfoControl();
                         } else {
                             filter[node.id] = checked;
                             Crdppf.docfilters({'topicfk':filter});                
@@ -108,6 +111,7 @@ Crdppf.LayerTreePanel.prototype = {
                             }
                             Crdppf.updateLayers = true;
                             Crdppf.Map.setOverlays();
+                            Crdppf.FeaturePanel.setInfoControl();
                         }
                     }
                 }
@@ -125,9 +129,10 @@ Crdppf.LayerTreePanel.prototype = {
                             'checkchange': function(node, checked){
                                 if (checked){
                                     if(Crdppf.updateLayers) {
-                                        Crdppf.LayerTreePanel.overlaysList.push(node.id);
+                                        if (Crdppf.LayerTreePanel.overlaysList.indexOf(node.id) == -1) {
+                                            Crdppf.LayerTreePanel.overlaysList.push(node.id);
+                                        }
                                         Crdppf.Map.setOverlays();
-                                        Ext.getCmp('infoButton').toggle(true);
                                         Crdppf.FeaturePanel.setInfoControl();
                                     }
                                 } else {
@@ -135,6 +140,7 @@ Crdppf.LayerTreePanel.prototype = {
                                     if(Crdppf.updateLayers) {
                                         Crdppf.Map.setOverlays();
                                     }
+                                    Crdppf.FeaturePanel.setInfoControl();
                                 }
                             }
                         }

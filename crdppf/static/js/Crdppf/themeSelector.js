@@ -81,15 +81,16 @@ Crdppf.ThemeSelector.prototype = {
 
                     var layers = layerList.themes[index].layers;
                     for (var key in layers){
-                         Crdppf.LayerTreePanel.overlaysList.push(key);
+                        if (Crdppf.LayerTreePanel.overlaysList.indexOf(key) == -1) {
+                            Crdppf.LayerTreePanel.overlaysList.push(key);
+                        }
                     }
                     Crdppf.updateLayers = true;
                     Crdppf.Map.setOverlays();
-                    Ext.getCmp('infoButton').toggle(true);
-                    Crdppf.FeaturePanel.setInfoControl();
                     if(Crdppf.currentProperty){
                         Crdppf.FeaturePanel.featureSelection(Crdppf.currentProperty);
                     }
+                    Crdppf.FeaturePanel.setInfoControl();
                 }
             }
         });

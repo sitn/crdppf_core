@@ -61,6 +61,7 @@ Crdppf.FeaturePanel.prototype = {
     * none
     */
     setInfoControl: function setInfoControl(){
+        Ext.getCmp('infoButton').toggle(true)
         Crdppf.Map.infoControl.activate();
         this.root.removeAll(true);
     },
