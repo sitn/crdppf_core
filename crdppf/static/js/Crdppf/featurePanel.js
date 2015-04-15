@@ -186,7 +186,7 @@ Crdppf.FeaturePanel.prototype = {
                         var sameLayerNode = new Ext.tree.TreeNode({
                             singleClickExpand: true,
                             attributes: jsonData[j],
-                            text: Crdppf.labels.restrictionFoundTxt + (j+1) + ' : ' + String(jsonData[j].data.intersectionMeasure),
+                            text: Crdppf.labels.restrictionFoundTxt + (j+1) + ' ' + String(jsonData[j].data.intersectionMeasure),
                             draggable: false,
                             leaf: false,
                             expanded: false,
