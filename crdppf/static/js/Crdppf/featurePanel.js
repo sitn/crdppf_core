@@ -49,7 +49,6 @@ Crdppf.FeaturePanel.prototype = {
     disableInfoControl: function disableInfoControl(){
         this.featureTree.collapse(false);
         this.root.removeAll(true);
-        console.log(this.root);
         this.featureTree.setTitle(Crdppf.labels.restrictionPanelTitle);
         Crdppf.Map.selectLayer.removeAllFeatures();
         Crdppf.currentProperty = null;
