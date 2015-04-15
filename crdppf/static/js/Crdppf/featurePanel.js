@@ -167,22 +167,15 @@ Crdppf.FeaturePanel.prototype = {
                 // iterate over all features: create a node for each restriction and group them by their owning layer
                 for (var j=0; j < jsonData.length; j++) {
                     if (jsonData[j].attributes.layerName == lName){
-                        Crdppf.docfilters({'objectids': [jsonData[i].fid]});
+                        Crdppf.docfilters({'objectids': [jsonData[j].fid]});
                         featureClass = jsonData[j].attributes.featureClass;
                         html = '';
-                        // Attribute keys are: statutjuridique, teneur, layerName, datepublication
-                        for (var value in jsonData[j].attributes){
-                            if (value !== 'geomType' && value !=='theme' && value !=='codegenre' && value !=='intersectionMeasure'){
-                                if (value === 'layerName'){
-                                    // Replace the layername as defined in the database by it's display name
-                                    html += '<p class=featureAttributeStyle><b>' + Crdppf.labels[value] + ' : </b>' + Crdppf.labels[jsonData[j].attributes[value]] +'</p>';
-                                    // Only display complementary attributes tenor, publication date and legal state
-                                } else  if (value === 'statutjuridique' || value === 'teneur' || value === 'datepublication') {
-                                    html += '<p class=featureAttributeStyle><b>' + Crdppf.labels[value] + ' : </b>' + jsonData[j].attributes[value] +'</p>';
-                                }
-                            }
-                        }
-                        html += '';
+                        // Replace the layername as defined in the database by it's display name
+                        html += '<p class=featureAttributeStyle><b>' + Crdppf.labels['layerName'] + ' : </b>' + Crdppf.labels[jsonData[j].attributes['layerName']] +'</p>';
+                        // Only display complementary attributes tenor, publication date and legal state
+                        html += '<p class=featureAttributeStyle><b>' + Crdppf.labels['teneur'] + ' : </b>' + jsonData[j].attributes['teneur'] +'</p>';
+                        html += '<p class=featureAttributeStyle><b>' + Crdppf.labels['statutjuridique'] + ' : </b>' + jsonData[j].attributes['statutjuridique'] +'</p>';
+                        html += '<p class=featureAttributeStyle><b>' + Crdppf.labels['datepublication'] + ' : </b>' + jsonData[j].attributes['datepublication'] +'</p>';
                         // create 1 node for each restriction (level 2)
                         var sameLayerNode = new Ext.tree.TreeNode({
                             singleClickExpand: true,
