@@ -26,7 +26,7 @@ Ext.onReady(function() {
     var sync = 0;
 
     var synchronize = function(sync) {
-        if (sync == 1){
+        if (sync == 1 && Crdppf.disclaimer === true) {
             Ext.MessageBox.buttonText.yes = Crdppf.labels.disclaimerAcceptance;
             Ext.MessageBox.buttonText.no = Crdppf.labels.diclaimerRefusal;
             var dlg = Ext.MessageBox.getDialog();
@@ -43,6 +43,8 @@ Ext.onReady(function() {
                animEl: 'elId',
                icon: Ext.MessageBox.WARNING
             });
+        } else if (sync == 1) {
+            redirectAfterDisclaimer('yes');
         }
     };
 

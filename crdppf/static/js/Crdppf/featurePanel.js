@@ -257,8 +257,9 @@ Crdppf.FeaturePanel.prototype = {
             this.root.appendChild(top);
             return;
         }
+
         var me = this;
-        
+
         // define an request object to the interection route
         var featureMask = new Ext.LoadMask(this.featureTree.body, {msg: Crdppf.labels.restrictionLoadingMsg});
         featureMask.show();

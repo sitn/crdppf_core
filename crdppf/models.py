@@ -55,7 +55,7 @@ class Layers(Base):
     topic = relationship("Topics", backref=backref("topic"),lazy="joined")
 
 class Documents(Base):
-    __tablename__ = 'documents_saisies'
+    __tablename__ = 'documents_edition'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     legalstate = Column(Integer, ForeignKey('crdppf.vl_legalstate.id'))
     legalstates = relationship("Legalstates", lazy="joined")
