@@ -97,6 +97,7 @@ class PDFConfig(object):
         self.placeholder = config['placeholder']
         self.pdfbasename = config['pdfbasename']
         self.siteplanbasename = config['siteplanbasename']
+        self.optionaltopics = config['optionaltopics']
 
 class AppendixFile(FPDF):
     """The helper class to create the appendices files with the same corporate
@@ -509,13 +510,19 @@ class Extract(FPDF):
         <ogc:PropertyName>nummai</ogc:PropertyName>
         </sld:Label> 
         <sld:Font>
-        <sld:CssParameter name="font-family">pdfconfig.fontfamily</sld:CssParameter> 
+        <sld:CssParameter name="font-family">"""
+        sld += self.pdfconfig.fontfamily
+        sld += """</sld:CssParameter> 
         <sld:CssParameter name="font-weight">bold</sld:CssParameter> 
         <sld:CssParameter name="font-size">16</sld:CssParameter> 
         </sld:Font>
         <sld:Fill>
         <sld:CssParameter name="fill">#000000</sld:CssParameter> 
         </sld:Fill>
+        <sld:Halo>
+        <sld:Radius>3</sld:Radius>
+        <sld:Fill><sld:CssParameter name="fill">#FFFFFF</sld:CssParameter></sld:Fill>
+        </sld:Halo>
         </sld:TextSymbolizer>
         </sld:Rule>
         </sld:FeatureTypeStyle>
@@ -1101,16 +1108,17 @@ class Extract(FPDF):
                 self.cell(118, 6,self.topiclist[topic]['topicname'],0,0,'L')
                 self.cell(15, 6,'',0,0,'L')
                 self.cell(15, 6,'',0,1,'L')
-                
-        self.ln()
-        self.set_font(*pdfconfig.textstyles['tocbold'])
-        self.multi_cell(0, 5, translations['restrictionnotlegallybindinglabel'], 'B', 1, 'L')
-        self.ln()
 
-        self.set_font(*pdfconfig.textstyles['tocbold'])
-        self.cell(118, 6, translations['norestrictionlabel'], 0, 0, 'L')
-        self.cell(15, 6, str(''), 0, 0, 'L')
-        self.cell(15, 6, str(''), 0, 1, 'L')
+        if pdfconfig.optionaltopics == True :
+            self.ln()
+            self.set_font(*pdfconfig.textstyles['tocbold'])
+            self.multi_cell(0, 5, translations['restrictionnotlegallybindinglabel'], 'B', 1, 'L')
+            self.ln()
+
+            self.set_font(*pdfconfig.textstyles['tocbold'])
+            self.cell(118, 6, translations['norestrictionlabel'], 0, 0, 'L')
+            self.cell(15, 6, str(''), 0, 0, 'L')
+            self.cell(15, 6, str(''), 0, 1, 'L')
 
     def write_thematic_page(self, topic):
         """Writes the page for the given topic
@@ -1218,10 +1226,12 @@ class Extract(FPDF):
                                     feature['teneur'] = 'None'
                                 if feature['geomType'] == 'area':
                                     content += feature['teneur'].encode('iso-8859-1') \
-                                        +str(' \t(')+feature['intersectionMeasure'].replace(' : ','Surface : ').encode('iso-8859-1')+str(')\n')
-                                else: 
+                                        +str(' \t(')+feature['intersectionMeasure'].replace(' : ', translations['areaMeasureLabel']).encode('iso-8859-1')+str(')\n')
+                                elif feature['geomType'] == 'line': 
                                     content += feature['teneur'].encode('iso-8859-1') \
-                                        +str(' \t(')+feature['intersectionMeasure'].replace(' - ','').encode('iso-8859-1')+str(')\n')
+                                        +str(' \t(')+feature['intersectionMeasure'].replace(' : ', translations['distanceMeasureLabel']).encode('iso-8859-1')+str(')\n')
+                                else: 
+                                    content += feature['teneur'].encode('iso-8859-1')+str('\n')
                                 for doctype in self.doctypes:
                                     if len(feature[doctype]) > 0:
                                         for document in feature[doctype]:
