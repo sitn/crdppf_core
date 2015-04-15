@@ -226,7 +226,7 @@ Crdppf.FeaturePanel.prototype = {
                 leaf: false,
                 expanded: true
             });
-            this.root.appendChild(layerChild);
+            Crdppf.FeaturePanel.root.appendChild(layerChild);
         }
     },
     /***
