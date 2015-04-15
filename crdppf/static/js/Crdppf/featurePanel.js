@@ -176,7 +176,8 @@ Crdppf.FeaturePanel.prototype = {
                                 if (value === 'layerName'){
                                     // Replace the layername as defined in the database by it's display name
                                     html += '<p class=featureAttributeStyle><b>' + Crdppf.labels[value] + ' : </b>' + Crdppf.labels[jsonData[j].attributes[value]] +'</p>';
-                                } else {
+                                    // Only display complementary attributes tenor, publication date and legal state
+                                } else  if (value === 'statutjuridique' || value === 'teneur' || value === 'datepublication') {
                                     html += '<p class=featureAttributeStyle><b>' + Crdppf.labels[value] + ' : </b>' + jsonData[j].attributes[value] +'</p>';
                                 }
                             }
@@ -186,7 +187,7 @@ Crdppf.FeaturePanel.prototype = {
                         var sameLayerNode = new Ext.tree.TreeNode({
                             singleClickExpand: true,
                             attributes: jsonData[j],
-                            text: Crdppf.labels.restrictionFoundTxt + (j+1) + ' ' + String(jsonData[j].data.intersectionMeasure),
+                            text: Crdppf.labels.restrictionFoundTxt + (j+1) + String(jsonData[j].data.intersectionMeasure),
                             draggable: false,
                             leaf: false,
                             expanded: false,
