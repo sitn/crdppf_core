@@ -1,7 +1,7 @@
 Ext.namespace('Crdppf');
 
 /***
-*create layer tree and append nodes & subnodes to it
+* create menu toolbar for the admin interface
 ***/
 Crdppf.adminToolbar = function(labels) {
 
