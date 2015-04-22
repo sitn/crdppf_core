@@ -65,6 +65,7 @@ def includeme(config):
     config.add_route('images', '/static/images/')
     config.add_route('create_extract', 'create_extract')
     config.add_route('get_features', 'get_features')
+    config.add_route('get_property', 'property/get')
     config.add_route('set_language', 'set_language')
     config.add_route('get_language', 'get_language')
     config.add_route('get_translation_dictionary', 'get_translation_dictionary')
@@ -89,6 +90,12 @@ def includeme(config):
     config.add_view('crdppf.views.entry.Entry', route_name = 'home')
     config.add_view('crdppf.views.entry.Entry', route_name = 'images')
     config.add_view('crdppf.views.entry.Entry', route_name='test')
+
+    # Print proxy routes
+    config.add_route('printproxy_report_create', '/printproxy/report/{idemai}')
+    config.add_route('printproxy_status', '/printproxy/status/{ref}.json')
+    config.add_route('printproxy_report_get', '/printproxy/report/{ref}')
+
 
     # ADMIN VIEWS
     config.add_view('crdppf.views.administration.Config', route_name='configpanel')

@@ -1,0 +1,16 @@
+throwErrorOnExtraParameters: true
+
+templates:
+  report: !template
+    reportTemplate: report_A4.jrxml
+    attributes:
+      map: !map
+          width: 500
+          height: 500
+          maxDpi : 400
+    processors:
+    - !reportBuilder # compile all reports in current directory
+      directory: '.'
+    - !createMap
+      inputMapper: {map: map}
+      outputMapper: {mapSubReport: map}
