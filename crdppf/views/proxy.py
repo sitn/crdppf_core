@@ -49,9 +49,11 @@ class Proxy:
 
     def _proxy(self, url, params=None, method=None, body=None, headers=None):
         # get query string
+
         params = dict(self.request.params) if params is None else params
         parsed_url = urlparse(url)
         all_params = parse_qs(parsed_url.query)
+
         for p in all_params:
             all_params[p] = ",".join(all_params[p])
         all_params.update(params)
@@ -153,7 +155,8 @@ class Proxy:
     def _proxy_response(
         self, url, headers=None, headers_update={}, **kwargs
     ):  # pragma: no cover
-        resp, content = self._proxy(url, **kwargs)
+
+        resp, content = self._proxy(url, headers=headers, **kwargs)
 
         return self._build_response(
             resp, content, headers_update=headers_update

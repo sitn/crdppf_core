@@ -38,14 +38,14 @@ from pyramid.view import view_config
 from pyramid.response import Response
 from pyramid.httpexceptions import HTTPBadGateway
 
-from print_project.views.proxy import Proxy
+from crdppf.views.proxy import Proxy
 
-from print_project.util.cached_content import get_cached_content, get_cached_content_l10n
-from print_project.util.content import get_content
+from crdppf.lib.cached_content import get_cached_content, get_cached_content_l10n
+from crdppf.lib.content import get_content
 
 log = logging.getLogger(__name__)
 
-
+import httplib2
 
 class PrintProxy(Proxy):  # pragma: no cover
 
@@ -56,26 +56,44 @@ class PrintProxy(Proxy):  # pragma: no cover
     @view_config(route_name='printproxy_report_create')
     def report_create(self):
         """ Create PDF. """
-        
-        content = {
+
+        idemai = self.request.matchdict.get("idemai")
+
+        body = {
             "layout": "report",
             "outputFormat": "pdf",
             "attributes": {}
         }
-        content["attributes"].update(get_cached_content())
-        content["attributes"].update(get_cached_content_l10n(self.request.params.get(
-            "lang",
-            self.request.registry.settings["lang"]
-        )))
-        content["attributes"].update(get_content(self.request.matchdict.get("ref")))
         
+        # TODO
+        #~ content["attributes"].update(get_cached_content()["attributes"])
+        #~ content["attributes"].update(get_cached_content_l10n(self.request.params.get(
+            #~ "lang",
+            #~ self.request.registry.settings["app_config"]["lang"]
+        #~ )))
+
+        dynamic_content = get_content(idemai, self.request)
+
+        body["attributes"].update(dynamic_content["attributes"])
+
+        _string = "%s/report.%s" % (
+            self.config['print_url'],
+            "pdf"
+        )
+
+        http = httplib2.Http()
+
+        body = json.dumps(body)
+
+        # Specify correct content type in headers
+        h = dict(self.request.headers)
+        h["Content-Type"] = "application/json"
+
         return self._proxy_response(
-            "print",
-            "%s/report.%s" % (
-                self.config['print_url'],
-                "pdf"
-            ),
-            body=json.dumps(content)
+            _string,
+            body=body,
+            method='POST',
+            headers=h
         )
 
     @view_config(route_name='printproxy_status')
