@@ -1,0 +1,72 @@
+throwErrorOnExtraParameters: true
+
+templates:
+    report: !template
+        reportTemplate: report_A4.jrxml
+        attributes:
+            legend_header_label: !string {}
+            full_topic_legend_label: !string {} 
+            tenor_label: !string {} 
+            legal_base_label: !string {} 
+            legal_disposition_label: !string {} 
+            reference_label: !string {} 
+            authority_label: !string {} 
+            transitory_disposition_label: !string {} 
+            maps_label: !string {} 
+            other_label: !string {}
+            
+            canton_logo: !string {}
+            municipality_logo: !string {}
+            municipality_name: !string {}
+            signature: !integer {}
+            
+            northArrow: !northArrow
+                size: 200
+                default:
+                    graphic: "north.svg"
+            base_scalebar: !scalebar
+                width: 230
+                height: 40
+            scalebar: !scalebar
+                width: 230
+                height: 40
+
+            map: !map
+                width: 554
+                height: 662
+                maxDpi : 400
+            base_map: !map
+                width: 554
+                height: 662
+                maxDpi : 400
+                
+            datasource: !datasource
+                attributes:
+                  topic_title: !string {} 
+                  legend_url: !string {}
+                  map: !map
+                    width: 554
+                    height: 662
+                    maxDpi : 400
+                  full_topic_legend: !string {} 
+                  tenor: !string {} 
+                  legal_base: !string {} 
+                  legal_disposition: !string {} 
+                  reference: !string {} 
+                  authority: !string {} 
+                  transitory_disposition: !string {} 
+                  maps: !string {} 
+                  other: !string {} 
+                      
+        processors:
+        - !reportBuilder # compile all reports in current directory
+            directory: '.'
+        - !createNorthArrow {}
+        - !createScalebar {}
+        - !createScalebar
+          prefix: base_
+        - !createMap
+          prefix: base_
+        - !createDataSource
+            processors:
+            - !createMap {}
