@@ -26,7 +26,7 @@ Ext.onReady(function() {
     var sync = 0;
 
     var synchronize = function(sync) {
-        if (sync == 1 && Crdppf.disclaimer === true) {
+        if (sync === 1 && Crdppf.disclaimer === true) {
             Ext.MessageBox.buttonText.yes = Crdppf.labels.disclaimerAcceptance;
             Ext.MessageBox.buttonText.no = Crdppf.labels.diclaimerRefusal;
             var dlg = Ext.MessageBox.getDialog();
@@ -34,7 +34,6 @@ Ext.onReady(function() {
             for (var i = 0; i < buttons.length; i++){
                  buttons[i].addClass('msgButtonStyle'); 
             }
-
             Ext.Msg.show({
                title: Crdppf.labels.disclaimerWindowTitle,
                msg: Crdppf.labels.disclaimerMsg,
@@ -43,14 +42,14 @@ Ext.onReady(function() {
                animEl: 'elId',
                icon: Ext.MessageBox.WARNING
             });
-        } else if (sync == 1) {
+        } else if (sync === 1) {
             redirectAfterDisclaimer('yes');
         }
     };
 
-    var triggerFunction = function(counter) {
-        if (counter == 2) {
-            synchronize();
+    Crdppf.triggerFunction = function(counter) {
+        if (counter == 3) {
+            synchronize(sync); 
         }
     };
 
@@ -82,7 +81,7 @@ Ext.onReady(function() {
                 OpenLayers.Util.extend(OpenLayers.Lang.fr, Crdppf.labels);
             }
             Crdppf.loadingCounter += 1;
-            triggerFunction(Crdppf.loadingCounter);            
+            Crdppf.triggerFunction(Crdppf.loadingCounter);            
         },
         method: 'POST',
         failure: function () {
@@ -96,7 +95,8 @@ Ext.onReady(function() {
         success: function(response) {
             Crdppf.layerList = Ext.decode(response.responseText);
             sync += 1;
-            synchronize(sync);        
+            Crdppf.loadingCounter += 1;
+            Crdppf.triggerFunction(Crdppf.loadingCounter);    
         },
         method: 'POST',
         failure: function () {
@@ -168,7 +168,8 @@ Crdppf.init_main = function(lang) {
         listeners:{
             click: function (){
                 Crdppf.FeaturePanel.disableInfoControl();
-                Crdppf.docfilters({'cadastrenb':0});
+                Crdppf.filterlist.cadastrenb = 0;
+                Crdppf.filterlist.municipalitynb = 0;
                 for (var i = Crdppf.filterlist.objectids.length; i > 0; i--){
                     Crdppf.docfilters({'objectids':[Crdppf.filterlist.objectids[i-1]]});
                 }

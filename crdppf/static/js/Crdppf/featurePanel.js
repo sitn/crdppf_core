@@ -74,7 +74,7 @@ Crdppf.FeaturePanel.prototype = {
     PropertySelection: function(features, labels) {
         
         var propertySelectionWindow;
-        
+
         if (features.length > 1) {
             var properties = [];
             for (var i = 0; i < features.length; i++){
@@ -82,7 +82,8 @@ Crdppf.FeaturePanel.prototype = {
                     i,
                     features[i].data.typimm+': '+features[i].data.nummai+' '+features[i].data.cadastre,
                     features[i].data.idemai,
-                    features[i].data.source
+                    features[i].data.source,
+                    features[i].data.nufeco
                 ];
             }
 
@@ -236,9 +237,10 @@ Crdppf.FeaturePanel.prototype = {
         Crdppf.Map.selectLayer.addFeatures([property]);
 
         var parcelId = property.attributes.idemai;
-        
-        // Update legal documents
-        Crdppf.docfilters({'cadastrenb': parseInt(parcelId.split('_',1)[0])});
+        // Update parameters for legal documents filtering
+        Crdppf.filterlist.cadastrenb = parseInt(parcelId.split('_',1)[0]);
+        Crdppf.filterlist.municipalitynb = Number(property.attributes.nufeco);
+        Crdppf.docfilters(Crdppf.filterlist);
         
         // If no result, display no results message
         if (Crdppf.LayerTreePanel.overlaysList.length === 0) {
