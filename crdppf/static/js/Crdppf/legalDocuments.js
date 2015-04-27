@@ -1,6 +1,6 @@
 Ext.namespace('Crdppf');
 
-Crdppf.filterlist = {'topic' : [], 'layers': [], 'municipalitynb': 0, 'cadastrenb': 0, 'objectids': []};
+Crdppf.filterlist = {'topic' : [], 'layers': [], 'chmunicipalitynb': null, 'cadastrenb': null, 'objectids': []};
 
 Crdppf.docfilters = function(filter) {
     // little helper function to check for the existence of an value in an array
@@ -29,40 +29,32 @@ Crdppf.docfilters = function(filter) {
             for (var j = 0; j < Crdppf.filterlist.topic.length; j++){
             // if the topicid is in the filterlist show the corresponding documents
                 if (record.get('origins').indexOf(Crdppf.filterlist.topic[j]) > -1) {
-                    if (record.get('municipalitynb') === Crdppf.filterlist.municipalitynb || record.get('municipalitynb') === null) {
+                    if (record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb || record.get('chmunicipalitynb') === null) {
                         if (record.get('cadastrenb') === Crdppf.filterlist.cadastrenb || record.get('cadastrenb') === null) {
                             return record;
                         }
-                        console.log(record.get('municipalitynb'));
+                    } else {
+                        if (record.get('cadastrenb') === Crdppf.filterlist.cadastrenb || record.get('cadastrenb') === null) {
+                            return record;
+                        } else {
+                            return record;
+                        }
                     }
                 }
             }
         } else {
-            if (record.get('cadastrenb') === Crdppf.filterlist.cadastrenb || record.get('cadastrenb') === null) {
-                return record;
+            if (record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb || record.get('chmunicipalitynb') === null) {
+                if (record.get('cadastrenb') === Crdppf.filterlist.cadastrenb || record.get('cadastrenb') === null) {
+                    return record;
+                }
+            } else {
+                if (record.get('cadastrenb') === Crdppf.filterlist.cadastrenb || record.get('cadastrenb') === null) {
+                    return record;
+                } else {
+                    return record;
+                }
             }
         }
-        //~ if (Crdppf.filterlist.cadastrenb > 0){
-            //~ if (record.get('cadastrenb') === Crdppf.filterlist.cadastrenb || record.get('cadastrenb') === 0) {
-                //~ if (Crdppf.filterlist.topic.length > 0) {
-                    //~ for (var i = 0; i < Crdppf.filterlist.topic.length; i++){
-                    //~ // if the topicid is in the filterlist show the corresponding documents
-                        //~ if (record.get('origins').indexOf(Crdppf.filterlist.topic[i]) > -1) {
-                            //~ return record;
-                        //~ }
-                    //~ }
-                //~ } else {
-                    //~ return record;
-                //~ }
-            //~ }
-        //~ } else {
-            //~ for (var j = 0; j < Crdppf.filterlist.topic.length; j++){
-            //~ // if the topicid is in the filterlist show the corresponding documents
-                //~ if (record.get('origins').indexOf(Crdppf.filterlist.topic[j]) > -1) {
-                    //~ return record;
-                //~ }
-            //~ }
-        //~ }
     });
     return Crdppf.filterlist;
 };

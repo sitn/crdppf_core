@@ -239,7 +239,7 @@ Crdppf.FeaturePanel.prototype = {
         var parcelId = property.attributes.idemai;
         // Update parameters for legal documents filtering
         Crdppf.filterlist.cadastrenb = parseInt(parcelId.split('_',1)[0]);
-        Crdppf.filterlist.municipalitynb = Number(property.attributes.nufeco);
+        Crdppf.filterlist.chmunicipalitynb = Number(property.attributes.nufeco);
         Crdppf.docfilters(Crdppf.filterlist);
         
         // If no result, display no results message
