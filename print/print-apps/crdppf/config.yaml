@@ -4,6 +4,18 @@ templates:
   report: !template
     reportTemplate: report_A4.jrxml
     attributes:
+      legend_header_label: !string {}
+      full_topic_legend_label: !string {} 
+      tenor_label: !string {} 
+      legal_base_label: !string {} 
+      legal_disposition_label: !string {} 
+      reference_label: !string {} 
+      authority_label: !string {} 
+      transitory_disposition_label: !string {} 
+      maps_label: !string {} 
+      other_label: !string {}
+      canton_logo: !string {}
+      
       map: !map
           width: 500
           height: 500

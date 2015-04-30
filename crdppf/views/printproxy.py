@@ -64,16 +64,17 @@ class PrintProxy(Proxy):  # pragma: no cover
             "outputFormat": "pdf",
             "attributes": {}
         }
-        
-        # TODO
-        #~ content["attributes"].update(get_cached_content()["attributes"])
-        #~ content["attributes"].update(get_cached_content_l10n(self.request.params.get(
-            #~ "lang",
-            #~ self.request.registry.settings["app_config"]["lang"]
-        #~ )))
+
+        body["attributes"].update(get_cached_content_l10n(self.request.params.get(
+            "lang",
+            self.request.registry.settings["app_config"]["lang"]
+        )))
+
+        cached_content = get_cached_content(self.request)
 
         dynamic_content = get_content(idemai, self.request)
 
+        body["attributes"].update(cached_content)
         body["attributes"].update(dynamic_content["attributes"])
 
         _string = "%s/report.%s" % (
