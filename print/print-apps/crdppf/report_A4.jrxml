@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2015-04-22T10:28:58 -->
+<!-- Created with Jaspersoft Studio version 6.0.4.final using JasperReports Library version 6.0.4  -->
+<!-- 2015-04-30T11:09:24 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9a3e59f5-6675-48cf-ad74-9c42b5a5b290">
-	<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
-	<property name="com.jaspersoft.studio.unit." value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="map" class="java.lang.String"/>
+	<parameter name="legend_header_label" class="java.lang.String"/>
+	<parameter name="full_topic_legend_label" class="java.lang.String"/>
+	<parameter name="tenor_label" class="java.lang.String"/>
+	<parameter name="legal_base_label" class="java.lang.String"/>
+	<parameter name="legal_disposition_label" class="java.lang.String"/>
+	<parameter name="reference_label" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="maps_label" class="java.lang.String"/>
+	<parameter name="other_label" class="java.lang.String"/>
+	<parameter name="canton_logo" class="java.lang.String"/>
+	<parameter name="authority_label" class="java.lang.String"/>
+	<parameter name="transitory_disposition_label" class="java.lang.String"/>
 	<title>
 		<band height="554" splitType="Stretch">
-        <subreport>
+			<subreport>
 				<reportElement x="0" y="51" width="500" height="500" uuid="fa145068-76a5-4834-98ed-ce65b1976b3d">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -24,6 +27,80 @@
 				</reportElement>
 				<subreportExpression><![CDATA[$P{map}]]></subreportExpression>
 			</subreport>
-            </band>
+			<textField>
+				<reportElement x="50" y="100" width="555" height="23" uuid="5b59bca0-4d72-4f52-889c-833479a3edc2"/>
+				<textElement>
+					<font size="16" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{legend_header_label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="50" y="140" width="555" height="23" uuid="aa11f0e0-fdbe-42c7-baf9-32b3dfdce217"/>
+				<textElement>
+					<font size="16" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{full_topic_legend_label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="50" y="180" width="555" height="23" uuid="05b503f8-ba34-4415-b0b0-6db9d8b7081d"/>
+				<textElement>
+					<font size="16" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{tenor_label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="50" y="220" width="555" height="23" uuid="59609859-9862-403b-94a6-4817bc51f83c"/>
+				<textElement>
+					<font size="16" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{legal_base_label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="50" y="260" width="555" height="23" uuid="0cc75c99-b800-470f-8cc0-7b5c36cd84be"/>
+				<textElement>
+					<font size="16" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{legal_disposition_label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="50" y="300" width="555" height="23" uuid="35b58a7b-ffc1-426b-af16-790c748273aa"/>
+				<textElement>
+					<font size="16" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{reference_label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="50" y="340" width="555" height="23" uuid="8be163a6-77a9-4d04-baa1-9d66528ec90f"/>
+				<textElement>
+					<font size="16" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{maps_label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="50" y="380" width="555" height="23" uuid="c30628c9-d91c-4f5e-8110-dc961fe9aee9"/>
+				<textElement>
+					<font size="16" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{other_label}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="560" y="-10" width="50" height="50" uuid="ff77d6d9-d2ff-4550-8362-6af21a668257"/>
+				<imageExpression><![CDATA[$P{canton_logo}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="50" y="430" width="555" height="23" uuid="9033b59b-4148-43b9-b08c-cc715e25ce53"/>
+				<textElement>
+					<font size="16" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{authority_label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="50" y="480" width="555" height="23" uuid="1786e796-19a1-4010-bec2-cc4200b2ada6"/>
+				<textElement>
+					<font size="16" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{transitory_disposition_label}]]></textFieldExpression>
+			</textField>
+		</band>
 	</title>
 </jasperReport>
