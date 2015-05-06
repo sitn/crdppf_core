@@ -21,7 +21,6 @@ from crdppf.models import AppConfig
 
 from crdppf.views.get_features import get_features_function
 from crdppf.views.legal_documents import getLegalDocuments
-from crdppf.views.legal_documents import getLegalbases
 from crdppf.views.legal_documents import getDocumentReferences
 from crdppf.util.pdf_functions import geom_from_coordinates
 
@@ -195,8 +194,6 @@ class Extract(FPDF):
         self.wms_get_map = {
             'REQUEST': 'GetMap'
         }
-        # initialize an empty dict for the topic related data
-        self.topicdata = {}
         # setting the default  root filename of the PDF and temporary files
         self.filename = 'thefilename'
         # empty dict for a list of  the topics and it's depending values
@@ -621,7 +618,7 @@ class Extract(FPDF):
                     }
                 # intersects a given layer with the feature and adds the results to the topiclist- see method add_layer
                 self.add_layer(layer)
-            self.get_topic_map(topic.layers,topic.topicid)
+            self.get_topic_map(topic.layers, topic.topicid)
             # Get the list of documents related to a topic with layers and results
             if self.topiclist[str(layer.topicfk)]['categorie'] == 3:
                 docfilters = [str(topic.topicid)]
@@ -636,23 +633,23 @@ class Extract(FPDF):
                 self.topiclist[str(topic.topicid)]['layers'] = None
                 self.topiclist[str(topic.topicid)]['categorie'] = 0
 
-        # if legal bases are defined for a topic (join in models.py) the attributes are compiled in a list
-        if topic.legalbases:
-            self.get_legalbases(topic.legalbases,topic.topicid)
-        else:
-            self.topiclist[str(topic.topicid)]['legalbases']=None
+        #~ # if legal bases are defined for a topic (join in models.py) the attributes are compiled in a list
+        #~ try:
+            #~ self.get_legalbases(topic.legalbases,topic.topicid)
+        #~ except:
+            #~ self.topiclist[str(topic.topicid)]['legalbases']=None
 
         # if legal povisions are defined for a topic the attributes are compiled in a list
-        if topic.legalprovisions:
-            self.get_legalprovisions(topic.legalprovisions,topic.topicid)
+        if 'legalprovision' in self.topiclist[topic.topicid].keys():
+            self.get_legalprovisions(self.topiclist[str(topic.topicid)]['legalprovision'],topic.topicid)
         else:
-            self.topiclist[str(topic.topicid)]['legalprovisions']=None
+            self.topiclist[str(topic.topicid)]['legalprovision']=None
 
-        # if references are defined for a topic the attributes are compiled in a list
-        if topic.references:
-            self.get_references(topic.references,topic.topicid)
-        else:
-            self.topiclist[str(topic.topicid)]['references']=None
+        #~ # if references are defined for a topic the attributes are compiled in a list
+        #~ try:
+            #~ self.get_references(topic.references,topic.topicid)
+        #~ except:
+            #~ self.topiclist[str(topic.topicid)]['references']=None
 
     def add_layer(self, layer):
 
@@ -667,7 +664,7 @@ class Extract(FPDF):
         if results :
             self.layerlist[str(layer.layerid)]={'layername':layer.layername,'features':[]}
             for result in results:
-                # for each object we check for related documents
+                # for each restriction object we check for related documents
                 docfilters = [str(result['id'])]
                 for doctype in self.doctypes:
                     docidlist = getDocumentReferences(docfilters)
@@ -754,21 +751,22 @@ class Extract(FPDF):
         """
         self.legalprovisionslist[str(topicid)]=[]
         for provision in legalprovisions:
-            self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(provision.officialtitle).encode('iso-8859-1'), unicode(provision.legalprovisionurl).encode('iso-8859-1'), provision.localurl)
+            self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), provision['officialtitle'], unicode(provision['remoteurl']).encode('iso-8859-1'), provision['localurl'])
             self.legalprovisionslist[str(topicid)].append({
-                'officialtitle':provision.officialtitle,
-                'title':provision.title,
-                'abreviation':provision.abreviation,
-                'officialnb':provision.officialnb,
-                'legalprovisionurl':provision.legalprovisionurl,
-                'canton':provision.canton,
-                'commune':provision.commune,
-                'legalstate':provision.legalstate,
-                'publishedsince':provision.publishedsince,
+                'officialtitle':provision[u'officialtitle'],
+                'title':provision['title'],
+                'abreviation':provision['abbreviation'],
+                'officialnb':provision['officialnb'],
+                'legalprovisionurl':provision['remoteurl'],
+                'canton':provision['state'],
+                'commune':provision['municipalityname'],
+                'legalstate':provision['legalstate'],
+                'publishedsince':provision['publicationdate'],
+                'sanctiondate':provision['sanctiondate'],
                 'no_page':'A'+str(len(self.appendix_entries))
                 #'metadata':provision.metadata
                 })
-        self.topiclist[str(topicid)]['legalprovisions'] = self.legalprovisionslist[str(topicid)]
+        self.topiclist[str(topicid)]['legalprovision'] = self.legalprovisionslist[str(topicid)]
 
     def get_references(self, references, topicid):
         """Decomposes the object containing all references related to a topic in a list
@@ -922,7 +920,7 @@ class Extract(FPDF):
             if self.log:
                 self.log.warning("DONE Applying SLD")
 
-            if sld_legendfile and topicid in [u'73','73']:
+            if sld_legendfile and topicid in [u'R073','R073','73',u'73']:
                 legend_sld = self.sld_url+self.filename+str('_')+str(restriction_layer.layername)+'_legend_sld.xml'
                 self.wms_get_legend['SLD'] = str(legend_sld)
 
@@ -1075,9 +1073,9 @@ class Extract(FPDF):
                 else:
                     self.cell(12, 6, '', 'B', 0, 'C')
                 self.cell(118, 6, self.topiclist[topic]['topicname'], 'LB', 0, 'L')
-                if self.topiclist[topic]['legalprovisions'] is not None :
+                if self.topiclist[topic]['legalprovision'] is not None :
                     pageslist = []
-                    for legalprovision in self.topiclist[topic]['legalprovisions']:
+                    for legalprovision in self.topiclist[topic]['legalprovision']:
                         pageslist.append(legalprovision['no_page'])
                     self.cell(15, 6, ', '.join(pageslist), 'LB', 0, 'C')
                 else:
@@ -1299,14 +1297,14 @@ class Extract(FPDF):
             self.set_font(*pdfconfig.textstyles['bold'])
             self.cell(55, 5, translations['legalbaseslabel'], 0, 0, 'L')
             self.set_font(*pdfconfig.textstyles['normal'])
-            if self.topiclist[topic]['legalbases']:
-                for legalbase in self.topiclist[topic]['legalbases']:
+            if self.topiclist[topic]['legalbase']:
+                for legalbase in self.topiclist[topic]['legalbase']:
                     self.set_x(80)
                     self.multi_cell(0, 5, legalbase['officialnb']+' : '+legalbase['officialtitle'], 0, 1, 'L')
                     self.set_x(80)
                     self.set_font(*self.pdfconfig.textstyles['url'])
                     self.set_text_color(*self.pdfconfig.urlcolor)
-                    self.multi_cell(0, 4, 'URL : '+str(legalbase['legalbaseurl']))
+                    self.multi_cell(0, 4, 'URL : '+str(legalbase['remoteurl']))
                     self.set_text_color(*self.pdfconfig.defaultcolor)
                     self.set_font(*self.pdfconfig.textstyles['normal'])
             else:
@@ -1366,7 +1364,7 @@ class Extract(FPDF):
             self.set_font(*self.pdfconfig.textstyles['tocbold'])
             self.appendix_links.append(self.add_link())
             self.cell(15, 6, str('A'+str(index)), 0, 0, 'L')
-            self.multi_cell(0, 6, str(appendix['title']), 0, 'L')
+            self.multi_cell(0, 6, appendix['title'], 0, 'L')
             if self.reportInfo['type'] == 'reduced' or self.reportInfo['type'] == 'reducedcertified':
                 self.set_x(40)
                 self.set_font(*self.pdfconfig.textstyles['tocurl'])
