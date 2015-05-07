@@ -97,6 +97,8 @@ class PDFConfig(object):
         self.pdfbasename = config['pdfbasename']
         self.siteplanbasename = config['siteplanbasename']
         self.optionaltopics = config['optionaltopics']
+        self.doctypes = config['doctypes']
+        #[u'legalbase',u'legalprovision',u'reference',u'temporaryprovision',u'map',u'other']
 
 class AppendixFile(FPDF):
     """The helper class to create the appendices files with the same corporate
@@ -216,6 +218,7 @@ class Extract(FPDF):
         self.cleanupfiles = []
         self.basemap = ''
         self.doctypes = [u'legalbase',u'legalprovision',u'reference',u'temporaryprovision',u'map',u'other']
+        #self.doctypes = request.registry.settings['doctypes']
 
     def alias_no_page(self, alias='{no_pg}'):
         """Define an alias for total number of pages"""
@@ -633,23 +636,20 @@ class Extract(FPDF):
                 self.topiclist[str(topic.topicid)]['layers'] = None
                 self.topiclist[str(topic.topicid)]['categorie'] = 0
 
-        #~ # if legal bases are defined for a topic (join in models.py) the attributes are compiled in a list
-        #~ try:
-            #~ self.get_legalbases(topic.legalbases,topic.topicid)
-        #~ except:
-            #~ self.topiclist[str(topic.topicid)]['legalbases']=None
-
         # if legal povisions are defined for a topic the attributes are compiled in a list
         if 'legalprovision' in self.topiclist[topic.topicid].keys():
             self.get_legalprovisions(self.topiclist[str(topic.topicid)]['legalprovision'],topic.topicid)
         else:
             self.topiclist[str(topic.topicid)]['legalprovision']=None
 
-        #~ # if references are defined for a topic the attributes are compiled in a list
-        #~ try:
-            #~ self.get_references(topic.references,topic.topicid)
-        #~ except:
-            #~ self.topiclist[str(topic.topicid)]['references']=None
+        # if other references are defined for a topic the attributes are compiled in a list
+        for doctype in self.doctypes:
+            if doctype in self.topiclist[topic.topicid].keys():
+                if doctype != 'legalbase' &&  doctype != 'legalprovision':
+                    self.get_references(self.topiclist[str(topic.topicid)][doctype],topic.topicid)
+            else:
+                if doctype != 'legalbase' &&  doctype != 'legalprovision':
+                    self.topiclist[str(topic.topicid)][doctype]=None
 
     def add_layer(self, layer):
 
@@ -772,17 +772,20 @@ class Extract(FPDF):
         """Decomposes the object containing all references related to a topic in a list
         """
         self.referenceslist[str(topicid)]=[]
+        self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), reference['officialtitle'], unicode(reference['remoteurl']).encode('iso-8859-1'), reference['localurl'])
         for reference in references:
             self.referenceslist[str(topicid)].append({
-                'officialtitle':reference.officialtitle,
-                'title':reference.title,
-                'abreviation':reference.abreviation,
-                'officialnb':reference.officialnb,
-                'legalprovisionurl':reference.referenceurl,
-                'canton':reference.canton,
-                'commune':reference.commune,
-                'legalstate':reference.legalstate,
-                'publishedsince':reference.publishedsince,
+                'officialtitle':reference['officialtitle'],
+                'title':reference['title'],
+                'abreviation':reference['abbreviation'],
+                'officialnb':reference['officialnb'],
+                'legalprovisionurl':reference['remoteurl'],
+                'canton':reference['state'],
+                'commune':reference['municipalityname'],
+                'legalstate':reference['legalstate'],
+                'publishedsince':reference['publicationdate'],
+               'sanctiondate':reference['sanctiondate'],
+                'no_page':'A'+str(len(self.appendix_entries))
                 #'metadata':legalprovision.metadata
                 })
         self.topiclist[str(topicid)]['references'] = self.referenceslist[str(topicid)]
@@ -1255,7 +1258,7 @@ class Extract(FPDF):
             # map = Maps and plans/Cartes et plans/Karten und Pläne
             for doctype in self.doctypes:
                 # for now we ignore different document types
-                if doctype not in [u'legalbase']:
+                if doctype not in ['legalbase']:
                     y = self.get_y()
                     self.set_y(y+5)
                     self.set_font(*pdfconfig.textstyles['bold'])
