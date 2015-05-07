@@ -29,8 +29,14 @@ class AppConfig(object):
     """
     def __init__(self, config):
         # tempdir : Path to the working directory where the temporary files will be stored
-        self.tempdir = pkg_resources.resource_filename('crdppfportal', 'static/public/temp_files/') 
-        self.slddir = pkg_resources.resource_filename('crdppfportal', 'static/public/') 
+        try:
+            self.tempdir = config['tempdir']
+        except:
+            self.tempdir = pkg_resources.resource_filename('crdppfportal', 'static/public/temp_files/')
+        try:
+            self.slddir = config['slddir']
+        except:
+            self.slddir = pkg_resources.resource_filename('crdppfportal', 'static/public/') 
         # pdfbasedir : Path to the directory where the generated pdf's will be stored
         self.pdfbasedir = pkg_resources.resource_filename('crdppfportal', 'static/public/pdf/') 
         # imagesbasedir : Path to the directory where the images resources are stored
@@ -38,7 +44,10 @@ class AppConfig(object):
         # municipalitylogodir : Path to the directory where the logos of the municipalities are stored
         self.municipalitylogodir = pkg_resources.resource_filename('crdppfportal','static/images/ecussons/')
         # legaldocsdir : Path to the folder where the legal documents are stored that may or may not be included
-        self.legaldocsdir = pkg_resources.resource_filename('crdppfportal', 'static/public/reglements/') 
+        try:
+            self.legaldocsdir  = config['legaldocsdir']
+        except:
+            self.legaldocsdir = pkg_resources.resource_filename('crdppfportal', 'static/public/reglements/') 
         self.ch_wms_layers = []
         # ch_topics : Restrictions on federal level
         self.ch_topics = config['ch_topics']
@@ -50,6 +59,10 @@ class AppConfig(object):
         self.wms_transparency = config['wms_transparency']
         self.wms_imageformat = config['wms_imageformat']
         self.emptytopics = config['emptytopics']
+        try: 
+            self.doctypes = config['doctypes'].split(',')
+        except:
+            self.doctypes = 'legalbase,legalprovision,reference,temporaryprovision,map,other'.split(',')
 
 class PDFConfig(object):
     """A class to define the configuration of the PDF extract to simplify changes.
@@ -97,8 +110,6 @@ class PDFConfig(object):
         self.pdfbasename = config['pdfbasename']
         self.siteplanbasename = config['siteplanbasename']
         self.optionaltopics = config['optionaltopics']
-        self.doctypes = config['doctypes']
-        #[u'legalbase',u'legalprovision',u'reference',u'temporaryprovision',u'map',u'other']
 
 class AppendixFile(FPDF):
     """The helper class to create the appendices files with the same corporate
@@ -217,8 +228,6 @@ class Extract(FPDF):
         self.log = log
         self.cleanupfiles = []
         self.basemap = ''
-        self.doctypes = [u'legalbase',u'legalprovision',u'reference',u'temporaryprovision',u'map',u'other']
-        #self.doctypes = request.registry.settings['doctypes']
 
     def alias_no_page(self, alias='{no_pg}'):
         """Define an alias for total number of pages"""
@@ -229,6 +238,7 @@ class Extract(FPDF):
         """Initialises the basic parameters of the application.
         """
         self.appconfig = AppConfig(config)
+        self.doctypes = self.appconfig.doctypes
 
     def set_pdf_config(self, config):
         """Loads the initial configuration of the PDF page.
@@ -645,10 +655,10 @@ class Extract(FPDF):
         # if other references are defined for a topic the attributes are compiled in a list
         for doctype in self.doctypes:
             if doctype in self.topiclist[topic.topicid].keys():
-                if doctype != 'legalbase' &&  doctype != 'legalprovision':
+                if doctype != 'legalbase' and  doctype != 'legalprovision':
                     self.get_references(self.topiclist[str(topic.topicid)][doctype],topic.topicid)
             else:
-                if doctype != 'legalbase' &&  doctype != 'legalprovision':
+                if doctype != 'legalbase' and  doctype != 'legalprovision':
                     self.topiclist[str(topic.topicid)][doctype]=None
 
     def add_layer(self, layer):
@@ -731,7 +741,6 @@ class Extract(FPDF):
         """
         self.legalbaselist[str(topicid)]=[]
         for legalbase in legalbases:
-            #self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(legalbase.officialtitle).encode('iso-8859-1'), unicode(legalbase.legalbaseurl).encode('iso-8859-1'))
             self.legalbaselist[str(topicid)].append({
                 'officialtitle':legalbase.officialtitle,
                 'title':legalbase.title,
@@ -751,7 +760,6 @@ class Extract(FPDF):
         """
         self.legalprovisionslist[str(topicid)]=[]
         for provision in legalprovisions:
-            self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), provision['officialtitle'], unicode(provision['remoteurl']).encode('iso-8859-1'), provision['localurl'])
             self.legalprovisionslist[str(topicid)].append({
                 'officialtitle':provision[u'officialtitle'],
                 'title':provision['title'],
@@ -772,7 +780,6 @@ class Extract(FPDF):
         """Decomposes the object containing all references related to a topic in a list
         """
         self.referenceslist[str(topicid)]=[]
-        self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), reference['officialtitle'], unicode(reference['remoteurl']).encode('iso-8859-1'), reference['localurl'])
         for reference in references:
             self.referenceslist[str(topicid)].append({
                 'officialtitle':reference['officialtitle'],
@@ -1078,8 +1085,9 @@ class Extract(FPDF):
                 self.cell(118, 6, self.topiclist[topic]['topicname'], 'LB', 0, 'L')
                 if self.topiclist[topic]['legalprovision'] is not None :
                     pageslist = []
-                    for legalprovision in self.topiclist[topic]['legalprovision']:
-                        pageslist.append(legalprovision['no_page'])
+                    # Desactivated for now because it explodes the layout as it is for now!!
+                    #~ for legalprovision in self.topiclist[topic]['legalprovision']:
+                        #~ pageslist.append(legalprovision['no_page'])
                     self.cell(15, 6, ', '.join(pageslist), 'LB', 0, 'C')
                 else:
                     self.cell(15, 6, '', 'LB', 0, 'L')
@@ -1292,7 +1300,9 @@ class Extract(FPDF):
                 self.cell(120, 5, translations['phonelabel']+self.topiclist[topic]['authority'].authorityphone1.encode('iso-8859-1'), 0, 1, 'L')
             if self.topiclist[topic]['authority'].authoritywww is not None:
                 self.cell(55, 5, str(' '), 0, 0, 'L')
-                self.cell(120, 5, translations['webadresslabel']+self.topiclist[topic]['authority'].authoritywww.encode('iso-8859-1'),0,1,'L')
+                self.set_text_color(*self.pdfconfig.urlcolor)
+                self.cell(120, 5, self.topiclist[topic]['authority'].authoritywww.encode('iso-8859-1'),0,1,'L')
+                self.set_text_color(*self.pdfconfig.defaultcolor)
 
             # Legal bases/Bases légales/Gesetzliche Grundlagen
             y = self.get_y()
@@ -1307,11 +1317,11 @@ class Extract(FPDF):
                     self.set_x(80)
                     self.set_font(*self.pdfconfig.textstyles['url'])
                     self.set_text_color(*self.pdfconfig.urlcolor)
-                    self.multi_cell(0, 4, 'URL : '+str(legalbase['remoteurl']))
+                    self.multi_cell(0, 4, 'URL : '+legalbase['remoteurl'])
                     self.set_text_color(*self.pdfconfig.defaultcolor)
                     self.set_font(*self.pdfconfig.textstyles['normal'])
             else:
-                self.multi_cell(0, 5, translations['placeholderlabel'])
+                self.multi_cell(0, 5, translations['nodocumenttext'])
 
     def add_appendix(self, topicid, num, label, url, filepath):
         self.appendix_entries.append({'topicid':topicid, 'no_page':num, 'title':label, 'url':url, 'path':filepath})
