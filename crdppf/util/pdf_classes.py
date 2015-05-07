@@ -1373,19 +1373,21 @@ class Extract(FPDF):
         self.cell(135, 6, self.translations['appendicestitlelabel'], 0, 1, 'L')
         
         index = 1
-        for appendix in self.appendix_entries:
-            self.set_font(*self.pdfconfig.textstyles['tocbold'])
-            self.appendix_links.append(self.add_link())
-            self.cell(15, 6, str('A'+str(index)), 0, 0, 'L')
-            self.multi_cell(0, 6, appendix['title'], 0, 'L')
-            if self.reportInfo['type'] == 'reduced' or self.reportInfo['type'] == 'reducedcertified':
-                self.set_x(40)
-                self.set_font(*self.pdfconfig.textstyles['tocurl'])
-                self.set_text_color(*self.pdfconfig.urlcolor)
-                self.multi_cell(0, 5, str(appendix['url']))
-                self.set_text_color(*self.pdfconfig.defaultcolor)
-
-            index = index+1
+        if len(self.appendix_entries) > 0:
+            for appendix in self.appendix_entries:
+                self.set_font(*self.pdfconfig.textstyles['tocbold'])
+                self.appendix_links.append(self.add_link())
+                self.cell(15, 6, str('A'+str(index)), 0, 0, 'L')
+                self.multi_cell(0, 6, appendix['title'], 0, 'L')
+                if self.reportInfo['type'] == 'reduced' or self.reportInfo['type'] == 'reducedcertified':
+                    self.set_x(40)
+                    self.set_font(*self.pdfconfig.textstyles['tocurl'])
+                    self.set_text_color(*self.pdfconfig.urlcolor)
+                    self.multi_cell(0, 5, str(appendix['url']))
+                    self.set_text_color(*self.pdfconfig.defaultcolor)
+                index = index+1
+        else:
+            self.multi_cell(0, 5, self.translations['nodocumenttext'])
 
     def clean_up_temp_files(self):
         """ Removes the temporary files needed to create an extract:
