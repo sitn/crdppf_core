@@ -36,26 +36,15 @@ Crdppf.docfilters = function(filter) {
                     } else {
                         if (record.get('cadastrenb') === Crdppf.filterlist.cadastrenb || record.get('cadastrenb') === null) {
                             return record;
-                        } else {
-                            return record;
-                        }
+                        } 
                     }
                 }
             }
         } else {
-            if (record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb || record.get('chmunicipalitynb') === null) {
-                if (record.get('cadastrenb') === Crdppf.filterlist.cadastrenb || record.get('cadastrenb') === null) {
-                    return record;
-                }
-            } else {
-                if (record.get('cadastrenb') === Crdppf.filterlist.cadastrenb || record.get('cadastrenb') === null) {
-                    return record;
-                } else {
-                    return record;
-                }
-            }
+            return record;
         }
     });
+    
     return Crdppf.filterlist;
 };
 
@@ -86,7 +75,7 @@ Crdppf.legalDocuments = function() {
             },
             // definition of the column model
             [
-            {name: 'docid'},
+            {name: 'documentid'},
             {name: 'doctype'},
             {name: 'lang'},
             {name: 'state'},
