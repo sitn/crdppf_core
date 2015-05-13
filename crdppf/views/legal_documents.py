@@ -52,7 +52,7 @@ def getTopicsList(request):
             'topicid':topic.topicid, 
             'topicname':topic.topicname, 
             'authorityfk':topic.authorityfk, 
-            #'publicationdate':topic.publicationdate.isoformat(), 
+            #'publicationdate':topic.publicationdate.isoformat() if topic.publicationdate else None, 
             'topicorder':topic.topicorder
         })
 

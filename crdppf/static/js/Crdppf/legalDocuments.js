@@ -43,6 +43,7 @@ Crdppf.docfilters = function(filter) {
                 }
             }
         } else {
+            // No specific topics selected
             if (record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb || record.get('chmunicipalitynb') === null) {
                 if (record.get('cadastrenb') === Crdppf.filterlist.cadastrenb || record.get('cadastrenb') === null) {
                     return record;
