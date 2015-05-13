@@ -168,8 +168,8 @@ Crdppf.init_main = function(lang) {
         listeners:{
             click: function (){
                 Crdppf.FeaturePanel.disableInfoControl();
-                Crdppf.filterlist.cadastrenb = 0;
-                Crdppf.filterlist.municipalitynb = 0;
+                Crdppf.filterlist.cadastrenb = null;
+                Crdppf.filterlist.chmunicipalitynb = null;
                 for (var i = Crdppf.filterlist.objectids.length; i > 0; i--){
                     Crdppf.docfilters({'objectids':[Crdppf.filterlist.objectids[i-1]]});
                 }

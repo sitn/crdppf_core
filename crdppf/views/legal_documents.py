@@ -150,12 +150,12 @@ def getLegalDocuments(request, filters):
     if 'docids' in filters.keys() and filters['docids'] is not None:
         documents = DBSession.query(LegalDocuments).filter(LegalDocuments.docid.in_(filters['docids']))
         if 'cadastrenb' in filters.keys():
-            documents = documents.filter(or_(LegalDocuments.cadastrenb==filters['cadastrenb'], LegalDocuments.cadastrenb==None))
+            documents = documents.filter(or_(LegalDocuments.cadastrenb==filters['cadastrenb'], LegalDocuments.cadastrenb==None)).order_by(LegalDocuments.doctype.asc())
         if 'chmunicipalitynb' in filters.keys():
-            documents = documents.filter(or_(LegalDocuments.chmunicipalitynb==filters['chmunicipalitynb'], LegalDocuments.chmunicipalitynb==None))
+            documents = documents.filter(or_(LegalDocuments.chmunicipalitynb==filters['chmunicipalitynb'], LegalDocuments.chmunicipalitynb==None)).order_by(LegalDocuments.doctype.asc())
     else:
-        documents = DBSession.query(LegalDocuments)
-    documents = documents.order_by(LegalDocuments.docid.asc()).all()
+        documents = DBSession.query(LegalDocuments).order_by(LegalDocuments.doctype.asc()).order_by(LegalDocuments.state.asc()).order_by(LegalDocuments.chmunicipalitynb.asc()).order_by(LegalDocuments.cadastrenb.asc())
+    documents = documents.order_by(LegalDocuments.doctype.asc()).order_by(LegalDocuments.state.asc()).order_by(LegalDocuments.chmunicipalitynb.asc()).order_by(LegalDocuments.cadastrenb.asc()).all()
     
     for document in documents :
         origins = []
