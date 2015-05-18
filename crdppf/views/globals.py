@@ -33,14 +33,17 @@ def initjs(request):
     layerlist = []
     baselayers = []
     # get all layers
-    layers = DBSession.query(Layers).all()
+    layers = DBSession.query(Layers).order_by(Layers.layerid).all()
+    baselayerexists = False
     for layer in layers:
         if layer.baselayer == True:
+            baselayerexists = True
             layerDico = {}
             layerDico['id'] = layer.layerid
             layerDico['image'] = layer.image
             layerDico['name'] = layer.layername
             layerDico['wmtsname'] = layer.wmtsname
+            layerDico['tile_format'] = layer.tile_format
             baselayers.append(layerDico)
         else:
             layerlist.append({
@@ -58,10 +61,31 @@ def initjs(request):
                 'updatedate': layer.updatedate,
                 'topicfk': layer.topicfk
             })
+    if baselayerexists == False :
+        if request.registry.settings['defaultTiles']:
+            defaultTiles = {}
+            defaultlayer = str(request.registry.settings['defaultTiles']).split(',')
+            for param in defaultlayer:
+                key, value = param.replace("'",'').split(':')
+                defaultTiles[key] = value
+            layerDico = {}
+            layerDico['id'] = '9999'
+            layerDico['image'] = None
+            layerDico['name'] = 'default_layer'
+            layerDico['wmtsname'] = defaultTiles['wmtsname']
+            layerDico['tile_format'] = defaultTiles['tile_format']
+            baselayers.append(layerDico)
 
-    init = {'fr': locals,'layerlist': layerlist, 'baseLayers': baselayers}
+    disclaimer = True
+    if request.registry.settings['disclaimer']:
+        if request.registry.settings['disclaimer'] == 'False' or request.registry.settings['disclaimer'] == 'false':
+            disclaimer = None
+        else:
+            disclaimer = request.registry.settings['disclaimer']
+
+    init = {'fr': locals,'layerlist': layerlist, 'baseLayers': baselayers, 'disclaimer': disclaimer}
     request.response.content = 'application/javascript'
-    
+
     return init
     
 @view_config(route_name='globalsjs', renderer='crdppf:templates/derived/globals.js')

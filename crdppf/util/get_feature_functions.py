@@ -40,18 +40,17 @@ def get_features_function(parcelGeom, params):
                 if geometryType == 'ST_Polygon' or geometryType == 'ST_MultiPolygon':
                     intersectionMeasure = DBSession.scalar(feature.geom.intersection(parcelGeom).area())
                     if intersectionMeasure >= 1:
-                        intersectionMeasureTxt = str(math.ceil(intersectionMeasure*10)/10) + ' [m2]'
+                        intersectionMeasureTxt = ' : '+ str(int(intersectionMeasure)) + ' [m2]'
                         geomType = 'Polygone'
                         jsonFeature = sloads(dumps(feature))
                         jsonFeature['properties']['layerName'] = layer
                         jsonFeature['properties']['intersectionMeasure'] = intersectionMeasureTxt
                         jsonFeature['properties']['geomType'] = 'area'
                         featureList.append(jsonFeature)
-
                 elif geometryType == 'ST_Line' or geometryType == 'ST_MultiLineString' or geometryType == 'ST_LineString':
                     intersectionMeasure = intersectionMeasure = DBSession.scalar(feature.geom.intersection(parcelGeom).length())
                     if intersectionMeasure >= 1:
-                        intersectionMeasureTxt = ' '
+                        intersectionMeasureTxt = ' : '+ str(int(intersectionMeasure)) +' [m]'
                         geomType = 'Ligne'
                         jsonFeature = sloads(dumps(feature))
                         jsonFeature['properties']['layerName'] = layer

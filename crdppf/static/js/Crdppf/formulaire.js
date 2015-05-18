@@ -1,32 +1,32 @@
  // MAIN USER INTERFACE
 Ext.onReady(function() {
 
-    
+
     Ext.namespace('Crdppf');
     Crdppf.topicstore = '';
-    
+
     var formtrigger = 0;
-    
+
     Ext.QuickTips.init();
     var winWait = new Ext.LoadMask(
         Ext.getBody(),
         {msg:"Veuillez patienter... chargement du formulaire."}
     );
-   
+
  // Load the topic list 
     Ext.Ajax.request({
         url: 'getTopicsList',
         success: function(response) {           
             var data = Ext.decode(response.responseText);           
             var data_array = [];
-            
+
             for (var i = 0; i < data.length; i++) {
                 data_array.push([
                     data[i].topicid.toString(),
                     data[i].topicname
                 ]);
             }
-            
+
             Crdppf.topicstore = new Ext.data.ArrayStore({
                 storeId: 'topicstore',
                 idIndex: 0,  
@@ -37,7 +37,7 @@ Ext.onReady(function() {
                 data: data_array
             });
             formtrigger += 1;
-            triggerFunction(formtrigger);          
+            triggerFunction(formtrigger);  
         },
         method: 'POST',
         failure: function () {
@@ -315,7 +315,6 @@ Ext.onReady(function() {
                     maxLength: 100
                 }   
             ],
-
             buttons: [{
                 text: 'Enregistrer',
                 handler: function(){
@@ -342,12 +341,11 @@ Ext.onReady(function() {
                 text: 'Cancel'
             }]
         });
-      
         return formulaire;
     };
 
     var triggerFunction = function(counter) {
-        
+
         if (counter == 1) {
             // create the header panel containing the page banner
             var headerPanel = new Ext.Panel({
@@ -356,7 +354,7 @@ Ext.onReady(function() {
                 border: false,
                 contentEl: 'header'
             });
-          
+
             // Container for the map and legal documents display
             var contentPanel = new Ext.Panel({
                 region: 'center',
@@ -367,7 +365,7 @@ Ext.onReady(function() {
                 ],
                 tbar: Crdppf.adminToolbar(Crdppf.labels)
             });
-            
+
             // Main window layout
             var crdppf = new Ext.Viewport({
                 layout: 'border',

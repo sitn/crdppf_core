@@ -22,7 +22,7 @@ def get_interface_config(request):
 def get_baselayers_config(request):
     """Return a JSON file defining the base layers
     """    
-    layers = DBSession.query(Layers).filter_by(baselayer = True).all()
+    layers = DBSession.query(Layers).filter_by(baselayer = True).order_by(Layers.layerid).all()
     layerList = []
     for layer in layers:
         layerDico = {}
@@ -30,5 +30,6 @@ def get_baselayers_config(request):
         layerDico['image'] = layer.image
         layerDico['name'] = layer.layername
         layerDico['wmtsname'] = layer.wmtsname
+        layerDico['tile_format'] = layer.tile_format
         layerList.append(layerDico)
     return {'baseLayers': layerList}
