@@ -131,7 +131,7 @@ Crdppf.legalDocuments.createView = function(labels) {
                         '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
                             '<tpl for=".">',
                                 '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFFFFF" : "#F5F5F5"]}">',
-                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{[xcount]} {officialnb}</a> - {officialtitle} du {publicationdate:date("d.m.Y")}</h3>',
+                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publicationdate:date("d.m.Y")}</h3>',
                                     '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
                                 '</div>',
                             '</tpl>',

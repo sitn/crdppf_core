@@ -1372,7 +1372,7 @@ class Extract(FPDF):
         self.cell(15, 6, self.translations['pagelabel'], 0, 0, 'L')
         self.cell(135, 6, self.translations['appendicestitlelabel'], 0, 1, 'L')
         
-        index =+ 1
+        index = 1
         if len(self.appendix_entries) > 0:
             for appendix in self.appendix_entries:
                 self.set_font(*self.pdfconfig.textstyles['tocbold'])
