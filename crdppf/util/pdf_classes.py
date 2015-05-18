@@ -20,6 +20,9 @@ from crdppf.models import DBSession
 from crdppf.models import AppConfig
 
 from crdppf.views.get_features import get_features_function
+from crdppf.views.legal_documents import getLegalDocuments
+from crdppf.views.legal_documents import getLegalbases
+from crdppf.views.legal_documents import getDocumentReferences
 from crdppf.util.pdf_functions import geom_from_coordinates
 
 class AppConfig(object):
@@ -28,6 +31,7 @@ class AppConfig(object):
     def __init__(self, config):
         # tempdir : Path to the working directory where the temporary files will be stored
         self.tempdir = pkg_resources.resource_filename('crdppfportal', 'static/public/temp_files/') 
+        self.slddir = pkg_resources.resource_filename('crdppfportal', 'static/public/') 
         # pdfbasedir : Path to the directory where the generated pdf's will be stored
         self.pdfbasedir = pkg_resources.resource_filename('crdppfportal', 'static/public/pdf/') 
         # imagesbasedir : Path to the directory where the images resources are stored
@@ -37,7 +41,9 @@ class AppConfig(object):
         # legaldocsdir : Path to the folder where the legal documents are stored that may or may not be included
         self.legaldocsdir = pkg_resources.resource_filename('crdppfportal', 'static/public/reglements/') 
         self.ch_wms_layers = []
+        # ch_topics : Restrictions on federal level
         self.ch_topics = config['ch_topics']
+        # ch_legend_layers: Mapping between internal layer name and layer name used for the feature and web service call
         self.ch_legend_layers = config['ch_legend_layers']
         self.crdppf_wms_layers = config['crdppf_wms_layers']
         self.wms_srs = config['wms_srs']
@@ -52,13 +58,17 @@ class PDFConfig(object):
     def __init__(self, config):
     # PDF Configuration
         self.defaultlanguage = config['defaultlanguage'].lower()
+        # default size of the PDF document A4, A3, A2, A1 - fixed by the pilot project to A4
         self.pdfformat = config['pdfformat']
+        # default orientation of the PDF document - fixed to portrait by the group
         self.pdforientation = config['pdforientation']
+        # left margin of the PDF's content block
         self.leftmargin = config['leftmargin']
         self.rightmargin = config['rightmargin']
         self.topmargin = config['topmargin']
         self.headermargin = config['headermargin']
         self.footermargin = config['footermargin']
+        # Grouped margin values for an easy access
         self.pdfmargins = [
             self.leftmargin,
             self.topmargin,
@@ -87,19 +97,25 @@ class PDFConfig(object):
         self.placeholder = config['placeholder']
         self.pdfbasename = config['pdfbasename']
         self.siteplanbasename = config['siteplanbasename']
+        self.optionaltopics = config['optionaltopics']
 
 class AppendixFile(FPDF):
+    """The helper class to create the appendices files with the same corporate
+    design and attach them to the main document if needed"""
+    
     def __init__(self):
         FPDF.__init__(self)
         self.pdfconfig = {}
         
     def load_app_config(self, config):
-        """Initialises the basic parameters of the application.
+        """Initialises the basic parameters of the application, like the language or the working
+        directories. For details look also at the AppConfig class.
         """
         self.appconfig = AppConfig(config)
 
     def set_pdf_config(self, config):
-        """Loads the initial configuration of the PDF page.
+        """Loads the initial configuration of the PDF page, like the format, orientation, styles and so on.
+        for details look at the PDFConfig class.
         """
         self.pdfconfig = PDFConfig(config)
 
@@ -137,41 +153,64 @@ class AppendixFile(FPDF):
             self.cell(60, 5, self.translations['nosignaturetext'], 0, 0, 'C')
         self.cell(55, 5, str(self.current_page), 0, 0, 'R')
 
+
+# MAIN DOCUMENT
 class Extract(FPDF):
     """The main class for the ectract object which collects all the data, then writes the pdf report."""
     # HINTS #
     # to get vars defined in the buildout  use : request.registry.settings['key']
     
     def __init__(self, request, log):
+        # loading the PDF library
         FPDF.__init__(self)
+        # assigning the request variables
         self.request = request
+        # fetch the base URL for the local WMS calls
         self.crdppf_wms = request.registry.settings['crdppf_wms']
+        # fetching the base URL for the remote WMS calls (confederation)
         self.ch_wms = request.registry.settings['ch_wms']
+        # fetching the base URL for the confederation's feature service
         self.chfs_baseurl = request.registry.settings['chfs_baseurl']
+        # gets the local path to the working directory for temporary files
         self.sld_url = request.static_url('crdppfportal:static/public/temp_files/')
+        # gets the path of the folter with the legend files
         self.topiclegenddir = request.static_url('crdppfportal:static/public/legend/')
+        # sets the creation date of the PDF instance
         self.creationdate = datetime.now().strftime("%d.%m.%Y-%H:%M:%S")
+        # same same but different use
         self.timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        # initializes an empty array for the calculated pdf/print configuration paraameters
         self.printformat = {}
+        # empty array for all the dynamic wms parameters like the bbox, center coords
         self.wms_params = {}
+        # setting the GetLegendGraphic option for a dynamic composition of the WMS URL
         self.wms_get_legend = {
             'REQUEST': 'GetLegendGraphic'
         }
+        # setting the GetStyles option
         self.wms_get_styles = {
             'REQUEST': 'GetStyles'
         }
+        # setting the GetMap option for the WMS
         self.wms_get_map = {
             'REQUEST': 'GetMap'
         }
+        # initialize an empty dict for the topic related data
         self.topicdata = {}
+        # setting the default  root filename of the PDF and temporary files
         self.filename = 'thefilename'
+        # empty dict for a list of  the topics and it's depending values
         self.topiclist = {}
         self.layerlist = {}
         self.legalbaselist = {}
         self.legalprovisionslist = {}
         self.referenceslist = {}
+        self.doclist = []
+        # dict used to store the entries of the table of content
         self.toc_entries = {}
+        # dict to store the values of the appendix list
         self.appendix_entries = []
+        # dict to store the refernces data
         self.reference_entries = []
         self.appendix_links = []
         self.topicorder = {}
@@ -179,42 +218,7 @@ class Extract(FPDF):
         self.log = log
         self.cleanupfiles = []
         self.basemap = ''
-
-    def get_basemap(self):
-
-        wmsBBOX, wmsbbox = self.get_wms_bbox()
-
-        params = {
-            'REQUEST': 'GetMap',
-            'VERSION': self.appconfig.wms_version,
-            'LAYERS': ",".join(self.appconfig.crdppf_wms_layers),
-            'SRS': self.appconfig.wms_srs,
-            'BBOX': ",".join([str(wmsBBOX['minX']), str(wmsBBOX['minY']), str(wmsBBOX['maxX']), str(wmsBBOX['maxY'])]),
-            'WIDTH': self.mapconfig['width'],
-            'HEIGHT': self.mapconfig['height'],
-            'FORMAT': 'image/png',
-            'TRANSPARENT': 'false'
-        }
-
-        getmapurl = self.crdppf_wms
-
-        if getmapurl.find('?') < 0:
-            getmapurl += '?'
-        getmapurl = getmapurl + '&'.join(['%s=%s' % (key, value) for (key, value) in params.items()])
-
-        http = httplib2.Http()
-
-        h = dict(self.request.headers)
-        if urlparse(getmapurl).hostname != 'localhost': # pragma: no cover
-            h.pop('Host')
-
-        try:
-            resp, content = http.request(getmapurl, method='GET', headers=h)
-        except: # pragma: no cover
-            self.log.error("Unable to do GetMap request for url %s" % getmapurl)
-            return None
-
-        self.basemap = Image.open(StringIO(content))
+        self.doctypes = [u'legalbase',u'legalprovision',u'reference',u'temporaryprovision',u'map',u'other']
 
     def alias_no_page(self, alias='{no_pg}'):
         """Define an alias for total number of pages"""
@@ -246,6 +250,7 @@ class Extract(FPDF):
         self.line(105, 0, 105, 35)
         self.line(165, 0, 165, 35)
         # Add the logos if existing else put a placeholder
+        # to put ch-logo dimensions in variable
         self.image(self.appconfig.imagesbasedir+self.pdfconfig.CHlogopath, 10, 8, 55, 14.42)
         self.image(self.appconfig.imagesbasedir+self.pdfconfig.cantonlogopath, 110, 8, self.pdfconfig.cantonlogowidth, self.pdfconfig.cantonlogoheight)
         try:
@@ -296,8 +301,45 @@ class Extract(FPDF):
         else:
             self.wms_url = self.crdppf_wms
 
+    # gets the basemap to display the selected property  in the cadastral context
+    def get_basemap(self):
+        # defines the corrners and the center point of the bbox for the wms call of the map
+        wmsBBOX, wmsbbox = self.get_wms_bbox()
+
+        params = {
+            'REQUEST': 'GetMap',
+            'VERSION': self.appconfig.wms_version,
+            'LAYERS': ",".join(self.appconfig.crdppf_wms_layers),
+            'SRS': self.appconfig.wms_srs,
+            'BBOX': ",".join([str(wmsBBOX['minX']), str(wmsBBOX['minY']), str(wmsBBOX['maxX']), str(wmsBBOX['maxY'])]),
+            'WIDTH': self.mapconfig['width'],
+            'HEIGHT': self.mapconfig['height'],
+            'FORMAT': 'image/png',
+            'TRANSPARENT': 'false'
+        }
+
+        getmapurl = self.crdppf_wms
+
+        if getmapurl.find('?') < 0:
+            getmapurl += '?'
+        getmapurl = getmapurl + '&'.join(['%s=%s' % (key, value) for (key, value) in params.items()])
+
+        http = httplib2.Http()
+
+        h = dict(self.request.headers)
+        if urlparse(getmapurl).hostname != 'localhost': 
+            h.pop('Host')
+
+        try:
+            resp, content = http.request(getmapurl, method='GET', headers=h)
+        except: 
+            self.log.error("Unable to do GetMap request for url %s" % getmapurl)
+            return None
+
+        self.basemap = Image.open(StringIO(content))
+        
     def get_title_page(self):
-        """Creates the title page of the PDF extract with the abstract and a situation map of the property.
+        """Creates the title page of the PDF extract with the summary and a situation map of the property.
         """
         today= datetime.now()
 
@@ -314,6 +356,7 @@ class Extract(FPDF):
         # PageTitle
         self.set_y(45)
         self.set_font(*self.pdfconfig.textstyles['title1'])
+        # write document title in function of the selected extract type
         if self.reportInfo['type'] =='certified':
             self.multi_cell(0, 9, self.translations["certifiedextracttitlelabel"])
         elif self.reportInfo['type'] =='reduced':
@@ -327,9 +370,11 @@ class Extract(FPDF):
         self.multi_cell(0, 7, self.translations['extractsubtitlelabel'])
         self.ln()
 
+        # placing the map - mapsize to put in variable
         map = self.image(self.sitemappath, 25, 80, 160, 90)
 
         y=self.get_y()
+        # rectangle size to put in variable
         self.rect(25, 80, 160, 90, '')
         self.set_y(y+105)
 
@@ -409,16 +454,17 @@ class Extract(FPDF):
         # END TITLEPAGE
 
     def get_map_format(self):
-        """ Define the center and the bounding box of the map request to the wms
+        """ Function to define the center and the bounding box of the map request to the wms
         """
         self.mapconfig = {'width':self.printformat['mapWidth'], 'height':self.printformat['mapHeight']}
         self.mapconfig['bboxCenterX'] = (self.featureInfo['BBOX']['maxX']+self.featureInfo['BBOX']['minX'])/2
         self.mapconfig['bboxCenterY'] = (self.featureInfo['BBOX']['maxY']+self.featureInfo['BBOX']['minY'])/2
 
     def get_legend_classes(self, bbox, layername):
-        """ Collects all the features in the map perimeter into a liste to create a dynamic legend
+        """ Collects all the features in the map perimeter into a list to create a dynamic legend
         """
         geom = geom_from_coordinates(bbox)
+        # transform coordinates from wkt to SpatialElement for intersection
         polygon = WKTSpatialElement(geom.wkt, 21781)
         mapfeatures = get_features_function(polygon, {'layerList':layername, 'translations':self.translations})
         if mapfeatures is not None:
@@ -464,20 +510,25 @@ class Extract(FPDF):
         <ogc:PropertyName>nummai</ogc:PropertyName>
         </sld:Label> 
         <sld:Font>
-        <sld:CssParameter name="font-family">pdfconfig.fontfamily</sld:CssParameter> 
+        <sld:CssParameter name="font-family">"""
+        sld += self.pdfconfig.fontfamily
+        sld += """</sld:CssParameter> 
         <sld:CssParameter name="font-weight">bold</sld:CssParameter> 
         <sld:CssParameter name="font-size">16</sld:CssParameter> 
         </sld:Font>
         <sld:Fill>
         <sld:CssParameter name="fill">#000000</sld:CssParameter> 
         </sld:Fill>
+        <sld:Halo>
+        <sld:Radius>3</sld:Radius>
+        <sld:Fill><sld:CssParameter name="fill">#FFFFFF</sld:CssParameter></sld:Fill>
+        </sld:Halo>
         </sld:TextSymbolizer>
         </sld:Rule>
         </sld:FeatureTypeStyle>
         </sld:UserStyle>
         </sld:NamedLayer>
         </sld:StyledLayerDescriptor>"""
-
 
         sldfile = open(self.appconfig.tempdir+self.pdfconfig.siteplanname+'_sld.xml', 'w')
         self.cleanupfiles.append(self.appconfig.tempdir+self.pdfconfig.siteplanname+'_sld.xml')
@@ -489,7 +540,9 @@ class Extract(FPDF):
 
         scale = self.printformat['scale']*2
         # SitePlan/Plan de situation/Situationsplan
+        # first we set the pdf's map canavas dimensions in cm
         sitemapparams = {'width':self.printformat['mapWidth'],'height':self.printformat['mapHeight']}
+        # then the center coordinates of the bbox are determined based on the feature's bbox
         sitemapparams['bboxCenterX'] = (self.featureInfo['BBOX']['maxX']+self.featureInfo['BBOX']['minX'])/2
         sitemapparams['bboxCenterY'] = (self.featureInfo['BBOX']['maxY']+self.featureInfo['BBOX']['minY'])/2
         #to recenter the map on the bbox of the feature, with the right scale and add at least 10% of space we calculate a wmsBBOX
@@ -523,12 +576,12 @@ class Extract(FPDF):
         http = httplib2.Http()
 
         h = dict(self.request.headers)
-        if urlparse(getmapurl).hostname != 'localhost': # pragma: no cover
+        if urlparse(getmapurl).hostname != 'localhost': 
             h.pop('Host')
 
         try:
             resp, content = http.request(getmapurl, method='GET', headers=h)
-        except: # pragma: no cover
+        except: 
             self.log.error("Unable to do GetMap request for url %s" % getmapurl)
             return None
 
@@ -538,16 +591,14 @@ class Extract(FPDF):
         out.close()
 
         self.sitemappath = self.appconfig.tempdir+self.pdfconfig.siteplanname+'.png'
-    
 
     def add_topic(self, topic):
         """Adds a new entry to the topic list and sets it's category from:
             categorie = 0 : restriction not available - no layers
             categorie = 1 : restriction not touching the feature - layers, but no features (check geo availability)
             categorie = 2 : restriction touching the feature - layers and features
-            categorie = 3 : restriction not legally binding - layers and features and 
-                complementary information
-            default to 0 - restriction is not available
+            categorie = 3 : restriction not legally binding - layers, features and complementary information
+            defaults to 0 - restriction is not available
         """
         self.topiclist[str(topic.topicid)]={
             'categorie':0,
@@ -555,15 +606,10 @@ class Extract(FPDF):
             'layers':{},
             'authority':topic.authority, 
             'topicorder':topic.topicorder,
-            #'references':topic.references,
-            'legalbases':[],
-            'legalprovisions':[],
-            #'legalprovisions':topic.legalprovisions, 
-            #'temporaryprovisions':topic.temporaryprovisions, 
             'authorityfk':topic.authorityfk,
-            'publicationdate':topic.publicationdate,
+            'publicationdate':topic.publicationdate
             }
- 
+
         # if geographic layers are defined for the topic, get the list of all layers and then
         # check for each layer the information regarding the features touching the property
         if topic.layers:
@@ -571,13 +617,17 @@ class Extract(FPDF):
             for layer in topic.layers:
                 self.topiclist[str(topic.topicid)]['layers'][layer.layerid]={
                     'layername':layer.layername,
-                    'layerlegalbases':None,
-                    'layerreference':None,
-                    'layerprovisions':None,
                     'features':None
                     }
+                # intersects a given layer with the feature and adds the results to the topiclist- see method add_layer
                 self.add_layer(layer)
             self.get_topic_map(topic.layers,topic.topicid)
+            # Get the list of documents related to a topic with layers and results
+            if self.topiclist[str(layer.topicfk)]['categorie'] == 3:
+                docfilters = [str(topic.topicid)]
+                for doctype in self.doctypes:
+                    docidlist = getDocumentReferences(docfilters)
+                    self.topiclist[str(topic.topicid)][doctype] = self.set_documents(str(topic.topicid), doctype, docidlist, True)                
         else:
             if str(topic.topicid) in self.appconfig.emptytopics:
                 self.topiclist[str(topic.topicid)]['layers'] = None
@@ -586,7 +636,7 @@ class Extract(FPDF):
                 self.topiclist[str(topic.topicid)]['layers'] = None
                 self.topiclist[str(topic.topicid)]['categorie'] = 0
 
-        # if legal bases are defined for a topic the attributes are compiled in a list
+        # if legal bases are defined for a topic (join in models.py) the attributes are compiled in a list
         if topic.legalbases:
             self.get_legalbases(topic.legalbases,topic.topicid)
         else:
@@ -617,11 +667,19 @@ class Extract(FPDF):
         if results :
             self.layerlist[str(layer.layerid)]={'layername':layer.layername,'features':[]}
             for result in results:
+                # for each object we check for related documents
+                docfilters = [str(result['id'])]
+                for doctype in self.doctypes:
+                    docidlist = getDocumentReferences(docfilters)
+                    result['properties'][doctype] = self.set_documents(str(layer.topicfk), doctype, docidlist, False)
                 self.layerlist[str(layer.layerid)]['features'].append(result['properties'])
-                #~ if result['properties']['url_regl']:
-                    #~ self.topiclist[str(layer.topicfk)]['legalprovisions'].append(result['properties']['url_regl'])
-            ## reglements
-            #legaldocsdir
+
+            # we also check for documents on the layer level - if there are any results - else we don't need to bother
+            docfilters = [layer.layername]
+            for doctype in self.doctypes:
+                docidlist = getDocumentReferences(docfilters)
+                self.topiclist[str(layer.topicfk)]['layers'][layer.layerid][doctype] = self.set_documents(str(layer.topicfk), doctype, docidlist, True)
+
             self.topiclist[str(layer.topicfk)]['categorie']=3
             self.topiclist[str(layer.topicfk)]['no_page']='tocpg_'+str(layer.topicfk)
             self.topiclist[str(layer.topicfk)]['layers'][layer.layerid]['features']=self.layerlist[str(layer.layerid)]['features']
@@ -630,6 +688,47 @@ class Extract(FPDF):
             if self.topiclist[str(layer.topicfk)]['categorie'] != 3:
                 self.topiclist[str(layer.topicfk)]['categorie']=1
 
+    def set_documents(self, topicid, doctype, docids, geofilter):
+        """ Function to fetch the documents related to the restriction:
+        legal provisions, temporary provisions, references 
+        """
+
+        docs = {}
+        documents = []
+        
+        if geofilter is True:
+            filters = {
+                'docids':docids,
+                'topicid':topicid,
+                'cadastrenb':self.featureInfo['numcom'],
+                'chmunicipalitynb':self.featureInfo['nufeco']
+            }
+        else:
+            filters = {'docids':docids}
+
+        if len(docids) > 0:
+            docs = getLegalDocuments(self.request,filters)
+        else:
+            docs['docs'] = []
+
+        references = []
+        # store the documents in a list
+        for doc in docs['docs']:
+            if doc['doctype'] == doctype and doc['documentid'] in docids:
+                references.append(doc)
+                if doc['doctype'] != u'legalbase' and doc['documentid'] not in self.doclist:
+                    self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'])
+                if doc['documentid'] not in self.doclist:
+                    self.doclist.append(doc)
+            if doc['doctype'] == doctype and geofilter is True and doc['documentid'] not in docids:
+                references.append(doc)
+                if doc['doctype'] != u'legalbase' and doc['documentid'] not in self.doclist:
+                    self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'])
+                if doc['documentid'] not in self.doclist:
+                    self.doclist.append(doc)
+                    
+        return references
+        
     def get_legalbases(self, legalbases, topicid):
         """Decomposes the object containing all legalbases related to a topic in a list
         """
@@ -774,7 +873,7 @@ class Extract(FPDF):
             http = httplib2.Http()
 
             h = dict(self.request.headers)
-            if urlparse(getstylesurl).hostname != 'localhost': # pragma: no cover
+            if urlparse(getstylesurl).hostname != 'localhost': 
                 h.pop('Host')
 
             if self.log:
@@ -784,7 +883,7 @@ class Extract(FPDF):
 
             try:
                 resp, content = http.request(getstylesurl, method='GET', headers=h)
-            except: # pragma: no cover
+            except:
                 self.log.error("Unable to do GetStyles request for url %s" % getstylesurl)
                 return None
 
@@ -836,12 +935,12 @@ class Extract(FPDF):
             http = httplib2.Http()
 
             h = dict(self.request.headers)
-            if urlparse(getsldurl).hostname != 'localhost': # pragma: no cover
+            if urlparse(getsldurl).hostname != 'localhost':
                 h.pop('Host')
 
             try:
                 resp, content = http.request(getsldurl, method='GET', headers=h)
-            except: # pragma: no cover
+            except:
                 self.log.error("Unable to do GetMap request for url %s" % getsldurl)
                 return None
 
@@ -888,12 +987,12 @@ class Extract(FPDF):
         http = httplib2.Http()
 
         h = dict(self.request.headers)
-        if urlparse(getmapurl).hostname != 'localhost': # pragma: no cover
+        if urlparse(getmapurl).hostname != 'localhost':
             h.pop('Host')
 
         try:
             resp, content = http.request(getmapurl, method='GET', headers=h)
-        except: # pragma: no cover
+        except:
             self.log.error("Unable to do GetMap request for url %s" % getmapurl)
             return None
 
@@ -1009,16 +1108,17 @@ class Extract(FPDF):
                 self.cell(118, 6,self.topiclist[topic]['topicname'],0,0,'L')
                 self.cell(15, 6,'',0,0,'L')
                 self.cell(15, 6,'',0,1,'L')
-                
-        self.ln()
-        self.set_font(*pdfconfig.textstyles['tocbold'])
-        self.multi_cell(0, 5, translations['restrictionnotlegallybindinglabel'], 'B', 1, 'L')
-        self.ln()
 
-        self.set_font(*pdfconfig.textstyles['tocbold'])
-        self.cell(118, 6, translations['norestrictionlabel'], 0, 0, 'L')
-        self.cell(15, 6, str(''), 0, 0, 'L')
-        self.cell(15, 6, str(''), 0, 1, 'L')
+        if pdfconfig.optionaltopics == True :
+            self.ln()
+            self.set_font(*pdfconfig.textstyles['tocbold'])
+            self.multi_cell(0, 5, translations['restrictionnotlegallybindinglabel'], 'B', 1, 'L')
+            self.ln()
+
+            self.set_font(*pdfconfig.textstyles['tocbold'])
+            self.cell(118, 6, translations['norestrictionlabel'], 0, 0, 'L')
+            self.cell(15, 6, str(''), 0, 0, 'L')
+            self.cell(15, 6, str(''), 0, 1, 'L')
 
     def write_thematic_page(self, topic):
         """Writes the page for the given topic
@@ -1106,89 +1206,71 @@ class Extract(FPDF):
             y = self.get_y()
             self.set_y(y+5)
             if self.topiclist[topic]['layers']:
+                i = 0
+                # for each layer we check if there are features
                 for layer in self.topiclist[topic]['layers']:
                     if self.topiclist[topic]['layers'][layer]['features']:
+                        i += 1
+                        self.set_font(*pdfconfig.textstyles['bold'])
+                        if i == 1:
+                            self.cell(55, 5, translations['contentlabel'].encode('iso-8859-1'), 0, 0, 'L')
+                        else:
+                            self.cell(55, 5, '', 0, 0, 'L')
+                        self.set_font(*pdfconfig.textstyles['normal'])
+                        content = ''
                         for feature in self.topiclist[topic]['layers'][layer]['features']:
                             if 'teneur' in feature.keys():
-                                self.set_font(*pdfconfig.textstyles['bold'])
-                                self.cell(55, 5, translations['contentlabel'].encode('iso-8859-1'), 0, 0, 'L')
-                                self.set_font(*pdfconfig.textstyles['normal'])
                                 if feature['statutjuridique'] is None:
                                     feature['statutjuridique'] = 'None'
                                 if feature['teneur'] is None:
                                     feature['teneur'] = 'None'
                                 if feature['geomType'] == 'area':
-                                    self.multi_cell(100, 5, feature['teneur'].encode('iso-8859-1') \
-                                        +'\t('+feature['intersectionMeasure'].replace(' : ','Surface : ').encode('iso-8859-1')+')', 0, 1, 'L')
+                                    content += feature['teneur'].encode('iso-8859-1') \
+                                        +str(' \t(')+feature['intersectionMeasure'].replace(' : ', translations['areaMeasureLabel']).encode('iso-8859-1')+str(')\n')
+                                elif feature['geomType'] == 'line': 
+                                    content += feature['teneur'].encode('iso-8859-1') \
+                                        +str(' \t(')+feature['intersectionMeasure'].replace(' : ', translations['distanceMeasureLabel']).encode('iso-8859-1')+str(')\n')
                                 else: 
-                                    self.multi_cell(100, 5, feature['teneur'].encode('iso-8859-1') \
-                                        +'\t('+feature['intersectionMeasure'].replace(' - ','').encode('iso-8859-1')+')', 0, 1, 'L')
+                                    content += feature['teneur'].encode('iso-8859-1')+str('\n')
+                                for doctype in self.doctypes:
+                                    if len(feature[doctype]) > 0:
+                                        for document in feature[doctype]:
+                                            content += document['officialtitle'].encode('iso-8859-1')+'\n'
                             else:
                                 for property,value in feature.iteritems():
                                     if value is not None and property != 'featureClass':
-                                        self.set_font(*pdfconfig.textstyles['bold'])
-                                        self.cell(55, 5, translations['contentlabel'].encode('iso-8859-1'), 0, 0, 'L')
-                                        self.set_font(*pdfconfig.textstyles['normal'])
                                         if isinstance(value, float) or isinstance(value, int):
                                             value = str(value)
-                                        self.multi_cell(100, 5, value.encode('iso-8859-1'), 0, 1, 'L')
+                                        content += value.encode('iso-8859-1')
+                        for doctype in self.doctypes:
+                            if len(self.topiclist[topic]['layers'][layer][doctype]) > 0:
+                                for document in self.topiclist[topic]['layers'][layer][doctype]:
+                                    content += document['officialtitle'].encode('iso-8859-1')+'\n'
+                        self.multi_cell(100, 5, content, 0, 1, 'L')
             else:
                 self.multi_cell(100, 5, 'Error in line 818', 0, 1, 'L')
-
-            # Legal Provisions/Dispositions juridiques/Gesetzliche Bestimmungen
-            y = self.get_y()
-            self.set_y(y+5)
-            self.set_font(*pdfconfig.textstyles['bold'])
-            self.cell(55, 5, translations['legalprovisionslabel'], 0, 0, 'L')
-            self.set_font(*pdfconfig.textstyles['normal'])
-            if self.topiclist[topic]['legalprovisions']:
-                count = 0 
-                for provision in self.topiclist[topic]['legalprovisions']:
-                    self.set_x(80)
-                    if provision['officialnb'] is not None:
-                        self.multi_cell(0, 5, provision['officialnb']+' : '+provision['officialtitle'], 0, 1, 'L')
-                    else: 
-                        self.multi_cell(0, 5, provision['officialtitle'], 0, 1, 'L')
-                    self.set_x(80)
-                    self.set_font(*self.pdfconfig.textstyles['url'])
-                    self.set_text_color(*self.pdfconfig.urlcolor)
-                    self.multi_cell(0, 4, 'URL : '+str(provision['legalprovisionurl']))
-                    self.set_text_color(*self.pdfconfig.defaultcolor)
-                    self.set_font(*self.pdfconfig.textstyles['normal'])
-            else:
-                    self.multi_cell(0, 4, translations['nodocumenttext'])
-
-            # References and complementary information/Informations et renvois supplémentaires/Verweise und Zusatzinformationen
-            y = self.get_y()
-            self.set_y(y+5)
-            self.set_font(*pdfconfig.textstyles['bold'])
-            self.cell(55, 5, translations['referenceslabel'], 0, 0, 'L')
-            self.set_font(*pdfconfig.textstyles['normal'])
-            if self.topiclist[topic]['references']:
-                for reference in self.topiclist[topic]['references']:
-                    self.set_x(80)
-                    self.multi_cell(0, 5, unicode(reference['officialtitle']).encode('iso-8859-1'))
-            else:
-                    self.multi_cell(0, 4, translations['nodocumenttext'])
-
-            # -- KEEP FOR FURTHER USE
-            
-            # Ongoing amendments/Modifications en cours/Laufende Änderungen
-            #~ y = self.get_y()
-            #~ self.set_y(y+5)
-            #~ self.set_font(*pdfconfig.textstyles['bold'])
-            #~ self.cell(55, 5, translations['temporaryprovisionslabel'], 0, 0, 'L')
-            #~ self.set_font(*pdfconfig.textstyles['normal'])
-            #~ if self.topiclist[topic]['temporaryprovisions']:
-                #~ for temp_provision in self.topiclist[topic]['temporaryprovisions']:
-                    #~ self.multi_cell(0, 5, unicode(temp_provision.officialtitle).encode('iso-8859-1'), 0, 1, 'L')
-                    #~ if temp_provision.temporaryprovisionurl :
-                        #~ self.set_x(80)
-                        #~ self.multi_cell(0, 5, unicode(temp_provision.temporaryprovisionurl).encode('iso-8859-1'))
-            #~ else:
-                    #~ self.multi_cell(0, 5, unicode('None','utf-8').encode('iso-8859-1'), 0, 1, 'L')
-
-            # --  END KEEP
+                
+            # For all document types we get the references and list them:
+            # legalprovisions = Legal Provisions/Dispositions juridiques/Gesetzliche Bestimmungen
+            # references = References and complementary information/Informations et renvois supplémentaires/Verweise und Zusatzinformationen
+            # temporaryprovisions = Ongoing amendments/Modifications en cours/Laufende Änderungen
+            # map = Maps and plans/Cartes et plans/Karten und Pläne
+            for doctype in self.doctypes:
+                # for now we ignore different document types
+                if doctype not in [u'legalbase']:
+                    y = self.get_y()
+                    self.set_y(y+5)
+                    self.set_font(*pdfconfig.textstyles['bold'])
+                    doctypelabel = doctype+'slabel'
+                    self.cell(55, 5, translations[doctypelabel], 0, 0, 'L')
+                    self.set_font(*pdfconfig.textstyles['normal'])
+                    if doctype in self.topiclist[topic].keys() and len(self.topiclist[topic][doctype]) > 0:
+                        for document in self.topiclist[topic][doctype]:
+                            self.set_x(80)
+                            self.multi_cell(0, 5, unicode(document['officialtitle']).encode('iso-8859-1'))
+                    else:
+                        self.set_x(80)
+                        self.multi_cell(0, 5, translations['nodocumenttext'])
 
             # Competent Authority/Service competent/Zuständige Behörde
             y = self.get_y()

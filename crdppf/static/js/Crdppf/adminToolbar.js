@@ -1,8 +1,10 @@
 Ext.namespace('Crdppf');
 
-// create layer tree and append nodes & subnodes to it
+/***
+* create menu toolbar for the admin interface
+***/
 Crdppf.adminToolbar = function(labels) {
-    
+
     var toolbar = new Ext.Toolbar();
 
         toolbar.add({
@@ -90,6 +92,6 @@ Crdppf.adminToolbar = function(labels) {
             }
         );
         toolbar.doLayout();
-    
+
     return toolbar;
 };
