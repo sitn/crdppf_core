@@ -7,7 +7,7 @@ Crdppf.docfilters = function(filter) {
     function isInArray(value, array) {
         return array.indexOf(value) > -1;
     }
-    
+
     if ('objectids' in filter) {
         if (filter.objectids.length > 0) {
             for (var i = 0; i < filter.objectids.length; i++) {
@@ -118,7 +118,7 @@ Crdppf.legalDocuments = function() {
 Crdppf.legalDocuments.createView = function(labels) {
 
     var legalDocumentsStore = null;
-    
+
     if (Crdppf.legalDocuments.store.getTotalCount()> 0) {
         // Parse the legal documents and apply the corresponding template
         var templates = new Ext.XTemplate(

@@ -94,10 +94,10 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
     # data format
     format='interlis'
     xml_layers = {
-        'R103':'ch.bazl.projektierungszonen-flughafenanlagen.oereb',
-        'R108':'ch.bazl.sicherheitszonenplan.oereb',
-        'R118':'ch.bazl.kataster-belasteter-standorte-zivilflugplaetze.oereb',
-        'R119':'ch.bav.kataster-belasteter-standorte-oev.oereb'
+        'R103': 'ch.bazl.projektierungszonen-flughafenanlagen.oereb',
+        'R108': 'ch.bazl.sicherheitszonenplan.oereb',
+        'R118': 'ch.bazl.kataster-belasteter-standorte-zivilflugplaetze.oereb',
+        'R119': 'ch.bav.kataster-belasteter-standorte-oev.oereb'
         }
     
     coords = geometry.coords(DBSession)

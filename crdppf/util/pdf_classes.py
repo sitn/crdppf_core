@@ -761,17 +761,17 @@ class Extract(FPDF):
         self.legalprovisionslist[str(topicid)]=[]
         for provision in legalprovisions:
             self.legalprovisionslist[str(topicid)].append({
-                'officialtitle':provision[u'officialtitle'],
-                'title':provision['title'],
-                'abreviation':provision['abbreviation'],
-                'officialnb':provision['officialnb'],
+                'officialtitle': provision[u'officialtitle'],
+                'title': provision['title'],
+                'abreviation': provision['abbreviation'],
+                'officialnb': provision['officialnb'],
                 'legalprovisionurl':provision['remoteurl'],
-                'canton':provision['state'],
-                'commune':provision['municipalityname'],
-                'legalstate':provision['legalstate'],
-                'publishedsince':provision['publicationdate'],
-                'sanctiondate':provision['sanctiondate'],
-                'no_page':'A'+str(len(self.appendix_entries))
+                'canton': provision['state'],
+                'commune': provision['municipalityname'],
+                'legalstate': provision['legalstate'],
+                'publishedsince': provision['publicationdate'],
+                'sanctiondate': provision['sanctiondate'],
+                'no_page': 'A'+str(len(self.appendix_entries))
                 #'metadata':provision.metadata
                 })
         self.topiclist[str(topicid)]['legalprovision'] = self.legalprovisionslist[str(topicid)]
@@ -782,17 +782,17 @@ class Extract(FPDF):
         self.referenceslist[str(topicid)]=[]
         for reference in references:
             self.referenceslist[str(topicid)].append({
-                'officialtitle':reference['officialtitle'],
-                'title':reference['title'],
-                'abreviation':reference['abbreviation'],
-                'officialnb':reference['officialnb'],
-                'legalprovisionurl':reference['remoteurl'],
-                'canton':reference['state'],
-                'commune':reference['municipalityname'],
-                'legalstate':reference['legalstate'],
-                'publishedsince':reference['publicationdate'],
-               'sanctiondate':reference['sanctiondate'],
-                'no_page':'A'+str(len(self.appendix_entries))
+                'officialtitle': reference['officialtitle'],
+                'title': reference['title'],
+                'abreviation': reference['abbreviation'],
+                'officialnb': reference['officialnb'],
+                'legalprovisionurl': reference['remoteurl'],
+                'canton': reference['state'],
+                'commune': reference['municipalityname'],
+                'legalstate': reference['legalstate'],
+                'publishedsince': reference['publicationdate'],
+                'sanctiondate': reference['sanctiondate'],
+                'no_page': 'A'+str(len(self.appendix_entries))
                 #'metadata':legalprovision.metadata
                 })
         self.topiclist[str(topicid)]['references'] = self.referenceslist[str(topicid)]
@@ -1372,7 +1372,7 @@ class Extract(FPDF):
         self.cell(15, 6, self.translations['pagelabel'], 0, 0, 'L')
         self.cell(135, 6, self.translations['appendicestitlelabel'], 0, 1, 'L')
         
-        index = 1
+        index =+ 1
         if len(self.appendix_entries) > 0:
             for appendix in self.appendix_entries:
                 self.set_font(*self.pdfconfig.textstyles['tocbold'])
@@ -1385,7 +1385,7 @@ class Extract(FPDF):
                     self.set_text_color(*self.pdfconfig.urlcolor)
                     self.multi_cell(0, 5, str(appendix['url']))
                     self.set_text_color(*self.pdfconfig.defaultcolor)
-                index = index+1
+                index =+ 1
         else:
             self.multi_cell(0, 5, self.translations['nodocumenttext'])
 
