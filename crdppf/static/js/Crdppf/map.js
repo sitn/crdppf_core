@@ -70,15 +70,6 @@ Crdppf.Map.prototype = {
             }
         });
 
-        control.events.register("beforefeatureselected", this, function(e) {
-            Crdppf.Map.selectLayer.removeAllFeatures();
-            Crdppf.currentProperty = null;
-            var propertySelectionWindow = Ext.getCmp('propertySelectionWindow');
-            if (propertySelectionWindow) {
-                propertySelectionWindow.destroy();
-            }
-        });
-
         // define actions on feature selection
         control.events.register("featuresselected", this, function(e) {
             // if there is more than one feature, we present the user with a selection window

@@ -6,7 +6,7 @@ from sqlalchemy import or_
 
 from crdppf.models import DBSession
 from crdppf.models import Topics, Town, OriginReference
-from crdppf.models import Documents, LegalDocuments, LegalBases
+from crdppf.models import Documents, LegalDocuments
 
 @view_config(route_name='getTownList', renderer='json')
 def getTownList(request):
@@ -106,56 +106,6 @@ def createNewDocEntry(request):
 
     return {'success':True}
 
-@view_config(route_name='getLegalbases', renderer='json')
-def getLegalbases(params):
-    """Gets all the legal bases related to a feature.
-    Input: dict with params : topic, canton, municipalitynb, cadastrenb
-    Output: legalbases
-    """
-
-    doclist = []
-    filterparams = {
-        'request': None,
-        'topic': None,
-        'layer': None,
-        'canton': None,
-        'muncipalitynb': None,
-        'cadastrenb': None
-    }
-            
-    legalbases = {}
-    
-    for param in params:
-        if params[param] is not None and param in filterparams.keys():
-            filterparams[param] = params[param]
-    
-    if param == 'topic':
-        legalbases = DBSession.query(LegalBases).filter_by(topic=params[param]).all()
-    else:
-        sdf
-        legalbases = DBSession.query(LegalBases).order_by(LegalBases.legalbaseid.asc()).all()
-
-    for legalbase in legalbases :
-        doclist.append({
-            legalbase.legalbaseid:{
-                'documentid': legalbase.legalbaseid,
-                'doctype': 'legalbase',
-                #'numcom': legalbase.numcom,
-                'topicfk': legalbase.topicfk,
-                'title': legalbase.title,
-                'officialtitle': legalbase.officialtitle,
-                'abreviation': legalbase.abreviation,
-                'officialnb': legalbase.officialnb,
-                'canton': legalbase.canton,
-                'commune': legalbase.commune,
-                'documenturl': legalbase.legalbaseurl,
-                'legalstate': legalbase.legalstate,
-                'publishedsince': legalbase.publishedsince.isoformat()
-            }
-        })
-
-    return {'legalbases': doclist}
-
 @view_config(route_name='getDocumentReferences', renderer='json')
 def getDocumentReferences(docfilters):
     """Gets all the id's of the documents referenced by an object, layer, topic or document.
@@ -200,12 +150,12 @@ def getLegalDocuments(request, filters):
     if 'docids' in filters.keys() and filters['docids'] is not None:
         documents = DBSession.query(LegalDocuments).filter(LegalDocuments.docid.in_(filters['docids']))
         if 'cadastrenb' in filters.keys():
-            documents = documents.filter(or_(LegalDocuments.cadastrenb==filters['cadastrenb'], LegalDocuments.cadastrenb==None))
+            documents = documents.filter(or_(LegalDocuments.cadastrenb==filters['cadastrenb'], LegalDocuments.cadastrenb==None)).order_by(LegalDocuments.doctype.asc())
         if 'chmunicipalitynb' in filters.keys():
-            documents = documents.filter(or_(LegalDocuments.chmunicipalitynb==filters['chmunicipalitynb'], LegalDocuments.chmunicipalitynb==None))
+            documents = documents.filter(or_(LegalDocuments.chmunicipalitynb==filters['chmunicipalitynb'], LegalDocuments.chmunicipalitynb==None)).order_by(LegalDocuments.doctype.asc())
     else:
-        documents = DBSession.query(LegalDocuments)
-    documents = documents.order_by(LegalDocuments.docid.asc()).all()
+        documents = DBSession.query(LegalDocuments).order_by(LegalDocuments.doctype.asc()).order_by(LegalDocuments.state.asc()).order_by(LegalDocuments.chmunicipalitynb.asc()).order_by(LegalDocuments.cadastrenb.asc())
+    documents = documents.order_by(LegalDocuments.doctype.asc()).order_by(LegalDocuments.state.asc()).order_by(LegalDocuments.chmunicipalitynb.asc()).order_by(LegalDocuments.cadastrenb.asc()).all()
     
     for document in documents :
         origins = []
