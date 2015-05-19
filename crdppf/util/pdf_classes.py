@@ -110,6 +110,10 @@ class PDFConfig(object):
         self.pdfbasename = config['pdfbasename']
         self.siteplanbasename = config['siteplanbasename']
         self.optionaltopics = config['optionaltopics']
+        try:
+            self.disclaimer  = config['disclaimer']
+        except:
+            self.disclaimer = False 
 
 class AppendixFile(FPDF):
     """The helper class to create the appendices files with the same corporate
@@ -454,12 +458,13 @@ class Extract(FPDF):
 #            self.set_font(*pdfconfig.textstyles['bold'])
 #            self.cell(0, 5, translations['signaturelabel'], 0, 0, 'L')
         # == END original code:
-        
-        self.set_y(250)
-        self.set_font(*pdfconfig.textstyles['bold'])
-        self.cell(0, 5, translations['disclaimerlabel'], 0, 1, 'L')
-        self.set_font(*pdfconfig.textstyles['normal'])
-        self.multi_cell(0, 5, translations['disclaimer'], 0, 1, 'L')
+
+        if pdfconfig.disclaimer == True :
+            self.set_y(250)
+            self.set_font(*pdfconfig.textstyles['bold'])
+            self.cell(0, 5, translations['disclaimerlabel'], 0, 1, 'L')
+            self.set_font(*pdfconfig.textstyles['normal'])
+            self.multi_cell(0, 5, translations['disclaimer'], 0, 1, 'L')
 
         # END TITLEPAGE
 
