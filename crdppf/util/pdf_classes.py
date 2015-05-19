@@ -1402,7 +1402,7 @@ class Extract(FPDF):
                     self.set_text_color(*self.pdfconfig.urlcolor)
                     self.multi_cell(0, 5, str(appendix['url']))
                     self.set_text_color(*self.pdfconfig.defaultcolor)
-                index =+ 1
+                index += 1
         else:
             self.multi_cell(0, 5, self.translations['nodocumenttext'])
 
