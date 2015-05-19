@@ -111,9 +111,17 @@ class PDFConfig(object):
         self.siteplanbasename = config['siteplanbasename']
         self.optionaltopics = config['optionaltopics']
         try:
+            self.pilotphase  = config['pilotphase']
+        except:
+            self.pilotphase = False
+        try:
             self.disclaimer  = config['disclaimer']
         except:
-            self.disclaimer = False 
+            self.disclaimer = False
+        try:
+            self.signature  = config['signature']
+        except:
+            self.signature = False 
 
 class AppendixFile(FPDF):
     """The helper class to create the appendices files with the same corporate
@@ -446,19 +454,23 @@ class Extract(FPDF):
         self.cell(70, 5, feature_info['operator'].encode('iso-8859-1'), 0, 1, 'L')
 
         # == this note is published only as long as the legal documents are not validated
-        y= self.get_y()
-        self.set_y(y+5)
-        self.set_font(*pdfconfig.textstyles['bold'])
-        self.multi_cell(0, 5, translations['pilotphasetxt'], 0, 1, 'L')
+        # Pilot phase information block - to de/activate in config_pdf.yaml.in
+        if pdfconfig.pilotphase == True :
+            y= self.get_y()
+            self.set_y(y+5)
+            self.set_font(*pdfconfig.textstyles['bold'])
+            self.multi_cell(0, 5, translations['pilotphasetxt'], 0, 1, 'L')
         # == end of temporary info will be removed and original code :
-        # == START original code:
-#        if self.reportInfo['type'] == 'certified' or self.reportInfo['type'] == 'reducedcertified':
-#            y= self.get_y()
-#            self.set_y(y+5)
-#            self.set_font(*pdfconfig.textstyles['bold'])
-#            self.cell(0, 5, translations['signaturelabel'], 0, 0, 'L')
-        # == END original code:
 
+        # Signature block for certified extracts - to de/activate in config_pdf.yaml.in
+        if pdfconfig.signature == True :
+            if self.reportInfo['type'] == 'certified' or self.reportInfo['type'] == 'reducedcertified':
+                y= self.get_y()
+                self.set_y(y+5)
+                self.set_font(*pdfconfig.textstyles['bold'])
+                self.cell(0, 5, translations['signaturelabel']+str(' ')+self.timestamp, 0, 0, 'L')
+
+        # Disclaimer block - to de/activate in config_pdf.yaml.in
         if pdfconfig.disclaimer == True :
             self.set_y(250)
             self.set_font(*pdfconfig.textstyles['bold'])
