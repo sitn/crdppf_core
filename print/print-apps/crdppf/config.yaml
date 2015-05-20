@@ -20,6 +20,7 @@ templates:
           width: 500
           height: 500
           maxDpi : 400
+          dpiSuggestions: [150]
     processors:
     - !reportBuilder # compile all reports in current directory
       directory: '.'
