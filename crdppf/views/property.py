@@ -10,16 +10,13 @@ from crdppf.models import Property
 @view_config(route_name='get_property', renderer='geojson')
 def get_property(request):
     
-    if 'ids' not in request.params:
+    if 'id' not in request.params:
         return HTTPBadRequest(detail='Please add a valid id in your request')
 
-    ids = request.params['ids'].split(',')
+    id_ = request.params['id']
 
     proto = Protocol(DBSession, Property, 'geom')
 
-    filter ="idemai IN ("
-    for id in ids:
-        filter += "'" + id + "',"
-    filter = filter[0:len(filter)-1] + ")"
+    filter ="idemai IN ('" + id_ + "')"
 
     return proto.read(request, filter=filter)

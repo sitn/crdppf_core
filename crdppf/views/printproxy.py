@@ -36,7 +36,7 @@ import simplejson as json
 
 from pyramid.view import view_config
 from pyramid.response import Response
-from pyramid.httpexceptions import HTTPBadGateway
+from pyramid.httpexceptions import HTTPBadGateway, HTTPBadRequest
 
 from crdppf.views.proxy import Proxy
 
@@ -73,6 +73,9 @@ class PrintProxy(Proxy):  # pragma: no cover
         cached_content = get_cached_content(self.request)
 
         dynamic_content = get_content(idemai, self.request)
+
+        if dynamic_content is False:
+            return HTTPBadRequest(detail='Found more then one geometry')
 
         body["attributes"].update(cached_content)
         body["attributes"].update(dynamic_content["attributes"])
