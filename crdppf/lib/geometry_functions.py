@@ -9,8 +9,12 @@ def get_feature_center(idemai):
     """ Extract a feature centroid regarding its idemai attribute
     """
 
-    geom = DBSession.query(Property.geom).filter(Property.idemai==idemai). \
-        first()[0]
+    geom = DBSession.query(Property.geom).filter(Property.idemai==idemai).all()
+
+    if len(geom) > 1:
+        return False
+    else:
+        geom = geom[0][0]
 
     return [
         DBSession.scalar(geom.centroid.x),
@@ -22,7 +26,12 @@ def get_feature_bbox(idemai):
     """
 
     box = DBSession.query(func.extent(Property.geom)). \
-        filter(Property.idemai==idemai).first()[0]
+        filter(Property.idemai==idemai).all()
+
+    if len(box) > 1:
+        return False
+    else:
+        box = box[0][0]
     
     box = box.split('(')[1].split(')')[0].replace(',', ' ').split(' ')
 

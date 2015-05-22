@@ -3,7 +3,6 @@
 from xml.dom.minidom import parseString
 
 from dogpile.cache.region import make_region
-
 cache_region = make_region()
 cache_region.configure("dogpile.cache.memory")
 

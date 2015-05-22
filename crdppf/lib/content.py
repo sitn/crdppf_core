@@ -25,13 +25,21 @@ def get_content(idemai, request):
     # Get the raw feature BBOX
     bbox = get_feature_bbox(idemai)
 
+    if bbox is False:
+        log.warning('Found more then one bbox for idemai: %s' % idemai)
+        return False
+
     # Get the feature center
     feature_center = get_feature_center(idemai)
+
+    if feature_center is False:
+        log.warning('Found more then one geometry for idemai: %s' % idemai)
+        return False
 
     # Get the print BOX
     print_box = get_print_format(bbox, request.registry.settings['pdf_config']['fitratio'])
 
-    log.warning('Calling feature: %s' % request.route_url('get_property')+'?ids='+idemai)
+    log.warning('Calling feature: %s' % request.route_url('get_property')+'?id='+idemai)
 
     wkt_polygon = ''.join([
         'POLYGON((',
@@ -59,7 +67,7 @@ def get_content(idemai, request):
         "longitudeFirst": "true",
         "layers": [{
             "type": "geojson",
-            "geoJson": request.route_url('get_property')+'?ids='+idemai,
+            "geoJson": request.route_url('get_property')+'?id='+idemai,
             "style": {
                 "version": "2",
                 "strokeColor": "gray",
