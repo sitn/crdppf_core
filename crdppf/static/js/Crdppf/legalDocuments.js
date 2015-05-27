@@ -1,6 +1,6 @@
 Ext.namespace('Crdppf');
 
-Crdppf.filterlist = {'topic' : [], 'layers': [], 'cadastrenb': 0, 'objectids': []};
+Crdppf.filterlist = {'topic' : [], 'layers': [], 'chmunicipalitynb': null, 'cadastrenb': null, 'objectids': []};
 
 Crdppf.docfilters = function(filter) {
     // little helper function to check for the existence of an value in an array
@@ -22,57 +22,33 @@ Crdppf.docfilters = function(filter) {
         }
     }
 
-    // if a topicid is passed in the filter, check if it exists already in the array
-    // if not, add it - else remove it
-    if ('topicfk' in filter) {
-        if (filter.topicfk) {
-            for (var key in filter.topicfk){
-                if (filter.topicfk[key] === true) {
-                    // function to add a filter criteria
-                    if ( !(isInArray(key, Crdppf.filterlist.topic))){
-                        Crdppf.filterlist.topic.push(key);
-                    }
-                } else {
-                    if (isInArray(key, Crdppf.filterlist.topic)){
-                        Crdppf.filterlist.topic.splice(Crdppf.filterlist.topic.indexOf(key), 1);
-                    }
-                }
-            }
-        }
-    }
-
-    if ('cadastrenb' in filter) {
-        if (filter.cadastrenb > 0) {
-            Crdppf.filterlist.cadastrenb = filter.cadastrenb;
-        } else {
-            Crdppf.filterlist.cadastrenb = 0;
-        }
-    }
-
     Crdppf.legalDocuments.store.clearFilter();
     Crdppf.legalDocuments.store.filterBy(function (record) {
-        if (Crdppf.filterlist.cadastrenb > 0){
-            if (record.get('cadastrenb') === Crdppf.filterlist.cadastrenb || record.get('cadastrenb') === 0) {
-                if (Crdppf.filterlist.topic.length > 0) {
-                    for (var i = 0; i < Crdppf.filterlist.topic.length; i++){
-                    // if the topicid is in the filterlist show the corresponding documents
-                        if (record.get('origins').indexOf(Crdppf.filterlist.topic[i].toString()) > -1) {
-                            return record;
+        
+        if (Crdppf.filterlist.topic.length > 0) {
+            for (var j = 0; j < Crdppf.filterlist.topic.length; j++){
+            // if the topicid is in the filterlist show the corresponding documents
+                if (record.get('origins').indexOf(Crdppf.filterlist.topic[j]) > -1) {
+                    if (Crdppf.filterlist.cadastrenb === null && Crdppf.filterlist.chmunicipalitynb === null) {
+                        return record;
+                    } else {
+                        if (record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb || record.get('chmunicipalitynb') === null) {
+                            if (record.get('cadastrenb') === Crdppf.filterlist.cadastrenb || record.get('cadastrenb') === null) {
+                                return record;
+                            }
+                        } else {
+                            if (record.get('cadastrenb') === Crdppf.filterlist.cadastrenb || record.get('cadastrenb') === null) {
+                                return record;
+                            }
                         }
                     }
-                } else {
-                    return record;
                 }
             }
         } else {
-            for (var j = 0; j < Crdppf.filterlist.topic.length; j++){
-            // if the topicid is in the filterlist show the corresponding documents
-                if (record.get('origins').indexOf(Crdppf.filterlist.topic[j].toString()) > -1) {
-                    return record;
-                }
-            }
+            return record;
         }
     });
+    
     return Crdppf.filterlist;
 };
 
@@ -94,16 +70,16 @@ Crdppf.legalDocuments = function() {
         proxy: proxy,
         remoteSort: true,
         sorters: [{
-            property: 'documentid',
+            property: 'doctype',
             direction: 'ASC'
         }],
         reader: new Ext.data.JsonReader({
-            root:'docs',
-            id:'idobj'
+            root: 'docs',
+            id: 'idobj'
             },
             // definition of the column model
             [
-            {name: 'docid'},
+            {name: 'documentid'},
             {name: 'doctype'},
             {name: 'lang'},
             {name: 'state'},
@@ -133,6 +109,7 @@ Crdppf.legalDocuments = function() {
             listeners:{
                 load: function() {
                     Crdppf.loadingCounter += 1;
+                    Crdppf.triggerFunction(Crdppf.loadingCounter); 
                 }
             }
     });
@@ -153,8 +130,8 @@ Crdppf.legalDocuments.createView = function(labels) {
                     '<tpl for=".">',
                         '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
                             '<tpl for=".">',
-                                '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
-                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFFFFF" : "#F5F5F5"]}">',
+                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publicationdate:date("d.m.Y")}</h3>',
                                     '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
                                 '</div>',
                             '</tpl>',
@@ -166,19 +143,19 @@ Crdppf.legalDocuments.createView = function(labels) {
                         '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
                             '<tpl for=".">',
                                 '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}"">',
-                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publicationdate:date("d.m.Y")}</h3>',
                                     '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
                                 '</div>',
                             '</tpl>',
                         '</tpl>',
                     '</tpl>',
-            
+
+                    '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                     '<tpl for=".">',
                         '<tpl if="this.isLegalbase(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
-                            '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                             '<tpl for=".">',
                                 '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
-                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {publicationdate:date("d.m.Y")}</h3>',
                                     '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
                                 '</div>',
                             '</tpl>',
@@ -214,10 +191,10 @@ Crdppf.legalDocuments.createView = function(labels) {
                             '</tpl>',
                         '</tpl>',
                     '</tpl>',
-            
+
+                    '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                     '<tpl for=".">',
                         '<tpl if="this.isLegalprovision(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
-                            '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                             '<tpl for=".">',
                                 '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFFFFF" : "#F5F5F5"]}">',
                                     '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
@@ -257,9 +234,9 @@ Crdppf.legalDocuments.createView = function(labels) {
                         '</tpl>',
                     '</tpl>',
 
+                    '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                     '<tpl for=".">',
                         '<tpl if="this.isReference(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
-                            '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                             '<tpl for=".">',
                                 '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
                                     '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
@@ -298,10 +275,10 @@ Crdppf.legalDocuments.createView = function(labels) {
                             '</tpl>',
                         '</tpl>',
                     '</tpl>',
-            
+
+                    '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                     '<tpl for=".">',
                         '<tpl if="this.isTemporaryprovision(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
-                            '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                             '<tpl for=".">',
                                 '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
                                     '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
@@ -340,10 +317,10 @@ Crdppf.legalDocuments.createView = function(labels) {
                             '</tpl>',
                         '</tpl>',
                     '</tpl>',
-            
+
+                    '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                     '<tpl for=".">',
                         '<tpl if="this.isMap(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
-                            '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                             '<tpl for=".">',
                                 '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
                                     '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
@@ -382,10 +359,10 @@ Crdppf.legalDocuments.createView = function(labels) {
                             '</tpl>',
                         '</tpl>',
                     '</tpl>',
-            
+
+                    '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                     '<tpl for=".">',
                         '<tpl if="this.isOther(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
-                            '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                             '<tpl for=".">',
                                 '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
                                     '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',

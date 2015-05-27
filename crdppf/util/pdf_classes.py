@@ -21,7 +21,6 @@ from crdppf.models import AppConfig
 
 from crdppf.views.get_features import get_features_function
 from crdppf.views.legal_documents import getLegalDocuments
-from crdppf.views.legal_documents import getLegalbases
 from crdppf.views.legal_documents import getDocumentReferences
 from crdppf.util.pdf_functions import geom_from_coordinates
 
@@ -30,8 +29,14 @@ class AppConfig(object):
     """
     def __init__(self, config):
         # tempdir : Path to the working directory where the temporary files will be stored
-        self.tempdir = pkg_resources.resource_filename('crdppfportal', 'static/public/temp_files/') 
-        self.slddir = pkg_resources.resource_filename('crdppfportal', 'static/public/') 
+        try:
+            self.tempdir = config['tempdir']
+        except:
+            self.tempdir = pkg_resources.resource_filename('crdppfportal', 'static/public/temp_files/')
+        try:
+            self.slddir = config['slddir']
+        except:
+            self.slddir = pkg_resources.resource_filename('crdppfportal', 'static/public/') 
         # pdfbasedir : Path to the directory where the generated pdf's will be stored
         self.pdfbasedir = pkg_resources.resource_filename('crdppfportal', 'static/public/pdf/') 
         # imagesbasedir : Path to the directory where the images resources are stored
@@ -39,7 +44,10 @@ class AppConfig(object):
         # municipalitylogodir : Path to the directory where the logos of the municipalities are stored
         self.municipalitylogodir = pkg_resources.resource_filename('crdppfportal','static/images/ecussons/')
         # legaldocsdir : Path to the folder where the legal documents are stored that may or may not be included
-        self.legaldocsdir = pkg_resources.resource_filename('crdppfportal', 'static/public/reglements/') 
+        try:
+            self.legaldocsdir  = config['legaldocsdir']
+        except:
+            self.legaldocsdir = pkg_resources.resource_filename('crdppfportal', 'static/public/reglements/') 
         self.ch_wms_layers = []
         # ch_topics : Restrictions on federal level
         self.ch_topics = config['ch_topics']
@@ -51,6 +59,10 @@ class AppConfig(object):
         self.wms_transparency = config['wms_transparency']
         self.wms_imageformat = config['wms_imageformat']
         self.emptytopics = config['emptytopics']
+        try: 
+            self.doctypes = config['doctypes'].split(',')
+        except:
+            self.doctypes = 'legalbase,legalprovision,reference,temporaryprovision,map,other'.split(',')
 
 class PDFConfig(object):
     """A class to define the configuration of the PDF extract to simplify changes.
@@ -98,6 +110,18 @@ class PDFConfig(object):
         self.pdfbasename = config['pdfbasename']
         self.siteplanbasename = config['siteplanbasename']
         self.optionaltopics = config['optionaltopics']
+        try:
+            self.pilotphase  = config['pilotphase']
+        except:
+            self.pilotphase = False
+        try:
+            self.disclaimer  = config['disclaimer']
+        except:
+            self.disclaimer = False
+        try:
+            self.signature  = config['signature']
+        except:
+            self.signature = False 
 
 class AppendixFile(FPDF):
     """The helper class to create the appendices files with the same corporate
@@ -195,8 +219,6 @@ class Extract(FPDF):
         self.wms_get_map = {
             'REQUEST': 'GetMap'
         }
-        # initialize an empty dict for the topic related data
-        self.topicdata = {}
         # setting the default  root filename of the PDF and temporary files
         self.filename = 'thefilename'
         # empty dict for a list of  the topics and it's depending values
@@ -218,7 +240,6 @@ class Extract(FPDF):
         self.log = log
         self.cleanupfiles = []
         self.basemap = ''
-        self.doctypes = [u'legalbase',u'legalprovision',u'reference',u'temporaryprovision',u'map',u'other']
 
     def alias_no_page(self, alias='{no_pg}'):
         """Define an alias for total number of pages"""
@@ -229,6 +250,7 @@ class Extract(FPDF):
         """Initialises the basic parameters of the application.
         """
         self.appconfig = AppConfig(config)
+        self.doctypes = self.appconfig.doctypes
 
     def set_pdf_config(self, config):
         """Loads the initial configuration of the PDF page.
@@ -432,24 +454,29 @@ class Extract(FPDF):
         self.cell(70, 5, feature_info['operator'].encode('iso-8859-1'), 0, 1, 'L')
 
         # == this note is published only as long as the legal documents are not validated
-        y= self.get_y()
-        self.set_y(y+5)
-        self.set_font(*pdfconfig.textstyles['bold'])
-        self.multi_cell(0, 5, translations['pilotphasetxt'], 0, 1, 'L')
+        # Pilot phase information block - to de/activate in config_pdf.yaml.in
+        if pdfconfig.pilotphase == True :
+            y= self.get_y()
+            self.set_y(y+5)
+            self.set_font(*pdfconfig.textstyles['bold'])
+            self.multi_cell(0, 5, translations['pilotphasetxt'], 0, 1, 'L')
         # == end of temporary info will be removed and original code :
-        # == START original code:
-#        if self.reportInfo['type'] == 'certified' or self.reportInfo['type'] == 'reducedcertified':
-#            y= self.get_y()
-#            self.set_y(y+5)
-#            self.set_font(*pdfconfig.textstyles['bold'])
-#            self.cell(0, 5, translations['signaturelabel'], 0, 0, 'L')
-        # == END original code:
-        
-        self.set_y(250)
-        self.set_font(*pdfconfig.textstyles['bold'])
-        self.cell(0, 5, translations['disclaimerlabel'], 0, 1, 'L')
-        self.set_font(*pdfconfig.textstyles['normal'])
-        self.multi_cell(0, 5, translations['disclaimer'], 0, 1, 'L')
+
+        # Signature block for certified extracts - to de/activate in config_pdf.yaml.in
+        if pdfconfig.signature == True :
+            if self.reportInfo['type'] == 'certified' or self.reportInfo['type'] == 'reducedcertified':
+                y= self.get_y()
+                self.set_y(y+5)
+                self.set_font(*pdfconfig.textstyles['bold'])
+                self.cell(0, 5, translations['signaturelabel']+str(' ')+self.timestamp, 0, 0, 'L')
+
+        # Disclaimer block - to de/activate in config_pdf.yaml.in
+        if pdfconfig.disclaimer == True :
+            self.set_y(250)
+            self.set_font(*pdfconfig.textstyles['bold'])
+            self.cell(0, 5, translations['disclaimerlabel'], 0, 1, 'L')
+            self.set_font(*pdfconfig.textstyles['normal'])
+            self.multi_cell(0, 5, translations['disclaimer'], 0, 1, 'L')
 
         # END TITLEPAGE
 
@@ -621,7 +648,7 @@ class Extract(FPDF):
                     }
                 # intersects a given layer with the feature and adds the results to the topiclist- see method add_layer
                 self.add_layer(layer)
-            self.get_topic_map(topic.layers,topic.topicid)
+            self.get_topic_map(topic.layers, topic.topicid)
             # Get the list of documents related to a topic with layers and results
             if self.topiclist[str(layer.topicfk)]['categorie'] == 3:
                 docfilters = [str(topic.topicid)]
@@ -636,23 +663,20 @@ class Extract(FPDF):
                 self.topiclist[str(topic.topicid)]['layers'] = None
                 self.topiclist[str(topic.topicid)]['categorie'] = 0
 
-        # if legal bases are defined for a topic (join in models.py) the attributes are compiled in a list
-        if topic.legalbases:
-            self.get_legalbases(topic.legalbases,topic.topicid)
-        else:
-            self.topiclist[str(topic.topicid)]['legalbases']=None
-
         # if legal povisions are defined for a topic the attributes are compiled in a list
-        if topic.legalprovisions:
-            self.get_legalprovisions(topic.legalprovisions,topic.topicid)
+        if 'legalprovision' in self.topiclist[topic.topicid].keys():
+            self.get_legalprovisions(self.topiclist[str(topic.topicid)]['legalprovision'],topic.topicid)
         else:
-            self.topiclist[str(topic.topicid)]['legalprovisions']=None
+            self.topiclist[str(topic.topicid)]['legalprovision']=None
 
-        # if references are defined for a topic the attributes are compiled in a list
-        if topic.references:
-            self.get_references(topic.references,topic.topicid)
-        else:
-            self.topiclist[str(topic.topicid)]['references']=None
+        # if other references are defined for a topic the attributes are compiled in a list
+        for doctype in self.doctypes:
+            if doctype in self.topiclist[topic.topicid].keys():
+                if doctype != 'legalbase' and  doctype != 'legalprovision':
+                    self.get_references(self.topiclist[str(topic.topicid)][doctype],topic.topicid)
+            else:
+                if doctype != 'legalbase' and  doctype != 'legalprovision':
+                    self.topiclist[str(topic.topicid)][doctype]=None
 
     def add_layer(self, layer):
 
@@ -667,7 +691,7 @@ class Extract(FPDF):
         if results :
             self.layerlist[str(layer.layerid)]={'layername':layer.layername,'features':[]}
             for result in results:
-                # for each object we check for related documents
+                # for each restriction object we check for related documents
                 docfilters = [str(result['id'])]
                 for doctype in self.doctypes:
                     docidlist = getDocumentReferences(docfilters)
@@ -734,7 +758,6 @@ class Extract(FPDF):
         """
         self.legalbaselist[str(topicid)]=[]
         for legalbase in legalbases:
-            #self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(legalbase.officialtitle).encode('iso-8859-1'), unicode(legalbase.legalbaseurl).encode('iso-8859-1'))
             self.legalbaselist[str(topicid)].append({
                 'officialtitle':legalbase.officialtitle,
                 'title':legalbase.title,
@@ -754,21 +777,21 @@ class Extract(FPDF):
         """
         self.legalprovisionslist[str(topicid)]=[]
         for provision in legalprovisions:
-            self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(provision.officialtitle).encode('iso-8859-1'), unicode(provision.legalprovisionurl).encode('iso-8859-1'), provision.localurl)
             self.legalprovisionslist[str(topicid)].append({
-                'officialtitle':provision.officialtitle,
-                'title':provision.title,
-                'abreviation':provision.abreviation,
-                'officialnb':provision.officialnb,
-                'legalprovisionurl':provision.legalprovisionurl,
-                'canton':provision.canton,
-                'commune':provision.commune,
-                'legalstate':provision.legalstate,
-                'publishedsince':provision.publishedsince,
-                'no_page':'A'+str(len(self.appendix_entries))
+                'officialtitle': provision[u'officialtitle'],
+                'title': provision['title'],
+                'abreviation': provision['abbreviation'],
+                'officialnb': provision['officialnb'],
+                'legalprovisionurl':provision['remoteurl'],
+                'canton': provision['state'],
+                'commune': provision['municipalityname'],
+                'legalstate': provision['legalstate'],
+                'publishedsince': provision['publicationdate'],
+                'sanctiondate': provision['sanctiondate'],
+                'no_page': 'A'+str(len(self.appendix_entries))
                 #'metadata':provision.metadata
                 })
-        self.topiclist[str(topicid)]['legalprovisions'] = self.legalprovisionslist[str(topicid)]
+        self.topiclist[str(topicid)]['legalprovision'] = self.legalprovisionslist[str(topicid)]
 
     def get_references(self, references, topicid):
         """Decomposes the object containing all references related to a topic in a list
@@ -776,15 +799,17 @@ class Extract(FPDF):
         self.referenceslist[str(topicid)]=[]
         for reference in references:
             self.referenceslist[str(topicid)].append({
-                'officialtitle':reference.officialtitle,
-                'title':reference.title,
-                'abreviation':reference.abreviation,
-                'officialnb':reference.officialnb,
-                'legalprovisionurl':reference.referenceurl,
-                'canton':reference.canton,
-                'commune':reference.commune,
-                'legalstate':reference.legalstate,
-                'publishedsince':reference.publishedsince,
+                'officialtitle': reference['officialtitle'],
+                'title': reference['title'],
+                'abreviation': reference['abbreviation'],
+                'officialnb': reference['officialnb'],
+                'legalprovisionurl': reference['remoteurl'],
+                'canton': reference['state'],
+                'commune': reference['municipalityname'],
+                'legalstate': reference['legalstate'],
+                'publishedsince': reference['publicationdate'],
+                'sanctiondate': reference['sanctiondate'],
+                'no_page': 'A'+str(len(self.appendix_entries))
                 #'metadata':legalprovision.metadata
                 })
         self.topiclist[str(topicid)]['references'] = self.referenceslist[str(topicid)]
@@ -922,7 +947,7 @@ class Extract(FPDF):
             if self.log:
                 self.log.warning("DONE Applying SLD")
 
-            if sld_legendfile and topicid in [u'73','73']:
+            if sld_legendfile and topicid in [u'R073','R073','73',u'73']:
                 legend_sld = self.sld_url+self.filename+str('_')+str(restriction_layer.layername)+'_legend_sld.xml'
                 self.wms_get_legend['SLD'] = str(legend_sld)
 
@@ -1075,10 +1100,11 @@ class Extract(FPDF):
                 else:
                     self.cell(12, 6, '', 'B', 0, 'C')
                 self.cell(118, 6, self.topiclist[topic]['topicname'], 'LB', 0, 'L')
-                if self.topiclist[topic]['legalprovisions'] is not None :
+                if self.topiclist[topic]['legalprovision'] is not None :
                     pageslist = []
-                    for legalprovision in self.topiclist[topic]['legalprovisions']:
-                        pageslist.append(legalprovision['no_page'])
+                    # Desactivated for now because it explodes the layout as it is for now!!
+                    #~ for legalprovision in self.topiclist[topic]['legalprovision']:
+                        #~ pageslist.append(legalprovision['no_page'])
                     self.cell(15, 6, ', '.join(pageslist), 'LB', 0, 'C')
                 else:
                     self.cell(15, 6, '', 'LB', 0, 'L')
@@ -1257,7 +1283,7 @@ class Extract(FPDF):
             # map = Maps and plans/Cartes et plans/Karten und Pläne
             for doctype in self.doctypes:
                 # for now we ignore different document types
-                if doctype not in [u'legalbase']:
+                if doctype not in ['legalbase']:
                     y = self.get_y()
                     self.set_y(y+5)
                     self.set_font(*pdfconfig.textstyles['bold'])
@@ -1291,7 +1317,9 @@ class Extract(FPDF):
                 self.cell(120, 5, translations['phonelabel']+self.topiclist[topic]['authority'].authorityphone1.encode('iso-8859-1'), 0, 1, 'L')
             if self.topiclist[topic]['authority'].authoritywww is not None:
                 self.cell(55, 5, str(' '), 0, 0, 'L')
-                self.cell(120, 5, translations['webadresslabel']+self.topiclist[topic]['authority'].authoritywww.encode('iso-8859-1'),0,1,'L')
+                self.set_text_color(*self.pdfconfig.urlcolor)
+                self.cell(120, 5, self.topiclist[topic]['authority'].authoritywww.encode('iso-8859-1'),0,1,'L')
+                self.set_text_color(*self.pdfconfig.defaultcolor)
 
             # Legal bases/Bases légales/Gesetzliche Grundlagen
             y = self.get_y()
@@ -1299,18 +1327,18 @@ class Extract(FPDF):
             self.set_font(*pdfconfig.textstyles['bold'])
             self.cell(55, 5, translations['legalbaseslabel'], 0, 0, 'L')
             self.set_font(*pdfconfig.textstyles['normal'])
-            if self.topiclist[topic]['legalbases']:
-                for legalbase in self.topiclist[topic]['legalbases']:
+            if self.topiclist[topic]['legalbase']:
+                for legalbase in self.topiclist[topic]['legalbase']:
                     self.set_x(80)
                     self.multi_cell(0, 5, legalbase['officialnb']+' : '+legalbase['officialtitle'], 0, 1, 'L')
                     self.set_x(80)
                     self.set_font(*self.pdfconfig.textstyles['url'])
                     self.set_text_color(*self.pdfconfig.urlcolor)
-                    self.multi_cell(0, 4, 'URL : '+str(legalbase['legalbaseurl']))
+                    self.multi_cell(0, 4, 'URL : '+legalbase['remoteurl'])
                     self.set_text_color(*self.pdfconfig.defaultcolor)
                     self.set_font(*self.pdfconfig.textstyles['normal'])
             else:
-                self.multi_cell(0, 5, translations['placeholderlabel'])
+                self.multi_cell(0, 5, translations['nodocumenttext'])
 
     def add_appendix(self, topicid, num, label, url, filepath):
         self.appendix_entries.append({'topicid':topicid, 'no_page':num, 'title':label, 'url':url, 'path':filepath})
@@ -1362,19 +1390,21 @@ class Extract(FPDF):
         self.cell(135, 6, self.translations['appendicestitlelabel'], 0, 1, 'L')
         
         index = 1
-        for appendix in self.appendix_entries:
-            self.set_font(*self.pdfconfig.textstyles['tocbold'])
-            self.appendix_links.append(self.add_link())
-            self.cell(15, 6, str('A'+str(index)), 0, 0, 'L')
-            self.multi_cell(0, 6, str(appendix['title']), 0, 'L')
-            if self.reportInfo['type'] == 'reduced' or self.reportInfo['type'] == 'reducedcertified':
-                self.set_x(40)
-                self.set_font(*self.pdfconfig.textstyles['tocurl'])
-                self.set_text_color(*self.pdfconfig.urlcolor)
-                self.multi_cell(0, 5, str(appendix['url']))
-                self.set_text_color(*self.pdfconfig.defaultcolor)
-
-            index = index+1
+        if len(self.appendix_entries) > 0:
+            for appendix in self.appendix_entries:
+                self.set_font(*self.pdfconfig.textstyles['tocbold'])
+                self.appendix_links.append(self.add_link())
+                self.cell(15, 6, str('A'+str(index)), 0, 0, 'L')
+                self.multi_cell(0, 6, appendix['title'], 0, 'L')
+                if self.reportInfo['type'] == 'reduced' or self.reportInfo['type'] == 'reducedcertified':
+                    self.set_x(40)
+                    self.set_font(*self.pdfconfig.textstyles['tocurl'])
+                    self.set_text_color(*self.pdfconfig.urlcolor)
+                    self.multi_cell(0, 5, str(appendix['url']))
+                    self.set_text_color(*self.pdfconfig.defaultcolor)
+                index += 1
+        else:
+            self.multi_cell(0, 5, self.translations['nodocumenttext'])
 
     def clean_up_temp_files(self):
         """ Removes the temporary files needed to create an extract:
