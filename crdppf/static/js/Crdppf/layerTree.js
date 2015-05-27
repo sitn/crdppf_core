@@ -50,6 +50,7 @@ Crdppf.LayerTreePanel.prototype = {
             leaf: true,
             listeners: {
                 'checkchange': function(node,checked){
+                    Crdppf.filterlist.topic = [];
                     if(checked){
                         layerTree.expandAll();
                         for (var n=1; n < rootLayerTree.childNodes.length; n++){
@@ -85,30 +86,31 @@ Crdppf.LayerTreePanel.prototype = {
                 checked: false,
                 listeners: {
                     'checkchange': function(node, checked){
-                        var filter = {};
                         if (checked){
-                            filter[node.id] = checked;
-                            Crdppf.docfilters({'topicfk':filter});
                             node.expand();
                             Crdppf.updateLayers = false;
                             for (var k=0; k < node.childNodes.length; k++){
                                 node.childNodes[k].getUI().toggleCheck(true);
                                 if (Crdppf.LayerTreePanel.overlaysList.indexOf(node.childNodes[k].id) == -1) {
                                     Crdppf.LayerTreePanel.overlaysList.push(node.childNodes[k].id);
+                                    Crdppf.filterlist.layers.push(node.childNodes[k].id);
                                 }
                             }
+                            Crdppf.filterlist.topic.push(node.id);
+                            Crdppf.docfilters(Crdppf.filterlist);
                             Crdppf.updateLayers = true;
                             Crdppf.Map.setOverlays();
                             Crdppf.FeaturePanel.setInfoControl();
-                        } else {
-                            filter[node.id] = checked;
-                            Crdppf.docfilters({'topicfk':filter});                
+                        } else {         
                             node.collapse();
                             Crdppf.updateLayers = false;
                             for (var k=0; k < node.childNodes.length; k++){
                                 node.childNodes[k].getUI().toggleCheck(false);
                                 Crdppf.LayerTreePanel.overlaysList.remove(node.childNodes[k].id);
+                                Crdppf.filterlist.layers.remove(node.childNodes[k].id);
                             }
+                            Crdppf.filterlist.topic.remove(node.id);
+                            Crdppf.docfilters(Crdppf.filterlist);
                             Crdppf.updateLayers = true;
                             Crdppf.Map.setOverlays();
                             Crdppf.FeaturePanel.setInfoControl();
@@ -131,12 +133,14 @@ Crdppf.LayerTreePanel.prototype = {
                                     if(Crdppf.updateLayers) {
                                         if (Crdppf.LayerTreePanel.overlaysList.indexOf(node.id) == -1) {
                                             Crdppf.LayerTreePanel.overlaysList.push(node.id);
+                                            Crdppf.filterlist.layers.push(node.id);
                                         }
                                         Crdppf.Map.setOverlays();
                                         Crdppf.FeaturePanel.setInfoControl();
                                     }
                                 } else {
                                     Crdppf.LayerTreePanel.overlaysList.remove(node.id);
+                                    Crdppf.filterlist.layers.remove(node.id);
                                     if(Crdppf.updateLayers) {
                                         Crdppf.Map.setOverlays();
                                     }

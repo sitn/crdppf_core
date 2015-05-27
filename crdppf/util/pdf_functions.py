@@ -94,10 +94,10 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
     # data format
     format='interlis'
     xml_layers = {
-        '103':'ch.bazl.projektierungszonen-flughafenanlagen.oereb',
-        '108':'ch.bazl.sicherheitszonenplan.oereb',
-        '118':'ch.bazl.kataster-belasteter-standorte-zivilflugplaetze.oereb',
-        '119':'ch.bav.kataster-belasteter-standorte-oev.oereb'
+        'R103': 'ch.bazl.projektierungszonen-flughafenanlagen.oereb',
+        'R108': 'ch.bazl.sicherheitszonenplan.oereb',
+        'R118': 'ch.bazl.kataster-belasteter-standorte-zivilflugplaetze.oereb',
+        'R119': 'ch.bav.kataster-belasteter-standorte-oev.oereb'
         }
     
     coords = geometry.coords(DBSession)
@@ -272,19 +272,19 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
                 })
 
         for geometry in geometries:
-            if topicid ==  '103':
+            if topicid in  [u'R103','103']:
                 xml_model = CHAirportProjectZonesPDF()
                 xml_model.theme = translations['CHAirportProjectZonesThemeLabel'] # u'Zones réservées des installations aéroportuaires'
                 xml_model.teneur = translations['CHAirportProjectZonesContentLabel'] # u'Limitation de la hauteur des bâtiments et autres obstacles'
-            elif topicid ==  u'108':
+            elif topicid in [u'R108','108']:
                 xml_model = CHAirportSecurityZonesPDF()
                 xml_model.theme = translations['CHAirportSecurityZonesThemeLabel'] # u'Plan de la zone de sécurité des aéroports' 
                 xml_model.teneur = translations['CHAirportSecurityZonesContentLabel'] # u'Limitation de la hauteur des bâtiments et autres obstacles'
-            elif topicid ==  u'118':
+            elif topicid in  [u'R118','118']:
                 xml_model = CHPollutedSitesCivilAirportsPDF()
                 xml_model.theme = translations['CHPollutedSitesCivilAirportsThemeLabel'] # u'Cadastre des sites pollués - domaine des transports publics'
                 xml_model.teneur = translations['CHPollutedSitesCivilAirportsContentLabel'] # u'Sites pollués' 
-            elif topicid ==  u'119':
+            elif topicid in  [u'R119','119']:
                 xml_model = CHPollutedSitesPublicTransportsPDF()
                 xml_model.theme = translations['CHPollutedSitesPublicTransportsThemeLabel'] # u'Cadastre des sites pollués - domaine des transports publics'
                 xml_model.teneur = translations['CHPollutedSitesPublicTransportsContentLabel'] # u'Sites pollués' 
