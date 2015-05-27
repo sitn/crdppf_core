@@ -95,10 +95,9 @@ def includeme(config):
     config.add_view('crdppf.views.entry.Entry', route_name='test')
 
     # Print proxy routes
-    config.add_route('printproxy_report_create', '/printproxy/report/{idemai}')
-    config.add_route('printproxy_status', '/printproxy/status/{ref}.json')
     config.add_route('printproxy_report_get', '/printproxy/report/{ref}')
-
+    config.add_route('printproxy_status', '/printproxy/status/{ref}.json')
+    config.add_route('printproxy_report_create', '/printproxy/report/{type_}/{idemai}')
 
     # ADMIN VIEWS
     config.add_view('crdppf.views.administration.Config', route_name='configpanel')

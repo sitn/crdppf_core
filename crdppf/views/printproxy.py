@@ -58,6 +58,7 @@ class PrintProxy(Proxy):  # pragma: no cover
         """ Create PDF. """
 
         idemai = self.request.matchdict.get("idemai")
+        type_ = self.request.matchdict.get("type_")
 
         body = {
             "layout": "report",
@@ -80,8 +81,9 @@ class PrintProxy(Proxy):  # pragma: no cover
         body["attributes"].update(cached_content)
         body["attributes"].update(dynamic_content["attributes"])
 
-        _string = "%s/report.%s" % (
+        _string = "%s/%s/report.%s" % (
             self.config['print_url'],
+            "crdppf",
             "pdf"
         )
 
@@ -103,19 +105,22 @@ class PrintProxy(Proxy):  # pragma: no cover
     @view_config(route_name='printproxy_status')
     def status(self):
         """ PDF status. """
+
+        _string = "%s/status/%s.json" % (
+            self.config['print_url'],
+            self.request.matchdict.get('ref')
+        )
+
         return self._proxy_response(
-            "print",
-            "%s/status/%s.json" % (
-                self.config['print_url'],
-                self.request.matchdict.get('ref')
-            ),
+            _string,
+            headers=self.request.headers
         )
 
     @view_config(route_name='printproxy_report_get')
     def report_get(self):
         """ Get the PDF. """
+
         return self._proxy_response(
-            "print",
             "%s/report/%s" % (
                 self.config['print_url'],
                 self.request.matchdict.get('ref')
