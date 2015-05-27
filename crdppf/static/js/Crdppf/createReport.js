@@ -2,7 +2,7 @@ Ext.namespace('Crdppf');
 
 Crdppf.Report= {
 
-    intervall: null,
+    interval: null,
 
     currentStatus: null,
 
@@ -46,7 +46,7 @@ Crdppf.Report= {
     getStatus: function(ref) {
 
         Ext.Ajax.request({
-            url: Crdppf.printReportStatusUrl + ref + '.json',
+            url: Crdppf.printReportStatusUrl+ref+'.json',
             method: 'GET',
             success: function(response) {
                 this.printManager(ref, Ext.decode(response.responseText).done);
@@ -54,6 +54,11 @@ Crdppf.Report= {
             failure: function(response) {
                 Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
                 clearInterval(this.interval);
+                this.pdfMask.hide();
+                this.interval = null;
+                this.currentStatus = null;
+                this.pdfMask = null;
+                this.interval = null;
                 return;
             },
             params: this.baseParams,
@@ -71,6 +76,9 @@ Crdppf.Report= {
         Ext.getCmp('pdfDisplayPanel').show();
         Ext.getCmp('pdfChoicePanel').hide();
         this.pdfMask.hide();
+        this.interval = null;
+        this.currentStatus = null;
+        this.pdfMask = null;
     }
 
 };

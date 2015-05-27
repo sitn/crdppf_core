@@ -94,7 +94,7 @@ class PrintProxy(Proxy):  # pragma: no cover
         # Specify correct content type in headers
         h = dict(self.request.headers)
         h["Content-Type"] = "application/json"
-        print _string
+
         return self._proxy_response(
             _string,
             body=body,
