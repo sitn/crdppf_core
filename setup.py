@@ -24,7 +24,7 @@ setup(
         'pyramid_debugtoolbar',
         'zope.sqlalchemy',
         'papyrus',
-        'GeoAlchemy',
+        'GeoAlchemy2',
         'OWSLib',
         'fpdf',
         'httplib2',
