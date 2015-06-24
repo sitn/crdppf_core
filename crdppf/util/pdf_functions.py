@@ -6,7 +6,7 @@ import types
 # geometry related librabries
 from shapely.geometry import Point as splPoint, Polygon as splPolygon
 from shapely.geometry import MultiPolygon as splMultiPolygon, LinearRing as splLinearRing
-from geoalchemy2 import functions, WKTElement, WKBElement, shape
+from geoalchemy2 import functions, WKTElement
 
 from geojson import loads
 
