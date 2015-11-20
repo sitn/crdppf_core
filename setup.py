@@ -28,7 +28,7 @@ setup(
         'OWSLib',
         'fpdf',
         'httplib2',
-        'pil',
+        'pillow',
         'pyyaml',
         'JSTools',
         'PyPDF2'
