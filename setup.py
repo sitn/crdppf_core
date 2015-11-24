@@ -31,7 +31,8 @@ setup(
         'pil',
         'pyyaml',
         'JSTools',
-        'PyPDF2'
+        'PyPDF2',
+        'simplejson'
     ],
     packages=find_packages(exclude=['ez_setup']),
     include_package_data=True,
