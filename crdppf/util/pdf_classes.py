@@ -9,7 +9,7 @@ from datetime import datetime
 from PIL import Image
 from StringIO import StringIO
 
-from geoalchemy import WKTSpatialElement
+from geoalchemy2 import WKTElement
 
 import httplib2
 from urlparse import urlparse
@@ -492,7 +492,7 @@ class Extract(FPDF):
         """
         geom = geom_from_coordinates(bbox)
         # transform coordinates from wkt to SpatialElement for intersection
-        polygon = WKTSpatialElement(geom.wkt, 21781)
+        polygon = WKTElement(geom.wkt, 21781)
         mapfeatures = get_features_function(polygon, {'layerList':layername, 'translations':self.translations})
         if mapfeatures is not None:
             classes = []
