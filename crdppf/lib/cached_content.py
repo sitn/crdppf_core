@@ -18,11 +18,25 @@ def get_cached_content(request):
     d={}
 
     canton_logo = DBSession.query(AppConfig).filter_by(parameter='cantonlogopath').first()
+    ch_logo = DBSession.query(AppConfig).filter_by(parameter='CHlogopath').first()
+    crdppf_logo = DBSession.query(AppConfig).filter_by(parameter='crdppflogopath').first()
 
     d['canton_logo'] = '/'.join([
         request.registry.settings['localhost_url'],
         'proj/images',
         canton_logo.paramvalue
+    ])
+    
+    d['ch_logo'] = '/'.join([
+        request.registry.settings['localhost_url'],
+        'proj/images',
+        ch_logo.paramvalue
+    ])
+    
+    d['crdppf_logo'] = '/'.join([
+        request.registry.settings['localhost_url'],
+        'proj/images',
+        crdppf_logo.paramvalue
     ])
 
     return d

@@ -72,7 +72,9 @@ class PrintProxy(Proxy):  # pragma: no cover
         )))
 
         cached_content = get_cached_content(self.request)
-
+        
+        print cached_content
+        
         dynamic_content = get_content(idemai, self.request)
 
         if dynamic_content is False:
