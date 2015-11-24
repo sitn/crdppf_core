@@ -911,7 +911,8 @@ class Extract(FPDF):
             try:
                 resp, content = http.request(getstylesurl, method='GET', headers=h)
             except:
-                self.log.error("Unable to do GetStyles request for url %s" % getstylesurl)
+                if self.log:
+                    self.log.error("Unable to do GetStyles request for url %s" % getstylesurl)
                 return None
 
             if self.log:
@@ -968,7 +969,8 @@ class Extract(FPDF):
             try:
                 resp, content = http.request(getsldurl, method='GET', headers=h)
             except:
-                self.log.error("Unable to do GetMap request for url %s" % getsldurl)
+                if self.log:
+                    self.log.error("Unable to do GetMap request for url %s" % getsldurl)
                 return None
 
             if topicid in self.appconfig.ch_topics:
@@ -1020,7 +1022,8 @@ class Extract(FPDF):
         try:
             resp, content = http.request(getmapurl, method='GET', headers=h)
         except:
-            self.log.error("Unable to do GetMap request for url %s" % getmapurl)
+            if self.log:
+                self.log.error("Unable to do GetMap request for url %s" % getmapurl)
             return None
 
         if self.log:

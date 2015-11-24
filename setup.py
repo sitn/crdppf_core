@@ -28,11 +28,12 @@ setup(
         'OWSLib',
         'fpdf',
         'httplib2',
-        'pil',
+        'pillow',
         'pyyaml',
         'JSTools',
         'PyPDF2',
         'dogpile.cache',
+        'simplejson'
     ],
     packages=find_packages(exclude=['ez_setup']),
     include_package_data=True,
