@@ -104,7 +104,6 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
     
     geomGeoJSON = loads(DBSession.scalar(geometry.ST_AsGeoJSON()))
     coords = geomGeoJSON['coordinates']
-    coords = coords[0]
     # Stupid ESRI stuff: double quotes are needed to call the feature service, thus we have to hardcode "rings"
     esrifeature = '{"rings":'+ str(coords)+'}'
 
