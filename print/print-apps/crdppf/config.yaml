@@ -32,11 +32,6 @@ templates:
           displayName: !string {}
           table: !table {}
 
-      topicpage: !datasource
-        attributes:
-          topic_title: !string {}
-          topic_text: !string {}
-
       map: !map
         width: 369
         height: 251

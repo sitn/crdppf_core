@@ -17,15 +17,15 @@ def get_feature_center(idemai):
         geom = geom[0][0]
 
     return [
-        DBSession.scalar(geom.centroid.x),
-        DBSession.scalar(geom.centroid.y)
+        DBSession.scalar(geom.ST_Centroid().ST_X()),
+        DBSession.scalar(geom.ST_Centroid().ST_Y())
     ]
 
 def get_feature_bbox(idemai):
     """ Extract a feature centroid regarding its idemai attribute
     """
 
-    box = DBSession.query(func.extent(Property.geom)). \
+    box = DBSession.query(func.ST_extent(Property.geom)). \
         filter(Property.idemai==idemai).all()
 
     if len(box) > 1:

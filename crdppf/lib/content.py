@@ -207,5 +207,5 @@ def get_content(idemai, request):
         },
         "layout": "report"
     }
-
+    sf
     return d
