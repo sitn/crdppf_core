@@ -30,19 +30,28 @@ templates:
       datasource: !datasource
         attributes:
           displayName: !string {}
+          topic: !string {}
           table: !table {}
 
+      topicpage: !datasource
+        attributes:
+          topic_title: !string {}
+          topic_text: !string {}
+
       map: !map
-        width: 369
+        width: 453
         height: 251
         maxDpi : 400
         dpiSuggestions: [150]
+
     processors:
     - !reportBuilder # compile all reports in current directory
       directory: '.'
     - !createMap
       inputMapper: {map: map}
       outputMapper: {mapSubReport: map}
+    - !createDataSource
+      inputMapper: {datasource: topicpage}
     - !createDataSource
       reportTemplate: table.jrxml
       reportKey: reportTemplate

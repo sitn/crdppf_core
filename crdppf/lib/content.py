@@ -139,14 +139,16 @@ def get_content(idemai, request):
     #~ base_map = deepcopy(map)
     #~ base_map["bbox"] = " "
 
-    topic_titles = [
-        {'topic_title':'bli', 'topic_text':'bla'},
-        {'topic_title':'blu','topic_text':'blo'}
+    data = [
+        {
+          "topic_title": "bli",
+          "topic_text": "bla"
+          },
+        {
+          "topic_title": "blu",
+          "topic_text": "blo"
+          }
         ]
-        
-    d = {
-        "topicpage": topic_titles
-    }
     
     d = {
     #    "datasource": [],
@@ -163,9 +165,10 @@ def get_content(idemai, request):
             #~ "map": my_map,
             #~ "legend_url": "http://...&style=toto.xml"
         #~ })
-    data = [
+    data1 = [
         {
           "displayName": "Feature 1",
+          "topic": "topic1",
           "table" : {
             "columns": ["id", "name", "icon"],
             "data": [
@@ -176,6 +179,7 @@ def get_content(idemai, request):
         },
         {
           "displayName": "Feature 2",
+          "topic": "topic2",
           "table": {
             "columns": ["id", "name", "icon"],
             "data": [
@@ -191,8 +195,8 @@ def get_content(idemai, request):
         "municipality": municipality,
         "municipalitylogopath": municipalitylogopath,
         "report_title": report_title,
-        "datasource": data,
-        "topicpage": topic_titles
+        #~ "datasource": data1,
+        "datasource": data
         #~ "attributes": {"map": {
             #~ "bbox": [555932, 201899, 556079, 202001],
             #~ "dpi": 72,
@@ -207,5 +211,5 @@ def get_content(idemai, request):
         },
         "layout": "report"
     }
-    sf
+
     return d
