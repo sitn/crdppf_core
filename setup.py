@@ -15,6 +15,7 @@ setup(
     author_email='sitn@ne.ch',
     url='http://www.camptocamp.com/geospatial-solutions',
     install_requires=[
+        'psycopg2',
         'pyramid',
         'sqlahelper',
         'waitress',
