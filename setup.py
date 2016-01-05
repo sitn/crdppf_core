@@ -33,7 +33,8 @@ setup(
         'pyyaml',
         'JSTools',
         'PyPDF2',
-        'simplejson'
+        'simplejson',
+        'flake8'
     ],
     packages=find_packages(exclude=['ez_setup']),
     include_package_data=True,
