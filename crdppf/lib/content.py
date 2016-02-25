@@ -142,11 +142,13 @@ def get_content(idemai, request):
     data = [
         {
           "topic_title": "bli",
-          "topic_text": "bla"
+          "topic_text": "bla",
+          "map": map
           },
         {
           "topic_title": "blu",
-          "topic_text": "blo"
+          "topic_text": "blo",
+          "map": map
           }
         ]
     
@@ -165,37 +167,12 @@ def get_content(idemai, request):
             #~ "map": my_map,
             #~ "legend_url": "http://...&style=toto.xml"
         #~ })
-    data1 = [
-        {
-          "displayName": "Feature 1",
-          "topic": "topic1",
-          "table" : {
-            "columns": ["id", "name", "icon"],
-            "data": [
-              [1, "blah", "icon_pan"],
-              [2, "blip", "icon_zoomin"]
-            ]
-          }
-        },
-        {
-          "displayName": "Feature 2",
-          "topic": "topic2",
-          "table": {
-            "columns": ["id", "name", "icon"],
-            "data": [
-              [10, "blah2", "icon_pan2"],
-              [20, "blip2", "icon_zoomin2"]
-            ]
-          }
-        }
-        ]
       
     d= {
         "attributes": {"map": map,
         "municipality": municipality,
         "municipalitylogopath": municipalitylogopath,
         "report_title": report_title,
-        #~ "datasource": data1,
         "datasource": data
         #~ "attributes": {"map": {
             #~ "bbox": [555932, 201899, 556079, 202001],

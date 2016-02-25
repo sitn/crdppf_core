@@ -46,27 +46,25 @@ def get_cached_content_l10n(lang):
 
     d={}
 
-    translations_list = {
-        'legendlabel': 'legend_header_label',
-        'completlegendlabel': 'full_topic_legend_label',
-        'teneur': 'tenor_label',
-        'legalbaseslabel': 'legal_base_label',
-        'legalprovisionslabel': 'legal_disposition_label',
-        'referenceslabel': 'reference_label',
-        'competentauthoritylabel': 'authority_label',
-        'temporaryprovisionslabel': 'transitory_disposition_label',
-        'mapslabel': 'maps_label',
-        'otherslabel': 'other_label',
-    }
+    #~ translations_list = {
+        #~ 'legendlabel': 'legend_header_label',
+        #~ 'completlegendlabel': 'full_topic_legend_label',
+        #~ 'teneur': 'tenor_label',
+        #~ 'legalbaseslabel': 'legal_base_label',
+        #~ 'legalprovisionslabel': 'legal_disposition_label',
+        #~ 'referenceslabel': 'reference_label',
+        #~ 'competentauthoritylabel': 'authority_label',
+        #~ 'temporaryprovisionslabel': 'transitory_disposition_label',
+        #~ 'mapslabel': 'maps_label',
+        #~ 'otherslabel': 'other_label',
+    #~ }
 
-    translations = DBSession.query(Translations).filter(Translations.varstr.in_(translations_list)).all()
+    translations = DBSession.query(Translations).all()
 
     for translation in translations:
 
-        varstr = translation.varstr
-
         if  getattr(translation, lang):
-            d[translations_list[varstr]] = getattr(translation, lang)
+            d[str(translation.varstr)] = getattr(translation, lang)
         else:
             log.warning("There is a undefined translation")
 

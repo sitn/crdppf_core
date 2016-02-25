@@ -3,6 +3,7 @@ throwErrorOnExtraParameters: true
 templates:
   report: !template
     reportTemplate: report_A4.jrxml
+    #tableData: topicpage1
     attributes:
       # Variables for header
       ch_logo: !string {}
@@ -12,49 +13,42 @@ templates:
       
       # Variables for footer
       # Variables for title page
-      # Variables for TOC
-      # Variables for topic page
       municipality: !string {}
       report_title: !string {}
-      legend_header_label: !string {}
-      full_topic_legend_label: !string {} 
-      tenor_label: !string {} 
-      legal_base_label: !string {} 
-      legal_disposition_label: !string {} 
-      reference_label: !string {} 
-      authority_label: !string {} 
-      transitory_disposition_label: !string {} 
-      maps_label: !string {} 
-      other_label: !string {}
+      propertylabel: !string {}
+      extractsubtitlelabel: !string {}
 
+      # Variables for TOC
+      # Variables for topic page
+      legendlabel: !string {}
+      completlegendlabel: !string {} 
+      legalbaseslabel: !string {} 
+      legalprovisionslabel: !string {} 
+      referenceslabel: !string {} 
+      competentauthoritylabel: !string {} 
+
+      #topicpage: !datasource
       datasource: !datasource
-        attributes:
-          displayName: !string {}
-          topic: !string {}
-          table: !table {}
-
-      topicpage: !datasource
         attributes:
           topic_title: !string {}
           topic_text: !string {}
+          map: !map
+            width: 493
+            height: 280
+            maxDpi : 400
+            dpiSuggestions: [150]
 
       map: !map
-        width: 453
-        height: 251
+        width: 493
+        height: 280
         maxDpi : 400
         dpiSuggestions: [150]
 
     processors:
     - !reportBuilder # compile all reports in current directory
       directory: '.'
-    - !createMap
-      inputMapper: {map: map}
-      outputMapper: {mapSubReport: map}
+    - !createMap {}
     - !createDataSource
-      inputMapper: {datasource: topicpage}
-    - !createDataSource
-      reportTemplate: table.jrxml
-      reportKey: reportTemplate
-      processors:
-        - !prepareTable {}
+       processors:
+         - !createMap {}
     tableData: jrDataSource
