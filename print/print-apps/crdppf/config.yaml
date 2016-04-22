@@ -5,18 +5,35 @@ templates:
     reportTemplate: report_A4.jrxml
     #tableData: topicpage1
     attributes:
+      # Global variables
+      placeholderlabel: !string {}
+      
       # Variables for header
       ch_logo: !string {}
       canton_logo: !string {}
       municipalitylogopath: !string {}
       crdppf_logo: !string {}
+      competentauthority: !string {} 
       
       # Variables for footer
       # Variables for title page
       municipality: !string {}
+      municipalitylabel: !string {}
+      federalmunicipalitynumber: !string {}
+      cadastre: !string {}
       report_title: !string {}
-      propertylabel: !string {}
       extractsubtitlelabel: !string {}
+      propertylabel: !string {}
+      propertynumber: !string {}
+      propertytype: !string {}
+      propertyarealabel: !string {}
+      propertyarea: !string {}
+      EGRIDlabel: !string {}
+      EGRIDnumber: !string {}
+      creationdatelabel: !string {}
+      extractcreationdate: !string {}
+      extractoperatorlabel: !string {}
+      certificationlabel: !string {}
 
       # Variables for TOC
       # Variables for topic page

@@ -2,6 +2,7 @@
 
 from copy import deepcopy
 import ast
+from datetime import datetime
 
 from crdppf.lib.wmts_parsing import wmts_layer
 from crdppf.lib.geometry_functions import get_feature_bbox, get_print_format, get_feature_center
@@ -27,6 +28,8 @@ def get_content(idemai, request):
         lang = session['lang'].lower()
     translations = get_translations(lang)
     
+    extractcreationdate = datetime.now().strftime("%Y%m%d%H%M%S")
+    
     # Configure the WMTS background layer
     url = request.registry.settings['wmts_getcapabilities_url']
     defaultTiles =  ast.literal_eval("{"+request.registry.settings['defaultTiles']+"}")
@@ -36,8 +39,11 @@ def get_content(idemai, request):
     featureInfo = get_feature_info(idemai, translations)
     municipality = featureInfo['nomcom'].strip()
     cadastre = featureInfo['nomcad'].strip()
+    propertynumber = featureInfo['nummai'].strip()
     type = featureInfo['type'].strip()
+    propertyarea = featureInfo['area']
     report_title = translations['reducedcertifiedextracttitlelabel']
+    certificationlabel = translations['certificationlabel']
     
     # AS does the german language, the french contains a few accents we have to replace to fetch the banner which has no accents in its pathname...
     conversion = [
@@ -169,10 +175,19 @@ def get_content(idemai, request):
         #~ })
       
     d= {
-        "attributes": {"map": map,
+        "attributes": {
+        "extractcreationdate": extractcreationdate,
+        "map": map,
         "municipality": municipality,
+        "cadastre": cadastre,
+        "propertytype": type,
+        "propertynumber": propertynumber,
+        "EGRIDnumber": featureInfo['no_egrid'],
         "municipalitylogopath": municipalitylogopath,
+        "federalmunicipalitynumber": featureInfo['nufeco'],
+        "competentauthority": 'Placeholder',
         "report_title": report_title,
+        "propertyarea": propertyarea,
         "datasource": data
         #~ "attributes": {"map": {
             #~ "bbox": [555932, 201899, 556079, 202001],
@@ -188,5 +203,5 @@ def get_content(idemai, request):
         },
         "layout": "report"
     }
-
+    #~ sdf
     return d
