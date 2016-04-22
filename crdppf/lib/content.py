@@ -9,6 +9,8 @@ from crdppf.lib.geometry_functions import get_feature_bbox, get_print_format, ge
 
 from crdppf.util.pdf_functions import get_feature_info, get_translations
 
+from crdppf.models import DBSession,Topics
+
 import logging
 
 log = logging.getLogger(__name__)
@@ -19,7 +21,16 @@ def get_content(idemai, request):
     """
     # Start a session
     session = request.session
+     
+    extractcreationdate = datetime.now().strftime("%Y%m%d%H%M%S")
     
+    extract = {
+        'pdfid': extractcreationdate,
+        'translations': {},
+        'featureInfo':{},
+        'topics':{}
+        }
+        
     # Define language to get multilingual labels for the selected language
     # defaults to 'fr': french - this may be changed in the appconfig
     if 'lang' not in session:
@@ -27,8 +38,32 @@ def get_content(idemai, request):
     else : 
         lang = session['lang'].lower()
     translations = get_translations(lang)
+    extract['translations'] = translations
     
-    extractcreationdate = datetime.now().strftime("%Y%m%d%H%M%S")
+    # 1) If the ID of the parcel is set get the basic attributs of the property
+    # else get the ID (idemai) of the selected parcel first using X/Y coordinates of the center 
+    #----------------------------------------------------------------------------------------------------
+    featureInfo = get_feature_info(idemai,translations) # '1_14127' # test parcel or '1_11340'
+    extract['featureInfo'] = featureInfo
+    
+    # 3) Get the list of all the restrictions by topicorder set in a column
+    #-------------------------------------------
+    topics = DBSession.query(Topics).order_by(Topics.topicorder).all()
+    
+    for topic in extract['topics']:
+            # for the federal data layers we get the restrictions calling the feature service and store the result in the DB
+            if topic.topicid in extract.appconfig.ch_topics:
+                xml_layers = []
+                for xml_layer in topic.layers:
+                    xml_layers.append(xml_layer.layername)
+                get_XML(extract.featureInfo['geom'], topic.topicid, pdfconfig.timestamp, lang, translations)
+            
+    for topic in topics:
+        extract['topics'][topic.topicid] = {
+            'topicname': topic.topicname,
+            'topicorder': topic.topicorder
+            }
+    sdf
     
     # Configure the WMTS background layer
     url = request.registry.settings['wmts_getcapabilities_url']
@@ -36,7 +71,6 @@ def get_content(idemai, request):
     layer = defaultTiles['wmtsname']
     wmts_layer_ = wmts_layer(url, layer)
 
-    featureInfo = get_feature_info(idemai, translations)
     municipality = featureInfo['nomcom'].strip()
     cadastre = featureInfo['nomcad'].strip()
     propertynumber = featureInfo['nummai'].strip()
@@ -145,6 +179,7 @@ def get_content(idemai, request):
     #~ base_map = deepcopy(map)
     #~ base_map["bbox"] = " "
 
+    sddfkh
     data = [
         {
           "topic_title": "bli",
