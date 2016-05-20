@@ -351,7 +351,7 @@ def get_feature_info(request, translations):
         return HTTPBadRequest(translations['HTTPBadRequestMsg'])
 
     parcelInfo['geom'] = queryresult.geom
-    parcelInfo['area'] = int(DBSession.scalar(queryresult.geom.ST_Area()))
+    parcelInfo['area'] = int(round(DBSession.scalar(queryresult.geom.ST_Area()),0))
 
     if isinstance(LocalName, (types.ClassType)) is False:
         queryresult1 = DBSession.query(LocalName).filter(LocalName.geom.ST_Intersects(parcelInfo['geom'])).first()
