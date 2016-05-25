@@ -8,7 +8,7 @@ from crdppf.lib.wmts_parsing import wmts_layer
 from crdppf.lib.geometry_functions import get_feature_bbox, get_print_format, get_feature_center
 
 from crdppf.views.get_features import get_features_function
-from crdppf.views.legal_documents import getDocumentReferences, getLegalDocuments
+from crdppf.util.documents import get_document_ref, get_documents
 from crdppf.util.pdf_functions import get_feature_info, get_translations, get_XML
 
 from crdppf.models import DBSession,Topics,AppConfig
@@ -36,26 +36,27 @@ def set_documents(request, topicid, doctype, docids, featureInfo, geofilter):
         filters = {'docids':docids}
 
     if len(docids) > 0:
-        docs = getLegalDocuments(request,filters)
+        docs = get_documents(filters)
     else:
         docs['docs'] = []
 
     references = []
     # store the documents in a list
-    for doc in docs['docs']:
-        if doc['doctype'] == doctype and doc['documentid'] in docids:
-            references.append(doc)
-            if doc['doctype'] != u'legalbase' and doc['documentid'] not in self.doclist:
-                self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'])
-            if doc['documentid'] not in self.doclist:
-                self.doclist.append(doc)
-        if doc['doctype'] == doctype and geofilter is True and doc['documentid'] not in docids:
-            references.append(doc)
-            if doc['doctype'] != u'legalbase' and doc['documentid'] not in self.doclist:
-                self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'])
-            if doc['documentid'] not in self.doclist:
-                self.doclist.append(doc)
-                
+    if len(docs['docs']) > 0:
+        for doc in docs['docs']:
+            if doc['doctype'] == doctype and doc['documentid'] in docids:
+                references.append(doc)
+                if doc['doctype'] != u'legalbase' and doc['documentid'] not in self.doclist:
+                    self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'])
+                if doc['documentid'] not in self.doclist:
+                    self.doclist.append(doc)
+            if doc['doctype'] == doctype and geofilter is True and doc['documentid'] not in docids:
+                references.append(doc)
+                if doc['doctype'] != u'legalbase' and doc['documentid'] not in self.doclist:
+                    self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'])
+                if doc['documentid'] not in self.doclist:
+                    self.doclist.append(doc)
+                    
     return references
         
 def add_toc_entry(topicid, num, label, categorie, appendices):
@@ -76,14 +77,14 @@ def add_layer(request, layer, featureid, featureInfo, translations, appconfig, t
             # for each restriction object we check for related documents
             docfilters = [str(result['id'])]
             for doctype in appconfig['doctypes']:
-                docidlist = getDocumentReferences(docfilters)
+                docidlist = get_document_ref(docfilters)
                 result['properties'][doctype] = set_documents(request, str(layer.topicfk), doctype, docidlist, featureInfo, False)
             layerlist[str(layer.layerid)]['features'].append(result['properties'])
-        dsfg
+        #~ dsfg
         # we also check for documents on the layer level - if there are any results - else we don't need to bother
         docfilters = [layer.layername]
         for doctype in appconfig['doctypes']:
-            docidlist = getDocumentReferences(docfilters)
+            docidlist = get_document_ref(docfilters)
             topiclist[str(layer.topicfk)]['layers'][layer.layerid][doctype] = set_documents(request, str(layer.topicfk), doctype, docidlist, featureInfo, True)
 
         topiclist[str(layer.topicfk)]['categorie']=3
@@ -93,7 +94,7 @@ def add_layer(request, layer, featureid, featureInfo, translations, appconfig, t
         layerlist[str(layer.layerid)]={'layername':layer.layername,'features':None}
         if topiclist[str(layer.topicfk)]['categorie'] != 3:
             topiclist[str(layer.topicfk)]['categorie']=1
-    weer
+    
     return topiclist
     
 def get_content(idemai, request):
@@ -281,15 +282,14 @@ def get_content(idemai, request):
                     }
                 # intersects a given layer with the feature and adds the results to the topiclist- see method add_layer
                 toto = add_layer(request, layer, propertynumber, featureInfo, translations, appconfig, topiclist)
-                sdf
                 topiclist.update(add_layer(request, layer, propertynumber, featureInfo, translations, appconfig, topiclist))
             #~ get_topic_map(topic.layers, topic.topicid)
             # Get the list of documents related to a topic with layers and results
             if topiclist[str(layer.topicfk)]['categorie'] == 3:
                 docfilters = [str(topic.topicid)]
                 for doctype in appconfig['doctypes']:
-                    docidlist = getDocumentReferences(docfilters)
-                    topiclist[str(topic.topicid)][doctype] = set_documents(request, str(topic.topicid), doctype, docidlist, featureInfo, True)      
+                    docidlist = get_document_ref(docfilters)
+                    #~ topiclist[str(topic.topicid)][doctype] = set_documents(request, str(topic.topicid), doctype, docidlist, featureInfo, True)      
 
         else:
             if str(topic.topicid) in appconfig['emptytopics']:
@@ -298,7 +298,7 @@ def get_content(idemai, request):
             else:
                 topiclist[str(topic.topicid)]['layers'] = None
                 topiclist[str(topic.topicid)]['categorie'] = 0
-        wer
+
         data.append(
             {
             'topic_title': topic.topicname,

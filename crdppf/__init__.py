@@ -101,9 +101,9 @@ def includeme(config):
     config.add_route('printproxy_status', '/printproxy/status/{ref}.json')
     config.add_route('printproxy_report_create', '/printproxy/report/{type_}/{idemai}')
 
-    # ADMIN VIEWS
-    config.add_view('crdppf.views.administration.Config', route_name='configpanel')
-    config.add_view('crdppf.views.administration.Config', route_name='formulaire_reglements')
+    #~ # ADMIN VIEWS
+    #~ config.add_view('crdppf.views.administration.Config', route_name='configpanel')
+    #~ config.add_view('crdppf.views.administration.Config', route_name='formulaire_reglements')
 
     config.add_route('catchall_static', '/*subpath')
     config.add_view('crdppf.static.static_view', route_name='catchall_static')
