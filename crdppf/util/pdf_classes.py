@@ -20,8 +20,7 @@ from crdppf.models import DBSession
 from crdppf.models import AppConfig
 
 from crdppf.views.get_features import get_features_function
-from crdppf.views.legal_documents import getLegalDocuments
-from crdppf.views.legal_documents import getDocumentReferences
+from crdppf.util.documents import get_document_ref, get_documents
 from crdppf.util.pdf_functions import geom_from_coordinates
 
 class AppConfig(object):
@@ -655,7 +654,7 @@ class Extract(FPDF):
             if self.topiclist[str(layer.topicfk)]['categorie'] == 3:
                 docfilters = [str(topic.topicid)]
                 for doctype in self.doctypes:
-                    docidlist = getDocumentReferences(docfilters)
+                    docidlist = get_document_ref(docfilters)
                     self.topiclist[str(topic.topicid)][doctype] = self.set_documents(str(topic.topicid), doctype, docidlist, True)                
         else:
             if str(topic.topicid) in self.appconfig.emptytopics:
@@ -696,14 +695,14 @@ class Extract(FPDF):
                 # for each restriction object we check for related documents
                 docfilters = [str(result['id'])]
                 for doctype in self.doctypes:
-                    docidlist = getDocumentReferences(docfilters)
+                    docidlist = get_document_ref(docfilters)
                     result['properties'][doctype] = self.set_documents(str(layer.topicfk), doctype, docidlist, False)
                 self.layerlist[str(layer.layerid)]['features'].append(result['properties'])
 
             # we also check for documents on the layer level - if there are any results - else we don't need to bother
             docfilters = [layer.layername]
             for doctype in self.doctypes:
-                docidlist = getDocumentReferences(docfilters)
+                docidlist = get_document_ref(docfilters)
                 self.topiclist[str(layer.topicfk)]['layers'][layer.layerid][doctype] = self.set_documents(str(layer.topicfk), doctype, docidlist, True)
 
             self.topiclist[str(layer.topicfk)]['categorie']=3
@@ -733,13 +732,13 @@ class Extract(FPDF):
             filters = {'docids':docids}
 
         if len(docids) > 0:
-            docs = getLegalDocuments(self.request,filters)
+            docs = get_documents(filters)
         else:
-            docs['docs'] = []
+            docs = []
 
         references = []
         # store the documents in a list
-        for doc in docs['docs']:
+        for doc in docs:
             if doc['doctype'] == doctype and doc['documentid'] in docids:
                 references.append(doc)
                 if doc['doctype'] != u'legalbase' and doc['documentid'] not in self.doclist:

@@ -104,7 +104,10 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
     
     geomGeoJSON = loads(DBSession.scalar(geometry.ST_AsGeoJSON()))
     coords = geomGeoJSON['coordinates']
-    coords = coords[0]
+
+    if geomGeoJSON['type'] == 'MultiPolygon':
+        coords = coords[0]
+    
     # Stupid ESRI stuff: double quotes are needed to call the feature service, thus we have to hardcode "rings"
     esrifeature = '{"rings":'+ str(coords)+'}'
 
@@ -351,7 +354,7 @@ def get_feature_info(idemai, translations):
         return HTTPBadRequest(translations['HTTPBadRequestMsg'])
 
     parcelInfo['geom'] = queryresult.geom
-    parcelInfo['area'] = int(DBSession.scalar(queryresult.geom.ST_Area()))
+    parcelInfo['area'] = int(round(DBSession.scalar(queryresult.geom.ST_Area()),0))
 
     if isinstance(LocalName, (types.ClassType)) is False:
         queryresult1 = DBSession.query(LocalName).filter(LocalName.geom.ST_Intersects(parcelInfo['geom'])).first()

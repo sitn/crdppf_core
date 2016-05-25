@@ -15,6 +15,7 @@ setup(
     author_email='sitn@ne.ch',
     url='http://www.camptocamp.com/geospatial-solutions',
     install_requires=[
+        'psycopg2',
         'pyramid',
         'sqlahelper',
         'waitress',
@@ -33,7 +34,8 @@ setup(
         'JSTools',
         'PyPDF2',
         'dogpile.cache',
-        'simplejson'
+        'simplejson',
+        'flake8'
     ],
     packages=find_packages(exclude=['ez_setup']),
     include_package_data=True,
