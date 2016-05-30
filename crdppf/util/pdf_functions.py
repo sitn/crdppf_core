@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import urllib
+import httplib2
 import types
 
 # geometry related librabries
@@ -127,8 +128,8 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
     params = urllib.urlencode(params)
     
     # Call the feature service URL wich sends back an XML Interlis 2.3 file in the OEREB Transfer structure
-    response = urllib.urlopen(fsurl, params)
-    content = response.read()
+    h = httplib2.Http()
+    (resp_headers, content) = h.request(fsurl, method="POST", body=params)
     
     # trim all whitespace and newlines
     content_lines = content.splitlines()
