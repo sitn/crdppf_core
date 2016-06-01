@@ -19,12 +19,12 @@ def get_documents(filters=None):
         if 'cadastrenb' in filters.keys():
             documents = documents.filter(or_(
                 LegalDocuments.cadastrenb == filters['cadastrenb'],
-                LegalDocuments.cadastrenb is None
+                LegalDocuments.cadastrenb == None
             )).order_by(LegalDocuments.doctype.asc())
         if 'chmunicipalitynb' in filters.keys():
             documents = documents.filter(or_(
                 LegalDocuments.chmunicipalitynb == filters['chmunicipalitynb'],
-                LegalDocuments.chmunicipalitynb is None
+                LegalDocuments.chmunicipalitynb == None
             )).order_by(LegalDocuments.doctype.asc())
     else:
         documents = DBSession.query(LegalDocuments).order_by(
