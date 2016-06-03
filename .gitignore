@@ -1,4 +1,5 @@
 *.pyc
 *.egg-info/
-apache/*.conf
-crdppf/static/build/crdppf.js
+/apache/*.conf
+/crdppf/static/build/crdppf.js
+/crdppf/crdppf_core/print/WEB-INF/classes/logback.xml

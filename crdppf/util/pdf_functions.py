@@ -315,7 +315,7 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
     
     return
 
-def get_feature_info(request, translations):
+def get_feature_info(idemai, translations):
     """The function gets the geometry of a parcel by it's ID and does an overlay 
     with other administrative layers to get the basic parcelInfo and attribute 
     information of the parcel : municipality, local names, and so on
@@ -332,11 +332,11 @@ def get_feature_info(request, translations):
     Y = None
     X = None
 
-    if request.params.get('id') :
-        parcelInfo['featureid'] = request.params.get('id')
-    elif request.params.get('X') and request.params.get('Y') :
-        X = int(request.params.get('X'))
-        Y = int(request.params.get('Y'))
+    if idemai :
+        parcelInfo['featureid'] = idemai
+    #~ elif request.params.get('X') and request.params.get('Y') :
+        #~ X = int(request.params.get('X'))
+        #~ Y = int(request.params.get('Y'))
     else :
         raise Exception(translations[''])
 

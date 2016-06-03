@@ -11,6 +11,7 @@
  * @include Crdppf/themeSelector.js
  * @include Crdppf/legalDocuments.js
  * @include Crdppf/measureTools.js
+ * @include Crdppf/createReport.js
  */
 
 // MAIN USER INTERFACE
@@ -292,29 +293,20 @@ Crdppf.init_main = function(lang) {
                     click: function(){
                         var pdfMask = new Ext.LoadMask(Ext.getCmp('pdfExtractWindow').body, {msg: Crdppf.labels.pdfLoadMessage});
                         pdfMask.show();
-                        var urlToOpen = Crdppf.printUrl + '?id=' + Crdppf.currentProperty.attributes.idemai;
+
                         var selectedRadio = Ext.getCmp('extractRadioGroup').getValue();
-                        urlToOpen += '&type=' + selectedRadio.inputValue;
-                        
-                        Ext.Ajax.request({
-                            url: urlToOpen,
-                            success: function(response) {
-                                var result = Ext.util.JSON.decode(response.responseText);
-                                var pdfurl = result.pdfurl;
-                                var button = Ext.getCmp('pdfDisplayButton');
-                                button.setHandler(function() {window.open(pdfurl);});
-                                Ext.getCmp('pdfDisplayPanel').show();
-                                Ext.getCmp('pdfChoicePanel').hide();
-                                pdfMask.hide();
-                            },
-                            method: 'POST',
-                            timeout : 300000,
-                            failure: function () {
-                                Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
-                                pdfMask.hide();
-                            }
-                        }); 
-                    }
+
+                        var url = [
+                            Crdppf.printReportCreateUrl,
+                            selectedRadio.inputValue,
+                            "/",
+                            Crdppf.currentProperty.attributes.idemai
+                        ].join('');
+
+                        this.Report.create(url, pdfMask);
+
+                    },
+                    scope: this
                 }
             },{
                     xtype: 'button',

@@ -14,6 +14,15 @@ Crdppf.getBaselayerConfigUrl = "${request.route_url('get_baselayers_config')}";
 Crdppf.wmsUrl = "${request.route_url('ogcproxy')}";
 Crdppf.ogcproxyUrl  = "${request.route_url('ogcproxy')}";
 Crdppf.printUrl = "${request.route_url('create_extract')}";
+<%
+    print_report = request.route_url('printproxy_report_create', idemai='', type_='2split')
+    print_report = print_report.split('2split')[0]
+    print_status = request.route_url('printproxy_status', ref='')
+    print_status = print_status.split('.json')[0]
+%>
+Crdppf.printReportCreateUrl = "${print_report}";
+Crdppf.printReportStatusUrl = "${print_status}";
+Crdppf.printReportGetUrl = "${request.route_url('printproxy_report_get', ref='')}";
 Crdppf.fulltextsearchUrl = "${request.registry.settings['fulltextsearch_url']}";
 Crdppf.mapproxyUrl = [${request.registry.settings['mapproxyurl']|n}];
 Crdppf.mapExtent = [${request.registry.settings['mapExtent']|n}];

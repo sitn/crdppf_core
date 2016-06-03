@@ -33,6 +33,7 @@ setup(
         'pyyaml',
         'JSTools',
         'PyPDF2',
+        'dogpile.cache',
         'simplejson',
         'flake8'
     ],

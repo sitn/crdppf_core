@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
+<!-- 2015-03-26T17:01:28 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Rapport_A4" pageWidth="595" pageHeight="842" columnWidth="539" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="28" uuid="c9129d1d-4862-4ba7-b9aa-23bc5d472331">
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="logocanton" class="java.lang.String">
+		<parameterDescription><![CDATA[Canton logo]]></parameterDescription>
+		<defaultValueExpression><![CDATA["06ne_ch_RVB.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="municipalitylogopath" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Placeholder.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="municipality" class="java.lang.String">
+		<parameterDescription><![CDATA[municipality name]]></parameterDescription>
+		<defaultValueExpression><![CDATA["placeholder"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="signature" class="java.lang.Integer">
+		<parameterDescription><![CDATA[id signature]]></parameterDescription>
+		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+	</parameter>
+	<parameter name="legend" class="java.lang.String">
+		<parameterDescription><![CDATA[Legend title]]></parameterDescription>
+	</parameter>
+	<parameter name="scalebarSubReport" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<field name="mapSubReport" class="java.lang.String"/>
+	<field name="topicTitle" class="java.lang.String">
+		<fieldDescription><![CDATA[Title of the topic page]]></fieldDescription>
+	</field>
+	<field name="mapLegendURL" class="java.lang.String">
+		<fieldDescription><![CDATA[URL of topic map legend]]></fieldDescription>
+	</field>
+	<variable name="idsignature" class="java.lang.String">
+		<variableExpression><![CDATA["" + IF($P{signature} == 1, new java.util.Random().nextInt(), "Extrait du géoportail")]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="70" splitType="Stretch">
+			<image scaleImage="RealSize">
+				<reportElement x="0" y="0" width="155" height="40" uuid="bf445e4e-bd1d-4426-8085-dbc844b1d127">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unity" value="mm"/>
+					<property name="local_mesure_unitwidth" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+					<property name="local_mesure_unitheight" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<imageExpression><![CDATA["/images/ecussons/Logo_Schweiz_Eidgen.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="280" y="0" width="121" height="38" uuid="44691387-02aa-442d-b706-e2c1f017b2e6">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["/images/ecussons/"+$P{logocanton}]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="266" y="-28" width="1" height="98" uuid="8f6f0836-6acc-4630-b169-02f5af8eaf3e"/>
+			</line>
+			<line>
+				<reportElement x="434" y="-28" width="1" height="98" uuid="a5d3f874-7903-43b7-a7a4-dda10d19958c"/>
+			</line>
+			<image>
+				<reportElement x="448" y="0" width="40" height="28" uuid="1a5ad499-847c-46e1-8bda-4b2ac77d9bce">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["/images/ecussons/"+$P{municipalitylogopath}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="448" y="30" width="102" height="20" uuid="2132b53e-e9fb-4bbf-a148-06994007aa5d"/>
+				<textElement>
+					<font fontName="Arial" size="7" pdfFontName="" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="501" splitType="Stretch">
+			<frame>
+				<reportElement mode="Transparent" x="1" y="41" width="538" height="251" forecolor="#000000" backcolor="#FFFFFF" uuid="85db8fca-8130-499d-aa18-2284c34abc44"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textField>
+					<reportElement x="20" y="10" width="100" height="20" uuid="8db0c5ff-646e-43e6-8510-81487c225855"/>
+					<textFieldExpression><![CDATA[$P{legend}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<subreport>
+				<reportElement x="170" y="41" width="369" height="251" uuid="856e7ada-1d4e-4e0f-a6a2-42a45a0639ef">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<subreportExpression><![CDATA[$F{mapSubReport}]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="0" y="10" width="536" height="20" uuid="845ea579-d949-42b9-8a3f-c9d6ae7d4ab3"/>
+				<textElement>
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{topicTitle}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="10" y="70" width="160" height="222" uuid="59f32bfd-997c-4f51-a5c8-b34de851e4ac"/>
+				<imageExpression><![CDATA[$F{mapLegendURL}]]></imageExpression>
+			</image>
+			<subreport>
+				<reportElement x="180" y="260" width="120" height="20" uuid="d95cbe94-b1ca-46e9-a207-2393a6eef53d">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<subreportExpression><![CDATA[$F{scalebarSubReport}]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="73" splitType="Stretch">
+			<textField>
+				<reportElement x="1" y="55" width="179" height="18" uuid="b60a5a8c-8ff8-4ce6-8ce8-8000b5815377"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA["Date de création: "+new SimpleDateFormat("dd.MM.yyyy - HH:mm:ss",new Locale("fr")).format(NOW())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="190" y="52" width="181" height="21" uuid="90ad605b-49aa-405c-aa67-349f2f335edc"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[$V{idsignature}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="52" width="80" height="21" uuid="2ccd21e9-ad33-40c5-9a33-164dab56e6a1"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="460" y="52" width="79" height="21" uuid="6de990e5-afc4-461a-8a99-babbbf05c23b"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[" / " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

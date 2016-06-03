@@ -100,6 +100,8 @@ class PDFConfig(object):
         self.fitratio = config['fitratio']
         self.pdfpath = pkg_resources.resource_filename('crdppfportal', 'static/public/pdf/')
         # CHlogopath : Path to the header logo of the Swiss Confederation
+        self.crdppflogopath = config['crdppflogopath']
+        # CHlogopath : Path to the header logo of the Swiss Confederation
         self.CHlogopath = config['CHlogopath']
         # cantonlogopath : Path to the header logo of the canton
         self.cantonlogopath = config['cantonlogo']['path']
