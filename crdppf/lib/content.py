@@ -80,7 +80,7 @@ def add_layer(request, layer, featureid, featureInfo, translations, appconfig, t
                 docidlist = get_document_ref(docfilters)
                 result['properties'][doctype] = set_documents(request, str(layer.topicfk), doctype, docidlist, featureInfo, False)
             layerlist[str(layer.layerid)]['features'].append(result['properties'])
-        #~ dsfg
+
         # we also check for documents on the layer level - if there are any results - else we don't need to bother
         docfilters = [layer.layername]
         for doctype in appconfig['doctypes']:
@@ -299,14 +299,23 @@ def get_content(idemai, request):
                 topiclist[str(topic.topicid)]['layers'] = None
                 topiclist[str(topic.topicid)]['categorie'] = 0
 
-        data.append(
-            {
-            'topic_title': topic.topicname,
-            'topic_text': topic.topicorder,
-            'topic_layers': layers,
-            #'topiclist': topiclist,
-            'map': map
-            })
+        #~ data.append(
+            #~ {
+            #~ 'topic_title': topic.topicname,
+            #~ 'topic_text': topic.topicorder,
+            #~ 'topic_layers': layers,
+            #~ #'topiclist': topiclist,
+            #~ 'map': map
+            #~ })
+            
+    data.append(
+        {
+        'topic_title': 'titre1',
+        'topic_text': 'topicorder',
+        'topic_layers': 'layer',
+        #'topiclist': topiclist,
+        'map': map
+        })
 
     d = {
     #    "datasource": [],
