@@ -2,8 +2,8 @@ throwErrorOnExtraParameters: true
 
 templates:
   report: !template
-    reportTemplate: report_A4.jrxml
-    #tableData: topicpage1
+    reportTemplate: pdfReport.jrxml
+
     attributes:
       # Global variables
       placeholderlabel: !string {}
@@ -44,28 +44,26 @@ templates:
       referenceslabel: !string {} 
       competentauthoritylabel: !string {} 
 
-      #topicpage: !datasource
+      map: !map
+        maxDpi: 400
+        width: 493
+        height: 280
+        
       datasource: !datasource
         attributes:
           topic_title: !string {}
-          topic_text: !string {}
-          map: !map
-            width: 493
-            height: 280
-            maxDpi : 400
-            dpiSuggestions: [150]
-
-      map: !map
-        width: 493
-        height: 280
-        maxDpi : 400
-        dpiSuggestions: [150]
-
+          #~ topic_text: !string {}
+          table: !table {}
+          
     processors:
     - !reportBuilder # compile all reports in current directory
       directory: '.'
-    - !createMap {}
+    - !createMap
+      inputMapper: {map: map}
+      outputMapper: {mapSubReport: map}
     - !createDataSource
-       processors:
-         - !createMap {}
+      reportTemplate: table.jrxml
+      reportKey: reportTemplate
+      processors:
+        - !prepareTable {}
     tableData: jrDataSource

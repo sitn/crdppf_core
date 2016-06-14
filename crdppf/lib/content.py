@@ -244,6 +244,33 @@ def get_content(idemai, request):
         ]
     }
 
+    basemap = {
+        "projection": "EPSG:21781",
+        "dpi": 150,
+        "rotation": 0,
+        "center": feature_center,
+        "scale": print_box['scale'],
+        "longitudeFirst": "true",
+        "layers": [{
+            "type": "geojson",
+            "geoJson": request.route_url('get_property')+'?id='+idemai,
+            "style": {
+                "version": "2",
+                "strokeColor": "gray",
+                "strokeLinecap": "round",
+                "strokeOpacity": 0.6,
+                "[INTERSECTS(geometry, "+wkt_polygon+")]": {
+                    "symbolizers": [{
+                        "strokeColor": "green",
+                        "strokeWidth": 2,
+                        "type": "line"
+                    }]
+                }
+            }
+        }, wmts_layer_
+        ]
+    }
+    
     #~ base_map = deepcopy(map)
     #~ base_map["bbox"] = " "
         
@@ -299,29 +326,33 @@ def get_content(idemai, request):
                 topiclist[str(topic.topicid)]['layers'] = None
                 topiclist[str(topic.topicid)]['categorie'] = 0
 
-        #~ data.append(
-            #~ {
-            #~ 'topic_title': topic.topicname,
-            #~ 'topic_text': topic.topicorder,
-            #~ 'topic_layers': layers,
-            #~ #'topiclist': topiclist,
-            #~ 'map': map
-            #~ })
+        data.append({
+            'topic_title': topic.topicname,
+            'table' : {
+                'columns': ["id", "name", "icon"],
+                'data': [
+                    [1, "blah", "icon_pan"],
+                    [2, "blip", "icon_zoomin"]
+                    ]
+                }
+            #~ topic.topicorder,
+            #~ layers
+            #'topiclist': topiclist,
+            })
             
-    data.append(
-        {
-        'topic_title': 'titre1',
-        'topic_text': 'topicorder',
-        'topic_layers': 'layer',
-        #'topiclist': topiclist,
-        'map': map
-        })
+    #~ data.append(
+        #~ {
+        #~ 'topic_title': 'titre1',
+        #~ 'topic_text': 'topicorder',
+        #~ 'topic_layers': 'layer',
+        #~ 'topiclist': topiclist,
+        #~ 'map': map
+        #~ })
 
     d = {
     #    "datasource": [],
         "map": map
-     #   "base_map": base_map,
-    }
+        }
 
     #~ maps = []
 
