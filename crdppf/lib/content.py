@@ -4,6 +4,7 @@ from copy import deepcopy
 import ast
 from datetime import datetime
 
+from crdppf.extract import Extract
 from crdppf.lib.wmts_parsing import wmts_layer
 from crdppf.lib.geometry_functions import get_feature_bbox, get_print_format, get_feature_center
 
@@ -17,46 +18,65 @@ import logging
 
 log = logging.getLogger(__name__)
 
-def set_documents(request, topicid, doctype, docids, featureInfo, geofilter):
+#~ def get_topiclist():
+    #~ topics = DBSession.query(Topics).order_by(Topics.topicorder).all()
+    
+    #~ topiclist = {}
+    #~ for topic in topics:
+        #~ topiclist[topic.topicorder] = {
+            #~ 'topicid': topic.topicid,
+            #~ 'topicname': topic.topicname,
+            #~ 'layers': topic.layers,
+            #~ 'publicationdate': topic.publicationdate.isoformat() if topic.publicationdate else None,
+            #~ 'authorityfk': topic.authorityfk,
+            #~ 'authority': topic.authority,
+            #~ 'metadata': topic.metadata
+            #~ }
+
+    #~ return topiclist
+    
+def set_documents(request, topicid, doctype, docids, featureinfo, geofilter, topicdata):
     """ Function to fetch the documents related to the restriction:
     legal provisions, temporary provisions, references 
     """
 
-    docs = {}
+    docs = []
     documents = []
+    doclist = topicdata['doclist']
     
     if geofilter is True:
         filters = {
             'docids': docids,
             'topicid': topicid,
-            'cadastrenb': featureInfo['numcom'],
-            'chmunicipalitynb': featureInfo['nufeco']
+            'cadastrenb': featureinfo['numcom'],
+            'chmunicipalitynb': featureinfo['nufeco']
         }
     else:
         filters = {'docids':docids}
 
     if len(docids) > 0:
         docs = get_documents(filters)
-    else:
-        docs['docs'] = []
+    #~ else:
+        #~ docs = []
 
     references = []
+    appendices = []
     # store the documents in a list
-    if len(docs['docs']) > 0:
-        for doc in docs['docs']:
+    if len(docs) > 0:
+        for doc in docs:
             if doc['doctype'] == doctype and doc['documentid'] in docids:
                 references.append(doc)
-                if doc['doctype'] != u'legalbase' and doc['documentid'] not in self.doclist:
-                    self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'])
-                if doc['documentid'] not in self.doclist:
-                    self.doclist.append(doc)
+                if doc['doctype'] != u'legalbase' and doc['documentid'] not in doclist:
+                    appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'], topicdata))
+                if doc['documentid'] not in doclist:
+                    doclist.append(doc)
             if doc['doctype'] == doctype and geofilter is True and doc['documentid'] not in docids:
                 references.append(doc)
-                if doc['doctype'] != u'legalbase' and doc['documentid'] not in self.doclist:
-                    self.add_appendix(topicid, 'A'+str(len(self.appendix_entries)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'])
-                if doc['documentid'] not in self.doclist:
-                    self.doclist.append(doc)
-                    
+                if doc['doctype'] != u'legalbase' and doc['documentid'] not in doclist:
+                    appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'], topicdata))
+                if doc['documentid'] not in doclist:
+                    doclist.append(doc)
+
     return references
         
 def add_toc_entry(topicid, num, label, categorie, appendices):
@@ -65,37 +85,48 @@ def add_toc_entry(topicid, num, label, categorie, appendices):
     
     return tocentries
 
-def add_layer(request, layer, featureid, featureInfo, translations, appconfig, topiclist):
+def add_appendix(topicid, num, label, url, filepath, topicdata):
+    toc_entries = topicdata['toc_entries']
+    appendix_entries = []
+    appendix_entries.append({'topicid':topicid, 'no_page':num, 'title':label, 'url':url, 'path':filepath})
+
+    if topicid in toc_entries[topicid] :
+        toc_entries[topicid]['appendices'].add(num)
+    else:
+        pass
+    
+    return appendix_entries
+
+def add_layer(request, layer, featureid, featureinfo, translations, appconfig, topicdata):
 
     layerlist = {}
     
-    results = get_features_function(featureInfo['geom'],{'layerList':layer.layername,'id':featureid,'translations':translations})
-
+    results = get_features_function(featureinfo['geom'],{'layerList':layer.layername,'id':featureid, 'translations':appconfig['translations']})
     if results :
         layerlist[str(layer.layerid)]={'layername':layer.layername,'features':[]}
         for result in results:
             # for each restriction object we check for related documents
             docfilters = [str(result['id'])]
-            for doctype in appconfig['doctypes']:
+            for doctype in appconfig['doctypes'].split(','):
                 docidlist = get_document_ref(docfilters)
-                result['properties'][doctype] = set_documents(request, str(layer.topicfk), doctype, docidlist, featureInfo, False)
+                result['properties'][doctype] = set_documents(request, str(layer.topicfk), doctype, docidlist, featureinfo, False, topicdata)
             layerlist[str(layer.layerid)]['features'].append(result['properties'])
 
         # we also check for documents on the layer level - if there are any results - else we don't need to bother
         docfilters = [layer.layername]
-        for doctype in appconfig['doctypes']:
+        for doctype in appconfig['doctypes'].split(','):
             docidlist = get_document_ref(docfilters)
-            topiclist[str(layer.topicfk)]['layers'][layer.layerid][doctype] = set_documents(request, str(layer.topicfk), doctype, docidlist, featureInfo, True)
+            topicdata[str(layer.topicfk)]['layers'][layer.layerid][doctype] = set_documents(request, str(layer.topicfk), doctype, docidlist, featureinfo, True,  topicdata)
 
-        topiclist[str(layer.topicfk)]['categorie']=3
-        topiclist[str(layer.topicfk)]['no_page']='tocpg_'+str(layer.topicfk)
-        topiclist[str(layer.topicfk)]['layers'][layer.layerid]['features'] = layerlist[str(layer.layerid)]['features']
+        topicdata[str(layer.topicfk)]['categorie']=3
+        topicdata[str(layer.topicfk)]['no_page']='tocpg_'+str(layer.topicfk)
+        topicdata[str(layer.topicfk)]['layers'][layer.layerid]['features'] = layerlist[str(layer.layerid)]['features']
     else:
-        layerlist[str(layer.layerid)]={'layername':layer.layername,'features':None}
-        if topiclist[str(layer.topicfk)]['categorie'] != 3:
-            topiclist[str(layer.topicfk)]['categorie']=1
-    
-    return topiclist
+        layerlist[str(layer.layerid)]={'layername': layer.layername,'features': None}
+        if topicdata[str(layer.topicfk)]['categorie'] != 3:
+            topicdata[str(layer.topicfk)]['categorie']=1
+
+    return topicdata
     
 def get_content(idemai, request):
     """ TODO....
@@ -105,45 +136,51 @@ def get_content(idemai, request):
     session = request.session
     configs = DBSession.query(AppConfig).all()
     
-    appconfig = {}
+    # initalize extract object
+    extract = Extract(request)
+    
     for config in configs:
         if not config.parameter in [u'crdppflogopath', u'cantonlogopath']:
-            appconfig[config.parameter] = config.paramvalue
-    extract = {}
-    extractcreationdate = datetime.now().strftime("%Y%m%d%H%M%S")
-    extract['pdfid'] = extractcreationdate
+            extract.baseconfig[config.parameter] = config.paramvalue
+    extract.id = extract.timestamp
 
     # Define language to get multilingual labels for the selected language
     # defaults to 'fr': french - this may be changed in the appconfig
     if 'lang' not in session:
-        lang = request.registry.settings['default_language'].lower()
+        extract.baseconfig['lang'] = request.registry.settings['default_language'].lower()
     else : 
-        lang = session['lang'].lower()
-    translations = get_translations(lang)
-    appconfig['translations'] = translations
-
+        extract.baseconfig['lang']  = session['lang'].lower()
+    extract.baseconfig['translations'] = get_translations(extract.baseconfig['lang'])
+    # for simplification
+    translations = extract.baseconfig['translations'] 
     
     # 1) If the ID of the parcel is set get the basic attributs of the property
     # else get the ID (idemai) of the selected parcel first using X/Y coordinates of the center 
     #----------------------------------------------------------------------------------------------------
-    featureInfo = get_feature_info(idemai,translations) # '1_14127' # test parcel or '1_11340'
-    extract['featureInfo'] = featureInfo
+    featureinfo = get_feature_info(idemai,translations) # '1_14127' # test parcel or '1_11340'
+    featureinfo = featureinfo
+    extract.filename = extract.id + u'_' + featureinfo['featureid']
     
     # 3) Get the list of all the restrictions by topicorder set in a column
     #-------------------------------------------
-    topics = DBSession.query(Topics).order_by(Topics.topicorder).all()
-    
-    # Configure the WMTS background layer
-    url = request.registry.settings['wmts_getcapabilities_url']
-    defaultTiles =  ast.literal_eval("{"+request.registry.settings['defaultTiles']+"}")
-    layer = defaultTiles['wmtsname']
-    wmts_layer_ = wmts_layer(url, layer)
+    extract.topics = DBSession.query(Topics).order_by(Topics.topicorder).all()
 
-    municipality = featureInfo['nomcom'].strip()
-    cadastre = featureInfo['nomcad'].strip()
-    propertynumber = featureInfo['nummai'].strip()
-    type = featureInfo['type'].strip()
-    propertyarea = featureInfo['area']
+    # Configure the WMTS background layer
+    defaultTiles = ast.literal_eval("{"+request.registry.settings['defaultTiles']+"}")
+    wmts = {
+        'url': request.registry.settings['wmts_getcapabilities_url'],
+        'defaultTiles': defaultTiles,
+        'layer': defaultTiles['wmtsname']
+    }
+
+    wmts_layer_= wmts_layer(wmts['url'], wmts['layer'])
+    extract.baseconfig['wmts'] = wmts
+
+    municipality = featureinfo['nomcom'].strip()
+    cadastre = featureinfo['nomcad'].strip()
+    propertynumber = featureinfo['nummai'].strip()
+    propertytype = featureinfo['type'].strip()
+    propertyarea = featureinfo['area']
     report_title = translations['reducedcertifiedextracttitlelabel']
     certificationlabel = translations['certificationlabel']
     
@@ -175,21 +212,25 @@ def get_content(idemai, request):
 
     for char in conversion:
         municipality_escaped = municipality_escaped.replace(char[0], char[1])
-
+    extract.header['municipality_escaped'] = municipality_escaped
+    
     municipalitylogodir = '/'.join([
         request.registry.settings['localhost_url'],
         'proj/images/ecussons/'])
     municipalitylogopath = municipalitylogodir + municipality_escaped + '.png'
+    extract.header['municipalitylogopath'] = municipalitylogopath
 
     # Get the raw feature BBOX
-    bbox = get_feature_bbox(idemai)
-
+    extract.basemap['bbox'] = get_feature_bbox(idemai)
+    bbox = extract.basemap['bbox'] 
+    
     if bbox is False:
         log.warning('Found more then one bbox for idemai: %s' % idemai)
         return False
 
     # Get the feature center
-    feature_center = get_feature_center(idemai)
+    extract.basemap['feature_center'] = get_feature_center(idemai)
+    feature_center = extract.basemap['feature_center']
 
     if feature_center is False:
         log.warning('Found more then one geometry for idemai: %s' % idemai)
@@ -275,83 +316,107 @@ def get_content(idemai, request):
     #~ base_map["bbox"] = " "
         
     data = []
-    topiclist = {}
+    topicdata = {}
+    topicdata['toc_entries'] = {}
+    topicdata['doclist'] = []
+    topicdata['appendix_entries'] = []
+    appconfig = extract.baseconfig
 
-    for topic in topics:
+    for topic in extract.topics:
         layers = []
 
         # for the federal data layers we get the restrictions calling the feature service and store the result in the DB
-        #~ if topic.topicid in appconfig['ch_topics']:
-            #~ xml_layers = []
-            #~ for xml_layer in topic.layers:
-                #~ xml_layers.append(xml_layer.layername)
-            #~ get_XML(featureInfo['geom'], topic.topicid, extractcreationdate, lang, translations)
+        if topic.topicid in extract.baseconfig['ch_topics']:
+            xml_layers = []
+            for xml_layer in topic.layers:
+                xml_layers.append(xml_layer.layername)
+            #~ get_XML(feature['geom'], topic.topicid, extractcreationdate, lang, translations)
 
-        topiclist[str(topic.topicid)]={
+        topicdata[str(topic.topicid)]={
             'categorie':0,
             'topicname':topic.topicname,
             'layers':{},
-            'authority':topic.authority, 
+            'authority': {
+                'authorityuuid': topic.authority.authorityid,
+                'authorityname': topic.authority.authorityname,
+                'authorityurl': topic.authority.authoritywww
+                }, 
             'topicorder':topic.topicorder,
             'authorityfk':topic.authorityfk,
             'publicationdate':topic.publicationdate
             }
 
-        toc_entries = {}
         # if geographic layers are defined for the topic, get the list of all layers and then
         # check for each layer the information regarding the features touching the property
         if topic.layers:
-            add_toc_entry(topic.topicid, '', str(topic.topicname.encode('iso-8859-1')), 1, '')
+            topicdata['toc_entries'].update(add_toc_entry(topic.topicid, '', str(topic.topicname.encode('iso-8859-1')), 1, ''))
             for layer in topic.layers:
-                topiclist[str(topic.topicid)]['layers'][layer.layerid]={
-                    'layername':layer.layername,
-                    'features':None
+                topicdata[str(topic.topicid)]['layers'][layer.layerid]={
+                    'layername': layer.layername,
+                    'features': None
                     }
-                # intersects a given layer with the feature and adds the results to the topiclist- see method add_layer
-                toto = add_layer(request, layer, propertynumber, featureInfo, translations, appconfig, topiclist)
-                topiclist.update(add_layer(request, layer, propertynumber, featureInfo, translations, appconfig, topiclist))
+                # intersects a given layer with the feature and adds the results to the topicdata- see method add_layer
+                topicdata[str(topic.topicid)].update(add_layer(request, layer, propertynumber, featureinfo, translations, appconfig, topicdata))
             #~ get_topic_map(topic.layers, topic.topicid)
             # Get the list of documents related to a topic with layers and results
-            if topiclist[str(layer.topicfk)]['categorie'] == 3:
+            if topicdata[str(layer.topicfk)]['categorie'] == 3:
                 docfilters = [str(topic.topicid)]
-                for doctype in appconfig['doctypes']:
+                for doctype in appconfig['doctypes'].split(','):
                     docidlist = get_document_ref(docfilters)
-                    #~ topiclist[str(topic.topicid)][doctype] = set_documents(request, str(topic.topicid), doctype, docidlist, featureInfo, True)      
-
+                    topicdata[str(topic.topicid)][doctype] = set_documents(request, str(topic.topicid), doctype, docidlist, featureinfo, True, topicdata)      
         else:
             if str(topic.topicid) in appconfig['emptytopics']:
-                topiclist[str(topic.topicid)]['layers'] = None
-                topiclist[str(topic.topicid)]['categorie'] = 1
+                topicdata[str(topic.topicid)]['layers'] = None
+                topicdata[str(topic.topicid)]['categorie'] = 1
             else:
-                topiclist[str(topic.topicid)]['layers'] = None
-                topiclist[str(topic.topicid)]['categorie'] = 0
+                topicdata[str(topic.topicid)]['layers'] = None
+                topicdata[str(topic.topicid)]['categorie'] = 0
 
-        data.append({
-            'topic_title': topic.topicname,
-            'table' : {
-                'columns': ["id", "name", "icon"],
-                'data': [
-                    [1, "blah", "icon_pan"],
-                    [2, "blip", "icon_zoomin"]
-                    ]
-                }
-            #~ topic.topicorder,
-            #~ layers
-            #'topiclist': topiclist,
-            })
-            
-    #~ data.append(
-        #~ {
-        #~ 'topic_title': 'titre1',
-        #~ 'topic_text': 'topicorder',
-        #~ 'topic_layers': 'layer',
-        #~ 'topiclist': topiclist,
-        #~ 'map': map
-        #~ })
-
+	if topicdata[topic.topicid]['categorie'] == 3:
+		data.append({
+			"topicname": topic.topicname,
+			"map": map,
+			"table" : {
+				"columns": [
+					"restrictions",
+					"objectlegend",
+					"maplegend",
+					"legalprovisions",
+					"legalbases",
+					"references",
+					"authority"
+				],
+				"data": [[
+					"restrictions",
+					"objectlegend",
+					"maplegend",
+					"legalprovisions",
+					"legalbases",
+					"references",
+					"authority"
+				]]}
+		})
+			#~ "topicname": topic.topicname,
+			#~ "authority": topic.authority.authorityname,
+			#~ "table" : [{
+				#~ "legalbases": topicdata[topic.topicid]['legalbase'],
+				#~ "legalprovisions": topicdata[topic.topicid]['legalprovision'],
+				#~ "references": topicdata[topic.topicid]['reference']
+				#~ }]
+			#~ })
+			#~ {"columns": [
+				#~ "topic_title",
+				#~ "restrictions",
+				#~ "objectlegend",
+				#~ "maplegend",
+				#~ "legalprovisions",
+				#~ "legalbases",
+				#~ "references",
+				#~ "authority"
+				#~ ],
     d = {
     #    "datasource": [],
-        "map": map
+        #~ "map": map
         }
 
     #~ maps = []
@@ -363,35 +428,41 @@ def get_content(idemai, request):
             #~ "map": my_map,
             #~ "legend_url": "http://...&style=toto.xml"
         #~ })
-      
+
     d= {
         "attributes": {
-        "extractcreationdate": extractcreationdate,
-        "map": map,
-        "municipality": municipality,
-        "cadastre": cadastre,
-        "propertytype": type,
-        "propertynumber": propertynumber,
-        "EGRIDnumber": featureInfo['no_egrid'],
-        "municipalitylogopath": municipalitylogopath,
-        "federalmunicipalitynumber": featureInfo['nufeco'],
-        "competentauthority": 'Placeholder',
-        "report_title": report_title,
-        "propertyarea": propertyarea,
-        "datasource": data
-        #~ "attributes": {"map": {
-            #~ "bbox": [555932, 201899, 556079, 202001],
-            #~ "dpi": 72,
-            #~ "layers": [{
-                #~ "type": "geojson",
-                #~ "geoJson":"http://localhost:6544/property/get?ids=13_5199"
-            #~ }],
-            #~ "longitudeFirst": True,
-            #~ "projection": "EPSG:21781",
-            #~ "scale": 1000
-        #~ }
+			"extractcreationdate": extract.creationdate,
+			"filename": extract.filename,
+			#~ "map": map,
+			"municipality": municipality,
+			"cadastre": cadastre,
+			"propertytype": propertytype,
+			"propertynumber": propertynumber,
+			"EGRIDnumber": featureinfo['no_egrid'],
+			"municipalitylogopath": municipalitylogopath,
+			"federalmunicipalitynumber": featureinfo['nufeco'],
+			"competentauthority": "Placeholder",
+			"title": report_title,
+			"comments": "comment",
+			"propertyarea": propertyarea,
+			"maplegendlabel": "Autre légende (visible dans le cadre)",
+			"certificationtext": "Certification selon xyz",
+			"toctitle": "Sommaire des thèmes RDPPF",
+			"datasource": data
+			#~ "attributes": {"map": {
+				#~ "bbox": [555932, 201899, 556079, 202001],
+				#~ "dpi": 72,
+				#~ "layers": [{
+					#~ "type": "geojson",
+					#~ "geoJson":"http://localhost:6544/property/get?ids=13_5199"
+				#~ }],
+				#~ "longitudeFirst": True,
+				#~ "projection": "EPSG:21781",
+				#~ "scale": 1000
+			#~ }
         },
-        "layout": "report"
+        "layout": "report",
+		"outputFormat": "pdf"
     }
     #~ sdf
     return d

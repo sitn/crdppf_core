@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 
 from dogpile.cache.region import make_region
 
@@ -54,5 +55,6 @@ def get_cached_content_l10n(lang):
             d[str(translation.varstr)] = getattr(translation, lang)
         else:
             log.warning("There is a undefined translation")
+            d[str(translation.varstr)] = u'undefined'
 
     return d
