@@ -1,24 +1,77 @@
 throwErrorOnExtraParameters: true
 
 templates:
-    A4 portrait: !template
-        reportTemplate: multimap.jrxml
+    report: !template
+        outputFilename: ${yyyyMMdd}_extract
+        reportTemplate: pdfextract.jrxml
         tableData: jrDataSource
         attributes:
             title: !string {}
             comments: !string {}
+           # Global variables
+            placeholderlabel: !string {}
+            # Variables for header
+            ch_logo: !string {}
+            canton_logo: !string {}
+            municipalitylogopath: !string {}
+            crdppf_logo: !string {}
+            competentauthority: !string {} 
+            # Variables for footer
+            # Variables for title page
+            municipality: !string {}
+            municipalitylabel: !string {}
+            federalmunicipalitynumber: !string {}
+            cadastre: !string {}
+
+            extractsubtitlelabel: !string {}
+            propertylabel: !string {}
+            propertynumber: !string {}
+            propertytype: !string {}
+            propertyarealabel: !string {}
+            propertyarea: !string {}
+            EGRIDlabel: !string {}
+            EGRIDnumber: !string {}
+            creationdatelabel: !string {}
+            extractcreationdate: !string {}
+            extractoperatorlabel: !string {}
+            certificationlabel: !string {}
+            certificationtext: !string {}
+            # Variables for TOC
+            # Variables for topic page
+            legendlabel: !string {}
+            maplegendlabel: !string {}
+            completlegendlabel: !string {} 
+            legalbaseslabel: !string {} 
+            legalprovisionslabel: !string {} 
+            referenceslabel: !string {} 
+            competentauthoritylabel: !string {}
             datasource: !datasource
                 attributes:
                     topicname: !string {}
-                    description: !string {}
+                    table: !table {}
+                    northArrow: !northArrow
+                      size: 40
+                      default:
+                          graphic: "file:///north.svg"
+                    scalebar: !scalebar
+                        width: 150
+                        height: 20
+                        default:
+                          fontSize: 8
                     map: !map
                         maxDpi: 254
-                        width: 200
-                        height: 200
+                        width: 493
+                        height: 280
 
         processors:
         - !reportBuilder # compile all reports in current directory
             directory: '.'
         - !createDataSource
-            processors:
-            - !createMap {}
+          reportTemplate: table.jrxml
+          reportKey: reportTemplate
+          processors:
+          - !createNorthArrow {}
+          - !createScalebar {}
+          - !createMap {}
+          - !prepareTable
+            dynamic: true

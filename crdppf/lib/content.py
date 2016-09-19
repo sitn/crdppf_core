@@ -391,7 +391,7 @@ def get_content(idemai, request):
 					"objectlegend",
 					"maplegend",
 					"legalprovisions",
-					"legalbases",
+					"legalbase",
 					"references",
 					"authority"
 				]]}
