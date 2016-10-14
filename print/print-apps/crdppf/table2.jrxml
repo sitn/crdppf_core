@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-10-14T18:03:43 -->
+<!-- 2016-10-14T18:25:17 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DJR_2141" pageWidth="200" pageHeight="842" columnWidth="200" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="ar.com.fdvs.dj.core.DJDefaultScriptlet" whenResourceMissingType="Key" uuid="e034c6ef-7449-4a6a-9b5e-4ce04cc083b2">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -12,16 +12,21 @@
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
-	<field name="item" class="java.lang.String"/>
+	<field name="remoteurl" class="java.lang.String"/>
 	<field name="officialtitle" class="java.lang.String"/>
 	<detail>
-		<band height="35" splitType="Immediate">
+		<band height="30" splitType="Immediate">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField>
-				<reportElement x="0" y="16" width="200" height="15" uuid="1fe50585-02c0-4feb-ac2b-c319c925bb71">
+				<reportElement x="0" y="0" width="200" height="15" uuid="1fe50585-02c0-4feb-ac2b-c319c925bb71">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[$F{officialtitle}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="15" width="200" height="15" uuid="2e2755e3-fde8-43d3-91f2-36d1d5f666d5"/>
+				<textFieldExpression><![CDATA[$F{remoteurl}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-10-14T18:08:14 -->
+<!-- 2016-10-14T18:49:44 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DJR_2141" pageWidth="595" pageHeight="842" columnWidth="493" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="ar.com.fdvs.dj.core.DJDefaultScriptlet" whenResourceMissingType="Key" uuid="e034c6ef-7449-4a6a-9b5e-4ce04cc083b2">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -114,14 +114,6 @@
 			<break>
 				<reportElement x="0" y="60" width="100" height="1" uuid="c483469f-ff9c-48f8-a4e9-3841cdc12edf"/>
 			</break>
-			<textField>
-				<reportElement x="252" y="34" width="100" height="30" uuid="ea0bec11-bbb0-4fd2-bd52-122a48a31312"/>
-				<textFieldExpression><![CDATA[$F{remoteurl}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="152" y="34" width="100" height="30" uuid="df6b8ce9-8483-4047-bd54-658ad1b390ef"/>
-				<text><![CDATA[remoteurl]]></text>
-			</staticText>
 		</band>
 	</detail>
 </jasperReport>

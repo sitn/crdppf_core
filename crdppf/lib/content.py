@@ -383,15 +383,15 @@ def get_content(idemai, request):
 	#~ table = topicdata[topic.topicid]['legalbase']
 
 	if topicdata[topic.topicid]['categorie'] == 3:
-		#~ table = topicdata[topic.topicid]['legalbase']
-		#~ if len(table) < 1:
-		table = {
-				"columns": ["officialtitle","remoteurl"],
-				"data": [
-					[topic.topicname, "url1"],
-					["Document 2", "url2"],
-				]
-			}
+		table = topicdata[topic.topicid]['legalbase']
+		if len(table) < 1:
+			table = {
+					"columns": ["officialtitle","remoteurl"],
+					"data": [
+						[topic.topicname, "url1"],
+						["Document 2", "url2"],
+					]
+				}
 		data.append({
 			"topicname": topic.topicname,
 			"map": map,
