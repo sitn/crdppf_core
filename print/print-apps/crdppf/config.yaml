@@ -1,77 +1,102 @@
 throwErrorOnExtraParameters: true
 
 templates:
-    report: !template
-        outputFilename: ${yyyyMMdd}_extract
-        reportTemplate: pdfextract.jrxml
-        tableData: jrDataSource
+  report: !template
+    outputFilename: ${yyyyMMddhhmmss}_extract
+    reportTemplate: dynamictables.jrxml
+
+    attributes:
+      # Global variables
+      placeholderlabel: !string {}
+      
+      # Variables for header
+      ch_logo: !string {}
+      canton_logo: !string {}
+      municipalitylogopath: !string {}
+      crdppf_logo: !string {}
+      competentauthority: !string {} 
+      
+      # Variables for footer
+      # Variables for title page
+      municipality: !string {}
+      municipalitylabel: !string {}
+      federalmunicipalitynumber: !string {}
+      cadastre: !string {}
+      title: !string {}
+      extractsubtitlelabel: !string {}
+      propertylabel: !string {}
+      propertynumber: !string {}
+      propertytype: !string {}
+      propertyarealabel: !string {}
+      propertyarea: !string {}
+      EGRIDlabel: !string {}
+      EGRIDnumber: !string {}
+      creationdatelabel: !string {}
+      extractcreationdate: !string {}
+      extractoperatorlabel: !string {}
+      certificationlabel: !string {}
+      certificationtext: !string {}
+
+      # Variables for TOC
+      # Variables for topic page
+      legendlabel: !string {}
+      completlegendlabel: !string {} 
+      legalbaseslabel: !string {} 
+      legalprovisionslabel: !string {} 
+      referenceslabel: !string {} 
+      competentauthoritylabel: !string {} 
+
+      scalebar: !scalebar
+        width: 150
+        height: 20
+        default:
+          fontSize: 8
+      mymap: !map
+        maxDpi: 400
+        width: 493
+        height: 280
+        
+      datasource: !datasource
         attributes:
-            title: !string {}
-            comments: !string {}
-           # Global variables
-            placeholderlabel: !string {}
-            # Variables for header
-            ch_logo: !string {}
-            canton_logo: !string {}
-            municipalitylogopath: !string {}
-            crdppf_logo: !string {}
-            competentauthority: !string {} 
-            # Variables for footer
-            # Variables for title page
-            municipality: !string {}
-            municipalitylabel: !string {}
-            federalmunicipalitynumber: !string {}
-            cadastre: !string {}
-
-            extractsubtitlelabel: !string {}
-            propertylabel: !string {}
-            propertynumber: !string {}
-            propertytype: !string {}
-            propertyarealabel: !string {}
-            propertyarea: !string {}
-            EGRIDlabel: !string {}
-            EGRIDnumber: !string {}
-            creationdatelabel: !string {}
-            extractcreationdate: !string {}
-            extractoperatorlabel: !string {}
-            certificationlabel: !string {}
-            certificationtext: !string {}
-            # Variables for TOC
-            # Variables for topic page
-            legendlabel: !string {}
-            maplegendlabel: !string {}
-            completlegendlabel: !string {} 
-            legalbaseslabel: !string {} 
-            legalprovisionslabel: !string {} 
-            referenceslabel: !string {} 
-            competentauthoritylabel: !string {}
-            datasource: !datasource
-                attributes:
-                    topicname: !string {}
-                    table: !table {}
-                    northArrow: !northArrow
-                      size: 40
-                      default:
-                          graphic: "file:///north.svg"
-                    scalebar: !scalebar
-                        width: 150
-                        height: 20
-                        default:
-                          fontSize: 8
-                    map: !map
-                        maxDpi: 254
-                        width: 493
-                        height: 280
-
+          topicname: !string {}
+          northArrow: !northArrow
+            size: 40
+            default:
+              graphic: "file:///north.svg"
+          scalebar: !scalebar
+            width: 150
+            height: 20
+            default:
+              fontSize: 8
+          map: !map
+            maxDpi: 254
+            width: 493
+            height: 280
+          table: !table {}
+          topicdata: !datasource
+            attributes:
+              item: !table {}
+          
+    processors:
+    - !reportBuilder # compile all reports in current directory
+      directory: '.'
+    - !createScalebar {}
+    - !createMap
+      inputMapper: {mymap: map}
+      outputMapper: {mapSubReport: mymap}
+    - !createDataSource
+      processors:
+      - !createNorthArrow {}
+      - !createScalebar {}
+      - !createMap {}
+      - !prepareTable
+        dynamic: true
+      - !createDataSource
         processors:
+        - !prepareTable
+          inputMapper: {item: table}
+          outputMapper: {table: items}
         - !reportBuilder # compile all reports in current directory
-            directory: '.'
-        - !createDataSource
-          reportTemplate: table.jrxml
-          reportKey: reportTemplate
-          processors:
-          - !createNorthArrow {}
-          - !createScalebar {}
-          - !createMap {}
-          - !prepareTable
-            dynamic: true
+          directory: '.'
+        inputMapper: {topicdata: datasource}
+        outputMapper: {jrDataSource: tableDS}

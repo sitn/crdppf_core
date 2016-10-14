@@ -58,7 +58,8 @@ def set_documents(request, topicid, doctype, docids, featureinfo, geofilter, top
         docs = get_documents(filters)
     #~ else:
         #~ docs = []
-
+    data = []
+    columns = []
     references = []
     appendices = []
     # store the documents in a list
@@ -76,6 +77,11 @@ def set_documents(request, topicid, doctype, docids, featureinfo, geofilter, top
                     appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'], topicdata))
                 if doc['documentid'] not in doclist:
                     doclist.append(doc)
+
+        columns = doclist[0].keys()
+        for document in doclist:
+            data.append([document['officialtitle'], document['remoteurl']])
+        references = {"columns": ["officialtitle","remoteurl"], "data": data}
 
     return references
         
@@ -290,7 +296,7 @@ def get_content(idemai, request):
         "dpi": 150,
         "rotation": 0,
         "center": feature_center,
-        "scale": print_box['scale'],
+        "scale": print_box['scale']*2,
         "longitudeFirst": "true",
         "layers": [{
             "type": "geojson",
@@ -302,7 +308,7 @@ def get_content(idemai, request):
                 "strokeOpacity": 0.6,
                 "[INTERSECTS(geometry, "+wkt_polygon+")]": {
                     "symbolizers": [{
-                        "strokeColor": "green",
+                        "strokeColor": "red",
                         "strokeWidth": 2,
                         "type": "line"
                     }]
@@ -363,7 +369,9 @@ def get_content(idemai, request):
                 docfilters = [str(topic.topicid)]
                 for doctype in appconfig['doctypes'].split(','):
                     docidlist = get_document_ref(docfilters)
-                    topicdata[str(topic.topicid)][doctype] = set_documents(request, str(topic.topicid), doctype, docidlist, featureinfo, True, topicdata)      
+                    topicdata[str(topic.topicid)][doctype] = set_documents(request, str(topic.topicid), doctype, docidlist, featureinfo, True, topicdata)
+            #~ sddf
+
         else:
             if str(topic.topicid) in appconfig['emptytopics']:
                 topicdata[str(topic.topicid)]['layers'] = None
@@ -372,29 +380,36 @@ def get_content(idemai, request):
                 topicdata[str(topic.topicid)]['layers'] = None
                 topicdata[str(topic.topicid)]['categorie'] = 0
 
+	#~ table = topicdata[topic.topicid]['legalbase']
+
 	if topicdata[topic.topicid]['categorie'] == 3:
 		data.append({
 			"topicname": topic.topicname,
 			"map": map,
+			"topicdata" : [{
+				"item" : {
+							"columns": ["officialtitle","remoteurl"],
+							"data": [
+								["Document 1", "url1"],
+								["Document 2", "url2"],
+							]
+						}
+				}],
 			"table" : {
-				"columns": [
-					"restrictions",
-					"objectlegend",
-					"maplegend",
-					"legalprovisions",
-					"legalbases",
-					"references",
-					"authority"
-				],
-				"data": [[
-					"restrictions",
-					"objectlegend",
-					"maplegend",
-					"legalprovisions",
-					"legalbase",
-					"references",
-					"authority"
-				]]}
+						"columns": ["officialtitle","remoteurl"],
+						"data": [
+							["Document 1", "url1"],
+							["Document 2", "url2"],
+						]
+					}
+			#~ "topicdata": {"item": "values"}
+				#~ {
+						#~ "columns": ["officialtitle","remoteurl"],
+						#~ "data": [
+							#~ ["Document 1", "url1"],
+							#~ ["Document 2", "url2"],
+						#~ ]
+					#~ }
 		})
 			#~ "topicname": topic.topicname,
 			#~ "authority": topic.authority.authorityname,
@@ -414,10 +429,6 @@ def get_content(idemai, request):
 				#~ "references",
 				#~ "authority"
 				#~ ],
-    d = {
-    #    "datasource": [],
-        #~ "map": map
-        }
 
     #~ maps = []
 
@@ -433,7 +444,7 @@ def get_content(idemai, request):
         "attributes": {
 			"extractcreationdate": extract.creationdate,
 			"filename": extract.filename,
-			#~ "map": map,
+			"mymap": basemap,
 			"municipality": municipality,
 			"cadastre": cadastre,
 			"propertytype": propertytype,

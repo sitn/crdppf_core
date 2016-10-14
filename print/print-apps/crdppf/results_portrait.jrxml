@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2016-10-14T15:47:41 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="gmf16_A4_portrait" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="20" bottomMargin="20" uuid="3664412a-b6c6-4e1c-8c14-6c4af7e6efc2">
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="ch_logo" class="java.lang.String"/>
+	<parameter name="canton_logo" class="java.lang.String"/>
+	<parameter name="municipalitylogopath" class="java.lang.String"/>
+	<parameter name="municipality" class="java.lang.String"/>
+	<parameter name="crdppf_logo" class="java.lang.String"/>
+	<field name="topicname" class="java.lang.String"/>
+	<field name="table" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
+	<field name="topicdata" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
+	<field name="mapSubReport" class="java.lang.String"/>
+	<field name="northArrowSubReport" class="java.lang.String"/>
+	<field name="scalebarSubReport" class="java.lang.String"/>
+	<field name="tableSubReport" class="java.lang.String"/>
+	<pageHeader>
+		<band height="55">
+			<image scaleImage="RealSize">
+				<reportElement x="0" y="0" width="116" height="40" uuid="3269391e-265d-485c-ad6d-ed61890b36c3">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
+					<property name="local_mesure_unity" value="mm"/>
+					<property name="local_mesure_unitwidth" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+					<property name="local_mesure_unitheight" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{ch_logo}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="170" y="0" width="100" height="28" uuid="94447617-8144-4b0f-a679-2af7a1a081e0">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{canton_logo}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="277" y="0" width="40" height="28" uuid="3047316e-c739-404e-84fc-ff17fb8240c7">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{municipalitylogopath}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="277" y="32" width="112" height="15" uuid="e65a4a6d-66c8-41a0-ab45-ca870e85775b">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="54" width="493" height="1" uuid="3885214a-401c-41a9-9cad-0e74d108a039">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.2" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<image>
+				<reportElement x="394" y="0" width="99" height="28" uuid="8cdb064a-ea84-4d75-8ba8-bcce4d5ae463">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{crdppf_logo}]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="448">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<subreport>
+				<reportElement x="0" y="340" width="493" height="30" uuid="2d58b926-6505-49df-ac13-667df92d4cb1">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<dataSourceExpression><![CDATA[$F{table}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$F{tableSubReport}]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="1" y="0" width="493" height="22" uuid="22c80cf5-78d8-4791-9eb9-ac621df1a041">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{topicname}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="0" y="40" width="493" height="280" uuid="4d2eb9bc-9c29-4694-b1ba-c5e314f16e94">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+			</rectangle>
+			<subreport>
+				<reportElement mode="Transparent" x="0" y="40" width="493" height="280" uuid="cdbe4941-8c60-4e51-aed3-344a41e4d1a5">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<subreportExpression><![CDATA[$F{mapSubReport}]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="422" width="100" height="1" uuid="1cb13fb7-4f07-4039-be93-77ac04a688ca"/>
+			</break>
+			<textField>
+				<reportElement x="130" y="380" width="100" height="30" uuid="5a9b71c9-d302-4f03-afda-8463ff790980"/>
+				<textFieldExpression><![CDATA[$F{topicdata}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="30" y="380" width="100" height="30" uuid="3389ec08-fc7c-4955-919c-a333e6e10e82"/>
+				<text><![CDATA[topicdata]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>
