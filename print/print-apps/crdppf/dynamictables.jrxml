@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-10-14T15:35:11 -->
+<!-- 2016-10-14T17:34:40 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="dynamictables" pageWidth="595" pageHeight="842" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" uuid="ec5a2ca3-0f18-45f7-bcd3-6113b53cad98">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -41,7 +41,9 @@
 	<parameter name="certificationtext" class="java.lang.String"/>
 	<parameter name="title" class="java.lang.String"/>
 	<parameter name="jrDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
-	<parameter name="mymap" class="java.lang.String"/>
+	<parameter name="basemap" class="java.lang.String"/>
+	<field name="topicdata" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
+	<field name="northArrowSubReport" class="java.lang.String"/>
 	<field name="scalebarSubReport" class="java.lang.String"/>
 	<title>
 		<band height="717">
@@ -276,7 +278,7 @@
 						<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
-					<subreportExpression><![CDATA[$P{mymap}]]></subreportExpression>
+					<subreportExpression><![CDATA[$P{basemap}]]></subreportExpression>
 				</subreport>
 			</frame>
 			<textField isBlankWhenNull="true">

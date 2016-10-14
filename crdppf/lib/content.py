@@ -383,25 +383,23 @@ def get_content(idemai, request):
 	#~ table = topicdata[topic.topicid]['legalbase']
 
 	if topicdata[topic.topicid]['categorie'] == 3:
+		#~ table = topicdata[topic.topicid]['legalbase']
+		#~ if len(table) < 1:
+		table = {
+				"columns": ["officialtitle","remoteurl"],
+				"data": [
+					[topic.topicname, "url1"],
+					["Document 2", "url2"],
+				]
+			}
 		data.append({
 			"topicname": topic.topicname,
 			"map": map,
 			"topicdata" : [{
-				"item" : {
-							"columns": ["officialtitle","remoteurl"],
-							"data": [
-								["Document 1", "url1"],
-								["Document 2", "url2"],
-							]
-						}
-				}],
-			"table" : {
-						"columns": ["officialtitle","remoteurl"],
-						"data": [
-							["Document 1", "url1"],
-							["Document 2", "url2"],
-						]
-					}
+				"item": topic.topicname,
+				"table": table
+				}]
+		})
 			#~ "topicdata": {"item": "values"}
 				#~ {
 						#~ "columns": ["officialtitle","remoteurl"],
@@ -410,7 +408,6 @@ def get_content(idemai, request):
 							#~ ["Document 2", "url2"],
 						#~ ]
 					#~ }
-		})
 			#~ "topicname": topic.topicname,
 			#~ "authority": topic.authority.authorityname,
 			#~ "table" : [{
@@ -444,7 +441,7 @@ def get_content(idemai, request):
         "attributes": {
 			"extractcreationdate": extract.creationdate,
 			"filename": extract.filename,
-			"mymap": basemap,
+			"basemap": basemap,
 			"municipality": municipality,
 			"cadastre": cadastre,
 			"propertytype": propertytype,

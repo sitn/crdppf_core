@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-10-14T15:47:41 -->
+<!-- 2016-10-14T18:07:21 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="gmf16_A4_portrait" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="20" bottomMargin="20" uuid="3664412a-b6c6-4e1c-8c14-6c4af7e6efc2">
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="ch_logo" class="java.lang.String"/>
@@ -9,8 +9,8 @@
 	<parameter name="municipality" class="java.lang.String"/>
 	<parameter name="crdppf_logo" class="java.lang.String"/>
 	<field name="topicname" class="java.lang.String"/>
-	<field name="table" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
 	<field name="topicdata" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
+	<field name="table" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
 	<field name="mapSubReport" class="java.lang.String"/>
 	<field name="northArrowSubReport" class="java.lang.String"/>
 	<field name="scalebarSubReport" class="java.lang.String"/>
@@ -88,7 +88,7 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="448">
+		<band height="434">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<subreport>
 				<reportElement x="0" y="340" width="493" height="30" uuid="2d58b926-6505-49df-ac13-667df92d4cb1">
@@ -97,8 +97,32 @@
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
-				<dataSourceExpression><![CDATA[$F{table}]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$F{tableSubReport}]]></subreportExpression>
+				<subreportParameter name="table">
+					<subreportParameterExpression><![CDATA[$F{table}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="topicdata">
+					<subreportParameterExpression><![CDATA[$F{topicdata}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ch_logo">
+					<subreportParameterExpression><![CDATA[$P{ch_logo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="canton_logo">
+					<subreportParameterExpression><![CDATA[$P{canton_logo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="municipalitylogopath">
+					<subreportParameterExpression><![CDATA[$P{municipalitylogopath}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="municipality">
+					<subreportParameterExpression><![CDATA[$P{municipality}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="crdppf_logo">
+					<subreportParameterExpression><![CDATA[$P{crdppf_logo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[$F{topicdata}]]></dataSourceExpression>
+				<subreportExpression><![CDATA["table.jasper"]]></subreportExpression>
 			</subreport>
 			<textField>
 				<reportElement x="1" y="0" width="493" height="22" uuid="22c80cf5-78d8-4791-9eb9-ac621df1a041">
@@ -129,14 +153,17 @@
 			<break>
 				<reportElement x="0" y="422" width="100" height="1" uuid="1cb13fb7-4f07-4039-be93-77ac04a688ca"/>
 			</break>
-			<textField>
-				<reportElement x="130" y="380" width="100" height="30" uuid="5a9b71c9-d302-4f03-afda-8463ff790980"/>
-				<textFieldExpression><![CDATA[$F{topicdata}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="30" y="380" width="100" height="30" uuid="3389ec08-fc7c-4955-919c-a333e6e10e82"/>
-				<text><![CDATA[topicdata]]></text>
-			</staticText>
+			<subreport>
+				<reportElement x="280" y="391" width="200" height="31" uuid="77628852-01ec-453c-a079-8d71c0dcc0e7"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="table">
+					<subreportParameterExpression><![CDATA[$F{table}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[$F{table}]]></dataSourceExpression>
+				<subreportExpression><![CDATA["table2.jasper"]]></subreportExpression>
+			</subreport>
 		</band>
 	</detail>
 </jasperReport>

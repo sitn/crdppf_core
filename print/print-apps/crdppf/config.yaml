@@ -51,7 +51,7 @@ templates:
         height: 20
         default:
           fontSize: 8
-      mymap: !map
+      basemap: !map
         maxDpi: 400
         width: 493
         height: 280
@@ -72,31 +72,28 @@ templates:
             maxDpi: 254
             width: 493
             height: 280
-          table: !table {}
           topicdata: !datasource
             attributes:
-              item: !table {}
+              item: !string {}
+              table: !table {}
           
     processors:
     - !reportBuilder # compile all reports in current directory
       directory: '.'
     - !createScalebar {}
     - !createMap
-      inputMapper: {mymap: map}
-      outputMapper: {mapSubReport: mymap}
+      inputMapper: {basemap: map}
+      outputMapper: {mapSubReport: basemap}
     - !createDataSource
       processors:
       - !createNorthArrow {}
       - !createScalebar {}
       - !createMap {}
-      - !prepareTable
-        dynamic: true
       - !createDataSource
         processors:
-        - !prepareTable
-          inputMapper: {item: table}
-          outputMapper: {table: items}
+        - !prepareTable {}
+          #~ dynamic: true
         - !reportBuilder # compile all reports in current directory
           directory: '.'
         inputMapper: {topicdata: datasource}
-        outputMapper: {jrDataSource: tableDS}
+        outputMapper: {jrDataSource: topicdata}
