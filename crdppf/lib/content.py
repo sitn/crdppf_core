@@ -42,22 +42,23 @@ def set_documents(request, topicid, doctype, docids, featureinfo, geofilter, top
 
     docs = []
     documents = []
-    doclist = topicdata['doclist']
+    doclist = topicdata["doclist"]
     
     if geofilter is True:
         filters = {
-            'docids': docids,
-            'topicid': topicid,
-            'cadastrenb': featureinfo['numcom'],
-            'chmunicipalitynb': featureinfo['nufeco']
+            "docids": docids,
+            "topicid": topicid,
+            "cadastrenb": featureinfo["numcom"],
+            "chmunicipalitynb": featureinfo["nufeco"]
         }
     else:
-        filters = {'docids':docids}
+        filters = {"docids":docids}
 
     if len(docids) > 0:
         docs = get_documents(filters)
     #~ else:
         #~ docs = []
+
     data = []
     columns = []
     references = []
@@ -66,24 +67,42 @@ def set_documents(request, topicid, doctype, docids, featureinfo, geofilter, top
     if len(docs) > 0:
         for doc in docs:
             if doc['doctype'] == doctype and doc['documentid'] in docids:
-                references.append(doc)
+                references.append({"officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl']})
                 if doc['doctype'] != u'legalbase' and doc['documentid'] not in doclist:
                     appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'], topicdata))
                 if doc['documentid'] not in doclist:
                     doclist.append(doc)
             if doc['doctype'] == doctype and geofilter is True and doc['documentid'] not in docids:
-                references.append(doc)
+                references.append({"officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl']})
                 if doc['doctype'] != u'legalbase' and doc['documentid'] not in doclist:
                     appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'], topicdata))
                 if doc['documentid'] not in doclist:
                     doclist.append(doc)
 
-        columns = doclist[0].keys()
         for document in doclist:
-            data.append([document['officialtitle'], document['remoteurl']])
-        references = {"columns": ["officialtitle","remoteurl"], "data": data}
+            references.append({"officialtitle": document['officialtitle'], "remoteurl": document['remoteurl']})
 
     return references
+    #~ # store the documents in a list
+    #~ if len(docs) > 0:
+        #~ for doc in docs:
+            #~ if doc["doctype"] == doctype and doc["documentid"] in docids:
+                #~ references.append({"officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl'], "publicationdate": ['publicationdate']})
+                #~ if doc["doctype"] != 'legalbase' and doc['documentid'] not in doclist:
+                    #~ appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(doc["officialtitle"]).encode('iso-8859-1'), unicode(doc["remoteurl"]).encode('iso-8859-1'), doc["localurl"], topicdata))
+                #~ if doc["documentid"] not in doclist:
+                    #~ doclist.append({"officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl'], "publicationdate": ['publicationdate']})
+            #~ if doc["doctype"] == doctype and geofilter is True and doc["documentid"] not in docids:
+                #~ references.append({"officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl'], "publicationdate": ['publicationdate']})
+                #~ if doc["doctype"] != 'legalbase' and doc["documentid"] not in doclist:
+                    #~ appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(doc["officialtitle"]).encode('iso-8859-1'), unicode(doc["remoteurl"]).encode('iso-8859-1'), doc["localurl"], topicdata))
+                #~ if doc["documentid"] not in doclist:
+                    #~ doclist.append(doc)
+
+        #~ for document in doclist:
+            #~ references.append({"officialtitle": document['officialtitle'], "remoteurl": document['remoteurl']})
+
+    #~ return references
         
 def add_toc_entry(topicid, num, label, categorie, appendices):
     tocentries = {}
@@ -146,9 +165,11 @@ def get_content(idemai, request):
     extract = Extract(request)
     
     for config in configs:
-        if not config.parameter in [u'crdppflogopath', u'cantonlogopath']:
+        if not config.parameter in ['crdppflogopath', 'cantonlogopath']:
             extract.baseconfig[config.parameter] = config.paramvalue
     extract.id = extract.timestamp
+
+    extract.topiclegenddir = request.static_url('crdppf:static/public/legend/')
 
     # Define language to get multilingual labels for the selected language
     # defaults to 'fr': french - this may be changed in the appconfig
@@ -296,7 +317,7 @@ def get_content(idemai, request):
         "dpi": 150,
         "rotation": 0,
         "center": feature_center,
-        "scale": print_box['scale']*2,
+        "scale": print_box['scale']*1.5,
         "longitudeFirst": "true",
         "layers": [{
             "type": "geojson",
@@ -323,15 +344,16 @@ def get_content(idemai, request):
         
     data = []
     topicdata = {}
-    topicdata['toc_entries'] = {}
-    topicdata['doclist'] = []
-    topicdata['appendix_entries'] = []
+    topicdata["toc_entries"] = {}
+    topicdata["doclist"] = []
+    topicdata["appendix_entries"] = []
     appconfig = extract.baseconfig
+    emptytopics = []
 
     for topic in extract.topics:
         layers = []
 
-        # for the federal data layers we get the restrictions calling the feature service and store the result in the DB
+		# for the federal data layers we get the restrictions calling the feature service and store the result in the DB
         if topic.topicid in extract.baseconfig['ch_topics']:
             xml_layers = []
             for xml_layer in topic.layers:
@@ -339,95 +361,74 @@ def get_content(idemai, request):
             #~ get_XML(feature['geom'], topic.topicid, extractcreationdate, lang, translations)
 
         topicdata[str(topic.topicid)]={
-            'categorie':0,
-            'topicname':topic.topicname,
-            'layers':{},
-            'authority': {
-                'authorityuuid': topic.authority.authorityid,
-                'authorityname': topic.authority.authorityname,
-                'authorityurl': topic.authority.authoritywww
+            "categorie": 0,
+            "topicname": topic.topicname,
+            "layers": {},
+            "authority": {
+                "authorityuuid": topic.authority.authorityid,
+                "authorityname": topic.authority.authorityname,
+                "authorityurl": topic.authority.authoritywww
                 }, 
-            'topicorder':topic.topicorder,
-            'authorityfk':topic.authorityfk,
-            'publicationdate':topic.publicationdate
+            "topicorder": topic.topicorder,
+            "authorityfk": topic.authorityfk,
+            "publicationdate": topic.publicationdate
             }
 
         # if geographic layers are defined for the topic, get the list of all layers and then
         # check for each layer the information regarding the features touching the property
         if topic.layers:
-            topicdata['toc_entries'].update(add_toc_entry(topic.topicid, '', str(topic.topicname.encode('iso-8859-1')), 1, ''))
+            topicdata["toc_entries"].update(add_toc_entry(topic.topicid, '', str(topic.topicname.encode('iso-8859-1')), 1, ''))
             for layer in topic.layers:
-                topicdata[str(topic.topicid)]['layers'][layer.layerid]={
-                    'layername': layer.layername,
-                    'features': None
+                topicdata[str(topic.topicid)]["layers"][layer.layerid]={
+                    "layername": layer.layername,
+                    "features": None
                     }
                 # intersects a given layer with the feature and adds the results to the topicdata- see method add_layer
                 topicdata[str(topic.topicid)].update(add_layer(request, layer, propertynumber, featureinfo, translations, appconfig, topicdata))
             #~ get_topic_map(topic.layers, topic.topicid)
             # Get the list of documents related to a topic with layers and results
-            if topicdata[str(layer.topicfk)]['categorie'] == 3:
+            if topicdata[str(layer.topicfk)]["categorie"] == 3:
                 docfilters = [str(topic.topicid)]
-                for doctype in appconfig['doctypes'].split(','):
+                for doctype in appconfig["doctypes"].split(','):
                     docidlist = get_document_ref(docfilters)
                     topicdata[str(topic.topicid)][doctype] = set_documents(request, str(topic.topicid), doctype, docidlist, featureinfo, True, topicdata)
-            #~ sddf
 
         else:
             if str(topic.topicid) in appconfig['emptytopics']:
+                emptytopics.append(topic.topicname)
                 topicdata[str(topic.topicid)]['layers'] = None
                 topicdata[str(topic.topicid)]['categorie'] = 1
             else:
                 topicdata[str(topic.topicid)]['layers'] = None
                 topicdata[str(topic.topicid)]['categorie'] = 0
 
-	#~ table = topicdata[topic.topicid]['legalbase']
-
-	if topicdata[topic.topicid]['categorie'] == 3:
-		table = topicdata[topic.topicid]['legalbase']
-		if len(table) < 1:
-			table = {
-					"columns": ["officialtitle","remoteurl"],
-					"data": [
-						[topic.topicname, "url1"],
-						["Document 2", "url2"],
-					]
-				}
+	if topicdata[topic.topicid]["categorie"] == 3:
+		if not topicdata[topic.topicid]['legalbase']:
+			table = topicdata[topic.topicid]['legalbase']
+		else:
+			table = [{"officialtitle": None, "remoteurl": None}]
+		
 		data.append({
 			"topicname": topic.topicname,
 			"map": map,
-			"topicdata" : [{
-				"item": topic.topicname,
-				"table": table
-				}]
+			"completelegend": extract.topiclegenddir+str(topic.topicid)+'_topiclegend.pdf',
+			#~ "legalbases" : table,
+			"legalbases" : [{
+				"officialtitle": "my legalbases",
+				"remoteurl": "http://sitn.ne.ch"
+			}],
+			"legalprovisions" : [{
+				"officialtitle": "my legal provision",
+				"remoteurl": "http://crdppf.ne.ch"
+			}],
+			"references" : [{
+				"officialtitle": "my reference",
+				"remoteurl": "http://crdppf.ne.ch"
+			}],
+			"authority" : [
+				topicdata[str(topic.topicid)]["authority"]
+			]
 		})
-			#~ "topicdata": {"item": "values"}
-				#~ {
-						#~ "columns": ["officialtitle","remoteurl"],
-						#~ "data": [
-							#~ ["Document 1", "url1"],
-							#~ ["Document 2", "url2"],
-						#~ ]
-					#~ }
-			#~ "topicname": topic.topicname,
-			#~ "authority": topic.authority.authorityname,
-			#~ "table" : [{
-				#~ "legalbases": topicdata[topic.topicid]['legalbase'],
-				#~ "legalprovisions": topicdata[topic.topicid]['legalprovision'],
-				#~ "references": topicdata[topic.topicid]['reference']
-				#~ }]
-			#~ })
-			#~ {"columns": [
-				#~ "topic_title",
-				#~ "restrictions",
-				#~ "objectlegend",
-				#~ "maplegend",
-				#~ "legalprovisions",
-				#~ "legalbases",
-				#~ "references",
-				#~ "authority"
-				#~ ],
-
-    #~ maps = []
 
     #~ for map__ in maps:
         #~ my_map = deepcopy(map)
@@ -439,35 +440,29 @@ def get_content(idemai, request):
 
     d= {
         "attributes": {
-			"extractcreationdate": extract.creationdate,
-			"filename": extract.filename,
-			"basemap": basemap,
-			"municipality": municipality,
-			"cadastre": cadastre,
-			"propertytype": propertytype,
-			"propertynumber": propertynumber,
-			"EGRIDnumber": featureinfo['no_egrid'],
-			"municipalitylogopath": municipalitylogopath,
-			"federalmunicipalitynumber": featureinfo['nufeco'],
-			"competentauthority": "Placeholder",
-			"title": report_title,
-			"comments": "comment",
+            "extractcreationdate": extract.creationdate,
+            "filename": extract.filename,
+            "basemap": basemap,
+            "municipality": municipality,
+            "cadastre": cadastre,
+            "propertytype": propertytype,
+            "propertynumber": propertynumber,
+            "EGRIDnumber": featureinfo['no_egrid'],
+            "municipalitylogopath": municipalitylogopath,
+            "federalmunicipalitynumber": featureinfo['nufeco'],
+            "competentauthority": "Placeholder",
+            "title": report_title,
+			"toc": {
+				"concernedtopics": "concerned topics",
+				"notconcernedtopics": [{
+			}],
+                "emptytopics": emptytopics
+			},
 			"propertyarea": propertyarea,
 			"maplegendlabel": "Autre légende (visible dans le cadre)",
 			"certificationtext": "Certification selon xyz",
 			"toctitle": "Sommaire des thèmes RDPPF",
 			"datasource": data
-			#~ "attributes": {"map": {
-				#~ "bbox": [555932, 201899, 556079, 202001],
-				#~ "dpi": 72,
-				#~ "layers": [{
-					#~ "type": "geojson",
-					#~ "geoJson":"http://localhost:6544/property/get?ids=13_5199"
-				#~ }],
-				#~ "longitudeFirst": True,
-				#~ "projection": "EPSG:21781",
-				#~ "scale": 1000
-			#~ }
         },
         "layout": "report",
 		"outputFormat": "pdf"

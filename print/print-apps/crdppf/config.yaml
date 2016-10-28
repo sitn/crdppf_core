@@ -3,7 +3,7 @@ throwErrorOnExtraParameters: true
 templates:
   report: !template
     outputFilename: ${yyyyMMddhhmmss}_extract
-    reportTemplate: dynamictables.jrxml
+    reportTemplate: mainpage.jrxml
 
     attributes:
       # Global variables
@@ -40,6 +40,7 @@ templates:
       # Variables for TOC
       # Variables for topic page
       legendlabel: !string {}
+      maplegendlabel: !string {}
       completlegendlabel: !string {} 
       legalbaseslabel: !string {} 
       legalprovisionslabel: !string {} 
@@ -59,6 +60,23 @@ templates:
       datasource: !datasource
         attributes:
           topicname: !string {}
+          completelegend: !string {} 
+          legalbases: !datasource
+            attributes:
+              officialtitle: !string {}
+              remoteurl: !string {}
+          legalprovisions: !datasource
+            attributes:
+              officialtitle: !string {}
+              remoteurl: !string {}
+          references: !datasource
+            attributes:
+              officialtitle: !string {}
+              remoteurl: !string {}
+          authority: !datasource
+            attributes:
+              authorityname: !string {}
+              authorityurl: !string {}
           northArrow: !northArrow
             size: 40
             default:
@@ -72,10 +90,6 @@ templates:
             maxDpi: 254
             width: 493
             height: 280
-          topicdata: !datasource
-            attributes:
-              item: !string {}
-              table: !table {}
           
     processors:
     - !reportBuilder # compile all reports in current directory
@@ -91,9 +105,25 @@ templates:
       - !createMap {}
       - !createDataSource
         processors:
-        - !prepareTable {}
-          #~ dynamic: true
         - !reportBuilder # compile all reports in current directory
           directory: '.'
-        inputMapper: {topicdata: datasource}
-        outputMapper: {jrDataSource: topicdata}
+        inputMapper: {legalbases: datasource}
+        outputMapper: {jrDataSource: legalbases}
+      - !createDataSource
+        processors:
+        - !reportBuilder # compile all reports in current directory
+          directory: '.'
+        inputMapper: {legalprovisions: datasource}
+        outputMapper: {jrDataSource: legalprovisions}
+      - !createDataSource
+        processors:
+        - !reportBuilder # compile all reports in current directory
+          directory: '.'
+        inputMapper: {references: datasource}
+        outputMapper: {jrDataSource: references}
+      - !createDataSource
+        processors:
+        - !reportBuilder # compile all reports in current directory
+          directory: '.'
+        inputMapper: {authority: datasource}
+        outputMapper: {jrDataSource: authority}
