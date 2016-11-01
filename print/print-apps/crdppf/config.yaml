@@ -38,6 +38,8 @@ templates:
       certificationtext: !string {}
 
       # Variables for TOC
+      glossarlabel: !string {}
+      
       # Variables for topic page
       legendlabel: !string {}
       maplegendlabel: !string {}
@@ -57,6 +59,12 @@ templates:
         width: 493
         height: 280
         
+      toc: !datasource
+        attributes:
+          toctitle: !string {}
+          concernedtopics: !string {}
+          notconcernedtopics: !string {}         
+          emptytopics: !string {}         
       datasource: !datasource
         attributes:
           topicname: !string {}
@@ -99,6 +107,17 @@ templates:
       inputMapper: {basemap: map}
       outputMapper: {mapSubReport: basemap}
     - !createDataSource
+      processors:
+      - !reportBuilder # compile all reports in current directory
+        directory: '.'
+      inputMapper: {toc: datasource}
+      outputMapper: {jrDataSource: toc}
+    - !createDataSource
+      processors:
+      - !reportBuilder # compile all reports in current directory
+        directory: '.'
+      inputMapper: {datasource: datasource}
+      outputMapper: {jrDataSource: jrDataSource}
       processors:
       - !createNorthArrow {}
       - !createScalebar {}

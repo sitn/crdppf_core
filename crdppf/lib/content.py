@@ -56,53 +56,31 @@ def set_documents(request, topicid, doctype, docids, featureinfo, geofilter, top
 
     if len(docids) > 0:
         docs = get_documents(filters)
-    #~ else:
-        #~ docs = []
+    else:
+        docs = []
 
-    data = []
-    columns = []
-    references = []
     appendices = []
+    
     # store the documents in a list
     if len(docs) > 0:
+        doc = ""
         for doc in docs:
             if doc['doctype'] == doctype and doc['documentid'] in docids:
-                references.append({"officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl']})
+                documents.append({"officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl']})
                 if doc['doctype'] != u'legalbase' and doc['documentid'] not in doclist:
                     appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'], topicdata))
                 if doc['documentid'] not in doclist:
                     doclist.append(doc)
             if doc['doctype'] == doctype and geofilter is True and doc['documentid'] not in docids:
-                references.append({"officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl']})
+                documents.append({"officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl']})
                 if doc['doctype'] != u'legalbase' and doc['documentid'] not in doclist:
                     appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'], topicdata))
                 if doc['documentid'] not in doclist:
                     doclist.append(doc)
+    if documents == []:
+        documents = [{"officialtitle": "", "remoteurl": ""}]
 
-        for document in doclist:
-            references.append({"officialtitle": document['officialtitle'], "remoteurl": document['remoteurl']})
-
-    return references
-    #~ # store the documents in a list
-    #~ if len(docs) > 0:
-        #~ for doc in docs:
-            #~ if doc["doctype"] == doctype and doc["documentid"] in docids:
-                #~ references.append({"officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl'], "publicationdate": ['publicationdate']})
-                #~ if doc["doctype"] != 'legalbase' and doc['documentid'] not in doclist:
-                    #~ appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(doc["officialtitle"]).encode('iso-8859-1'), unicode(doc["remoteurl"]).encode('iso-8859-1'), doc["localurl"], topicdata))
-                #~ if doc["documentid"] not in doclist:
-                    #~ doclist.append({"officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl'], "publicationdate": ['publicationdate']})
-            #~ if doc["doctype"] == doctype and geofilter is True and doc["documentid"] not in docids:
-                #~ references.append({"officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl'], "publicationdate": ['publicationdate']})
-                #~ if doc["doctype"] != 'legalbase' and doc["documentid"] not in doclist:
-                    #~ appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(doc["officialtitle"]).encode('iso-8859-1'), unicode(doc["remoteurl"]).encode('iso-8859-1'), doc["localurl"], topicdata))
-                #~ if doc["documentid"] not in doclist:
-                    #~ doclist.append(doc)
-
-        #~ for document in doclist:
-            #~ references.append({"officialtitle": document['officialtitle'], "remoteurl": document['remoteurl']})
-
-    #~ return references
+    return documents
         
 def add_toc_entry(topicid, num, label, categorie, appendices):
     tocentries = {}
@@ -133,6 +111,7 @@ def add_layer(request, layer, featureid, featureinfo, translations, appconfig, t
             # for each restriction object we check for related documents
             docfilters = [str(result['id'])]
             for doctype in appconfig['doctypes'].split(','):
+                docfilters.append(doctype)
                 docidlist = get_document_ref(docfilters)
                 result['properties'][doctype] = set_documents(request, str(layer.topicfk), doctype, docidlist, featureinfo, False, topicdata)
             layerlist[str(layer.layerid)]['features'].append(result['properties'])
@@ -140,6 +119,7 @@ def add_layer(request, layer, featureid, featureinfo, translations, appconfig, t
         # we also check for documents on the layer level - if there are any results - else we don't need to bother
         docfilters = [layer.layername]
         for doctype in appconfig['doctypes'].split(','):
+            docfilters.append(doctype)
             docidlist = get_document_ref(docfilters)
             topicdata[str(layer.topicfk)]['layers'][layer.layerid][doctype] = set_documents(request, str(layer.topicfk), doctype, docidlist, featureinfo, True,  topicdata)
 
@@ -283,35 +263,6 @@ def get_content(idemai, request):
         '))'
     ])
 
-    # This define the "general" map that we are going to copy x times,
-    # one time as base map and x times as topic map.
-    map = {
-        "projection": "EPSG:21781",
-        "dpi": 150,
-        "rotation": 0,
-        "center": feature_center,
-        "scale": print_box['scale'],
-        "longitudeFirst": "true",
-        "layers": [{
-            "type": "geojson",
-            "geoJson": request.route_url('get_property')+'?id='+idemai,
-            "style": {
-                "version": "2",
-                "strokeColor": "gray",
-                "strokeLinecap": "round",
-                "strokeOpacity": 0.6,
-                "[INTERSECTS(geometry, "+wkt_polygon+")]": {
-                    "symbolizers": [{
-                        "strokeColor": "green",
-                        "strokeWidth": 2,
-                        "type": "line"
-                    }]
-                }
-            }
-        }, wmts_layer_
-        ]
-    }
-
     basemap = {
         "projection": "EPSG:21781",
         "dpi": 150,
@@ -338,22 +289,21 @@ def get_content(idemai, request):
         }, wmts_layer_
         ]
     }
-    
-    #~ base_map = deepcopy(map)
-    #~ base_map["bbox"] = " "
-        
+
     data = []
     topicdata = {}
     topicdata["toc_entries"] = {}
     topicdata["doclist"] = []
     topicdata["appendix_entries"] = []
     appconfig = extract.baseconfig
+    concernedtopics = []
+    notconcernedtopics = []
     emptytopics = []
 
     for topic in extract.topics:
         layers = []
 
-		# for the federal data layers we get the restrictions calling the feature service and store the result in the DB
+        # for the federal data layers we get the restrictions calling the feature service and store the result in the DB
         if topic.topicid in extract.baseconfig['ch_topics']:
             xml_layers = []
             for xml_layer in topic.layers:
@@ -364,6 +314,15 @@ def get_content(idemai, request):
             "categorie": 0,
             "topicname": topic.topicname,
             "layers": {},
+            "legalbase": {},
+            "legalprovision": [{
+                    "officialtitle": "",
+                    "remoteurl": ""
+                }],
+            "reference": [{
+                    "officialtitle": "",
+                    "remoteurl": ""
+                }],
             "authority": {
                 "authorityuuid": topic.authority.authorityid,
                 "authorityname": topic.authority.authorityname,
@@ -377,22 +336,25 @@ def get_content(idemai, request):
         # if geographic layers are defined for the topic, get the list of all layers and then
         # check for each layer the information regarding the features touching the property
         if topic.layers:
+            topicdata[str(topic.topicid)]['wmslayerlist'] = []
             topicdata["toc_entries"].update(add_toc_entry(topic.topicid, '', str(topic.topicname.encode('iso-8859-1')), 1, ''))
             for layer in topic.layers:
                 topicdata[str(topic.topicid)]["layers"][layer.layerid]={
                     "layername": layer.layername,
                     "features": None
                     }
+                topicdata[str(topic.topicid)]['wmslayerlist'].append(layer.layername)
                 # intersects a given layer with the feature and adds the results to the topicdata- see method add_layer
                 topicdata[str(topic.topicid)].update(add_layer(request, layer, propertynumber, featureinfo, translations, appconfig, topicdata))
             #~ get_topic_map(topic.layers, topic.topicid)
+
             # Get the list of documents related to a topic with layers and results
             if topicdata[str(layer.topicfk)]["categorie"] == 3:
                 docfilters = [str(topic.topicid)]
                 for doctype in appconfig["doctypes"].split(','):
                     docidlist = get_document_ref(docfilters)
                     topicdata[str(topic.topicid)][doctype] = set_documents(request, str(topic.topicid), doctype, docidlist, featureinfo, True, topicdata)
-
+                
         else:
             if str(topic.topicid) in appconfig['emptytopics']:
                 emptytopics.append(topic.topicname)
@@ -402,33 +364,69 @@ def get_content(idemai, request):
                 topicdata[str(topic.topicid)]['layers'] = None
                 topicdata[str(topic.topicid)]['categorie'] = 0
 
-	if topicdata[topic.topicid]["categorie"] == 3:
-		if not topicdata[topic.topicid]['legalbase']:
-			table = topicdata[topic.topicid]['legalbase']
-		else:
-			table = [{"officialtitle": None, "remoteurl": None}]
-		
-		data.append({
-			"topicname": topic.topicname,
-			"map": map,
-			"completelegend": extract.topiclegenddir+str(topic.topicid)+'_topiclegend.pdf',
-			#~ "legalbases" : table,
-			"legalbases" : [{
-				"officialtitle": "my legalbases",
-				"remoteurl": "http://sitn.ne.ch"
-			}],
-			"legalprovisions" : [{
-				"officialtitle": "my legal provision",
-				"remoteurl": "http://crdppf.ne.ch"
-			}],
-			"references" : [{
-				"officialtitle": "my reference",
-				"remoteurl": "http://crdppf.ne.ch"
-			}],
-			"authority" : [
-				topicdata[str(topic.topicid)]["authority"]
-			]
-		})
+        if topicdata[str(topic.topicid)]['categorie'] == 0:
+            notconcernedtopics.append(topic.topicname)
+            
+        if topicdata[str(topic.topicid)]['categorie']  == 1:
+            emptytopics.append(topic.topicname)
+
+        if topicdata[topic.topicid]["categorie"] == 3:
+            concernedtopics.append(topic.topicname)
+            
+            topiclayers = {
+                "baseURL": request.registry.settings['crdppf_wms'],
+                "opacity": 1,
+                "type": "WMS",
+                "layers": topicdata[str(topic.topicid)]['wmslayerlist'],
+                "imageFormat": "image/png",
+                "styles": "default",
+                "customParams": {
+                "TRANSPARENT": "true"
+                }
+            }
+
+            # This define the "general" map that we are going to copy x times,
+            # one time as base map and x times as topic map.
+            map = {
+                "projection": "EPSG:21781",
+                "dpi": 150,
+                "rotation": 0,
+                "center": feature_center,
+                "scale": print_box['scale']*1.1,
+                "longitudeFirst": "true",
+                "layers": [{
+                    "type": "geojson",
+                    "geoJson": request.route_url('get_property')+'?id='+idemai,
+                    "style": {
+                        "version": "2",
+                        "strokeColor": "gray",
+                        "strokeLinecap": "round",
+                        "strokeOpacity": 0.6,
+                        "[INTERSECTS(geometry, "+wkt_polygon+")]": {
+                            "symbolizers": [{
+                                "strokeColor": "green",
+                                "strokeWidth": 2,
+                                "type": "line"
+                            }]
+                        }
+                    }
+                }, 
+                topiclayers, 
+                wmts_layer_
+                ]
+            }
+            
+            data.append({
+                "topicname": topic.topicname,
+                "map": map,
+                "completelegend": extract.topiclegenddir+str(topic.topicid)+'_topiclegend.pdf',
+                "legalbases": topicdata[str(topic.topicid)]["legalbase"],
+                "legalprovisions": topicdata[str(topic.topicid)]["legalprovision"],
+                "references": topicdata[str(topic.topicid)]["reference"],
+                "authority": [
+                    topicdata[str(topic.topicid)]["authority"]
+                ]
+            })
 
     #~ for map__ in maps:
         #~ my_map = deepcopy(map)
@@ -452,20 +450,21 @@ def get_content(idemai, request):
             "federalmunicipalitynumber": featureinfo['nufeco'],
             "competentauthority": "Placeholder",
             "title": report_title,
-			"toc": {
-				"concernedtopics": "concerned topics",
-				"notconcernedtopics": [{
-			}],
-                "emptytopics": emptytopics
-			},
-			"propertyarea": propertyarea,
-			"maplegendlabel": "Autre légende (visible dans le cadre)",
-			"certificationtext": "Certification selon xyz",
-			"toctitle": "Sommaire des thèmes RDPPF",
-			"datasource": data
+            "toc": [{
+                "toctitle": "Sommaire des thèmes RDPPF",
+                "concernedtopics": ";".join(concernedtopics),
+                "notconcernedtopics": ";".join(notconcernedtopics),
+                "emptytopics": ";".join(emptytopics)
+            }],
+            "propertyarea": propertyarea,
+            "maplegendlabel": "Autre légende (visible dans le cadre)",
+            "certificationtext": "Certification selon xyz",
+            "toctitle": "Sommaire des thèmes RDPPF",
+            "datasource": data,
+            "glossarlabel": "Glossaire"
         },
         "layout": "report",
-		"outputFormat": "pdf"
+        "outputFormat": "pdf"
     }
     #~ sdf
     return d
