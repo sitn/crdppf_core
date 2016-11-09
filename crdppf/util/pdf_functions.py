@@ -71,7 +71,7 @@ def validate_XML(xmlparser, xmlfilename):
 
     return xmlvalid
 
-def get_XML(geometry, topicid, extracttime, lang, translations):
+def get_XML(geometry, srid, topicid, extracttime, lang, translations):
     """Gets the XML extract of the federal data feature service for a given topic
         and validates it against the schema.
     """
@@ -308,14 +308,14 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
                 xml_model.datepublication = None
             # It is very important to set the SRID if it's not the default EPSG:4326 !!
             xml_model.idobj = str(extracttime)+'_'+str(geometry['restrictionid'])
-            xml_model.geom = WKTElement(geometry['geom'], 21781)
+            xml_model.geom = WKTElement(geometry['geom'], srid)
             DBSession.add(xml_model)
 
         DBSession.flush()
     
     return
 
-def get_feature_info(request, translations):
+def get_feature_info(request, srid, translations):
     """The function gets the geometry of a parcel by it's ID and does an overlay 
     with other administrative layers to get the basic parcelInfo and attribute 
     information of the parcel : municipality, local names, and so on
@@ -324,9 +324,11 @@ def get_feature_info(request, translations):
     for debbuging the query use str(query) in the console/browser window
     to visualize geom.wkt use session.scalar(geom.wkt)
     """
-
-    SRS = 21781
-
+    try: 
+        SRS = srid
+    except:
+        SRS = 2056
+        
     parcelInfo = {}
     parcelInfo['featureid'] = None
     Y = None
@@ -365,7 +367,7 @@ def get_feature_info(request, translations):
 
     parcelInfo['nummai'] = queryresult.nummai # Parcel number
     parcelInfo['type'] = queryresult.typimm # Parcel type
-    parcelInfo['source'] = queryresult.source # Parcel type
+    #parcelInfo['source'] = queryresult.source # Parcel source
     if 'no_egrid' in queryresult.__table__.columns.keys():
         parcelInfo['no_egrid'] = queryresult.no_egrid
     else:
