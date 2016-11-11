@@ -367,7 +367,6 @@ def get_feature_info(request, srid, translations):
 
     parcelInfo['nummai'] = queryresult.nummai # Parcel number
     parcelInfo['type'] = queryresult.typimm # Parcel type
-    #parcelInfo['source'] = queryresult.source # Parcel source
     if 'no_egrid' in queryresult.__table__.columns.keys():
         parcelInfo['no_egrid'] = queryresult.no_egrid
     else:
