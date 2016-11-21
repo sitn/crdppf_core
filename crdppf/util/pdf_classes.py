@@ -493,7 +493,7 @@ class Extract(FPDF):
         """
         geom = geom_from_coordinates(bbox)
         # transform coordinates from wkt to SpatialElement for intersection
-        polygon = WKTElement(geom.wkt, 21781)
+        polygon = WKTElement(geom.wkt, self.srid)
         mapfeatures = get_features_function(polygon, {'layerList':layername, 'translations':self.translations})
         if mapfeatures is not None:
             classes = []
@@ -684,7 +684,7 @@ class Extract(FPDF):
         if self.log:
             self.log.warning("Running get feature")
 
-        results = get_features_function(self.featureInfo['geom'],{'layerList':layer.layername,'id':self.featureid,'translations':self.translations})
+        results = get_features_function(self.featureInfo['geom'], {'layerList':layer.layername,'id':self.featureid,'translations':self.translations})
 
         if self.log:
             self.log.warning("Done get feature")

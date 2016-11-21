@@ -6,6 +6,7 @@
 <head>
     <meta charset="UTF-8" /> 
     <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Cadastre des restrictions de droit public à la propriété foncière</title>
     <link href="${request.static_url('crdppfportal:static/images/favico.ico')}" rel="shortcut icon" type="image/x-icon" />
     <link rel="stylesheet" href="${request.static_url('crdppf:static/lib/ext/resources/css/ext-all.css')}" type="text/css" media="screen" charset="utf-8" />
