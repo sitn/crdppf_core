@@ -9,7 +9,7 @@ class Extract(object):
     
     def __init__(self, request):
         # document id
-        self.id = ''
+        self.id = datetime.now().strftime("%Y%m%d%H%M%S")
         # sets the creation date of the PDF instance
         self.creationdate = datetime.now().strftime("%d.%m.%Y-%H:%M:%S")
         # same same but different use
@@ -48,3 +48,16 @@ class Extract(object):
         self.reference_entries = []
         self.appendix_links = []
         self.basemap = {}
+        self.wms_params = {}
+        # setting the GetLegendGraphic option for a dynamic composition of the WMS URL
+        self.wms_get_legend = {
+            'REQUEST': 'GetLegendGraphic'
+        }
+        # setting the GetStyles option
+        self.wms_get_styles = {
+            'REQUEST': 'GetStyles'
+        }
+        # setting the GetMap option for the WMS
+        self.wms_get_map = {
+            'REQUEST': 'GetMap'
+        }

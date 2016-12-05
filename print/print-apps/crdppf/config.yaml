@@ -7,7 +7,10 @@ templates:
 
     attributes:
       # Global variables
+      extractid: !string {}
       placeholderlabel: !string {}
+      pagelabel: !string {}
+      appendiceslistlabel: !string {}
       
       # Variables for header
       ch_logo: !string {}
@@ -22,6 +25,7 @@ templates:
       municipalitylabel: !string {}
       federalmunicipalitynumber: !string {}
       cadastre: !string {}
+      cadastrelabel: !string {}
       title: !string {}
       extractsubtitlelabel: !string {}
       propertylabel: !string {}
@@ -37,8 +41,11 @@ templates:
       certificationlabel: !string {}
       certificationtext: !string {}
 
-      # Variables for TOC
-      glossarlabel: !string {}
+      # Variables for Glossar
+      glossar: !datasource
+        attributes:
+          glossarlabel: !string {}
+          definitions: !table {}
       
       # Variables for topic page
       legendlabel: !string {}
@@ -49,12 +56,16 @@ templates:
       referenceslabel: !string {} 
       competentauthoritylabel: !string {} 
 
-      scalebar: !scalebar
-        width: 150
-        height: 20
+      basemapNorthArrow: !northArrow
+        size: 17
         default:
-          fontSize: 8
-      basemap: !map
+          graphic: "file:///north.svg"
+      scalebar: !scalebar
+        width: 93
+        height: 15
+        default:
+          fontSize: 7
+      map: !map
         maxDpi: 400
         width: 493
         height: 280
@@ -68,7 +79,13 @@ templates:
       datasource: !datasource
         attributes:
           topicname: !string {}
-          completelegend: !string {} 
+          completelegend: !string {}
+          propertyarea: !string {}
+          restrictions: !datasource
+            attributes:
+              codegenre: !string {}
+              teneur: !string {}
+              area: !string {}
           legalbases: !datasource
             attributes:
               officialtitle: !string {}
@@ -86,26 +103,39 @@ templates:
               authorityname: !string {}
               authorityurl: !string {}
           northArrow: !northArrow
-            size: 40
+            size: 17
             default:
               graphic: "file:///north.svg"
           scalebar: !scalebar
-            width: 150
-            height: 20
+            width: 93
+            height: 15
             default:
-              fontSize: 8
+              fontSize: 7
           map: !map
-            maxDpi: 254
+            maxDpi: 400
             width: 493
             height: 280
-          
+
     processors:
     - !reportBuilder # compile all reports in current directory
       directory: '.'
+    - !createNorthArrow
+      inputMapper: {basemapNorthArrow: northArrow}
+      outputMapper: {northArrowSubReport: northArrowSubReport}
     - !createScalebar {}
     - !createMap
-      inputMapper: {basemap: map}
+      inputMapper: {map: map}
       outputMapper: {mapSubReport: basemap}
+    - !createDataSource
+      processors:
+      - !reportBuilder # compile all reports in current directory
+        directory: '.'
+      inputMapper: {glossar: datasource}
+      outputMapper: {jrDataSource: glossar}
+      processors:
+      - !prepareTable
+        inputMapper: {definitions: table}
+        outputMapper: {table: definitions}
     - !createDataSource
       processors:
       - !reportBuilder # compile all reports in current directory
@@ -121,7 +151,15 @@ templates:
       processors:
       - !createNorthArrow {}
       - !createScalebar {}
-      - !createMap {}
+      - !createMap
+        inputMapper: {map: map}
+        outputMapper: {mapSubReport: mapSubReport}
+      - !createDataSource
+        processors:
+        - !reportBuilder # compile all reports in current directory
+          directory: '.'
+        inputMapper: {restrictions: datasource}
+        outputMapper: {jrDataSource: restrictions}
       - !createDataSource
         processors:
         - !reportBuilder # compile all reports in current directory

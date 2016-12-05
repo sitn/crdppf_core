@@ -5,11 +5,11 @@ from crdppf.models import Property, PaperFormats
 
 from sqlalchemy.sql import func
 
-def get_feature_center(idemai):
-    """ Extract a feature centroid regarding its idemai attribute
+def get_feature_center(id):
+    """ Extract a feature centroid regarding its id attribute
     """
 
-    geom = DBSession.query(Property.geom).filter(Property.idemai==idemai).all()
+    geom = DBSession.query(Property.geom).filter(Property.id==id).all()
 
     if len(geom) > 1:
         return False
@@ -21,12 +21,12 @@ def get_feature_center(idemai):
         DBSession.scalar(geom.ST_Centroid().ST_Y())
     ]
 
-def get_feature_bbox(idemai):
-    """ Extract a feature centroid regarding its idemai attribute
+def get_feature_bbox(id):
+    """ Extract a feature centroid regarding its id attribute
     """
 
     box = DBSession.query(func.ST_extent(Property.geom)). \
-        filter(Property.idemai==idemai).all()
+        filter(Property.id==id).all()
 
     if len(box) > 1:
         return False

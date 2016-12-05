@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-10-14T19:06:38 -->
+<!-- 2016-11-22T13:52:32 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pdfextract1" pageWidth="595" pageHeight="842" sectionType="Part" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30" whenResourceMissingType="Error" uuid="d2716064-8ae4-40cf-a575-33afba400e3a">
+	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="crdppf"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="ch_logo" class="java.lang.String"/>
 	<parameter name="canton_logo" class="java.lang.String"/>
 	<parameter name="municipalitylogopath" class="java.lang.String"/>
@@ -15,6 +17,7 @@
 	<parameter name="EGRIDlabel" class="java.lang.String"/>
 	<parameter name="EGRIDnumber" class="java.lang.String"/>
 	<parameter name="legendlabel" class="java.lang.String"/>
+	<parameter name="maplegendlabel" class="java.lang.String"/>
 	<parameter name="completlegendlabel" class="java.lang.String"/>
 	<parameter name="legalbaseslabel" class="java.lang.String"/>
 	<parameter name="legalprovisionslabel" class="java.lang.String"/>
@@ -29,11 +32,26 @@
 	<parameter name="creationdatelabel" class="java.lang.String"/>
 	<parameter name="competentauthority" class="java.lang.String"/>
 	<parameter name="placeholderlabel" class="java.lang.String"/>
+	<parameter name="pagelabel" class="java.lang.String"/>
+	<parameter name="appendiceslistlabel" class="java.lang.String"/>
 	<parameter name="certificationlabel" class="java.lang.String"/>
 	<parameter name="certificationtext" class="java.lang.String"/>
+	<parameter name="glossarlabel" class="java.lang.String"/>
 	<parameter name="title" class="java.lang.String"/>
-	<parameter name="jrDataSource" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
-	<group name="Glossar">
+	<parameter name="toc" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="jrDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="basemap" class="java.lang.String"/>
+	<group name="Titlepage and TOC">
+		<groupHeader>
+			<part uuid="1e51d81b-2bac-4806-a6ab-2d666891cc25">
+				<p:subreportPart xmlns:p="http://jasperreports.sourceforge.net/jasperreports/parts" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/parts http://jasperreports.sourceforge.net/xsd/parts.xsd">
+					<subreportParameter name="REPORT_CONNECTION">
+						<subreportParameterExpression><![CDATA[$P{REPORT_CONNECTION}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportExpression><![CDATA["toc.jasper"]]></subreportExpression>
+				</p:subreportPart>
+			</part>
+		</groupHeader>
 		<groupFooter>
 			<part uuid="42f26622-19db-4c74-bf02-e3d780b844da">
 				<p:subreportPart xmlns:p="http://jasperreports.sourceforge.net/jasperreports/parts" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/parts http://jasperreports.sourceforge.net/xsd/parts.xsd">
@@ -49,48 +67,12 @@
 		</groupFooter>
 	</group>
 	<detail>
-		<part uuid="8708867c-dfda-4be8-b935-9e761f02b313">
+		<part uuid="dbf7b612-de21-4609-8537-6538c611480c">
 			<p:subreportPart xmlns:p="http://jasperreports.sourceforge.net/jasperreports/parts" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/parts http://jasperreports.sourceforge.net/xsd/parts.xsd">
 				<subreportParameter name="REPORT_CONNECTION">
 					<subreportParameterExpression><![CDATA[$P{REPORT_CONNECTION}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="ch_logo">
-					<subreportParameterExpression><![CDATA[$P{ch_logo}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="canton_logo">
-					<subreportParameterExpression><![CDATA[$P{canton_logo}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="municipalitylogopath">
-					<subreportParameterExpression><![CDATA[$P{municipalitylogopath}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="municipality">
-					<subreportParameterExpression><![CDATA[$P{municipality}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="crdppf_logo">
-					<subreportParameterExpression><![CDATA[$P{crdppf_logo}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="legalbaseslabel">
-					<subreportParameterExpression><![CDATA[$P{legalbaseslabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="legalprovisionslabel">
-					<subreportParameterExpression><![CDATA[$P{legalprovisionslabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="completlegendlabel">
-					<subreportParameterExpression><![CDATA[$P{completlegendlabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="referenceslabel">
-					<subreportParameterExpression><![CDATA[$P{referenceslabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="competentauthoritylabel">
-					<subreportParameterExpression><![CDATA[$P{competentauthoritylabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="jrDataSource">
-					<subreportParameterExpression><![CDATA[$P{jrDataSource}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="REPORT_DATA_SOURCE">
-					<subreportParameterExpression><![CDATA[$P{jrDataSource}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportExpression><![CDATA["dynamictables.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA["topicpage.jasper"]]></subreportExpression>
 			</p:subreportPart>
 		</part>
 	</detail>

@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
 
+import json
 from copy import deepcopy
 import ast
 from datetime import datetime
 
+from crdppf import db_config
 from crdppf.extract import Extract
 from crdppf.lib.wmts_parsing import wmts_layer
 from crdppf.lib.geometry_functions import get_feature_bbox, get_print_format, get_feature_center
@@ -17,23 +19,6 @@ from crdppf.models import DBSession,Topics,AppConfig
 import logging
 
 log = logging.getLogger(__name__)
-
-#~ def get_topiclist():
-    #~ topics = DBSession.query(Topics).order_by(Topics.topicorder).all()
-    
-    #~ topiclist = {}
-    #~ for topic in topics:
-        #~ topiclist[topic.topicorder] = {
-            #~ 'topicid': topic.topicid,
-            #~ 'topicname': topic.topicname,
-            #~ 'layers': topic.layers,
-            #~ 'publicationdate': topic.publicationdate.isoformat() if topic.publicationdate else None,
-            #~ 'authorityfk': topic.authorityfk,
-            #~ 'authority': topic.authority,
-            #~ 'metadata': topic.metadata
-            #~ }
-
-    #~ return topiclist
     
 def set_documents(request, topicid, doctype, docids, featureinfo, geofilter, topicdata):
     """ Function to fetch the documents related to the restriction:
@@ -132,8 +117,8 @@ def add_layer(request, layer, featureid, featureinfo, translations, appconfig, t
             topicdata[str(layer.topicfk)]['categorie']=1
 
     return topicdata
-    
-def get_content(idemai, request):
+
+def get_content(id, request):
     """ TODO....
         Explain how the whole thing works...
     """
@@ -147,7 +132,7 @@ def get_content(idemai, request):
     for config in configs:
         if not config.parameter in ['crdppflogopath', 'cantonlogopath']:
             extract.baseconfig[config.parameter] = config.paramvalue
-    extract.id = extract.timestamp
+    extract.srid = db_config['srid']
 
     extract.topiclegenddir = request.static_url('crdppf:static/public/legend/')
 
@@ -162,11 +147,11 @@ def get_content(idemai, request):
     translations = extract.baseconfig['translations'] 
     
     # 1) If the ID of the parcel is set get the basic attributs of the property
-    # else get the ID (idemai) of the selected parcel first using X/Y coordinates of the center 
+    # else get the ID (id) of the selected parcel first using X/Y coordinates of the center 
     #----------------------------------------------------------------------------------------------------
-    featureinfo = get_feature_info(idemai,translations) # '1_14127' # test parcel or '1_11340'
+    featureinfo = get_feature_info(id, extract.srid, translations) # '1_14127' # test parcel or '1_11340'
     featureinfo = featureinfo
-    extract.filename = extract.id + u'_' + featureinfo['featureid']
+    extract.filename = extract.id + featureinfo['featureid']
     
     # 3) Get the list of all the restrictions by topicorder set in a column
     #-------------------------------------------
@@ -226,27 +211,30 @@ def get_content(idemai, request):
         'proj/images/ecussons/'])
     municipalitylogopath = municipalitylogodir + municipality_escaped + '.png'
     extract.header['municipalitylogopath'] = municipalitylogopath
-
+    legenddir = '/'.join([
+        request.registry.settings['localhost_url'],
+        'proj/images/icons/'])
+        
     # Get the raw feature BBOX
-    extract.basemap['bbox'] = get_feature_bbox(idemai)
+    extract.basemap['bbox'] = get_feature_bbox(id)
     bbox = extract.basemap['bbox'] 
     
     if bbox is False:
-        log.warning('Found more then one bbox for idemai: %s' % idemai)
+        log.warning('Found more then one bbox for id: %s' % id)
         return False
 
     # Get the feature center
-    extract.basemap['feature_center'] = get_feature_center(idemai)
+    extract.basemap['feature_center'] = get_feature_center(id)
     feature_center = extract.basemap['feature_center']
 
     if feature_center is False:
-        log.warning('Found more then one geometry for idemai: %s' % idemai)
+        log.warning('Found more then one geometry for id: %s' % id)
         return False
 
     # Get the print BOX
     print_box = get_print_format(bbox, request.registry.settings['pdf_config']['fitratio'])
 
-    log.warning('Calling feature: %s' % request.route_url('get_property')+'?id='+idemai)
+    log.warning('Calling feature: %s' % request.route_url('get_property')+'?id='+id)
 
     wkt_polygon = ''.join([
         'POLYGON((',
@@ -264,7 +252,7 @@ def get_content(idemai, request):
     ])
 
     basemap = {
-        "projection": "EPSG:21781",
+        "projection": "EPSG:2056",
         "dpi": 150,
         "rotation": 0,
         "center": feature_center,
@@ -272,7 +260,7 @@ def get_content(idemai, request):
         "longitudeFirst": "true",
         "layers": [{
             "type": "geojson",
-            "geoJson": request.route_url('get_property')+'?id='+idemai,
+            "geoJson": request.route_url('get_property')+'?id='+id,
             "style": {
                 "version": "2",
                 "strokeColor": "gray",
@@ -354,25 +342,48 @@ def get_content(idemai, request):
                 for doctype in appconfig["doctypes"].split(','):
                     docidlist = get_document_ref(docfilters)
                     topicdata[str(topic.topicid)][doctype] = set_documents(request, str(topic.topicid), doctype, docidlist, featureinfo, True, topicdata)
-                
         else:
             if str(topic.topicid) in appconfig['emptytopics']:
                 emptytopics.append(topic.topicname)
                 topicdata[str(topic.topicid)]['layers'] = None
-                topicdata[str(topic.topicid)]['categorie'] = 1
+                topicdata[str(topic.topicid)]['categorie'] = 0
             else:
                 topicdata[str(topic.topicid)]['layers'] = None
-                topicdata[str(topic.topicid)]['categorie'] = 0
+                topicdata[str(topic.topicid)]['categorie'] = 1
 
-        if topicdata[str(topic.topicid)]['categorie'] == 0:
+        if topicdata[str(topic.topicid)]['categorie'] == 1:
             notconcernedtopics.append(topic.topicname)
             
-        if topicdata[str(topic.topicid)]['categorie']  == 1:
+        if topicdata[str(topic.topicid)]['categorie']  == 0:
             emptytopics.append(topic.topicname)
 
         if topicdata[topic.topicid]["categorie"] == 3:
             concernedtopics.append(topic.topicname)
-            
+
+            if topicdata[topic.topicid]['layers']:
+                topicdata[str(topic.topicid)]["restrictions"] = []
+                
+                for layer in topicdata[topic.topicid]['layers']:
+                    if topicdata[topic.topicid]['layers'][layer]['features']:
+                        for feature in topicdata[topic.topicid]['layers'][layer]['features']:
+                            if 'teneur' in feature.keys() and feature['teneur'] is not None and feature['statutjuridique'] is not None:
+                                if feature['geomType'] == 'area' :
+                                    topicdata[str(topic.topicid)]["restrictions"].append({
+                                        "codegenre": legenddir+"/0000.png",
+                                        "teneur": feature['teneur'],
+                                        "area": feature['intersectionMeasure'].replace(' : ','').replace(' - ','')
+                                    })
+                                else: 
+                                    topicdata[str(topic.topicid)]["restrictions"].append({
+                                        "codegenre": legenddir+"/0000.png",
+                                        "teneur": feature['teneur'],
+                                        "area": feature['intersectionMeasure'].replace(' - ','').replace(' : ','')
+                                    })
+                            else:
+                                for property,value in feature.iteritems():
+                                    if value is not None and property != 'featureClass':
+                                        if isinstance(value, float) or isinstance(value, int):
+                                                            value = str(value)
             topiclayers = {
                 "baseURL": request.registry.settings['crdppf_wms'],
                 "opacity": 1,
@@ -388,7 +399,7 @@ def get_content(idemai, request):
             # This define the "general" map that we are going to copy x times,
             # one time as base map and x times as topic map.
             map = {
-                "projection": "EPSG:21781",
+                "projection": "EPSG:2056",
                 "dpi": 150,
                 "rotation": 0,
                 "center": feature_center,
@@ -396,7 +407,7 @@ def get_content(idemai, request):
                 "longitudeFirst": "true",
                 "layers": [{
                     "type": "geojson",
-                    "geoJson": request.route_url('get_property')+'?id='+idemai,
+                    "geoJson": request.route_url('get_property')+'?id='+id,
                     "style": {
                         "version": "2",
                         "strokeColor": "gray",
@@ -419,6 +430,8 @@ def get_content(idemai, request):
             data.append({
                 "topicname": topic.topicname,
                 "map": map,
+                "propertyarea": propertyarea,
+                "restrictions": topicdata[str(topic.topicid)]["restrictions"],
                 "completelegend": extract.topiclegenddir+str(topic.topicid)+'_topiclegend.pdf',
                 "legalbases": topicdata[str(topic.topicid)]["legalbase"],
                 "legalprovisions": topicdata[str(topic.topicid)]["legalprovision"],
@@ -428,21 +441,15 @@ def get_content(idemai, request):
                 ]
             })
 
-    #~ for map__ in maps:
-        #~ my_map = deepcopy(map)
-        #~ my_map["layers"][1]["layers"] = 'toto'
-        #~ d["datasource"].push({
-            #~ "map": my_map,
-            #~ "legend_url": "http://...&style=toto.xml"
-        #~ })
-
     d= {
         "attributes": {
             "extractcreationdate": extract.creationdate,
             "filename": extract.filename,
-            "basemap": basemap,
+            "extractid": extract.id,
+            "map": basemap,
             "municipality": municipality,
             "cadastre": cadastre,
+            "cadastrelabel": "Cadastre",
             "propertytype": propertytype,
             "propertynumber": propertynumber,
             "EGRIDnumber": featureinfo['no_egrid'],
@@ -461,10 +468,26 @@ def get_content(idemai, request):
             "certificationtext": "Certification selon xyz",
             "toctitle": "Sommaire des thèmes RDPPF",
             "datasource": data,
-            "glossarlabel": "Glossaire"
+            "glossar": [{
+                "glossarlabel": "Glossaire/Abréviations",
+                "definitions": {
+                    "columns": ["term", "definition"],
+                    "data": [
+                        ["SGRF", "Service de la géomatique et du registre foncier"],
+                        ["SITN", "Système d'Information du Territoire Neuchâtelois"]
+                    ]
+                }
+            }]
         },
         "layout": "report",
         "outputFormat": "pdf"
     }
     #~ sdf
+    
+    # pretty printed json data for the extract
+    #~ jsonfile = open('C:/temp/extractdata.json', 'w')
+    #~ jsondata = json.dumps(d, indent=4)
+    #~ jsonfile.write(jsondata)
+    #~ jsonfile.close()
+    
     return d
