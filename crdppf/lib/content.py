@@ -369,13 +369,13 @@ def get_content(id, request):
                             if 'teneur' in feature.keys() and feature['teneur'] is not None and feature['statutjuridique'] is not None:
                                 if feature['geomType'] == 'area' :
                                     topicdata[str(topic.topicid)]["restrictions"].append({
-                                        "codegenre": legenddir+"/0000.png",
+                                        "codegenre": legenddir+"0000.png",
                                         "teneur": feature['teneur'],
                                         "area": feature['intersectionMeasure'].replace(' : ','').replace(' - ','')
                                     })
                                 else: 
                                     topicdata[str(topic.topicid)]["restrictions"].append({
-                                        "codegenre": legenddir+"/0000.png",
+                                        "codegenre": legenddir+"0000.png",
                                         "teneur": feature['teneur'],
                                         "area": feature['intersectionMeasure'].replace(' - ','').replace(' : ','')
                                     })
@@ -440,6 +440,16 @@ def get_content(id, request):
                     topicdata[str(topic.topicid)]["authority"]
                 ]
             })
+            
+            appendices = {
+                "topicid": str(topic.topicid),
+                "documentlist" : topicdata[str(topic.topicid)]["legalprovision"]
+                }
+
+    abbreviations = [
+                    ["SGRF", "Service de la géomatique et du registre foncier"],
+                    ["SITN", "Système d'Information du Territoire Neuchâtelois"]
+                ]
 
     d= {
         "attributes": {
@@ -472,10 +482,7 @@ def get_content(id, request):
                 "glossarlabel": "Glossaire/Abréviations",
                 "definitions": {
                     "columns": ["term", "definition"],
-                    "data": [
-                        ["SGRF", "Service de la géomatique et du registre foncier"],
-                        ["SITN", "Système d'Information du Territoire Neuchâtelois"]
-                    ]
+                    "data": abbreviations
                 }
             }]
         },
@@ -489,5 +496,5 @@ def get_content(id, request):
     #~ jsondata = json.dumps(d, indent=4)
     #~ jsonfile.write(jsondata)
     #~ jsonfile.close()
-    
+
     return d
