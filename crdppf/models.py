@@ -92,6 +92,10 @@ class Translations(Base):
     __tablename__ = 'translations'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
 
+class Glossar(Base):
+    __tablename__ = 'glossar'
+    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+    
 # DATA SECTION
 if 'town' in db_config['tables']:
     table_def_ = db_config['tables']['town']
@@ -125,7 +129,7 @@ if 'property' in db_config['tables']:
         __tablename__ = table_def_['tablename']
         __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
         noobj = Column(table_def_['att_id'], Integer, primary_key=True)
-        idemai = Column(table_def_['att_id_property'], String)
+        id = Column(table_def_['att_id_property'], String)
         nummai = Column(table_def_['att_property_number'], String)
         typimm = Column(table_def_['att_property_type'], String)
         geom = Column(Geometry("GEOMETRY", srid=srid_))

@@ -446,11 +446,6 @@ def get_content(id, request):
                 "documentlist" : topicdata[str(topic.topicid)]["legalprovision"]
                 }
 
-    abbreviations = [
-                    ["SGRF", "Service de la géomatique et du registre foncier"],
-                    ["SITN", "Système d'Information du Territoire Neuchâtelois"]
-                ]
-
     d= {
         "attributes": {
             "extractcreationdate": extract.creationdate,
@@ -465,26 +460,15 @@ def get_content(id, request):
             "EGRIDnumber": featureinfo['no_egrid'],
             "municipalitylogopath": municipalitylogopath,
             "federalmunicipalitynumber": featureinfo['nufeco'],
-            "competentauthority": "Placeholder",
+            "competentauthority": extract.baseconfig['competentauthority'] ,
             "title": report_title,
             "toc": [{
-                "toctitle": "Sommaire des thèmes RDPPF",
                 "concernedtopics": ";".join(concernedtopics),
                 "notconcernedtopics": ";".join(notconcernedtopics),
                 "emptytopics": ";".join(emptytopics)
             }],
             "propertyarea": propertyarea,
-            "maplegendlabel": "Autre légende (visible dans le cadre)",
-            "certificationtext": "Certification selon xyz",
-            "toctitle": "Sommaire des thèmes RDPPF",
-            "datasource": data,
-            "glossar": [{
-                "glossarlabel": "Glossaire/Abréviations",
-                "definitions": {
-                    "columns": ["term", "definition"],
-                    "data": abbreviations
-                }
-            }]
+            "datasource": data
         },
         "layout": "report",
         "outputFormat": "pdf"

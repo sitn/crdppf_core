@@ -315,7 +315,7 @@ def get_XML(geometry, srid, topicid, extracttime, lang, translations):
     
     return
 
-def get_feature_info(request, srid, translations):
+def get_feature_info(id, srid, translations):
     """The function gets the geometry of a parcel by it's ID and does an overlay 
     with other administrative layers to get the basic parcelInfo and attribute 
     information of the parcel : municipality, local names, and so on
@@ -334,8 +334,8 @@ def get_feature_info(request, srid, translations):
     Y = None
     X = None
 
-    if idemai :
-        parcelInfo['featureid'] = idemai
+    if id:
+        parcelInfo['featureid'] = id
     #~ elif request.params.get('X') and request.params.get('Y') :
         #~ X = int(request.params.get('X'))
         #~ Y = int(request.params.get('Y'))
@@ -343,7 +343,7 @@ def get_feature_info(request, srid, translations):
         raise Exception(translations[''])
 
     if parcelInfo['featureid'] is not None:
-        queryresult = DBSession.query(Property).filter_by(idemai=parcelInfo['featureid']).first()
+        queryresult = DBSession.query(Property).filter_by(id=parcelInfo['featureid']).first()
         # We should check unicity of the property id and raise an exception if there are multiple results 
     elif (X > 0 and Y > 0):
         if  Y > X :
@@ -351,7 +351,7 @@ def get_feature_info(request, srid, translations):
         else:
             pointYX = WKTElement('POINT('+str(X)+' '+str(Y)+')',SRS)
         queryresult = DBSession.query(Property).filter(Property.geom.ST_Contains(pointYX)).first()
-        parcelInfo['featureid'] = queryresult.idemai
+        parcelInfo['featureid'] = queryresult.id
     else : 
         # to define
         return HTTPBadRequest(translations['HTTPBadRequestMsg'])

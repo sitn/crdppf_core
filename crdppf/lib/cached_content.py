@@ -7,7 +7,7 @@ cache_region.configure("dogpile.cache.memory")
 
 from crdppf.models import DBSession
 
-from crdppf.models import AppConfig, Translations
+from crdppf.models import AppConfig, Translations, Glossar
 
 import logging
 
@@ -47,6 +47,7 @@ def get_cached_content_l10n(lang):
 
     d={}
 
+    # First get all the translated strings for the selected language
     translations = DBSession.query(Translations).all()
 
     for translation in translations:
@@ -56,5 +57,25 @@ def get_cached_content_l10n(lang):
         else:
             log.warning("There is a undefined translation")
             d[str(translation.varstr)] = u'undefined'
+
+    # Second get all the definitions for the selected language
+    glossar = DBSession.query(Glossar).filter_by(lang=lang).all()
+
+    abbreviations = []
+    for term in glossar:
+        if not term.expression == '' or term.definition == '':
+            abbreviations.append([
+                term.expression, term.definition
+            ])
+        else:
+            log.warning("There is a empty definition")
+    
+    d["glossar"] = [{
+        "glossarlabel": d["pdfGlossarLabel"],
+        "definitions": {
+            "columns": ["term", "definition"],
+            "data": abbreviations
+        }
+    }]
 
     return d
