@@ -41,6 +41,9 @@ setup(
     include_package_data=True,
     zip_safe=False,
     entry_points={
+        'console_scripts': [
+            "iconizer = crdppf.utilities.iconizer:main",
+        ],
         'paste.app_factory': [
             'main = crdppf_core:main',
         ],

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-12-01T15:46:23 -->
+<!-- 2016-12-19T15:43:26 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report" pageWidth="493" pageHeight="800" whenNoDataType="BlankPage" columnWidth="493" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="9a3e59f5-6675-48cf-ad74-9c42b5a5b290">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
@@ -22,7 +22,7 @@
 	<field name="term" class="java.lang.String"/>
 	<field name="definition" class="java.lang.String"/>
 	<pageHeader>
-		<band height="98">
+		<band height="104">
 			<image scaleImage="RetainShape" hAlign="Center">
 				<reportElement x="0" y="0" width="124" height="40" uuid="17ba958a-4f03-4a5e-a623-1c6b7e41b683">
 					<property name="local_mesure_unitx" value="pixel"/>
@@ -46,7 +46,7 @@
 				<imageExpression><![CDATA[$P{canton_logo}]]></imageExpression>
 			</image>
 			<image hAlign="Center">
-				<reportElement x="269" y="0" width="85" height="28" uuid="749c667b-d7fe-4acc-87e8-79fbc79fc024">
+				<reportElement key="TransparentImage" x="269" y="0" width="85" height="28" uuid="749c667b-d7fe-4acc-87e8-79fbc79fc024">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="local_mesure_unitheight" value="pixel"/>
@@ -64,7 +64,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center">
-					<font fontName="Arial" size="6"/>
+					<font fontName="Cadastra" size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
@@ -95,7 +95,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement>
-					<font size="16" isBold="true"/>
+					<font fontName="Cadastra" size="16" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{glossarlabel}]]></textFieldExpression>
 			</textField>

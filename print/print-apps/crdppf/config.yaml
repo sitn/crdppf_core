@@ -8,6 +8,7 @@ templates:
     attributes:
       # Global variables
       extractid: !string {}
+      pdfExtractIdLabel: !string {}
       placeholderlabel: !string {}
       pagelabel: !string {}
       appendiceslistlabel: !string {}
@@ -20,6 +21,7 @@ templates:
       competentauthority: !string {} 
       
       # Variables for footer
+      
       # Variables for title page
       municipality: !string {}
       municipalitylabel: !string {}
@@ -41,6 +43,9 @@ templates:
       certificationlabel: !string {}
       certificationtext: !string {}
 
+      # Parameters for table of content
+      toclabel: !string {}
+      
       # Variables for Glossar
       glossar: !datasource
         attributes:
@@ -49,7 +54,7 @@ templates:
       
       # Variables for topic page
       legendlabel: !string {}
-      maplegendlabel: !string {}
+      bboxlegendlabel: !string {}
       completlegendlabel: !string {} 
       legalbaseslabel: !string {} 
       legalprovisionslabel: !string {} 
@@ -59,7 +64,7 @@ templates:
       basemapNorthArrow: !northArrow
         size: 17
         default:
-          graphic: "file:///north.svg"
+          graphic: "file:///north.jpg"
       scalebar: !scalebar
         width: 93
         height: 15
@@ -72,7 +77,6 @@ templates:
         
       toc: !datasource
         attributes:
-          toctitle: !string {}
           concernedtopics: !string {}
           notconcernedtopics: !string {}         
           emptytopics: !string {}         

@@ -12,10 +12,13 @@ from crdppf.lib.geometry_functions import get_feature_bbox, get_print_format, ge
 
 from crdppf.views.get_features import get_features_function
 from crdppf.util.documents import get_document_ref, get_documents
-from crdppf.util.pdf_functions import get_feature_info, get_translations, get_XML
+from crdppf.util.pdf_functions import get_feature_info, get_translations
+from crdppf.util.pdf_functions import geom_from_coordinates, get_XML
 
 from crdppf.models import DBSession,Topics,AppConfig
 
+from geoalchemy2 import functions, WKTElement
+from geoalchemy2.shape import to_shape
 import logging
 
 log = logging.getLogger(__name__)
@@ -85,11 +88,27 @@ def add_appendix(topicid, num, label, url, filepath, topicdata):
     
     return appendix_entries
 
+def get_legend_classes(bbox, layername, translations):
+    """ Collects all the features in the map perimeter into a list to create a dynamic legend
+    """
+    # transform coordinates from wkt to SpatialElement for intersection
+    polygon = WKTElement(bbox.wkt, 2056)
+    mapfeatures = get_features_function(polygon, {'layerList':layername, 'translations': translations})
+    if mapfeatures is not None:
+        classes = []
+        for mapfeature in mapfeatures:
+            classes.append(str(mapfeature['properties']['codegenre']))
+
+    return classes
+
 def add_layer(request, layer, featureid, featureinfo, translations, appconfig, topicdata):
 
     layerlist = {}
-    
     results = get_features_function(featureinfo['geom'],{'layerList':layer.layername,'id':featureid, 'translations':appconfig['translations']})
+
+    bbox = to_shape(featureinfo['geom']).envelope
+    legend = get_legend_classes(bbox,layer.layername,translations)
+    
     if results :
         layerlist[str(layer.layerid)]={'layername':layer.layername,'features':[]}
         for result in results:
@@ -326,6 +345,7 @@ def get_content(id, request):
         if topic.layers:
             topicdata[str(topic.topicid)]['wmslayerlist'] = []
             topicdata["toc_entries"].update(add_toc_entry(topic.topicid, '', str(topic.topicname.encode('iso-8859-1')), 1, ''))
+            
             for layer in topic.layers:
                 topicdata[str(topic.topicid)]["layers"][layer.layerid]={
                     "layername": layer.layername,
@@ -334,7 +354,6 @@ def get_content(id, request):
                 topicdata[str(topic.topicid)]['wmslayerlist'].append(layer.layername)
                 # intersects a given layer with the feature and adds the results to the topicdata- see method add_layer
                 topicdata[str(topic.topicid)].update(add_layer(request, layer, propertynumber, featureinfo, translations, appconfig, topicdata))
-            #~ get_topic_map(topic.layers, topic.topicid)
 
             # Get the list of documents related to a topic with layers and results
             if topicdata[str(layer.topicfk)]["categorie"] == 3:

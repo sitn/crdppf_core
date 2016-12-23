@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-12-05T17:25:07 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="gmf16_A4_portrait" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="3664412a-b6c6-4e1c-8c14-6c4af7e6efc2">
+<!-- 2016-12-19T17:23:06 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="gmf16_A4_portrait" pageWidth="493" pageHeight="794" columnWidth="493" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="3664412a-b6c6-4e1c-8c14-6c4af7e6efc2">
 	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
+	<property name="net.sf.jasperreports.bookmarks.data.source.parameter" value="REPORT_DATA_SOURCE"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<subDataset name="restrictions" uuid="9a5d3c62-005a-4a40-baa8-4f42f0ef271a">
 		<parameter name="propertyarea" class="java.lang.String">
 			<defaultValueExpression><![CDATA[$P{propertyarea}]]></defaultValueExpression>
@@ -49,12 +51,15 @@
 	<parameter name="municipality" class="java.lang.String"/>
 	<parameter name="crdppf_logo" class="java.lang.String"/>
 	<parameter name="legendlabel" class="java.lang.String"/>
-	<parameter name="maplegendlabel" class="java.lang.String"/>
+	<parameter name="bboxlegendlabel" class="java.lang.String"/>
 	<parameter name="completlegendlabel" class="java.lang.String"/>
 	<parameter name="legalbaseslabel" class="java.lang.String"/>
 	<parameter name="legalprovisionslabel" class="java.lang.String"/>
 	<parameter name="referenceslabel" class="java.lang.String"/>
 	<parameter name="competentauthoritylabel" class="java.lang.String"/>
+	<parameter name="extractid" class="java.lang.String"/>
+	<parameter name="extractcreationdate" class="java.lang.String"/>
+	<parameter name="pagelabel" class="java.lang.String"/>
 	<field name="topicname" class="java.lang.String"/>
 	<field name="completelegend" class="java.lang.String"/>
 	<field name="propertyarea" class="java.lang.String"/>
@@ -93,7 +98,7 @@
 				<imageExpression><![CDATA[$P{canton_logo}]]></imageExpression>
 			</image>
 			<image hAlign="Center">
-				<reportElement x="269" y="0" width="85" height="28" uuid="39210068-bc74-466e-acdc-0ad2b2d62c8a">
+				<reportElement key="TransparentImage" x="269" y="0" width="85" height="28" uuid="39210068-bc74-466e-acdc-0ad2b2d62c8a">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="local_mesure_unitheight" value="pixel"/>
@@ -111,7 +116,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center">
-					<font fontName="Arial" size="6"/>
+					<font fontName="Cadastra" size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
@@ -165,24 +170,6 @@
 					</reportElement>
 					<subreportExpression><![CDATA[$F{mapSubReport}]]></subreportExpression>
 				</subreport>
-				<subreport>
-					<reportElement x="20" y="253" width="93" height="7" uuid="1387f6e5-f001-4073-8737-50ac9c4a8bc8">
-						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="mm"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					</reportElement>
-					<subreportExpression><![CDATA[$F{scalebarSubReport}]]></subreportExpression>
-				</subreport>
-				<subreport>
-					<reportElement key="" mode="Transparent" x="54" y="233" width="17" height="17" uuid="8e2148b7-b04a-439e-aee3-b28c205b995f">
-						<property name="com.jaspersoft.studio.unit.width" value="mm"/>
-						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="mm"/>
-					</reportElement>
-					<subreportExpression><![CDATA[$F{northArrowSubReport}]]></subreportExpression>
-				</subreport>
 			</frame>
 			<textField bookmarkLevel="1">
 				<reportElement x="0" y="28" width="493" height="22" uuid="22c80cf5-78d8-4791-9eb9-ac621df1a041">
@@ -227,6 +214,24 @@
 				</textElement>
 				<text><![CDATA[Part]]></text>
 			</staticText>
+			<subreport>
+				<reportElement x="20" y="333" width="93" height="7" uuid="1387f6e5-f001-4073-8737-50ac9c4a8bc8">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<subreportExpression><![CDATA[$F{scalebarSubReport}]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement key="" mode="Transparent" x="54" y="313" width="17" height="17" uuid="8e2148b7-b04a-439e-aee3-b28c205b995f">
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+				</reportElement>
+				<subreportExpression><![CDATA[$F{northArrowSubReport}]]></subreportExpression>
+			</subreport>
 		</band>
 		<band height="19">
 			<textField>
@@ -262,23 +267,23 @@
 								<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 							</reportElement>
-							<textElement>
+							<textElement verticalAlignment="Middle">
 								<font fontName="Cadastra" size="8.5"/>
 							</textElement>
 							<textFieldExpression><![CDATA[$F{teneur}]]></textFieldExpression>
 						</textField>
 						<textField>
 							<reportElement x="200" y="0" width="52" height="15" uuid="d381043e-83fe-4886-b5a3-542585b6179a"/>
-							<textElement textAlignment="Right">
+							<textElement textAlignment="Right" verticalAlignment="Middle">
 								<font fontName="Cadastra" size="8.5"/>
 							</textElement>
-							<textFieldExpression><![CDATA[$F{area} +" m2"]]></textFieldExpression>
+							<textFieldExpression><![CDATA[$F{area}]]></textFieldExpression>
 						</textField>
 						<textField>
 							<reportElement x="252" y="0" width="48" height="15" uuid="fa72dc93-e88e-4b4b-bd9b-b3c7bfe51469">
 								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 							</reportElement>
-							<textElement textAlignment="Right">
+							<textElement textAlignment="Right" verticalAlignment="Middle">
 								<font fontName="Cadastra" size="8.5"/>
 							</textElement>
 							<textFieldExpression><![CDATA[$P{propertyarea} +" %"]]></textFieldExpression>
@@ -319,7 +324,7 @@
 				<textElement>
 					<font fontName="Cadastra" size="8.5" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{maplegendlabel}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{bboxlegendlabel}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="19">
@@ -379,7 +384,7 @@
 							<reportElement x="0" y="0" width="300" height="15" uuid="5ed4671f-c6c6-4ad7-8950-551518cff2b9">
 								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 							</reportElement>
-							<textElement>
+							<textElement verticalAlignment="Middle">
 								<font fontName="Cadastra" size="8.5"/>
 							</textElement>
 							<textFieldExpression><![CDATA[$F{officialtitle}]]></textFieldExpression>
@@ -430,7 +435,7 @@
 							<reportElement x="0" y="0" width="300" height="15" uuid="2d20685e-3f3c-40c7-bf03-bf0c130e12af">
 								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 							</reportElement>
-							<textElement>
+							<textElement verticalAlignment="Middle">
 								<font fontName="Cadastra" size="8.5"/>
 							</textElement>
 							<textFieldExpression><![CDATA[$F{officialtitle}]]></textFieldExpression>
@@ -481,7 +486,7 @@
 							<reportElement x="0" y="0" width="300" height="15" uuid="79583210-a916-4dd7-bccd-7db2fef35a19">
 								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 							</reportElement>
-							<textElement>
+							<textElement verticalAlignment="Middle">
 								<font fontName="Cadastra" size="8.5"/>
 								<paragraph leftIndent="0"/>
 							</textElement>
@@ -503,7 +508,8 @@
 				</jr:list>
 			</componentElement>
 		</band>
-		<band height="30">
+		<band height="32">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField>
 				<reportElement x="0" y="0" width="493" height="19" uuid="c4523b24-d156-4e85-bbec-36a92dd6c8b3">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -534,7 +540,7 @@
 							<reportElement x="0" y="0" width="300" height="15" uuid="794843ec-1aa2-45cf-993d-7235160fdb99">
 								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 							</reportElement>
-							<textElement>
+							<textElement verticalAlignment="Middle">
 								<font fontName="Cadastra" size="8.5"/>
 								<paragraph leftIndent="0"/>
 							</textElement>
@@ -555,16 +561,9 @@
 					</jr:listContents>
 				</jr:list>
 			</componentElement>
-		</band>
-	</detail>
-	<pageFooter>
-		<band height="5">
-			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<break>
-				<reportElement x="0" y="1" width="100" height="1" uuid="2934b1ee-50b3-48f9-8b2b-b2b834181de5">
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-				</reportElement>
+				<reportElement x="0" y="31" width="100" height="1" uuid="e023618f-72b3-415a-8aab-40fe57b52099"/>
 			</break>
 		</band>
-	</pageFooter>
+	</detail>
 </jasperReport>

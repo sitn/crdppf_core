@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-12-05T14:31:59 -->
+<!-- 2016-12-20T11:05:13 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainpage" pageWidth="595" pageHeight="842" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" uuid="ec5a2ca3-0f18-45f7-bcd3-6113b53cad98">
 	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -24,15 +24,15 @@
 	<parameter name="EGRIDlabel" class="java.lang.String"/>
 	<parameter name="EGRIDnumber" class="java.lang.String"/>
 	<parameter name="legendlabel" class="java.lang.String"/>
-	<parameter name="maplegendlabel" class="java.lang.String"/>
+	<parameter name="bboxlegendlabel" class="java.lang.String"/>
 	<parameter name="completlegendlabel" class="java.lang.String"/>
 	<parameter name="legalbaseslabel" class="java.lang.String"/>
 	<parameter name="legalprovisionslabel" class="java.lang.String"/>
 	<parameter name="referenceslabel" class="java.lang.String"/>
 	<parameter name="competentauthoritylabel" class="java.lang.String"/>
-	<parameter name="extractsubtitlelabel" class="java.lang.String"/>
 	<parameter name="extractcreationdate" class="java.lang.String"/>
 	<parameter name="extractid" class="java.lang.String"/>
+	<parameter name="pdfExtractIdLabel" class="java.lang.String"/>
 	<parameter name="municipalitylabel" class="java.lang.String"/>
 	<parameter name="cadastrelabel" class="java.lang.String"/>
 	<parameter name="federalmunicipalitynumber" class="java.lang.String"/>
@@ -46,6 +46,7 @@
 	<parameter name="certificationlabel" class="java.lang.String"/>
 	<parameter name="certificationtext" class="java.lang.String"/>
 	<parameter name="title" class="java.lang.String"/>
+	<parameter name="toclabel" class="java.lang.String"/>
 	<parameter name="toc" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="glossar" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="jrDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
@@ -129,11 +130,12 @@
 			<subreport>
 				<reportElement x="20" y="420" width="93" height="7" uuid="d1e5c319-c49a-4bfa-9099-11ce9896aedf">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
 				</reportElement>
 				<subreportExpression><![CDATA[$P{scalebarSubReport}]]></subreportExpression>
 			</subreport>
 			<subreport>
-				<reportElement key="" mode="Transparent" x="53" y="395" width="17" height="17" uuid="8e2148b7-b04a-439e-aee3-b28c205b995f">
+				<reportElement key="" mode="Transparent" x="43" y="395" width="17" height="17" uuid="8e2148b7-b04a-439e-aee3-b28c205b995f">
 					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
@@ -370,7 +372,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Cadastra" size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Identifiant de l'extrait"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{pdfExtractIdLabel}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="243" y="586" width="250" height="17" uuid="95a742b4-e13c-470c-8a60-590d349b66e8">
@@ -391,7 +393,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Cadastra" size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Service de la géomatique et du registre foncier"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{competentauthority}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="523" width="493" height="17" uuid="47c01797-92b4-40a0-a54b-ab63bb405743">
@@ -465,6 +467,9 @@
 				<subreportParameter name="appendiceslistlabel">
 					<subreportParameterExpression><![CDATA[$P{appendiceslistlabel}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="toclabel">
+					<subreportParameterExpression><![CDATA[$P{toclabel}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[$P{toc}]]></dataSourceExpression>
 				<subreportExpression><![CDATA["toc.jasper"]]></subreportExpression>
 			</subreport>
@@ -498,8 +503,8 @@
 				<subreportParameter name="legendlabel">
 					<subreportParameterExpression><![CDATA[$P{legendlabel}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="maplegendlabel">
-					<subreportParameterExpression><![CDATA[$P{maplegendlabel}]]></subreportParameterExpression>
+				<subreportParameter name="bboxlegendlabel">
+					<subreportParameterExpression><![CDATA[$P{bboxlegendlabel}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="completlegendlabel">
 					<subreportParameterExpression><![CDATA[$P{completlegendlabel}]]></subreportParameterExpression>
@@ -579,9 +584,10 @@
 		<band height="15">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<line>
-				<reportElement x="0" y="0" width="491" height="1" uuid="f1fd2c0f-ee37-4a4a-95af-11c27d1c011d">
+				<reportElement x="0" y="0" width="493" height="1" uuid="f1fd2c0f-ee37-4a4a-95af-11c27d1c011d">
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<graphicElement>
 					<pen lineWidth="0.8"/>
@@ -599,6 +605,7 @@
 			<textField>
 				<reportElement x="380" y="1" width="100" height="9" uuid="0ba39e05-b5b3-448c-851c-2827f4d3bb19">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font fontName="Cadastra" size="6.5"/>

@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-12-02T10:54:31 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TocReport" pageWidth="544" pageHeight="800" whenNoDataType="AllSectionsNoDetail" columnWidth="544" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6e74177b-d551-4a75-ae51-6cdde3f284ce">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+<!-- 2016-12-20T11:04:26 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TocReport" pageWidth="544" pageHeight="800" whenNoDataType="AllSectionsNoDetail" columnWidth="544" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="6e74177b-d551-4a75-ae51-6cdde3f284ce">
+	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
+	<property name="net.sf.jasperreports.bookmarks.data.source.parameter" value="REPORT_DATA_SOURCE"/>
+	<style name="Default" isDefault="true" fontName="Cadastra" fontSize="10"/>
 	<style name="Title" hTextAlign="Right" hImageAlign="Right" fontSize="32">
 		<box>
 			<topPen lineWidth="1.0"/>
 		</box>
 	</style>
-	<style name="Heading1" fontSize="16" isBold="true">
+	<style name="Heading1" style="Default" fontSize="16" isBold="true">
 		<box>
 			<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
 		</box>
 	</style>
 	<style name="HeadingLabel1" style="Heading1"/>
 	<style name="HeadingIndex1" style="Heading1"/>
-	<style name="Heading2" fontSize="16">
+	<style name="Heading2" style="Default" fontSize="16">
 		<box>
 			<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
 		</box>
 	</style>
 	<style name="HeadingLabel2" style="Heading2"/>
 	<style name="HeadingIndex2" style="Heading2"/>
-	<style name="Heading3" fontSize="12">
+	<style name="Heading3" style="Default" fontSize="12">
 		<box>
 			<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
 		</box>
@@ -38,12 +40,10 @@
 	<parameter name="pagelabel" class="java.lang.String"/>
 	<parameter name="appendiceslistlabel" class="java.lang.String"/>
 	<parameter name="propertynumber" class="java.lang.String"/>
+	<parameter name="toclabel" class="java.lang.String"/>
 	<field name="concernedtopics" class="java.lang.String"/>
 	<field name="notconcernedtopics" class="java.lang.String"/>
 	<field name="emptytopics" class="java.lang.String"/>
-	<field name="toctitle" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
 	<field name="level" class="java.lang.Integer"/>
 	<field name="label" class="java.lang.String"/>
 	<field name="pageIndex" class="java.lang.Integer"/>
@@ -64,7 +64,7 @@
 				<textElement>
 					<font fontName="Cadastra" size="15" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{toctitle}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{toclabel}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="121" width="493" height="17" uuid="2ad1edce-fc3e-485e-80d1-3478614514d4">
@@ -125,7 +125,7 @@
 				<imageExpression><![CDATA[$P{canton_logo}]]></imageExpression>
 			</image>
 			<image hAlign="Center">
-				<reportElement x="269" y="0" width="85" height="28" uuid="b60ce929-3e3d-415a-96cd-3df418d6e3e6">
+				<reportElement key="TransparentImage" x="269" y="0" width="85" height="28" uuid="b60ce929-3e3d-415a-96cd-3df418d6e3e6">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="local_mesure_unitheight" value="pixel"/>
@@ -143,7 +143,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center">
-					<font fontName="Arial" size="6"/>
+					<font fontName="Cadastra" size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
@@ -174,7 +174,7 @@
 	<detail>
 		<band height="17" splitType="Stretch">
 			<property name="local_mesure_unitheight" value="pixel"/>
-			<textField evaluationTime="Master" hyperlinkType="LocalAnchor">
+			<textField evaluationTime="Band" hyperlinkType="LocalAnchor">
 				<reportElement style="HeadingLabel1" x="0" y="0" width="20" height="17" uuid="fd27672f-5f23-444c-8482-0eac44e51ea2">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="local_mesure_unity" value="pixel"/>
@@ -279,16 +279,7 @@
 				<textElement verticalAlignment="Top">
 					<font fontName="Cadastra" size="6" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Informations générales]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="94" width="230" height="11" uuid="39c823c5-b374-48f0-9cb5-d63447421329">
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
-				</reportElement>
-				<textElement verticalAlignment="Top">
-					<font fontName="Cadastra" size="6" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Données de base]]></text>
+				<text><![CDATA[]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="0" y="105" width="230" height="18" uuid="d365b8b5-e8db-4f15-b729-7c79eb6b9606"/>
@@ -311,6 +302,29 @@
 				</textElement>
 				<textFieldExpression><![CDATA["www.ne.ch/sgrf"]]></textFieldExpression>
 				<hyperlinkReferenceExpression><![CDATA["www.ne.ch/sgrf"]]></hyperlinkReferenceExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="26" width="230" height="11" uuid="569e8369-5b6a-4d3a-9a9f-c5ddc83db00e">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Cadastra" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Informations générales"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="94" width="230" height="11" uuid="5619901c-209c-4daf-8b10-bdf37046084e">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Cadastra" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Données de base"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-12-01T16:37:46 -->
+<!-- 2016-12-19T15:44:16 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Definitions" pageWidth="493" pageHeight="842" columnWidth="493" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Key" uuid="e034c6ef-7449-4a6a-9b5e-4ce04cc083b2">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -28,7 +28,10 @@
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textFieldExpression><![CDATA[$F{term}+": " + $F{definition}]]></textFieldExpression>
+				<textElement markup="styled">
+					<font fontName="Cadastra" size="8.5" pdfFontName="Cadastra" pdfEncoding=""/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>"+$F{term}+":</b> " + $F{definition}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
