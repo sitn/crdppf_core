@@ -5,7 +5,7 @@ FileName: iconizer.py
 Creates all the symbols to generate the dynamic legend for the PDF extract
 =============================================================================
 Created: [2016/12/19]
-Updated: [2017/02/13]
+Updated: [2017/03/21]
 Author: François Voisard
 """
 
@@ -87,9 +87,10 @@ def main():
     topics = session.query(Topics).all()
     layers = session.query(Layers).all()
     for layer in layers:
-        if layer.baselayer == False and layer.layername not in ['r132_perimetre_prot_eau','r131_zone_prot_eau']:
+        if layer.baselayer == False and layer.layername not in ['r132_perimetre_prot_eau','r73_affectations_primaires','r145_sens_bruit']:
+            print layer.layername
             iconizer(layer, wmsconfigs, configs)
-
+            
 
 def set_wms_config(configs):
     """ Sets the basic WMS parameters in function of the topic
@@ -134,6 +135,7 @@ def iconizer(restriction_layer, wmsconfigs, configs):
     if getstylesurl.find('?') < 0:
         getstylesurl += '?'
     getstylesurl = getstylesurl + '&'.join(['%s=%s' % (key, value) for (key, value) in wms_get_styles.items()])
+    print getstylesurl
 
     http = httplib2.Http()
 
@@ -197,7 +199,7 @@ def iconizer(restriction_layer, wmsconfigs, configs):
                 if getsldurl.find('?') < 0:
                     getsldurl += '?'
                 getsldurl = getsldurl + '&'.join(['%s=%s' % (key, value) for (key, value) in wms_get_legend.items()])
-                print getsldurl
+                #~ print getsldurl
 
                 http = httplib2.Http()
 
