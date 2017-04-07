@@ -57,7 +57,7 @@ class PrintProxy(Proxy):  # pragma: no cover
     def report_create(self):
         """ Create PDF. """
 
-        idemai = self.request.matchdict.get("idemai")
+        id = self.request.matchdict.get("id")
         type_ = self.request.matchdict.get("type_")
 
         body = {
@@ -75,7 +75,7 @@ class PrintProxy(Proxy):  # pragma: no cover
         
         print cached_content
         
-        dynamic_content = get_content(idemai, self.request)
+        dynamic_content = get_content(id, self.request)
 
         if dynamic_content is False:
             return HTTPBadRequest(detail='Found more then one geometry')

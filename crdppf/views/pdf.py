@@ -101,7 +101,7 @@ def create_extract(request):
 #=========================
 
     # 1) If the ID of the parcel is set get the basic attributs of the property
-    # else get the ID (idemai) of the selected parcel first using X/Y coordinates of the center 
+    # else get the ID (id) of the selected parcel first using X/Y coordinates of the center 
     #----------------------------------------------------------------------------------------------------
     extract.featureInfo = get_feature_info(request, extract.srid, translations) # '1_14127' # test parcel or '1_11340'
 

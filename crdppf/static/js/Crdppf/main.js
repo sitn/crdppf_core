@@ -300,7 +300,7 @@ Crdppf.init_main = function(lang) {
                             Crdppf.printReportCreateUrl,
                             selectedRadio.inputValue,
                             "/",
-                            Crdppf.currentProperty.attributes.idemai
+                            Crdppf.currentProperty.attributes.id
                         ].join('');
 
                         this.Report.create(url, pdfMask);
