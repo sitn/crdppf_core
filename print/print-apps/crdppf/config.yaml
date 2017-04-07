@@ -12,16 +12,16 @@ templates:
       placeholderlabel: !string {}
       pagelabel: !string {}
       appendiceslistlabel: !string {}
-      
+
       # Variables for header
       ch_logo: !string {}
       canton_logo: !string {}
       municipalitylogopath: !string {}
       crdppf_logo: !string {}
       competentauthority: !string {} 
-      
+
       # Variables for footer
-      
+
       # Variables for title page
       municipality: !string {}
       municipalitylabel: !string {}
@@ -45,7 +45,7 @@ templates:
 
       # Parameters for table of content
       toclabel: !string {}
-      
+
       # Variables for Glossar
       glossar: !datasource
         attributes:
@@ -64,7 +64,7 @@ templates:
       basemapNorthArrow: !northArrow
         size: 17
         default:
-          graphic: "file:///north.jpg"
+          graphic: "file:///north.svg"
       scalebar: !scalebar
         width: 93
         height: 15
@@ -77,19 +77,29 @@ templates:
         
       toc: !datasource
         attributes:
-          concernedtopics: !string {}
+          concernedtopics: !datasource
+            attributes:
+              topicname: !string {}
+              documentlist: !string {}
           notconcernedtopics: !string {}         
           emptytopics: !string {}         
       datasource: !datasource
         attributes:
           topicname: !string {}
           completelegend: !string {}
-          propertyarea: !string {}
+          bboxlegend: !datasource
+            attributes:
+              codegenre: !string {}
+              teneur: !string {}
+            default:
+              - codegenre: ""
+              - teneur: ""
           restrictions: !datasource
             attributes:
               codegenre: !string {}
               teneur: !string {}
               area: !string {}
+              area_pct: !float {}
           legalbases: !datasource
             attributes:
               officialtitle: !string {}
@@ -146,6 +156,13 @@ templates:
         directory: '.'
       inputMapper: {toc: datasource}
       outputMapper: {jrDataSource: toc}
+      processors:
+      - !createDataSource
+        processors:
+        - !reportBuilder # compile all reports in current directory
+          directory: '.'
+        inputMapper: {concernedtopics: datasource}
+        outputMapper: {jrDataSource: concernedtopics}
     - !createDataSource
       processors:
       - !reportBuilder # compile all reports in current directory
@@ -158,6 +175,12 @@ templates:
       - !createMap
         inputMapper: {map: map}
         outputMapper: {mapSubReport: mapSubReport}
+      - !createDataSource
+        processors:
+        - !reportBuilder # compile all reports in current directory
+          directory: '.'
+        inputMapper: {bboxlegend: datasource}
+        outputMapper: {jrDataSource: bboxlegend}
       - !createDataSource
         processors:
         - !reportBuilder # compile all reports in current directory

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-12-20T11:05:13 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-04-07T10:19:57 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainpage" pageWidth="595" pageHeight="842" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" uuid="ec5a2ca3-0f18-45f7-bcd3-6113b53cad98">
-	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
@@ -159,7 +158,7 @@
 				<textElement>
 					<font fontName="Cadastra" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{certificationtext}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
 			</textField>
 			<image scaleImage="RetainShape" hAlign="Center">
 				<reportElement x="0" y="0" width="124" height="40" uuid="d8ea4d73-0773-4eb1-a8df-470a0fafcc29">
@@ -427,9 +426,9 @@
 		</band>
 	</title>
 	<detail>
-		<band height="9" splitType="Stretch">
+		<band height="9">
 			<subreport>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="493" height="5" uuid="eb82c361-4c13-42b1-8335-1d609e1c43dd">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="493" height="5" isRemoveLineWhenBlank="true" uuid="eb82c361-4c13-42b1-8335-1d609e1c43dd">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -603,9 +602,8 @@
 				<textFieldExpression><![CDATA[$P{extractid}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="380" y="1" width="100" height="9" uuid="0ba39e05-b5b3-448c-851c-2827f4d3bb19">
+				<reportElement x="385" y="1" width="100" height="9" uuid="0ba39e05-b5b3-448c-851c-2827f4d3bb19">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font fontName="Cadastra" size="6.5"/>
@@ -620,7 +618,7 @@
 				<textFieldExpression><![CDATA[$P{extractcreationdate}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="460" y="1" width="33" height="9" uuid="c8841281-c4df-40d7-ad93-b53d124b0459">
+				<reportElement x="480" y="1" width="13" height="9" uuid="c8841281-c4df-40d7-ad93-b53d124b0459">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Right">
