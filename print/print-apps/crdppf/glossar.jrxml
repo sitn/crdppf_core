@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-12-19T15:43:26 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report" pageWidth="493" pageHeight="800" whenNoDataType="BlankPage" columnWidth="493" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="9a3e59f5-6675-48cf-ad74-9c42b5a5b290">
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-04-13T13:36:20 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" uuid="9a3e59f5-6675-48cf-ad74-9c42b5a5b290">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
-	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="ch_logo" class="java.lang.String"/>
 	<parameter name="canton_logo" class="java.lang.String"/>
 	<parameter name="municipalitylogopath" class="java.lang.String"/>
 	<parameter name="municipality" class="java.lang.String"/>
 	<parameter name="crdppf_logo" class="java.lang.String"/>
+	<parameter name="extractcreationdate" class="java.lang.String"/>
+	<parameter name="extractid" class="java.lang.String"/>
+	<parameter name="pagelabel" class="java.lang.String"/>
 	<field name="glossarlabel" class="java.lang.String"/>
 	<field name="definitions" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<field name="term" class="java.lang.String"/>
@@ -110,4 +105,43 @@
 			</subreport>
 		</band>
 	</detail>
+	<pageFooter>
+		<band height="10">
+			<line>
+				<reportElement x="0" y="0" width="493" height="1" uuid="f8baaac4-0124-4f50-b8bb-fd8e8451dea7">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.8"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="100" y="1" width="181" height="9" uuid="6259ac06-25a4-410d-9b98-39094d34bf6a">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Cadastra" size="6.5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{extractid}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="1" width="90" height="8" uuid="b78ad76c-e391-4edd-a0ab-2ebed93889cd"/>
+				<textElement>
+					<font fontName="Cadastra" size="6.5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{extractcreationdate}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Master" isBlankWhenNull="true">
+				<reportElement x="385" y="1" width="108" height="8" uuid="b4dfa216-323b-41b9-8811-ade5ada8995a">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Cadastra" size="6.5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pagelabel} +" " + $V{MASTER_CURRENT_PAGE} + "/" + $V{MASTER_TOTAL_PAGES}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
 </jasperReport>

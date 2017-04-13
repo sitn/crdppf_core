@@ -3,7 +3,7 @@ throwErrorOnExtraParameters: true
 templates:
   report: !template
     outputFilename: ${yyyyMMddhhmmss}_extract
-    reportTemplate: mainpage.jrxml
+    reportTemplate: pdfextract.jrxml
 
     attributes:
       # Global variables
@@ -28,7 +28,6 @@ templates:
       federalmunicipalitynumber: !string {}
       cadastre: !string {}
       cadastrelabel: !string {}
-      title: !string {}
       extractsubtitlelabel: !string {}
       propertylabel: !string {}
       propertynumber: !string {}
@@ -41,7 +40,11 @@ templates:
       extractcreationdate: !string {}
       extractoperatorlabel: !string {}
       certificationlabel: !string {}
-      certificationtext: !string {}
+      titlepage: !datasource
+        attributes:
+          title: !string {}
+          certificationtext: !string {}
+          certificationinstance: !string {}
 
       # Parameters for table of content
       toclabel: !string {}
@@ -74,15 +77,15 @@ templates:
         maxDpi: 400
         width: 493
         height: 280
-        
+
       toc: !datasource
         attributes:
           concernedtopics: !datasource
             attributes:
               topicname: !string {}
               documentlist: !string {}
-          notconcernedtopics: !string {}         
-          emptytopics: !string {}         
+      notconcernedtopics: !string {}         
+      emptytopics: !string {}         
       datasource: !datasource
         attributes:
           topicname: !string {}
@@ -150,6 +153,12 @@ templates:
       - !prepareTable
         inputMapper: {definitions: table}
         outputMapper: {table: definitions}
+    - !createDataSource
+      processors:
+      - !reportBuilder # compile all reports in current directory
+        directory: '.'
+      inputMapper: {titlepage: datasource}
+      outputMapper: {jrDataSource: titlepage}
     - !createDataSource
       processors:
       - !reportBuilder # compile all reports in current directory

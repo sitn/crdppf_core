@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-04-07T10:19:57 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainpage" pageWidth="595" pageHeight="842" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" uuid="ec5a2ca3-0f18-45f7-bcd3-6113b53cad98">
+<!-- 2017-04-13T13:32:48 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainpage" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" uuid="ec5a2ca3-0f18-45f7-bcd3-6113b53cad98">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
@@ -41,20 +41,17 @@
 	<parameter name="competentauthority" class="java.lang.String"/>
 	<parameter name="placeholderlabel" class="java.lang.String"/>
 	<parameter name="pagelabel" class="java.lang.String"/>
-	<parameter name="appendiceslistlabel" class="java.lang.String"/>
 	<parameter name="certificationlabel" class="java.lang.String"/>
-	<parameter name="certificationtext" class="java.lang.String"/>
-	<parameter name="title" class="java.lang.String"/>
 	<parameter name="toclabel" class="java.lang.String"/>
-	<parameter name="toc" class="net.sf.jasperreports.engine.JRDataSource"/>
-	<parameter name="glossar" class="net.sf.jasperreports.engine.JRDataSource"/>
-	<parameter name="jrDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="basemap" class="java.lang.String"/>
 	<parameter name="northArrowSubReport" class="java.lang.String"/>
 	<parameter name="scalebarSubReport" class="java.lang.String"/>
+	<parameter name="titlepage" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<field name="title" class="java.lang.String"/>
+	<field name="certificationtext" class="java.lang.String"/>
+	<field name="certificationinstance" class="java.lang.String"/>
 	<title>
-		<band height="779">
-			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		<band height="755">
 			<textField>
 				<reportElement x="0" y="85" width="493" height="45" uuid="91967381-ca0a-45ff-98d9-b3f085b93036">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -64,7 +61,7 @@
 				<textElement>
 					<font size="16" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{title}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{title}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="472" width="493" height="17" uuid="29833704-80ba-403b-8514-1046cc955fb7">
@@ -95,7 +92,7 @@
 				<textFieldExpression><![CDATA[$P{propertynumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="713" width="100" height="12" uuid="271ad7a2-f811-4bba-b789-1983e06224ad">
+				<reportElement x="0" y="697" width="100" height="12" uuid="271ad7a2-f811-4bba-b789-1983e06224ad">
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 				</reportElement>
 				<textElement>
@@ -122,6 +119,7 @@
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<printWhenExpression><![CDATA[($P{basemap} != null || !$P{basemap}.equals( "" ))]]></printWhenExpression>
 					</reportElement>
 					<subreportExpression><![CDATA[$P{basemap}]]></subreportExpression>
 				</subreport>
@@ -143,7 +141,7 @@
 				<subreportExpression><![CDATA[$P{northArrowSubReport}]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="741" width="493" height="10" uuid="d8df0118-7778-4c00-a7e4-458b634767f3">
+				<reportElement x="0" y="725" width="493" height="10" uuid="d8df0118-7778-4c00-a7e4-458b634767f3">
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 				</reportElement>
 				<textElement>
@@ -152,13 +150,13 @@
 				<textFieldExpression><![CDATA["(Tampon)                                                                                   (Date)                                                                         (Signature)"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement isPrintRepeatedValues="false" x="0" y="725" width="490" height="12" uuid="5ab69d2b-c6f8-4008-89f9-1e0fc5b897eb">
+				<reportElement isPrintRepeatedValues="false" x="0" y="709" width="490" height="12" uuid="5ab69d2b-c6f8-4008-89f9-1e0fc5b897eb">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement>
 					<font fontName="Cadastra" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{certificationtext} == null && $F{certificationtext}.equals( "" )) ? "" : $F{certificationtext}]]></textFieldExpression>
 			</textField>
 			<image scaleImage="RetainShape" hAlign="Center">
 				<reportElement x="0" y="0" width="124" height="40" uuid="d8ea4d73-0773-4eb1-a8df-470a0fafcc29">
@@ -425,162 +423,8 @@
 			</textField>
 		</band>
 	</title>
-	<detail>
-		<band height="9">
-			<subreport>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="493" height="5" isRemoveLineWhenBlank="true" uuid="eb82c361-4c13-42b1-8335-1d609e1c43dd">
-					<property name="local_mesure_unitwidth" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<subreportParameter name="ch_logo">
-					<subreportParameterExpression><![CDATA[$P{ch_logo}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="canton_logo">
-					<subreportParameterExpression><![CDATA[$P{canton_logo}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="municipalitylogopath">
-					<subreportParameterExpression><![CDATA[$P{municipalitylogopath}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="municipality">
-					<subreportParameterExpression><![CDATA[$P{municipality}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="crdppf_logo">
-					<subreportParameterExpression><![CDATA[$P{crdppf_logo}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="extractcreationdate">
-					<subreportParameterExpression><![CDATA[$P{extractcreationdate}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="propertynumber">
-					<subreportParameterExpression><![CDATA[$P{propertynumber}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="toc">
-					<subreportParameterExpression><![CDATA[$P{toc}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="SUBREPORT_DIR">
-					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="pagelabel">
-					<subreportParameterExpression><![CDATA[$P{pagelabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="appendiceslistlabel">
-					<subreportParameterExpression><![CDATA[$P{appendiceslistlabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="toclabel">
-					<subreportParameterExpression><![CDATA[$P{toclabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<dataSourceExpression><![CDATA[$P{toc}]]></dataSourceExpression>
-				<subreportExpression><![CDATA["toc.jasper"]]></subreportExpression>
-			</subreport>
-			<break>
-				<reportElement x="0" y="6" width="100" height="1" uuid="beab864e-d225-4c54-afef-2ca7aff3813a"/>
-			</break>
-		</band>
-		<band height="15">
-			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-			<subreport>
-				<reportElement x="0" y="0" width="493" height="10" isRemoveLineWhenBlank="true" uuid="9549b6bc-3653-4bf3-bb45-c77d676c8994">
-					<property name="local_mesure_unitwidth" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-				</reportElement>
-				<subreportParameter name="ch_logo">
-					<subreportParameterExpression><![CDATA[$P{ch_logo}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="canton_logo">
-					<subreportParameterExpression><![CDATA[$P{canton_logo}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="municipalitylogopath">
-					<subreportParameterExpression><![CDATA[$P{municipalitylogopath}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="municipality">
-					<subreportParameterExpression><![CDATA[$P{municipality}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="crdppf_logo">
-					<subreportParameterExpression><![CDATA[$P{crdppf_logo}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="legendlabel">
-					<subreportParameterExpression><![CDATA[$P{legendlabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="bboxlegendlabel">
-					<subreportParameterExpression><![CDATA[$P{bboxlegendlabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="completlegendlabel">
-					<subreportParameterExpression><![CDATA[$P{completlegendlabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="legalbaseslabel">
-					<subreportParameterExpression><![CDATA[$P{legalbaseslabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="legalprovisionslabel">
-					<subreportParameterExpression><![CDATA[$P{legalprovisionslabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="referenceslabel">
-					<subreportParameterExpression><![CDATA[$P{referenceslabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="competentauthoritylabel">
-					<subreportParameterExpression><![CDATA[$P{competentauthoritylabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="extractcreationdate">
-					<subreportParameterExpression><![CDATA[$P{extractcreationdate}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="jrDataSource">
-					<subreportParameterExpression><![CDATA[$P{jrDataSource}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="SUBREPORT_DIR">
-					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="pagelabel">
-					<subreportParameterExpression><![CDATA[$P{pagelabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<dataSourceExpression><![CDATA[$P{jrDataSource}]]></dataSourceExpression>
-				<subreportExpression><![CDATA["topicpage.jasper"]]></subreportExpression>
-			</subreport>
-			<break>
-				<reportElement x="0" y="12" width="100" height="1" uuid="947dd149-ba91-4582-a856-61bfd0dcef5c"/>
-			</break>
-		</band>
-		<band height="9">
-			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-			<subreport>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="493" height="5" uuid="39f07425-7d06-4e7f-8433-3fc86b0c6980">
-					<property name="local_mesure_unitwidth" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<subreportParameter name="ch_logo">
-					<subreportParameterExpression><![CDATA[$P{ch_logo}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="canton_logo">
-					<subreportParameterExpression><![CDATA[$P{canton_logo}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="municipalitylogopath">
-					<subreportParameterExpression><![CDATA[$P{municipalitylogopath}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="municipality">
-					<subreportParameterExpression><![CDATA[$P{municipality}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="crdppf_logo">
-					<subreportParameterExpression><![CDATA[$P{crdppf_logo}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="extractcreationdate">
-					<subreportParameterExpression><![CDATA[$P{extractcreationdate}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="SUBREPORT_DIR">
-					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="pagelabel">
-					<subreportParameterExpression><![CDATA[$P{pagelabel}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="glossar">
-					<subreportParameterExpression><![CDATA[$P{glossar}]]></subreportParameterExpression>
-				</subreportParameter>
-				<dataSourceExpression><![CDATA[$P{glossar}]]></dataSourceExpression>
-				<subreportExpression><![CDATA["glossar.jasper"]]></subreportExpression>
-			</subreport>
-		</band>
-	</detail>
 	<pageFooter>
-		<band height="15">
+		<band height="10">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<line>
 				<reportElement x="0" y="0" width="493" height="1" uuid="f1fd2c0f-ee37-4a4a-95af-11c27d1c011d">
@@ -601,14 +445,14 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{extractid}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="385" y="1" width="100" height="9" uuid="0ba39e05-b5b3-448c-851c-2827f4d3bb19">
+			<textField evaluationTime="Master" isBlankWhenNull="true">
+				<reportElement x="385" y="1" width="108" height="8" uuid="0ba39e05-b5b3-448c-851c-2827f4d3bb19">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font fontName="Cadastra" size="6.5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{pagelabel} +" " + $V{PAGE_NUMBER} +" / "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{pagelabel} +" " + $V{MASTER_CURRENT_PAGE} + "/" + $V{MASTER_TOTAL_PAGES}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="1" width="90" height="8" uuid="93910a72-1025-4e52-8eef-db274e05cfe9"/>
@@ -616,15 +460,6 @@
 					<font fontName="Cadastra" size="6.5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{extractcreationdate}]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report">
-				<reportElement x="480" y="1" width="13" height="9" uuid="c8841281-c4df-40d7-ad93-b53d124b0459">
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Right">
-					<font fontName="Cadastra" size="6.5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

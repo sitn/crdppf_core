@@ -511,12 +511,16 @@ def get_content(id, request):
             "municipalitylogopath": municipalitylogopath,
             "federalmunicipalitynumber": featureinfo['nufeco'],
             "competentauthority": extract.baseconfig['competentauthority'] ,
-            "title": report_title,
-            "toc": [{
-                "concernedtopics":  concernedtopics,
-                "notconcernedtopics": ";".join(notconcernedtopics),
-                "emptytopics": ";".join(emptytopics)
+            "titlepage": [{
+                "title": report_title,
+                "certificationinstance": "", 
+                "certificationtext": "",
             }],
+            "toc": [{
+                "concernedtopics":  concernedtopics
+            }],
+            "notconcernedtopics": ";".join(notconcernedtopics),
+            "emptytopics": ";".join(emptytopics),
             "propertyarea": propertyarea,
             "datasource": data
         },
