@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-04-13T16:34:31 -->
+<!-- 2017-04-13T17:09:46 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pdfextract" pageWidth="595" pageHeight="842" sectionType="Part" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30" whenResourceMissingType="Error" uuid="d2716064-8ae4-40cf-a575-33afba400e3a">
 	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
@@ -180,6 +180,9 @@
 					</subreportParameter>
 					<subreportParameter name="emptytopics">
 						<subreportParameterExpression><![CDATA[$P{emptytopics}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="extractid">
+						<subreportParameterExpression><![CDATA[$P{extractid}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportExpression><![CDATA["toc.jasper"]]></subreportExpression>
 				</p:subreportPart>
