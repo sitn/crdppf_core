@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-04-13T17:09:46 -->
+<!-- 2017-05-04T12:05:23 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pdfextract" pageWidth="595" pageHeight="842" sectionType="Part" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30" whenResourceMissingType="Error" uuid="d2716064-8ae4-40cf-a575-33afba400e3a">
 	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
+	<property name="net.sf.jasperreports.export.pdfa.icc.profile.path" value="sRGB_IEC61966-2-1_black_scaled.icc"/>
+	<property name="net.sf.jasperreports.export.pdf.exclude.key.TransparentImage" value=""/>
+	<property name="net.sf.jasperreports.styles.inherit.from.default" value="false"/>
+	<style name="Default" isDefault="true" fontName="Cadastra" fontSize="8.5"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="ch_logo" class="java.lang.String"/>
 	<parameter name="canton_logo" class="java.lang.String"/>
@@ -37,7 +41,7 @@
 	<parameter name="certificationlabel" class="java.lang.String"/>
 	<parameter name="toclabel" class="java.lang.String"/>
 	<parameter name="titlepage" class="net.sf.jasperreports.engine.JRDataSource"/>
-	<parameter name="toc" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="concernedtopics" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="notconcernedtopics" class="java.lang.String"/>
 	<parameter name="emptytopics" class="java.lang.String"/>
 	<parameter name="glossar" class="net.sf.jasperreports.engine.JRDataSource"/>
@@ -142,14 +146,20 @@
 			<part evaluationTime="Report" uuid="1e51d81b-2bac-4806-a6ab-2d666891cc25">
 				<property name="net.sf.jasperreports.bookmarks.data.source.parameter" value="REPORT_DATA_SOURCE"/>
 				<p:subreportPart xmlns:p="http://jasperreports.sourceforge.net/jasperreports/parts" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/parts http://jasperreports.sourceforge.net/xsd/parts.xsd">
-					<subreportParameter name="canton_logo">
-						<subreportParameterExpression><![CDATA[$P{canton_logo}]]></subreportParameterExpression>
+					<subreportParameter name="REPORT_CONNECTION">
+						<subreportParameterExpression><![CDATA[$P{REPORT_CONNECTION}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="ch_logo">
 						<subreportParameterExpression><![CDATA[$P{ch_logo}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter name="canton_logo">
+						<subreportParameterExpression><![CDATA[$P{canton_logo}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="municipalitylogopath">
 						<subreportParameterExpression><![CDATA[$P{municipalitylogopath}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="municipality">
+						<subreportParameterExpression><![CDATA[$P{municipality}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="crdppf_logo">
 						<subreportParameterExpression><![CDATA[$P{crdppf_logo}]]></subreportParameterExpression>
@@ -163,8 +173,8 @@
 					<subreportParameter name="pagelabel">
 						<subreportParameterExpression><![CDATA[$P{pagelabel}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="municipality">
-						<subreportParameterExpression><![CDATA[$P{municipality}]]></subreportParameterExpression>
+					<subreportParameter name="extractid">
+						<subreportParameterExpression><![CDATA[$P{extractid}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="extractcreationdate">
 						<subreportParameterExpression><![CDATA[$P{extractcreationdate}]]></subreportParameterExpression>
@@ -172,17 +182,14 @@
 					<subreportParameter name="propertynumber">
 						<subreportParameterExpression><![CDATA[$P{propertynumber}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="REPORT_CONNECTION">
-						<subreportParameterExpression><![CDATA[$P{REPORT_CONNECTION}]]></subreportParameterExpression>
+					<subreportParameter name="concernedtopics">
+						<subreportParameterExpression><![CDATA[$P{concernedtopics}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="notconcernedtopics">
 						<subreportParameterExpression><![CDATA[$P{notconcernedtopics}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="emptytopics">
 						<subreportParameterExpression><![CDATA[$P{emptytopics}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="extractid">
-						<subreportParameterExpression><![CDATA[$P{extractid}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportExpression><![CDATA["toc.jasper"]]></subreportExpression>
 				</p:subreportPart>

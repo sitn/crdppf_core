@@ -516,9 +516,7 @@ def get_content(id, request):
                 "certificationinstance": "", 
                 "certificationtext": "",
             }],
-            "toc": [{
-                "concernedtopics":  concernedtopics
-            }],
+            "concernedtopics":  concernedtopics,
             "notconcernedtopics": ";".join(notconcernedtopics),
             "emptytopics": ";".join(emptytopics),
             "propertyarea": propertyarea,

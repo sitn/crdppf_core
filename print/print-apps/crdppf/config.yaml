@@ -78,12 +78,10 @@ templates:
         width: 493
         height: 280
 
-      toc: !datasource
+      concernedtopics: !datasource
         attributes:
-          concernedtopics: !datasource
-            attributes:
-              topicname: !string {}
-              documentlist: !string {}
+          topicname: !string {}
+          documentlist: !string {}
       notconcernedtopics: !string {}         
       emptytopics: !string {}         
       datasource: !datasource
@@ -163,15 +161,8 @@ templates:
       processors:
       - !reportBuilder # compile all reports in current directory
         directory: '.'
-      inputMapper: {toc: datasource}
-      outputMapper: {jrDataSource: toc}
-      processors:
-      - !createDataSource
-        processors:
-        - !reportBuilder # compile all reports in current directory
-          directory: '.'
-        inputMapper: {concernedtopics: datasource}
-        outputMapper: {jrDataSource: concernedtopics}
+      inputMapper: {concernedtopics: datasource}
+      outputMapper: {jrDataSource: concernedtopics}
     - !createDataSource
       processors:
       - !reportBuilder # compile all reports in current directory
