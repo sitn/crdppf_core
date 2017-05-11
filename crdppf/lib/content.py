@@ -88,11 +88,11 @@ def add_appendix(topicid, num, label, url, filepath, topicdata):
 
     return appendix_entries
 
-def get_legend_classes(bbox, layername, translations):
+def get_legend_classes(bbox, layername, translations, srid):
     """ Collects all the features in the map perimeter into a list to create a dynamic legend
     """
     # transform coordinates from wkt to SpatialElement for intersection
-    polygon = WKTElement(bbox.wkt, 2056)
+    polygon = WKTElement(bbox.wkt, srid)
     mapfeatures = get_features_function(polygon, {'layerList':layername, 'translations': translations})
     if mapfeatures is not None:
         classes = []
@@ -148,6 +148,7 @@ def get_content(id, request):
 
     # initalize extract object
     extract = Extract(request)
+    type = request.matchdict.get("type_")
 
     for config in configs:
         if not config.parameter in ['crdppflogopath', 'cantonlogopath']:
@@ -193,7 +194,7 @@ def get_content(id, request):
     propertynumber = featureinfo['nummai'].strip()
     propertytype = featureinfo['type'].strip()
     propertyarea = featureinfo['area']
-    report_title = translations['reducedcertifiedextracttitlelabel']
+    report_title = translations[str(type+'extracttitlelabel')]
     certificationlabel = translations['certificationlabel']
 
     # AS does the german language, the french contains a few accents we have to replace to fetch the banner which has no accents in its pathname...
@@ -272,7 +273,7 @@ def get_content(id, request):
     ])
         
     basemap = {
-        "projection": "EPSG:2056",
+        "projection": "EPSG:"+str(extract.srid),
         "dpi": 150,
         "rotation": 0,
         "center": feature_center,
@@ -358,8 +359,8 @@ def get_content(id, request):
                 topicdata[str(topic.topicid)].update(add_layer(request, layer, propertynumber, featureinfo, translations, appconfig, topicdata))
 
                 # get the legend entries in the map bbox not touching the features
-                featurelegend = get_legend_classes(to_shape(featureinfo['geom']),layer.layername,translations)
-                bboxlegend = get_legend_classes(to_shape(WKTElement(wkt_polygon)),layer.layername,translations)
+                featurelegend = get_legend_classes(to_shape(featureinfo['geom']),layer.layername,translations,extract.srid)
+                bboxlegend = get_legend_classes(to_shape(WKTElement(wkt_polygon)),layer.layername,translations,extract.srid)
                 bboxitems = set()
                 for legenditem in bboxlegend:
                     if not legenditem in featurelegend:
@@ -449,7 +450,7 @@ def get_content(id, request):
             # This define the "general" map that we are going to copy x times,
             # one time as base map and x times as topic map.
             map = {
-                "projection": "EPSG:2056",
+                "projection": "EPSG:"+str(extract.srid),
                 "dpi": 150,
                 "rotation": 0,
                 "center": feature_center,

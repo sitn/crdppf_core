@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-05-04T10:07:40 -->
+<!-- 2017-05-11T14:06:10 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="gmf16_A4_portrait" pageWidth="595" pageHeight="842" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" uuid="3664412a-b6c6-4e1c-8c14-6c4af7e6efc2">
 	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
 	<property name="net.sf.jasperreports.bookmarks.data.source.parameter" value="REPORT_DATA_SOURCE"/>
@@ -90,7 +90,7 @@
 		<band height="55">
 			<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 			<image scaleImage="RetainShape" hAlign="Center">
-				<reportElement x="0" y="0" width="124" height="40" uuid="de17703f-7f67-4f20-b074-94990b2e9f20">
+				<reportElement x="0" y="0" width="124" height="40" uuid="e258a226-b119-4910-afb8-848ebb91cef7">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
 					<property name="local_mesure_unity" value="mm"/>
@@ -102,7 +102,7 @@
 				<imageExpression><![CDATA[$P{ch_logo}]]></imageExpression>
 			</image>
 			<image hAlign="Center">
-				<reportElement x="170" y="0" width="85" height="28" uuid="79f377db-7d59-4b04-aa76-1e187a6918c8">
+				<reportElement x="170" y="0" width="85" height="28" uuid="25237092-35fe-4e1d-8b92-6df52fc3d5b8">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -112,7 +112,7 @@
 				<imageExpression><![CDATA[$P{canton_logo}]]></imageExpression>
 			</image>
 			<image hAlign="Center">
-				<reportElement key="TransparentImage" x="269" y="0" width="85" height="28" uuid="39210068-bc74-466e-acdc-0ad2b2d62c8a">
+				<reportElement x="269" y="0" width="85" height="28" uuid="ce91c6c7-885a-4c04-924d-b0a2567061bd">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="local_mesure_unitheight" value="pixel"/>
@@ -123,19 +123,19 @@
 				<imageExpression><![CDATA[$P{municipalitylogopath}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="269" y="29" width="85" height="15" uuid="3162db6d-06fa-46ab-aa1c-0bae0e71d6a9">
+				<reportElement stretchType="RelativeToTallestObject" x="269" y="29" width="85" height="15" uuid="130aacb2-8a7c-4d8a-9471-7047cbf405d1">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center">
-					<font fontName="Cadastra" size="6"/>
+					<font fontName="Arial" size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="0" y="54" width="493" height="1" uuid="cb5bf9e2-299c-491f-8a08-e6e1d54ee6a4">
+				<reportElement x="0" y="54" width="493" height="1" uuid="dfeb3d7f-1915-48e1-92ab-a37bd8c42d03">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
 				</reportElement>
@@ -144,7 +144,7 @@
 				</graphicElement>
 			</line>
 			<image hAlign="Center">
-				<reportElement x="394" y="0" width="99" height="28" uuid="41325793-a41a-4dd3-bc50-1d910d46b1a5">
+				<reportElement x="394" y="0" width="99" height="28" uuid="3f77814c-2571-4c3e-a831-098b2940f164">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="local_mesure_unitheight" value="pixel"/>

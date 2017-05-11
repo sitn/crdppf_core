@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-05-04T09:57:20 -->
+<!-- 2017-05-11T14:06:31 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" uuid="9a3e59f5-6675-48cf-ad74-9c42b5a5b290">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
@@ -19,8 +19,17 @@
 	<field name="definition" class="java.lang.String"/>
 	<pageHeader>
 		<band height="104">
+			<textField>
+				<reportElement x="0" y="68" width="493" height="30" uuid="98a07dd4-c09b-4074-901d-66449b033be9">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Cadastra" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{glossarlabel}]]></textFieldExpression>
+			</textField>
 			<image scaleImage="RetainShape" hAlign="Center">
-				<reportElement x="0" y="0" width="124" height="40" uuid="17ba958a-4f03-4a5e-a623-1c6b7e41b683">
+				<reportElement x="0" y="0" width="124" height="40" uuid="9fe496d8-98f3-489d-88b5-71cd97eaa263">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
 					<property name="local_mesure_unity" value="mm"/>
@@ -32,7 +41,7 @@
 				<imageExpression><![CDATA[$P{ch_logo}]]></imageExpression>
 			</image>
 			<image hAlign="Center">
-				<reportElement x="170" y="0" width="85" height="28" uuid="05bcdf4f-a83e-49a2-a726-6cd9da280500">
+				<reportElement x="170" y="0" width="85" height="28" uuid="2080e84f-1b9e-473e-a5bb-4d1bdaaf9a9e">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -42,7 +51,7 @@
 				<imageExpression><![CDATA[$P{canton_logo}]]></imageExpression>
 			</image>
 			<image hAlign="Center">
-				<reportElement key="TransparentImage" x="269" y="0" width="85" height="28" uuid="749c667b-d7fe-4acc-87e8-79fbc79fc024">
+				<reportElement x="269" y="0" width="85" height="28" uuid="69b7da68-e0c2-4aaa-99ed-719ba0863815">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="local_mesure_unitheight" value="pixel"/>
@@ -53,19 +62,19 @@
 				<imageExpression><![CDATA[$P{municipalitylogopath}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="269" y="29" width="85" height="15" uuid="96e1e1bf-14ff-45aa-88ba-eda375fbc6ea">
+				<reportElement stretchType="RelativeToTallestObject" x="269" y="29" width="85" height="15" uuid="5cc04e68-8b53-4769-bba9-876583b98da1">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center">
-					<font fontName="Cadastra" size="6"/>
+					<font fontName="Arial" size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="0" y="54" width="493" height="1" uuid="a6f06f80-ee51-49af-985c-ec5d93f6c4d2">
+				<reportElement x="0" y="54" width="493" height="1" uuid="5895d934-9a81-4f04-8c82-c4354bbb2678">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
 				</reportElement>
@@ -74,7 +83,7 @@
 				</graphicElement>
 			</line>
 			<image hAlign="Center">
-				<reportElement x="394" y="0" width="99" height="28" uuid="d2d1b447-f977-488e-ade3-4874cb560f1c">
+				<reportElement x="394" y="0" width="99" height="28" uuid="110bfb23-9c66-4008-b61a-7e9ef5f94616">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="local_mesure_unitheight" value="pixel"/>
@@ -86,15 +95,6 @@
 				</reportElement>
 				<imageExpression><![CDATA[$P{crdppf_logo}]]></imageExpression>
 			</image>
-			<textField>
-				<reportElement x="0" y="68" width="493" height="30" uuid="98a07dd4-c09b-4074-901d-66449b033be9">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<textElement>
-					<font fontName="Cadastra" size="16" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{glossarlabel}]]></textFieldExpression>
-			</textField>
 		</band>
 	</pageHeader>
 	<detail>
