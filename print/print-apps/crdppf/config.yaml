@@ -81,7 +81,13 @@ templates:
       concernedtopics: !datasource
         attributes:
           topicname: !string {}
-          documentlist: !string {}
+          documentlist: !datasource
+            attributes:
+              appendixno: !string {}
+              appendixtitle: !string {}
+            default:
+              - appendixno: ""
+              - appendixtitle: ""
       notconcernedtopics: !string {}         
       emptytopics: !string {}         
       datasource: !datasource
@@ -163,6 +169,13 @@ templates:
         directory: '.'
       inputMapper: {concernedtopics: datasource}
       outputMapper: {jrDataSource: concernedtopics}
+      processors:
+      - !createDataSource
+        processors:
+        - !reportBuilder # compile all reports in current directory
+          directory: '.'
+        inputMapper: {documentlist: datasource}
+        outputMapper: {jrDataSource: documentlist}
     - !createDataSource
       processors:
       - !reportBuilder # compile all reports in current directory

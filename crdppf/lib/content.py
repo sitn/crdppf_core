@@ -395,14 +395,12 @@ def get_content(id, request):
 
         if topicdata[topic.topicid]["categorie"] == 3:
             appendiceslist = []
-            i=0
-            for legalprovision in topicdata[str(topic.topicid)]["legalprovision"]:
+            for i, legalprovision in enumerate(topicdata[str(topic.topicid)]["legalprovision"]):
                 if not legalprovision["officialtitle"] == "":
-                    i += 1
-                    appendiceslist.append('A'+str(i)+' '+legalprovision["officialtitle"])
+                    appendiceslist.append({'appendixno':'A'+str(i+1),'appendixtitle':legalprovision["officialtitle"]})
             concernedtopics.append({
                     "topicname": topic.topicname,
-                    "documentlist" : ";".join(appendiceslist)
+                    "documentlist": appendiceslist
                 })
 
             if topicdata[topic.topicid]['layers']:
@@ -491,11 +489,6 @@ def get_content(id, request):
                     topicdata[str(topic.topicid)]["authority"]
                 ]
             })
-
-            appendices = {
-                "topicid": str(topic.topicid),
-                "documentlist" : topicdata[str(topic.topicid)]["legalprovision"]
-                }
 
     d= {
         "attributes": {

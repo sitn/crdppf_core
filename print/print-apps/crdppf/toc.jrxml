@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-05-11T13:47:54 -->
+<!-- 2017-05-18T09:23:01 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TocReport" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" whenResourceMissingType="Empty" uuid="6e74177b-d551-4a75-ae51-6cdde3f284ce">
 	<property name="net.sf.jasperreports.bookmarks.data.source.parameter" value="REPORT_DATA_SOURCE"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -53,7 +53,7 @@
 			<![CDATA[]]>
 		</queryString>
 		<field name="topicname" class="java.lang.String"/>
-		<field name="documentlist" class="java.lang.String"/>
+		<field name="documentlist" class="net.sf.jasperreports.engine.JRDataSource"/>
 		<variable name="status" class="java.lang.Integer" resetType="None">
 			<variableExpression><![CDATA[$F{topicname}.compareTo($P{label})]]></variableExpression>
 		</variable>
@@ -266,22 +266,11 @@
 						<returnValue fromVariable="status" toVariable="status"/>
 					</datasetRun>
 					<jr:listContents height="17" width="261">
-						<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-							<reportElement x="0" y="0" width="261" height="17" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="c5362945-06b8-4f39-a2a2-b0c84be1f0c7">
-								<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-								<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-							</reportElement>
-							<box>
-								<bottomPen lineWidth="0.0"/>
-							</box>
-							<textElement verticalAlignment="Top">
-								<font fontName="Cadastra" size="8.5"/>
-								<paragraph leftIndent="0" spacingBefore="3"/>
-							</textElement>
-							<textFieldExpression><![CDATA[$F{documentlist}.replace(";", "\n")]]></textFieldExpression>
-						</textField>
+						<subreport>
+							<reportElement x="0" y="0" width="261" height="17" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="9622185a-4850-4604-852a-5e8c266a1e8e"/>
+							<dataSourceExpression><![CDATA[$F{documentlist}]]></dataSourceExpression>
+							<subreportExpression><![CDATA["appendices.jasper"]]></subreportExpression>
+						</subreport>
 					</jr:listContents>
 				</jr:list>
 			</componentElement>
