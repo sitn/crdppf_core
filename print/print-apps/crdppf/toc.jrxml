@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-05-18T09:23:01 -->
+<!-- 2017-06-08T16:12:39 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TocReport" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" whenResourceMissingType="Empty" uuid="6e74177b-d551-4a75-ae51-6cdde3f284ce">
 	<property name="net.sf.jasperreports.bookmarks.data.source.parameter" value="REPORT_DATA_SOURCE"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -205,7 +205,7 @@
 		<band height="17">
 			<printWhenExpression><![CDATA[$F{level} == 1]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="LocalAnchor">
-				<reportElement style="HeadingLabel1" stretchType="RelativeToTallestObject" x="20" y="0" width="473" height="17" isPrintWhenDetailOverflows="true" uuid="c7dfd2ec-2cdd-4131-b727-b23f03a7ecd8">
+				<reportElement style="HeadingLabel1" stretchType="RelativeToTallestObject" x="20" y="0" width="474" height="17" isPrintWhenDetailOverflows="true" uuid="c7dfd2ec-2cdd-4131-b727-b23f03a7ecd8">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -242,38 +242,34 @@
 				<hyperlinkAnchorExpression><![CDATA[$F{label}]]></hyperlinkAnchorExpression>
 			</textField>
 			<componentElement>
-				<reportElement stretchType="RelativeToTallestObject" x="232" y="0" width="261" height="17" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="03eca570-3123-4535-ae30-dc4fb86c3d9f">
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
-					<property name="com.jaspersoft.studio.unit.CONTENTS.height" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				<reportElement x="230" y="0" width="262" height="17" isPrintWhenDetailOverflows="true" uuid="80cbd8fb-ff04-4de6-8d56-45e07e4887e1">
+					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value="appendices"/>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-					<datasetRun subDataset="concernedtopics" uuid="b26e0607-e152-4034-95e7-082b51d22c14">
+					<datasetRun subDataset="concernedtopics" uuid="02666ca8-9735-4b3d-bad9-93737a20e501">
 						<datasetParameter name="REPORT_DATA_SOURCE">
 							<datasetParameterExpression><![CDATA[$P{concernedtopics}]]></datasetParameterExpression>
 						</datasetParameter>
 						<datasetParameter name="label">
 							<datasetParameterExpression><![CDATA[$F{label}]]></datasetParameterExpression>
 						</datasetParameter>
-						<datasetParameter name="pageIndex">
-							<datasetParameterExpression><![CDATA[$V{level2Index}]]></datasetParameterExpression>
-						</datasetParameter>
-						<datasetParameter name="pagenumber">
-							<datasetParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></datasetParameterExpression>
-						</datasetParameter>
 						<returnValue fromVariable="status" toVariable="status"/>
 					</datasetRun>
-					<jr:listContents height="17" width="261">
+					<jr:listContents height="17" width="262">
 						<subreport>
-							<reportElement x="0" y="0" width="261" height="17" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="9622185a-4850-4604-852a-5e8c266a1e8e"/>
+							<reportElement key="" x="0" y="0" width="262" height="17" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="c69e0b4b-4d60-4ffd-904b-cc6aca8507f5">
+								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+								<printWhenExpression><![CDATA[$V{status} == 0]]></printWhenExpression>
+							</reportElement>
 							<dataSourceExpression><![CDATA[$F{documentlist}]]></dataSourceExpression>
 							<subreportExpression><![CDATA["appendices.jasper"]]></subreportExpression>
 						</subreport>
 					</jr:listContents>
 				</jr:list>
 			</componentElement>
+			<returnValue toVariable="status">
+				<expression><![CDATA[$V{status}]]></expression>
+			</returnValue>
 		</band>
 		<band height="64">
 			<property name="local_mesure_unitheight" value="pixel"/>

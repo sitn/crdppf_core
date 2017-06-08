@@ -271,7 +271,7 @@ def get_content(id, request):
         str(bbox['minY']),
         '))'
     ])
-        
+
     basemap = {
         "projection": "EPSG:"+str(extract.srid),
         "dpi": 150,
@@ -397,11 +397,15 @@ def get_content(id, request):
             appendiceslist = []
             for i, legalprovision in enumerate(topicdata[str(topic.topicid)]["legalprovision"]):
                 if not legalprovision["officialtitle"] == "":
-                    appendiceslist.append({'appendixno':'A'+str(i+1),'appendixtitle':legalprovision["officialtitle"]})
+                    appendiceslist.append(['A'+str(i+1), legalprovision["officialtitle"]])
+
             concernedtopics.append({
-                    "topicname": topic.topicname,
-                    "documentlist": appendiceslist
-                })
+                "topicname": topic.topicname,
+                "documentlist": {
+                "columns": ["appendixno", "appendixtitle"],
+                "data": appendiceslist
+                }
+            })
 
             if topicdata[topic.topicid]['layers']:
                 topicdata[str(topic.topicid)]["restrictions"] = []

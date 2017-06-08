@@ -18,7 +18,7 @@ templates:
       canton_logo: !string {}
       municipalitylogopath: !string {}
       crdppf_logo: !string {}
-      competentauthority: !string {} 
+      competentauthority: !string {}
 
       # Variables for footer
 
@@ -48,6 +48,12 @@ templates:
 
       # Parameters for table of content
       toclabel: !string {}
+      concernedtopics: !datasource
+        attributes:
+          topicname: !string {}
+          documentlist: !table {}
+      notconcernedtopics: !string {}
+      emptytopics: !string {}
 
       # Variables for Glossar
       glossar: !datasource
@@ -58,11 +64,11 @@ templates:
       # Variables for topic page
       legendlabel: !string {}
       bboxlegendlabel: !string {}
-      completlegendlabel: !string {} 
-      legalbaseslabel: !string {} 
-      legalprovisionslabel: !string {} 
-      referenceslabel: !string {} 
-      competentauthoritylabel: !string {} 
+      completlegendlabel: !string {}
+      legalbaseslabel: !string {}
+      legalprovisionslabel: !string {}
+      referenceslabel: !string {}
+      competentauthoritylabel: !string {}
 
       basemapNorthArrow: !northArrow
         size: 17
@@ -77,19 +83,7 @@ templates:
         maxDpi: 400
         width: 493
         height: 280
-
-      concernedtopics: !datasource
-        attributes:
-          topicname: !string {}
-          documentlist: !datasource
-            attributes:
-              appendixno: !string {}
-              appendixtitle: !string {}
-            default:
-              - appendixno: ""
-              - appendixtitle: ""
-      notconcernedtopics: !string {}         
-      emptytopics: !string {}         
+        
       datasource: !datasource
         attributes:
           topicname: !string {}
@@ -143,10 +137,10 @@ templates:
     - !createNorthArrow
       inputMapper: {basemapNorthArrow: northArrow}
       outputMapper: {northArrowSubReport: northArrowSubReport}
-    - !createScalebar {}
     - !createMap
       inputMapper: {map: map}
       outputMapper: {mapSubReport: basemap}
+    - !createScalebar {}
     - !createDataSource
       processors:
       - !reportBuilder # compile all reports in current directory
@@ -170,12 +164,9 @@ templates:
       inputMapper: {concernedtopics: datasource}
       outputMapper: {jrDataSource: concernedtopics}
       processors:
-      - !createDataSource
-        processors:
-        - !reportBuilder # compile all reports in current directory
-          directory: '.'
-        inputMapper: {documentlist: datasource}
-        outputMapper: {jrDataSource: documentlist}
+      - !prepareTable
+        inputMapper: {documentlist: table}
+        outputMapper: {table: documentlist}
     - !createDataSource
       processors:
       - !reportBuilder # compile all reports in current directory
@@ -184,10 +175,10 @@ templates:
       outputMapper: {jrDataSource: jrDataSource}
       processors:
       - !createNorthArrow {}
-      - !createScalebar {}
       - !createMap
         inputMapper: {map: map}
         outputMapper: {mapSubReport: mapSubReport}
+      - !createScalebar {}
       - !createDataSource
         processors:
         - !reportBuilder # compile all reports in current directory
