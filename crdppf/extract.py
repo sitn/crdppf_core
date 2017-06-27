@@ -11,7 +11,7 @@ class Extract(object):
         # document id
         self.id = datetime.now().strftime("%Y%m%d%H%M%S")
         # sets the creation date of the PDF instance
-        self.creationdate = datetime.now().strftime("%d.%m.%Y-%H:%M:%S")
+        self.creationdate = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
         # same same but different use
         self.timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         # setting the default  root filename of the PDF and temporary files
