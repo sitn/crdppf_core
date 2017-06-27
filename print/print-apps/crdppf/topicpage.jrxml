@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-06-07T16:14:36 -->
+<!-- 2017-06-27T11:49:25 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="gmf16_A4_portrait" pageWidth="595" pageHeight="842" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" uuid="3664412a-b6c6-4e1c-8c14-6c4af7e6efc2">
 	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
 	<property name="net.sf.jasperreports.bookmarks.data.source.parameter" value="REPORT_DATA_SOURCE"/>
@@ -198,7 +198,7 @@
 				<anchorNameExpression><![CDATA[$F{topicname}]]></anchorNameExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" x="193" y="375" width="86" height="10" uuid="c19cf5df-d1b3-4bee-8290-a175603a5eb7">
+				<reportElement positionType="FixRelativeToBottom" x="220" y="375" width="58" height="10" uuid="c19cf5df-d1b3-4bee-8290-a175603a5eb7">
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>

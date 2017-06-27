@@ -48,6 +48,15 @@ templates:
 
       # Parameters for table of content
       toclabel: !string {}
+      pdfConcernedTopicsLabel1: !string {}
+      pdfConcernedTopicsLabel2: !string {}
+      #~ pdfConcernedTopicsLabel3:  !string {}
+      pdfNotConcernedTopicsLabel: !string {}
+      pdfEmptyTopicsLabel: !string {}
+      pdfGeneralInformationLabel: !string {}
+      pdfGeneralInformationTxt: !string {}
+      pdfBaseDataLabel: !string {}
+      pdfBaseDataTxt: !string {}
       concernedtopics: !datasource
         attributes:
           topicname: !string {}

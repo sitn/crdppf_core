@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-06-08T16:12:39 -->
+<!-- 2017-06-15T12:04:08 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TocReport" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" whenResourceMissingType="Empty" uuid="6e74177b-d551-4a75-ae51-6cdde3f284ce">
 	<property name="net.sf.jasperreports.bookmarks.data.source.parameter" value="REPORT_DATA_SOURCE"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -68,6 +68,14 @@
 	<parameter name="appendiceslistlabel" class="java.lang.String"/>
 	<parameter name="propertynumber" class="java.lang.String"/>
 	<parameter name="toclabel" class="java.lang.String"/>
+	<parameter name="pdfConcernedTopicsLabel1" class="java.lang.String"/>
+	<parameter name="pdfConcernedTopicsLabel2" class="java.lang.String"/>
+	<parameter name="pdfNotConcernedTopicsLabel" class="java.lang.String"/>
+	<parameter name="pdfEmptyTopicsLabel" class="java.lang.String"/>
+	<parameter name="pdfGeneralInformationLabel" class="java.lang.String"/>
+	<parameter name="pdfGeneralInformationTxt" class="java.lang.String"/>
+	<parameter name="pdfBaseDataTxt" class="java.lang.String"/>
+	<parameter name="pdfBaseDataLabel" class="java.lang.String"/>
 	<parameter name="extractid" class="java.lang.String"/>
 	<parameter name="notconcernedtopics" class="java.lang.String"/>
 	<parameter name="emptytopics" class="java.lang.String"/>
@@ -176,7 +184,7 @@
 				<textElement verticalAlignment="Top">
 					<font fontName="Cadastra" size="8.5" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Restrictions à la propriété foncière qui touchent l’immeuble " + $P{propertynumber} + " de " + $P{municipality}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{pdfConcernedTopicsLabel1} +" " + $P{propertynumber} + " " + $P{pdfConcernedTopicsLabel2} + " " + $P{municipality}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="106" width="100" height="10" uuid="88a99a64-0d91-4411-a6d0-0c0427eede31">
@@ -205,7 +213,7 @@
 		<band height="17">
 			<printWhenExpression><![CDATA[$F{level} == 1]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="LocalAnchor">
-				<reportElement style="HeadingLabel1" stretchType="RelativeToTallestObject" x="20" y="0" width="474" height="17" isPrintWhenDetailOverflows="true" uuid="c7dfd2ec-2cdd-4131-b727-b23f03a7ecd8">
+				<reportElement style="HeadingLabel1" stretchType="RelativeToTallestObject" x="0" y="0" width="494" height="17" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="c7dfd2ec-2cdd-4131-b727-b23f03a7ecd8">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -216,7 +224,7 @@
 				</box>
 				<textElement verticalAlignment="Top">
 					<font fontName="Cadastra" size="8.5" isBold="false"/>
-					<paragraph rightIndent="265" spacingBefore="3"/>
+					<paragraph lineSpacing="Single" leftIndent="19" rightIndent="265" spacingBefore="3"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{label}]]></textFieldExpression>
 				<hyperlinkAnchorExpression><![CDATA[$F{label}]]></hyperlinkAnchorExpression>
@@ -285,7 +293,7 @@
 				<textElement verticalAlignment="Top">
 					<font fontName="Cadastra" size="8.5" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Restrictions à la propriété foncière qui ne touchent pas l’immeuble"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{pdfNotConcernedTopicsLabel}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="47" width="493" height="17" isRemoveLineWhenBlank="true" uuid="87a3ff8e-f1d1-4bac-a97c-d17219622b5a">
@@ -313,7 +321,7 @@
 				<textElement verticalAlignment="Top">
 					<font fontName="Cadastra" size="8.5" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Restrictions à la propriété foncière pour lesquelles aucune donnée n’est disponible"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{pdfEmptyTopicsLabel}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" evaluationTime="Page">
 				<reportElement isPrintRepeatedValues="false" x="0" y="33" width="493" height="17" uuid="d5bb9d69-0474-46d1-be03-fe9e277c5f33">
@@ -334,7 +342,7 @@
 				<textElement>
 					<font fontName="Cadastra" size="6"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Le contenu du cadastre RDPPF est supposé connu. Le canton de Neuchâtel n’engage pas sa responsabilité sur l’exactitude ou la fiabilité des documents législatifs dans leur version électronique. L’extrait a un caractère informatif et ne crée aucun droit ou obligation. Les documents juridiquement contraignants sont ceux qui ont été légalement adoptés ou publiés. La certification d’un extrait confirme la concordance de cet extrait avec le cadastre RDPPF à la date d’établissement dudit extrait."]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{pdfGeneralInformationTxt}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="26" width="230" height="11" uuid="e834b965-7821-4998-ac78-82c63301b2e1">
@@ -350,7 +358,7 @@
 				<textElement>
 					<font fontName="Cadastra" size="6"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Plan cadastral du SITN à partir des données de la mensuration officielle. Etat de la mensuration: " + $P{extractcreationdate}.toString().substring(0,10) + "."]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{pdfBaseDataTxt}+ " " + $P{extractcreationdate}.toString().substring(0,10) + "."]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="260" y="94" width="232" height="11" uuid="28e9af56-04ab-47d6-b9f0-7589e23fffa9"/>
@@ -377,7 +385,7 @@
 				<textElement>
 					<font fontName="Cadastra" size="6" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Informations générales"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{pdfGeneralInformationLabel}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="94" width="230" height="11" uuid="1b6e1c03-762a-4541-b8af-44f454c30353">
@@ -389,7 +397,7 @@
 				<textElement>
 					<font fontName="Cadastra" size="6" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Données de base"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{pdfBaseDataLabel}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
