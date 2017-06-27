@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-06-27T16:07:16 -->
+<!-- 2017-06-27T18:08:42 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="gmf16_A4_portrait" pageWidth="595" pageHeight="842" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" uuid="3664412a-b6c6-4e1c-8c14-6c4af7e6efc2">
 	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
 	<property name="net.sf.jasperreports.bookmarks.data.source.parameter" value="REPORT_DATA_SOURCE"/>
@@ -409,8 +409,8 @@
 					<font fontName="Cadastra" size="6"/>
 					<paragraph lineSpacing="Single" spacingBefore="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{completelegend}]]></textFieldExpression>
-				<hyperlinkReferenceExpression><![CDATA[$F{completelegend}]]></hyperlinkReferenceExpression>
+				<textFieldExpression><![CDATA[($F{completelegend}.equals("") || $F{completelegend}== null) ? null : $F{completelegend}]]></textFieldExpression>
+				<hyperlinkReferenceExpression><![CDATA[($F{completelegend}.equals("") || $F{completelegend}== null) ? null : $F{completelegend}]]></hyperlinkReferenceExpression>
 			</textField>
 		</band>
 		<band height="30">
@@ -446,8 +446,8 @@
 								<font fontName="Cadastra" size="6"/>
 								<paragraph leftIndent="8" spacingBefore="0" spacingAfter="2"/>
 							</textElement>
-							<textFieldExpression><![CDATA[$F{remoteurl}]]></textFieldExpression>
-							<hyperlinkReferenceExpression><![CDATA[$F{remoteurl}]]></hyperlinkReferenceExpression>
+							<textFieldExpression><![CDATA[($F{remoteurl}.equals("") || $F{remoteurl} == null) ? null : $F{remoteurl}]]></textFieldExpression>
+							<hyperlinkReferenceExpression><![CDATA[($F{remoteurl}.equals("") || $F{remoteurl} == null) ? null : $F{remoteurl}]]></hyperlinkReferenceExpression>
 						</textField>
 						<textField isStretchWithOverflow="true" isBlankWhenNull="true" bookmarkLevel="2">
 							<reportElement x="0" y="0" width="300" height="15" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="11937dfb-57df-4372-83a2-d61c25b87e55">
@@ -509,8 +509,8 @@
 								<font fontName="Cadastra" size="6"/>
 								<paragraph leftIndent="8" rightIndent="0" spacingBefore="2"/>
 							</textElement>
-							<textFieldExpression><![CDATA[$F{remoteurl}]]></textFieldExpression>
-							<hyperlinkReferenceExpression><![CDATA[$F{remoteurl}]]></hyperlinkReferenceExpression>
+							<textFieldExpression><![CDATA[($F{remoteurl}.equals("") || $F{remoteurl} == null) ? null : $F{remoteurl}]]></textFieldExpression>
+							<hyperlinkReferenceExpression><![CDATA[($F{remoteurl}.equals("") || $F{remoteurl} == null) ? null : $F{remoteurl}]]></hyperlinkReferenceExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
@@ -562,8 +562,8 @@
 								<font fontName="Cadastra" size="6"/>
 								<paragraph leftIndent="8" spacingBefore="2"/>
 							</textElement>
-							<textFieldExpression><![CDATA[$F{remoteurl}]]></textFieldExpression>
-							<hyperlinkReferenceExpression><![CDATA[$F{remoteurl}]]></hyperlinkReferenceExpression>
+							<textFieldExpression><![CDATA[($F{remoteurl}.equals("") || $F{remoteurl} == null) ? null : $F{remoteurl}]]></textFieldExpression>
+							<hyperlinkReferenceExpression><![CDATA[($F{remoteurl}.equals("") || $F{remoteurl} == null) ? null : $F{remoteurl}]]></hyperlinkReferenceExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
@@ -616,7 +616,7 @@
 								<font fontName="Cadastra" size="6"/>
 								<paragraph leftIndent="8" spacingBefore="2"/>
 							</textElement>
-							<textFieldExpression><![CDATA[$F{authorityurl}]]></textFieldExpression>
+							<textFieldExpression><![CDATA[($F{authorityurl}.equals("") || $F{authorityurl} == null) ? null : $F{authorityurl}]]></textFieldExpression>
 							<hyperlinkReferenceExpression><![CDATA[$F{authorityurl}]]></hyperlinkReferenceExpression>
 						</textField>
 					</jr:listContents>
