@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 from pyramid.view import view_config
 
+from crdppf import db_config
 from crdppf.models import DBSession
 from crdppf.models import Topics
 
@@ -75,6 +76,7 @@ def create_extract(request):
     # GET the PDF Configuration parameters such as the page layout, margins
     # and text styles
     extract.set_pdf_config(request.registry.settings['pdf_config'])
+    extract.srid = db_config['srid']
 
     if logon is True:
         log.warning("set_pdf_config()")
@@ -101,7 +103,7 @@ def create_extract(request):
     # 1) If the ID of the parcel is set get the basic attributs of the property
     # else get the ID (idemai) of the selected parcel first using X/Y coordinates of the center 
     #----------------------------------------------------------------------------------------------------
-    extract.featureInfo = get_feature_info(request,translations) # '1_14127' # test parcel or '1_11340'
+    extract.featureInfo = get_feature_info(request, extract.srid, translations) # '1_14127' # test parcel or '1_11340'
 
     featureInfo = extract.featureInfo
 
@@ -170,13 +172,13 @@ def create_extract(request):
     if logon is True:
         log.warning('get XML from CH feature service')
         
-    for topic in extract.topics:
+    #~ for topic in extract.topics:
         # for the federal data layers we get the restrictions calling the feature service and store the result in the DB
-        if topic.topicid in extract.appconfig.ch_topics:
-            xml_layers = []
-            for xml_layer in topic.layers:
-                xml_layers.append(xml_layer.layername)
-            get_XML(extract.featureInfo['geom'], topic.topicid, pdfconfig.timestamp, lang, translations)
+        #~ if topic.topicid in extract.appconfig.ch_topics:
+            #~ xml_layers = []
+            #~ for xml_layer in topic.layers:
+                #~ xml_layers.append(xml_layer.layername)
+            #~ get_XML(extract.featureInfo['geom'], extract.srid, topic.topicid, pdfconfig.timestamp, lang, translations)
 
     if logon is True:
         log.warning('get XML from CH feature service DONE')

@@ -199,7 +199,7 @@ Crdppf.Map.prototype = {
         this.map.events.register("mousemove", me.map, function(e) {
             var pixel = new OpenLayers.Pixel(e.xy.x,e.xy.y);
             var lonlat = this.getLonLatFromPixel(pixel);
-            OpenLayers.Util.getElement('mousepos').innerHTML = '<b>' + Crdppf.labels.olCoordinates + ' (ch1903) - Y : ' + Math.round(lonlat.lon) + ' m / X : ' + Math.round(lonlat.lat) + ' m</b>';
+            OpenLayers.Util.getElement('mousepos').innerHTML = '<b>' + Crdppf.labels.olCoordinates + ' (ch1903+) - Y : ' + Math.round(lonlat.lon) + ' m / X : ' + Math.round(lonlat.lat) + ' m</b>';
         });
 
         // Set layers'id
