@@ -17,6 +17,6 @@ def get_property(request):
 
     proto = Protocol(DBSession, Property, 'geom')
 
-    filter ="idemai IN ('" + id_ + "')"
+    filter ="id IN ('" + id_ + "')"
 
     return proto.read(request, filter=filter)

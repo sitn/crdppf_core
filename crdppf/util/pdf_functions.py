@@ -1,12 +1,15 @@
 # -*- coding: UTF-8 -*-
 
 import urllib
+import httplib2
 import types
 
 # geometry related librabries
 from shapely.geometry import Point as splPoint, Polygon as splPolygon
 from shapely.geometry import MultiPolygon as splMultiPolygon, LinearRing as splLinearRing
-from geoalchemy import WKTSpatialElement
+from geoalchemy2 import functions, WKTElement
+
+from geojson import loads
 
 from xml.dom.minidom import parseString
 
@@ -68,7 +71,7 @@ def validate_XML(xmlparser, xmlfilename):
 
     return xmlvalid
 
-def get_XML(geometry, topicid, extracttime, lang, translations):
+def get_XML(geometry, srid, topicid, extracttime, lang, translations):
     """Gets the XML extract of the federal data feature service for a given topic
         and validates it against the schema.
     """
@@ -81,8 +84,8 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
     # geometry of the feature to call the feature server for
     feature = geometry
     #geomtype = 'geometryType=esriGeometryEnvelope'
-    wktfeature = DBSession.scalar(geometry.wkt)
-    bbox = get_bbox_from_geometry(DBSession.scalar(geometry.envelope.wkt))
+    wktfeature = DBSession.scalar(geometry.ST_AsText())
+    bbox = get_bbox_from_geometry(DBSession.scalar(functions.ST_AsText(geometry.ST_Envelope())))
     # geometrytype used for feature service call
     geomtype = 'esriGeometryPolygon'
     # geomtype = 'esriGeometryEnvelope' - BBOX
@@ -100,7 +103,12 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
         'R119': 'ch.bav.kataster-belasteter-standorte-oev.oereb'
         }
     
-    coords = geometry.coords(DBSession)
+    geomGeoJSON = loads(DBSession.scalar(geometry.ST_AsGeoJSON()))
+    coords = geomGeoJSON['coordinates']
+
+    if geomGeoJSON['type'] == 'MultiPolygon':
+        coords = coords[0]
+    
     # Stupid ESRI stuff: double quotes are needed to call the feature service, thus we have to hardcode "rings"
     esrifeature = '{"rings":'+ str(coords)+'}'
 
@@ -120,8 +128,8 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
     params = urllib.urlencode(params)
     
     # Call the feature service URL wich sends back an XML Interlis 2.3 file in the OEREB Transfer structure
-    response = urllib.urlopen(fsurl, params)
-    content = response.read()
+    h = httplib2.Http()
+    (resp_headers, content) = h.request(fsurl, method="POST", body=params)
     
     # trim all whitespace and newlines
     content_lines = content.splitlines()
@@ -300,14 +308,14 @@ def get_XML(geometry, topicid, extracttime, lang, translations):
                 xml_model.datepublication = None
             # It is very important to set the SRID if it's not the default EPSG:4326 !!
             xml_model.idobj = str(extracttime)+'_'+str(geometry['restrictionid'])
-            xml_model.geom = WKTSpatialElement(geometry['geom'], 21781)
+            xml_model.geom = WKTElement(geometry['geom'], srid)
             DBSession.add(xml_model)
 
         DBSession.flush()
     
     return
 
-def get_feature_info(request, translations):
+def get_feature_info(id, srid, translations):
     """The function gets the geometry of a parcel by it's ID and does an overlay 
     with other administrative layers to get the basic parcelInfo and attribute 
     information of the parcel : municipality, local names, and so on
@@ -316,48 +324,49 @@ def get_feature_info(request, translations):
     for debbuging the query use str(query) in the console/browser window
     to visualize geom.wkt use session.scalar(geom.wkt)
     """
-
-    SRS = 21781
-
+    try: 
+        SRS = srid
+    except:
+        SRS = 2056
+        
     parcelInfo = {}
     parcelInfo['featureid'] = None
     Y = None
     X = None
 
-    if request.params.get('id') :
-        parcelInfo['featureid'] = request.params.get('id')
-    elif request.params.get('X') and request.params.get('Y') :
-        X = int(request.params.get('X'))
-        Y = int(request.params.get('Y'))
+    if id:
+        parcelInfo['featureid'] = id
+    #~ elif request.params.get('X') and request.params.get('Y') :
+        #~ X = int(request.params.get('X'))
+        #~ Y = int(request.params.get('Y'))
     else :
         raise Exception(translations[''])
 
     if parcelInfo['featureid'] is not None:
-        queryresult = DBSession.query(Property).filter_by(idemai=parcelInfo['featureid']).first()
+        queryresult = DBSession.query(Property).filter_by(id=parcelInfo['featureid']).first()
         # We should check unicity of the property id and raise an exception if there are multiple results 
     elif (X > 0 and Y > 0):
         if  Y > X :
-            pointYX = WKTSpatialElement('POINT('+str(Y)+' '+str(X)+')',SRS)
+            pointYX = WKTElement('POINT('+str(Y)+' '+str(X)+')',SRS)
         else:
-            pointYX = WKTSpatialElement('POINT('+str(X)+' '+str(Y)+')',SRS)
-        queryresult = DBSession.query(Property).filter(Property.geom.gcontains(pointYX)).first()
-        parcelInfo['featureid'] = queryresult.idemai
+            pointYX = WKTElement('POINT('+str(X)+' '+str(Y)+')',SRS)
+        queryresult = DBSession.query(Property).filter(Property.geom.ST_Contains(pointYX)).first()
+        parcelInfo['featureid'] = queryresult.id
     else : 
         # to define
         return HTTPBadRequest(translations['HTTPBadRequestMsg'])
 
     parcelInfo['geom'] = queryresult.geom
-    parcelInfo['area'] = int(DBSession.scalar(queryresult.geom.area))
+    parcelInfo['area'] = int(round(DBSession.scalar(queryresult.geom.ST_Area()),0))
 
     if isinstance(LocalName, (types.ClassType)) is False:
-        queryresult1 = DBSession.query(LocalName).filter(LocalName.geom.intersects(parcelInfo['geom'])).first()
+        queryresult1 = DBSession.query(LocalName).filter(LocalName.geom.ST_Intersects(parcelInfo['geom'])).first()
         parcelInfo['lieu_dit'] = queryresult1.nomloc # Flurname
 
-    queryresult2 = DBSession.query(Town).filter(Town.geom.buffer(1).gcontains(parcelInfo['geom'])).first()
+    queryresult2 = DBSession.query(Town).filter(Town.geom.ST_Buffer(1).ST_Contains(parcelInfo['geom'])).first()
 
     parcelInfo['nummai'] = queryresult.nummai # Parcel number
     parcelInfo['type'] = queryresult.typimm # Parcel type
-    parcelInfo['source'] = queryresult.source # Parcel type
     if 'no_egrid' in queryresult.__table__.columns.keys():
         parcelInfo['no_egrid'] = queryresult.no_egrid
     else:
@@ -372,9 +381,9 @@ def get_feature_info(request, translations):
     parcelInfo['numcom'] = queryresult.numcom
     parcelInfo['nomcom'] = queryresult2.comnom
     parcelInfo['nufeco'] = queryresult2.nufeco
-    parcelInfo['centerX'] = DBSession.scalar(queryresult.geom.centroid.x)
-    parcelInfo['centerY'] = DBSession.scalar(queryresult.geom.centroid.y)
-    parcelInfo['BBOX'] = get_bbox_from_geometry(DBSession.scalar(queryresult.geom.envelope.wkt))
+    parcelInfo['centerX'] = DBSession.scalar(functions.ST_X(queryresult.geom.ST_Centroid()))
+    parcelInfo['centerY'] = DBSession.scalar(functions.ST_Y(queryresult.geom.ST_Centroid()))
+    parcelInfo['BBOX'] = get_bbox_from_geometry(DBSession.scalar(functions.ST_AsText(queryresult.geom.ST_Envelope())))
 
     # the get_print_format function is not needed any longer as the paper size has been fixed to A4 by the cantons
     # but we keep the code because the decision will be revoked 

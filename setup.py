@@ -15,6 +15,7 @@ setup(
     author_email='sitn@ne.ch',
     url='http://www.camptocamp.com/geospatial-solutions',
     install_requires=[
+        'psycopg2',
         'pyramid',
         'sqlahelper',
         'waitress',
@@ -24,20 +25,25 @@ setup(
         'pyramid_debugtoolbar',
         'zope.sqlalchemy',
         'papyrus',
-        'GeoAlchemy',
+        'GeoAlchemy2',
         'OWSLib',
         'fpdf',
         'httplib2',
-        'pil',
+        'pillow',
         'pyyaml',
         'JSTools',
         'PyPDF2',
         'dogpile.cache',
+        'simplejson',
+        'flake8'
     ],
     packages=find_packages(exclude=['ez_setup']),
     include_package_data=True,
     zip_safe=False,
     entry_points={
+        'console_scripts': [
+            "iconizer = crdppf.utilities.iconizer:main",
+        ],
         'paste.app_factory': [
             'main = crdppf_core:main',
         ],

@@ -3,7 +3,9 @@ from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
 import sqlahelper
 from pyramid.session import UnencryptedCookieSessionFactoryConfig
-from pyramid.mako_templating import renderer_factory as mako_renderer_factory
+
+from pyramid_mako import add_mako_renderer
+
 from papyrus.renderers import GeoJSON
 import papyrus
 
@@ -45,7 +47,10 @@ def includeme(config):
     settings.update(yaml.load(file(settings.get('app.cfg'))))
 
     config.include(papyrus.includeme)
-    config.add_renderer('.js', mako_renderer_factory)
+    config.include('pyramid_mako')
+    # bind the mako renderer to other file extensions
+    add_mako_renderer(config, ".js")
+
     config.add_renderer('geojson', GeoJSON())
 
     # add app configuration from db
@@ -77,8 +82,8 @@ def includeme(config):
     config.add_route('getTownList', 'getTownList')
     config.add_route('getTopicsList', 'getTopicsList')
     config.add_route('createNewDocEntry', 'createNewDocEntry')
-    config.add_route('getDocumentReferences', 'getDocumentReferences')
-    config.add_route('getLegalDocuments', 'getLegalDocuments')
+    config.add_route('document_ref', 'getDocumentReferences')
+    config.add_route('legal_documents', 'getLegalDocuments')
     config.add_route('map', 'map')
     config.add_route('configpanel', 'configpanel')
     
@@ -88,18 +93,17 @@ def includeme(config):
     config.add_route('ogcproxy', '/ogcproxy')
     
     # CLIENT VIEWS
-    config.add_view('crdppf.views.entry.Entry', route_name = 'home')
     config.add_view('crdppf.views.entry.Entry', route_name = 'images')
     config.add_view('crdppf.views.entry.Entry', route_name='test')
 
     # Print proxy routes
     config.add_route('printproxy_report_get', '/printproxy/report/{ref}')
     config.add_route('printproxy_status', '/printproxy/status/{ref}.json')
-    config.add_route('printproxy_report_create', '/printproxy/report/{type_}/{idemai}')
+    config.add_route('printproxy_report_create', '/printproxy/report/{type_}/{id}')
 
-    # ADMIN VIEWS
-    config.add_view('crdppf.views.administration.Config', route_name='configpanel')
-    config.add_view('crdppf.views.administration.Config', route_name='formulaire_reglements')
+    #~ # ADMIN VIEWS
+    #~ config.add_view('crdppf.views.administration.Config', route_name='configpanel')
+    #~ config.add_view('crdppf.views.administration.Config', route_name='formulaire_reglements')
 
     config.add_route('catchall_static', '/*subpath')
     config.add_view('crdppf.static.static_view', route_name='catchall_static')

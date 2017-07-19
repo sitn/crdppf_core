@@ -29,18 +29,18 @@ def get_features_function(parcelGeom, params):
     featureList = []
     for layer in layerList:
         targetModel = table2model_match[layer]
-        intersectResult = DBSession.query(targetModel).filter(or_(targetModel.geom.intersects(parcelGeom), targetModel.geom.within(parcelGeom))).all()
+        intersectResult = DBSession.query(targetModel).filter(or_(targetModel.geom.ST_Intersects(parcelGeom), targetModel.geom.ST_Within(parcelGeom))).all()
         if intersectResult:
             # create geojson output with custom attributes
             for feature in intersectResult:
-                geometryType = DBSession.scalar(feature.geom.geometry_type())
+                geometryType = DBSession.scalar(feature.geom.ST_GeometryType())
                 geomType = ''
                 intersectionMeasure = -9999
                 intersectionMeasureTxt = ''
                 if geometryType == 'ST_Polygon' or geometryType == 'ST_MultiPolygon':
-                    intersectionMeasure = DBSession.scalar(feature.geom.intersection(parcelGeom).area())
+                    intersectionMeasure = DBSession.scalar(feature.geom.ST_Intersection(parcelGeom).ST_Area())
                     if intersectionMeasure >= 1:
-                        intersectionMeasureTxt = ' : '+ str(int(intersectionMeasure)) + ' [m2]'
+                        intersectionMeasureTxt = ' : '+ str(int(round(intersectionMeasure,0))) + ' [m2]'
                         geomType = 'Polygone'
                         jsonFeature = sloads(dumps(feature))
                         jsonFeature['properties']['layerName'] = layer
@@ -48,9 +48,9 @@ def get_features_function(parcelGeom, params):
                         jsonFeature['properties']['geomType'] = 'area'
                         featureList.append(jsonFeature)
                 elif geometryType == 'ST_Line' or geometryType == 'ST_MultiLineString' or geometryType == 'ST_LineString':
-                    intersectionMeasure = intersectionMeasure = DBSession.scalar(feature.geom.intersection(parcelGeom).length())
+                    intersectionMeasure = DBSession.scalar(feature.geom.ST_Intersection(parcelGeom).ST_Length())
                     if intersectionMeasure >= 1:
-                        intersectionMeasureTxt = ' : '+ str(int(intersectionMeasure)) +' [m]'
+                        intersectionMeasureTxt = ' : '+ str(int(round(intersectionMeasure,0))) +' [m]'
                         geomType = 'Ligne'
                         jsonFeature = sloads(dumps(feature))
                         jsonFeature['properties']['layerName'] = layer

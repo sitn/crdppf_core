@@ -3,4 +3,7 @@
 	url = https://github.com/geoext/geoext.git
 [submodule "crdppf/static/lib/openlayers"]
 	path = crdppf/static/lib/openlayers
-	url = https://github.com/openlayers/openlayers.git
+	url = https://github.com/openlayers/ol2.git
+[submodule "crdppf/static/lib/proj4js/proj4js"]
+	path = crdppf/static/lib/proj4js/proj4js
+	url = https://github.com/proj4js/proj4js.git

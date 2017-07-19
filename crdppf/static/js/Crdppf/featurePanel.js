@@ -81,7 +81,7 @@ Crdppf.FeaturePanel.prototype = {
                 properties[i] = [
                     i,
                     features[i].data.typimm+': '+features[i].data.nummai+' '+features[i].data.cadastre,
-                    features[i].data.idemai,
+                    features[i].data.id,
                     features[i].data.source,
                     features[i].data.nufeco
                 ];
@@ -89,7 +89,7 @@ Crdppf.FeaturePanel.prototype = {
 
             var comboFeatureSelect = new Ext.form.ComboBox({
                 store: new Ext.data.ArrayStore({
-                    fields: ['index','displaytxt','idemai','idemai'],
+                    fields: ['index','displaytxt','id','id'],
                     data: properties 
                 }),
                 displayField: 'displaytxt',
@@ -139,7 +139,7 @@ Crdppf.FeaturePanel.prototype = {
     insertRestrictions: function (request, me) {
         var geojson_format = new OpenLayers.Format.GeoJSON();
         var jsonData = geojson_format.read(request.responseText);
-        Crdppf.FeaturePanel.featureTree.setTitle(Crdppf.labels.restrictionPanelTxt + Crdppf.currentProperty.attributes.idemai);
+        Crdppf.FeaturePanel.featureTree.setTitle(Crdppf.labels.restrictionPanelTxt + Crdppf.currentProperty.attributes.id);
         var lList = [];
         // iterate over the restrictions found
         Crdppf.FeaturePanel.root.removeAll(true);
@@ -236,7 +236,7 @@ Crdppf.FeaturePanel.prototype = {
         Crdppf.Map.intersectLayer.removeAllFeatures();
         Crdppf.Map.selectLayer.addFeatures([property]);
 
-        var parcelId = property.attributes.idemai;
+        var parcelId = property.attributes.id;
         // Update parameters for legal documents filtering
         Crdppf.filterlist.cadastrenb = parseInt(parcelId.split('_', 1)[0]);
         Crdppf.filterlist.chmunicipalitynb = Number(property.attributes.nufeco);

@@ -8,14 +8,14 @@ Crdppf.setLanguageUrl = "${request.route_url('set_language')}";
 Crdppf.getLanguageUrl = "${request.route_url('get_language')}";
 Crdppf.getTranslationDictionaryUrl = "${request.route_url('get_translation_dictionary')}";
 Crdppf.getTranslationListUrl = "${request.route_url('get_translations_list')}";
-Crdppf.getLegalDocumentsUrl = "${request.route_url('getLegalDocuments')}";
+Crdppf.getLegalDocumentsUrl = "${request.route_url('legal_documents')}";
 Crdppf.getInterfaceConfigUrl = "${request.route_url('get_interface_config')}";
 Crdppf.getBaselayerConfigUrl = "${request.route_url('get_baselayers_config')}";
 Crdppf.wmsUrl = "${request.route_url('ogcproxy')}";
 Crdppf.ogcproxyUrl  = "${request.route_url('ogcproxy')}";
 Crdppf.printUrl = "${request.route_url('create_extract')}";
 <%
-    print_report = request.route_url('printproxy_report_create', idemai='', type_='2split')
+    print_report = request.route_url('printproxy_report_create', id='', type_='2split')
     print_report = print_report.split('2split')[0]
     print_status = request.route_url('printproxy_status', ref='')
     print_status = print_status.split('.json')[0]

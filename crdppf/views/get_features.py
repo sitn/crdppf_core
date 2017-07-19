@@ -16,6 +16,6 @@ def get_features(request):
 def getParcelGeom(parcelId):
     """ Return the parcel geometry for a given parcel ID
     """  
-    queryParcel =DBSession.query(Property).filter_by(idemai=parcelId).first()
+    queryParcel =DBSession.query(Property).filter_by(id=parcelId).first()
     parcelGeom = queryParcel.geom
     return parcelGeom
