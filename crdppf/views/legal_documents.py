@@ -13,7 +13,7 @@ from crdppf.util.documents import get_documents, get_document_ref
 @view_config(route_name='getTownList', renderer='json')
 def getTownList(request):
     """ Loads the list of the cadastres of the Canton."""
-    
+
     results = {}
 
     if 'numcad' in Town.__table__.columns.keys():
@@ -44,17 +44,17 @@ def getTownList(request):
 @view_config(route_name='getTopicsList', renderer='json')
 def getTopicsList(request):
     """ Loads the list of the topics."""
-    
+
     results = {}
     results = DBSession.query(Topics).order_by(Topics.topicid.asc()).all()
 
     topics = []
     for topic in results :
         topics.append({
-            'topicid':topic.topicid, 
-            'topicname':topic.topicname, 
-            'authorityfk':topic.authorityfk, 
-            #'publicationdate':topic.publicationdate.isoformat(), 
+            'topicid':topic.topicid,
+            'topicname':topic.topicname,
+            'authorityfk':topic.authorityfk,
+            #'publicationdate':topic.publicationdate.isoformat(),
             'topicorder':topic.topicorder
         })
 
@@ -64,9 +64,9 @@ def getTopicsList(request):
 def createNewDocEntry(request):
     # Attention il faut que l'utilisateur puisse écrire dans la table et d'1, mais aussi qu'il ait le droit sur la SEQUENCE dans PG
     data = sloads(request.POST['data'])
-    
+
     document = Documents()
-    
+
     if data['numcom']:
         document.nocom = int(data['numcom'])
     else:
@@ -75,7 +75,7 @@ def createNewDocEntry(request):
         document.nufeco = int(data['nufeco'])
     else:
         document.nufeco = None
-    if data['numcad']:    
+    if data['numcad']:
         document.nocad = int(data['numcad'])
     else:
         document.nocad = None
@@ -110,14 +110,14 @@ def createNewDocEntry(request):
 
 @view_config(route_name='document_ref', renderer='json')
 def document_ref(request):
-    
+
     referenceslist = get_document_ref()
-    
+
     return referenceslist
 
 @view_config(route_name='legal_documents', renderer='json')
 def legal_documents(request):
-    
+
     doclist = get_documents()
-        
+
     return {'docs': doclist}

@@ -22,16 +22,16 @@ from geoalchemy2.shape import to_shape
 import logging
 
 log = logging.getLogger(__name__)
-    
+
 def set_documents(request, topicid, doctype, docids, featureinfo, geofilter, topicdata):
     """ Function to fetch the documents related to the restriction:
-    legal provisions, temporary provisions, references 
+    legal provisions, temporary provisions, references
     """
 
     docs = []
     documents = []
     doclist = topicdata["doclist"]
-    
+
     if geofilter is True:
         filters = {
             "docids": docids,
@@ -161,14 +161,14 @@ def get_content(id, request):
     # defaults to 'fr': french - this may be changed in the appconfig
     if 'lang' not in session:
         extract.baseconfig['lang'] = request.registry.settings['default_language'].lower()
-    else : 
+    else :
         extract.baseconfig['lang']  = session['lang'].lower()
     extract.baseconfig['translations'] = get_translations(extract.baseconfig['lang'])
     # for simplification
-    translations = extract.baseconfig['translations'] 
+    translations = extract.baseconfig['translations']
 
     # 1) If the ID of the parcel is set get the basic attributs of the property
-    # else get the ID (id) of the selected parcel first using X/Y coordinates of the center 
+    # else get the ID (id) of the selected parcel first using X/Y coordinates of the center
     #----------------------------------------------------------------------------------------------------
     featureinfo = get_feature_info(id, extract.srid, translations) # '1_14127' # test parcel or '1_11340'
     featureinfo = featureinfo
@@ -238,7 +238,7 @@ def get_content(id, request):
 
     # Get the raw feature BBOX
     extract.basemap['bbox'] = get_feature_bbox(id)
-    bbox = extract.basemap['bbox'] 
+    bbox = extract.basemap['bbox']
 
     if bbox is False:
         log.warning('Found more then one bbox for id: %s' % id)
@@ -337,7 +337,7 @@ def get_content(id, request):
                 "authorityuuid": topic.authority.authorityid,
                 "authorityname": topic.authority.authorityname,
                 "authorityurl": topic.authority.authoritywww
-                }, 
+                },
             "topicorder": topic.topicorder,
             "authorityfk": topic.authorityfk,
             "publicationdate": topic.publicationdate
@@ -389,7 +389,7 @@ def get_content(id, request):
 
         if topicdata[str(topic.topicid)]['categorie'] == 1:
             notconcernedtopics.append(topic.topicname)
-            
+
         if topicdata[str(topic.topicid)]['categorie']  == 0:
             emptytopics.append(topic.topicname)
 
@@ -409,7 +409,7 @@ def get_content(id, request):
 
             if topicdata[topic.topicid]['layers']:
                 topicdata[str(topic.topicid)]["restrictions"] = []
-                
+
                 for layer in topicdata[topic.topicid]['layers']:
                     if topicdata[topic.topicid]['layers'][layer]['features']:
                         for feature in topicdata[topic.topicid]['layers'][layer]['features']:
@@ -425,7 +425,7 @@ def get_content(id, request):
                                         "area": feature['intersectionMeasure'].replace(' : ','').replace(' - ',''),
                                         "area_pct": round((float(feature['intersectionMeasure'].replace(' : ','').replace(' - ','').replace(' [m2]',''))*100)/propertyarea,1)
                                     })
-                                else: 
+                                else:
                                     topicdata[str(topic.topicid)]["restrictions"].append({
                                         "codegenre": legenddir+feature['codegenre']+".png",
                                         "teneur": feature['teneur'],
@@ -474,8 +474,8 @@ def get_content(id, request):
                             }]
                         }
                     }
-                }, 
-                topiclayers, 
+                },
+                topiclayers,
                 wmts_layer_
                 ]
             }
@@ -511,7 +511,7 @@ def get_content(id, request):
             "competentauthority": extract.baseconfig['competentauthority'] ,
             "titlepage": [{
                 "title": report_title,
-                "certificationinstance": "", 
+                "certificationinstance": "",
                 "certificationtext": "",
             }],
             "concernedtopics":  concernedtopics,
@@ -525,9 +525,9 @@ def get_content(id, request):
     }
     #~ sdf
 
-    # pretty printed json data for the extract
+    #~ # pretty printed json data for the extract
     #~ jsonfile = open('C:/Temp/extractdata.json', 'w')
-    #~ jsondata = json.dumps(d['attributes'], indent=4)
+    #~ jsondata = json.dumps(d, indent=4)
     #~ jsonfile.write(jsondata)
     #~ jsonfile.close()
 
