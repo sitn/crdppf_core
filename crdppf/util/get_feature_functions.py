@@ -4,10 +4,11 @@ from papyrus.geojsonencoder import dumps
 
 from simplejson import loads as sloads
 import csv
-import math
+# import math
 
 from crdppf.models import DBSession
 from crdppf.util.table2model_match import table2model_match
+
 
 def get_features_function(parcelGeom, params):
 
@@ -20,10 +21,10 @@ def get_features_function(parcelGeom, params):
         itemList.append(item)
     layerList = itemList[0]
 
-    test = 'empty'
-    # retrieve models from table2model
-    for layer in layerList:
-        model = table2model_match[layer]
+#    test = 'empty'
+#    # retrieve models from table2model
+#    for layer in layerList:
+#        model = table2model_match[layer]
 
     # spatial analysis
     featureList = []
@@ -40,7 +41,7 @@ def get_features_function(parcelGeom, params):
                 if geometryType == 'ST_Polygon' or geometryType == 'ST_MultiPolygon':
                     intersectionMeasure = DBSession.scalar(feature.geom.ST_Intersection(parcelGeom).ST_Area())
                     if intersectionMeasure >= 1:
-                        intersectionMeasureTxt = ' : '+ str(int(round(intersectionMeasure,0))) + ' [m2]'
+                        intersectionMeasureTxt = ' : ' + str(int(round(intersectionMeasure, 0))) + ' [m2]'
                         geomType = 'Polygone'
                         jsonFeature = sloads(dumps(feature))
                         jsonFeature['properties']['layerName'] = layer
@@ -50,7 +51,7 @@ def get_features_function(parcelGeom, params):
                 elif geometryType == 'ST_Line' or geometryType == 'ST_MultiLineString' or geometryType == 'ST_LineString':
                     intersectionMeasure = DBSession.scalar(feature.geom.ST_Intersection(parcelGeom).ST_Length())
                     if intersectionMeasure >= 1:
-                        intersectionMeasureTxt = ' : '+ str(int(round(intersectionMeasure,0))) +' [m]'
+                        intersectionMeasureTxt = ' : ' + str(int(round(intersectionMeasure, 0))) + ' [m]'
                         geomType = 'Ligne'
                         jsonFeature = sloads(dumps(feature))
                         jsonFeature['properties']['layerName'] = layer
@@ -60,7 +61,7 @@ def get_features_function(parcelGeom, params):
                 elif geometryType == 'ST_Point' or geometryType == 'ST_MultiPoint':
                     featureMeasure = -9999
                     geomType = 'Point'
-                    intersectionMeasureTxt = ' ' #' : point'
+                    intersectionMeasureTxt = ' '    # ' : point'
                     jsonFeature = sloads(dumps(feature))
                     jsonFeature['properties']['layerName'] = layer
                     jsonFeature['properties']['intersectionMeasure'] = intersectionMeasureTxt
