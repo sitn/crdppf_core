@@ -7,7 +7,7 @@ cache_region = make_region()
 cache_region.configure("dogpile.cache.memory")
 
 import httplib2
-
+import sys
 import logging
 
 log = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ def parse_wmts_getcapabilites(url):
 
     try:
         resp, content = http.request(url)
-    except Exception as e:
+    except Exception:
         log.error(
             "Error '%s' while getting the URL:\n%s" %
             (sys.exc_info()[0], url)

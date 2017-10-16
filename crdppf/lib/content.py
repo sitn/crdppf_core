@@ -476,7 +476,8 @@ def get_content(id, request):
                                 "type": "line"
                             }]
                         }
-                    }},
+                    }
+                },
                 topiclayers,
                 wmts_layer_
                 ]
