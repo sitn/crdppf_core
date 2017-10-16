@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import ast
 from datetime import datetime
+
 
 # MAIN DOCUMENT
 class Extract(object):
     """The main class for the ectract object which collects all the data to write the report."""
-    
+
     def __init__(self, request):
         # document id
         self.id = datetime.now().strftime("%Y%m%d%H%M%S")

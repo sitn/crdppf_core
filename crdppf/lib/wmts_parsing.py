@@ -12,6 +12,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
+
 @cache_region.cache_on_arguments()
 def parse_wmts_getcapabilites(url):
     """ This cached function makes a HTTP request to retrieve the
@@ -31,6 +32,7 @@ def parse_wmts_getcapabilites(url):
     dom = parseString(content)
 
     return dom
+
 
 @cache_region.cache_on_arguments()
 def wmts_layer(url, layer):
@@ -79,7 +81,7 @@ def wmts_layer(url, layer):
             tilematrixset = layer_.getElementsByTagName("TileMatrixSet")[0].firstChild.nodeValue
             dimensions_ = layer_.getElementsByTagName("Dimension")
             if len(dimensions_) > 0:
-                for dimension_ in dimensions_:                    
+                for dimension_ in dimensions_:
                     identifier = dimension_.getElementsByTagName("ows:Identifier")[0].firstChild.nodeValue
                     value = dimension_.getElementsByTagName("Value")[0].firstChild.nodeValue
                     dimensions.append(

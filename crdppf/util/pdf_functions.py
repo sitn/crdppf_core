@@ -2,6 +2,7 @@
 
 import urllib
 import httplib2
+from pyramid.httpexceptions import HTTPBadRequest
 import types
 
 # geometry related librabries
@@ -334,9 +335,9 @@ def get_feature_info(id, srid, translations):
             pointYX = WKTElement('POINT('+str(X)+' '+str(Y)+')', SRS)
         queryresult = DBSession.query(Property).filter(Property.geom.ST_Contains(pointYX)).first()
         parcelInfo['featureid'] = queryresult.id
-#    else:
-#        # to define
-#        return HTTPBadRequest(translations['HTTPBadRequestMsg'])
+    else:
+        # to define
+        return HTTPBadRequest(translations['HTTPBadRequestMsg'])
 
     parcelInfo['geom'] = queryresult.geom
     parcelInfo['area'] = int(round(DBSession.scalar(queryresult.geom.ST_Area()), 0))
