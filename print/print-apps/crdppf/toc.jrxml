@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-06-15T12:04:08 -->
+<!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TocReport" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" whenResourceMissingType="Empty" uuid="6e74177b-d551-4a75-ae51-6cdde3f284ce">
 	<property name="net.sf.jasperreports.bookmarks.data.source.parameter" value="REPORT_DATA_SOURCE"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -39,25 +38,6 @@
 	</style>
 	<style name="HeadingLabel3" style="Heading3"/>
 	<style name="HeadingIndex3" style="Heading3"/>
-	<subDataset name="concernedtopics" uuid="9a5d3c62-005a-4a40-baa8-4f42f0ef271a">
-		<parameter name="label" class="java.lang.String">
-			<defaultValueExpression><![CDATA[$P{label}]]></defaultValueExpression>
-		</parameter>
-		<parameter name="pagenumber" class="java.lang.Integer">
-			<defaultValueExpression><![CDATA[$P{pagenumber}]]></defaultValueExpression>
-		</parameter>
-		<parameter name="pageIndex" class="java.lang.Integer">
-			<defaultValueExpression><![CDATA[$P{pageIndex}]]></defaultValueExpression>
-		</parameter>
-		<queryString>
-			<![CDATA[]]>
-		</queryString>
-		<field name="topicname" class="java.lang.String"/>
-		<field name="documentlist" class="net.sf.jasperreports.engine.JRDataSource"/>
-		<variable name="status" class="java.lang.Integer" resetType="None">
-			<variableExpression><![CDATA[$F{topicname}.compareTo($P{label})]]></variableExpression>
-		</variable>
-	</subDataset>
 	<parameter name="ch_logo" class="java.lang.String"/>
 	<parameter name="canton_logo" class="java.lang.String"/>
 	<parameter name="municipalitylogopath" class="java.lang.String"/>
@@ -87,6 +67,9 @@
 		<variableExpression><![CDATA[$F{level} == 1 ? 0 : ($F{level} == 2 ? ($V{level2Index} + 1) : $V{level2Index})]]></variableExpression>
 	</variable>
 	<variable name="status" class="java.lang.Integer"/>
+	<variable name="current_topic" class="java.lang.String">
+		<variableExpression><![CDATA[$V{current_topic}]]></variableExpression>
+	</variable>
 	<pageHeader>
 		<band height="60">
 			<image scaleImage="RetainShape" hAlign="Center">
@@ -173,7 +156,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{toclabel}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="89" width="493" height="17" uuid="6822cf3d-da48-4e67-b365-60a5a9f7f56c">
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
@@ -249,32 +232,19 @@
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER} + $F{pageIndex} + 2]]></textFieldExpression>
 				<hyperlinkAnchorExpression><![CDATA[$F{label}]]></hyperlinkAnchorExpression>
 			</textField>
-			<componentElement>
-				<reportElement x="230" y="0" width="262" height="17" isPrintWhenDetailOverflows="true" uuid="80cbd8fb-ff04-4de6-8d56-45e07e4887e1">
-					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value="appendices"/>
-				</reportElement>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-					<datasetRun subDataset="concernedtopics" uuid="02666ca8-9735-4b3d-bad9-93737a20e501">
-						<datasetParameter name="REPORT_DATA_SOURCE">
-							<datasetParameterExpression><![CDATA[$P{concernedtopics}]]></datasetParameterExpression>
-						</datasetParameter>
-						<datasetParameter name="label">
-							<datasetParameterExpression><![CDATA[$F{label}]]></datasetParameterExpression>
-						</datasetParameter>
-						<returnValue fromVariable="status" toVariable="status"/>
-					</datasetRun>
-					<jr:listContents height="17" width="262">
-						<subreport>
-							<reportElement key="" x="0" y="0" width="262" height="17" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="c69e0b4b-4d60-4ffd-904b-cc6aca8507f5">
-								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-								<printWhenExpression><![CDATA[$V{status} == 0]]></printWhenExpression>
-							</reportElement>
-							<dataSourceExpression><![CDATA[$F{documentlist}]]></dataSourceExpression>
-							<subreportExpression><![CDATA["appendices.jasper"]]></subreportExpression>
-						</subreport>
-					</jr:listContents>
-				</jr:list>
-			</componentElement>
+			<subreport>
+				<reportElement x="227" y="0" width="265" height="17" uuid="f7d5f2fa-e00e-4c78-92c5-fc039e703756"/>
+				<subreportParameter name="label">
+					<subreportParameterExpression><![CDATA[$F{label}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REPORT_DATA_SOURCE">
+					<subreportParameterExpression><![CDATA[$P{concernedtopics}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[$P{concernedtopics}]]></dataSourceExpression>
+				<returnValue subreportVariable="current_topic" toVariable="current_topic"/>
+				<returnValue subreportVariable="status" toVariable="status"/>
+				<subreportExpression><![CDATA["appendices.jasper"]]></subreportExpression>
+			</subreport>
 			<returnValue toVariable="status">
 				<expression><![CDATA[$V{status}]]></expression>
 			</returnValue>
