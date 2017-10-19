@@ -28,15 +28,13 @@
 # either expressed or implied, of the FreeBSD Project.
 
 
-import urllib
 import logging
 
 import simplejson as json
 
 
 from pyramid.view import view_config
-from pyramid.response import Response
-from pyramid.httpexceptions import HTTPBadGateway, HTTPBadRequest
+from pyramid.httpexceptions import HTTPBadRequest
 
 from crdppf.views.proxy import Proxy
 
@@ -45,7 +43,6 @@ from crdppf.lib.content import get_content
 
 log = logging.getLogger(__name__)
 
-import httplib2
 
 class PrintProxy(Proxy):  # pragma: no cover
 
@@ -58,7 +55,7 @@ class PrintProxy(Proxy):  # pragma: no cover
         """ Create PDF. """
 
         id = self.request.matchdict.get("id")
-        type_ = self.request.matchdict.get("type_")
+        # type_ = self.request.matchdict.get("type_")
 
         body = {
             "layout": "report",
@@ -72,9 +69,9 @@ class PrintProxy(Proxy):  # pragma: no cover
         )))
 
         cached_content = get_cached_content(self.request)
-        
+
         print cached_content
-        
+
         dynamic_content = get_content(id, self.request)
 
         if dynamic_content is False:
@@ -88,8 +85,6 @@ class PrintProxy(Proxy):  # pragma: no cover
             "crdppf",
             "pdf"
         )
-
-        http = httplib2.Http()
 
         body = json.dumps(body)
 

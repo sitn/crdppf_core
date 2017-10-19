@@ -13,10 +13,11 @@ import logging
 
 log = logging.getLogger(__name__)
 
+
 @cache_region.cache_on_arguments()
 def get_cached_content(request):
 
-    d={}
+    d = {}
 
     canton_logo = DBSession.query(AppConfig).filter_by(parameter='cantonlogopath').first()
     ch_logo = DBSession.query(AppConfig).filter_by(parameter='CHlogopath').first()
@@ -27,13 +28,13 @@ def get_cached_content(request):
         'proj/images',
         canton_logo.paramvalue
     ])
-    
+
     d['ch_logo'] = '/'.join([
         request.registry.settings['localhost_url'],
         'proj/images',
         ch_logo.paramvalue
     ])
-    
+
     d['crdppf_logo'] = '/'.join([
         request.registry.settings['localhost_url'],
         'proj/images',
@@ -42,17 +43,18 @@ def get_cached_content(request):
 
     return d
 
+
 @cache_region.cache_on_arguments()
 def get_cached_content_l10n(lang):
 
-    d={}
+    d = {}
 
     # First get all the translated strings for the selected language
     translations = DBSession.query(Translations).all()
 
     for translation in translations:
 
-        if  getattr(translation, lang):
+        if getattr(translation, lang):
             d[str(translation.varstr)] = getattr(translation, lang)
         else:
             log.warning("There is a undefined translation")
@@ -69,7 +71,7 @@ def get_cached_content_l10n(lang):
             ])
         else:
             log.warning("There is a empty definition")
-    
+
     d["glossar"] = [{
         "glossarlabel": d["pdfGlossarLabel"],
         "definitions": {
