@@ -22,7 +22,7 @@ table2model_match = {
     'r87_astra_projektierungszonen_nationalstrassen': CHHighwaysProjectZones,
     'r88_astra_baulinien_nationalstrassen': CHHighwaysConstructionLimits,
     'r97_bav_baulinien_eisenbahnanlagen': CHRailwaysConstructionLimits,
-    'r96_bav_projektierungszonen_eisenbahnanlagen': CHAirportProjectZones,
+    'r96_bav_projektierungszonen_eisenbahnanlagen': CHRailwaysProjectZones,
     'r103_bazl_projektierungszonen_flughafenanlagen': CHAirportProjectZones,
     'r103_bazl_projektierungszonen_flughafenanlagen_pdf': CHAirportProjectZonesPDF,
     'r104_bazl_baulinien_flughafenanlagen': CHAirportConstructionLimits,

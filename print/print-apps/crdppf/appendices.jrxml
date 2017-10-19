@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Appendices" pageWidth="493" pageHeight="842" columnWidth="493" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" whenResourceMissingType="Key" isIgnorePagination="true" uuid="e034c6ef-7449-4a6a-9b5e-4ce04cc083b2">
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="Default" isDefault="true" fontName="Cadastra" fontSize="8.5"/>
+	<subDataset name="documentlist" uuid="27eb866d-8234-461d-b36b-01d4c7856af3">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="appendixno" class="java.lang.String"/>
+		<field name="appendixtitle" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="label" class="java.lang.String"/>
+	<field name="topicname" class="java.lang.String"/>
+	<field name="documentlist" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<variable name="current_topic" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[$F{topicname}]]></variableExpression>
+	</variable>
+	<variable name="status" class="java.lang.Integer">
+		<variableExpression><![CDATA[$F{topicname}.compareTo( $P{label} )]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="17" splitType="Immediate">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+			<componentElement>
+				<reportElement x="0" y="0" width="265" height="17" uuid="0fd77b98-1559-46ee-87c6-c7cdb8e68975">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<printWhenExpression><![CDATA[$F{topicname}.compareTo( $P{label} ) == 0]]></printWhenExpression>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="documentlist" uuid="ca4eeb76-03cd-4f80-b747-dea0143b428f">
+						<datasetParameter name="REPORT_DATA_SOURCE">
+							<datasetParameterExpression><![CDATA[$F{documentlist}]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:listContents height="17" width="265">
+						<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+							<reportElement x="20" y="0" width="245" height="17" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="b92dae86-e104-42ed-b084-54f0f5a48819">
+								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+							</reportElement>
+							<textFieldExpression><![CDATA[$F{appendixtitle}]]></textFieldExpression>
+						</textField>
+						<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+							<reportElement x="0" y="0" width="20" height="17" isRemoveLineWhenBlank="true" uuid="22b1bb4a-e30b-4352-8663-55b24e64bb35">
+								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+							</reportElement>
+							<textElement>
+								<font fontName="Cadastra"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{appendixno}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+		</band>
+	</detail>
+</jasperReport>
