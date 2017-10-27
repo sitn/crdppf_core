@@ -11,7 +11,7 @@
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<style name="Default" isDefault="true" fontName="Cadastra" fontSize="8.5"/>
-	<subDataset name="documentlist" uuid="27eb866d-8234-461d-b36b-01d4c7856af3">
+	<subDataset name="DocumentlistTableSource" uuid="27eb866d-8234-461d-b36b-01d4c7856af3">
 		<queryString>
 			<![CDATA[]]>
 		</queryString>
@@ -21,7 +21,7 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="label" class="java.lang.String"/>
 	<field name="topicname" class="java.lang.String"/>
-	<field name="documentlist" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<field name="DocumentlistTableSource" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
 	<variable name="current_topic" class="java.lang.String" resetType="None">
 		<variableExpression><![CDATA[$F{topicname}]]></variableExpression>
 	</variable>
@@ -39,9 +39,9 @@
 					<printWhenExpression><![CDATA[$F{topicname}.compareTo( $P{label} ) == 0]]></printWhenExpression>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-					<datasetRun subDataset="documentlist" uuid="ca4eeb76-03cd-4f80-b747-dea0143b428f">
+					<datasetRun subDataset="DocumentlistTableSource" uuid="ca4eeb76-03cd-4f80-b747-dea0143b428f">
 						<datasetParameter name="REPORT_DATA_SOURCE">
-							<datasetParameterExpression><![CDATA[$F{documentlist}]]></datasetParameterExpression>
+							<datasetParameterExpression><![CDATA[$F{DocumentlistTableSource}]]></datasetParameterExpression>
 						</datasetParameter>
 					</datasetRun>
 					<jr:listContents height="17" width="265">

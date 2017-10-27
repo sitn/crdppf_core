@@ -48,12 +48,12 @@
 	<parameter name="pdfGeneralInformationTxt" class="java.lang.String"/>
 	<parameter name="pdfBaseDataTxt" class="java.lang.String"/>
 	<parameter name="pdfBaseDataLabel" class="java.lang.String"/>
-	<parameter name="titlepage" class="net.sf.jasperreports.engine.JRDataSource"/>
-	<parameter name="concernedtopics" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="TitlepageDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="ConcernedTopicsDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="notconcernedtopics" class="java.lang.String"/>
 	<parameter name="emptytopics" class="java.lang.String"/>
-	<parameter name="glossar" class="net.sf.jasperreports.engine.JRDataSource"/>
-	<parameter name="jrDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="GlossaryDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="MainDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="basemap" class="java.lang.String"/>
 	<parameter name="northArrowSubReport" class="java.lang.String"/>
 	<parameter name="scalebarSubReport" class="java.lang.String"/>
@@ -143,7 +143,7 @@
 						<subreportParameterExpression><![CDATA[$P{creationdatelabel}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="REPORT_DATA_SOURCE">
-						<subreportParameterExpression><![CDATA[$P{titlepage}]]></subreportParameterExpression>
+						<subreportParameterExpression><![CDATA[$P{TitlepageDataSource}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="pagelabel">
 						<subreportParameterExpression><![CDATA[$P{pagelabel}]]></subreportParameterExpression>
@@ -190,8 +190,8 @@
 					<subreportParameter name="propertynumber">
 						<subreportParameterExpression><![CDATA[$P{propertynumber}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="concernedtopics">
-						<subreportParameterExpression><![CDATA[$P{concernedtopics}]]></subreportParameterExpression>
+					<subreportParameter name="ConcernedTopicsDataSource">
+						<subreportParameterExpression><![CDATA[$P{ConcernedTopicsDataSource}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="notconcernedtopics">
 						<subreportParameterExpression><![CDATA[$P{notconcernedtopics}]]></subreportParameterExpression>
@@ -234,7 +234,7 @@
 						<subreportParameterExpression><![CDATA[$P{REPORT_CONNECTION}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="REPORT_DATA_SOURCE">
-						<subreportParameterExpression><![CDATA[$P{glossar}]]></subreportParameterExpression>
+						<subreportParameterExpression><![CDATA[$P{GlossaryDataSource}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="canton_logo">
 						<subreportParameterExpression><![CDATA[$P{canton_logo}]]></subreportParameterExpression>
@@ -272,7 +272,7 @@
 					<subreportParameterExpression><![CDATA[$P{REPORT_CONNECTION}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="REPORT_DATA_SOURCE">
-					<subreportParameterExpression><![CDATA[$P{jrDataSource}]]></subreportParameterExpression>
+					<subreportParameterExpression><![CDATA[$P{MainDataSource}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="canton_logo">
 					<subreportParameterExpression><![CDATA[$P{canton_logo}]]></subreportParameterExpression>

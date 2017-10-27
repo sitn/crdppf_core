@@ -59,7 +59,7 @@
 	<parameter name="extractid" class="java.lang.String"/>
 	<parameter name="notconcernedtopics" class="java.lang.String"/>
 	<parameter name="emptytopics" class="java.lang.String"/>
-	<parameter name="concernedtopics" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="ConcernedTopicsDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<field name="level" class="java.lang.Integer"/>
 	<field name="label" class="java.lang.String"/>
 	<field name="pageIndex" class="java.lang.Integer"/>
@@ -238,9 +238,9 @@
 					<subreportParameterExpression><![CDATA[$F{label}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="REPORT_DATA_SOURCE">
-					<subreportParameterExpression><![CDATA[$P{concernedtopics}]]></subreportParameterExpression>
+					<subreportParameterExpression><![CDATA[$P{ConcernedTopicsDataSource}]]></subreportParameterExpression>
 				</subreportParameter>
-				<dataSourceExpression><![CDATA[$P{concernedtopics}]]></dataSourceExpression>
+				<dataSourceExpression><![CDATA[$P{ConcernedTopicsDataSource}]]></dataSourceExpression>
 				<returnValue subreportVariable="current_topic" toVariable="current_topic"/>
 				<returnValue subreportVariable="status" toVariable="status"/>
 				<subreportExpression><![CDATA["appendices.jasper"]]></subreportExpression>

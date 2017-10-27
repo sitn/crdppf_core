@@ -6,7 +6,7 @@
 	<property name="net.sf.jasperreports.bookmarks.data.source.parameter" value="REPORT_DATA_SOURCE"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<style name="Default" isDefault="true" fontName="Cadastra" fontSize="8.5"/>
-	<subDataset name="restrictions" uuid="9a5d3c62-005a-4a40-baa8-4f42f0ef271a">
+	<subDataset name="RestrictionsDataSource" uuid="9a5d3c62-005a-4a40-baa8-4f42f0ef271a">
 		<parameter name="propertyarea" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[$P{propertyarea}]]></defaultValueExpression>
 		</parameter>
@@ -18,32 +18,32 @@
 		<field name="area" class="java.lang.String"/>
 		<field name="area_pct" class="java.lang.Double"/>
 	</subDataset>
-	<subDataset name="bboxlegend" uuid="9a5d3c62-005a-4a40-baa8-4f42f0ef271a">
+	<subDataset name="BBOXLegendDataSource" uuid="9a5d3c62-005a-4a40-baa8-4f42f0ef271a">
 		<field name="codegenre" class="java.lang.String"/>
 		<field name="teneur" class="java.lang.String"/>
 	</subDataset>
-	<subDataset name="legalbases" uuid="9a5d3c62-005a-4a40-baa8-4f42f0ef271a">
+	<subDataset name="LegalbasesDataSource" uuid="9a5d3c62-005a-4a40-baa8-4f42f0ef271a">
 		<queryString>
 			<![CDATA[]]>
 		</queryString>
 		<field name="officialtitle" class="java.lang.String"/>
 		<field name="remoteurl" class="java.lang.String"/>
 	</subDataset>
-	<subDataset name="legalprovisions" uuid="5f77d94f-5f61-48d9-ad0a-eba04cb7a940">
+	<subDataset name="LegalprovisionsDataSource" uuid="5f77d94f-5f61-48d9-ad0a-eba04cb7a940">
 		<queryString>
 			<![CDATA[]]>
 		</queryString>
 		<field name="officialtitle" class="java.lang.String"/>
 		<field name="remoteurl" class="java.lang.String"/>
 	</subDataset>
-	<subDataset name="references" uuid="15455023-00f1-4b7d-9e91-d37b6e6ad77c">
+	<subDataset name="ReferencesDataSource" uuid="15455023-00f1-4b7d-9e91-d37b6e6ad77c">
 		<queryString>
 			<![CDATA[]]>
 		</queryString>
 		<field name="officialtitle" class="java.lang.String"/>
 		<field name="remoteurl" class="java.lang.String"/>
 	</subDataset>
-	<subDataset name="authority" uuid="d47f8fd5-7b9e-4ddc-a17d-ce81cd5777a2">
+	<subDataset name="AuthorityDataSource" uuid="d47f8fd5-7b9e-4ddc-a17d-ce81cd5777a2">
 		<queryString>
 			<![CDATA[]]>
 		</queryString>
@@ -69,18 +69,18 @@
 	<parameter name="propertyarea" class="java.lang.Integer"/>
 	<field name="topicname" class="java.lang.String"/>
 	<field name="completelegend" class="java.lang.String"/>
-	<field name="restrictions" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
-	<field name="bboxlegend" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
-	<field name="legalbases" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
-	<field name="legalprovisions" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
-	<field name="references" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
-	<field name="authority" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
+	<field name="RestrictionsDataSource" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
+	<field name="BBOXLegendDataSource" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
+	<field name="LegalbasesDataSource" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
+	<field name="LegalprovisionsDataSource" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
+	<field name="ReferencesDataSource" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
+	<field name="AuthorityDataSource" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
 	<field name="mapSubReport" class="java.lang.String"/>
 	<field name="northArrowSubReport" class="java.lang.String"/>
 	<field name="scalebarSubReport" class="java.lang.String"/>
 	<field name="tableSubReport" class="java.lang.String"/>
 	<variable name="bboxl" class="java.lang.Integer">
-		<variableExpression><![CDATA[$F{bboxlegend}.getRecordCount()]]></variableExpression>
+		<variableExpression><![CDATA[$F{BBOXLegendDataSource}.getRecordCount()]]></variableExpression>
 	</variable>
 	<variable name="V_CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page" calculation="Sum">
 		<variableExpression><![CDATA[1]]></variableExpression>
@@ -269,9 +269,9 @@
 					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-					<datasetRun subDataset="restrictions" uuid="a53875fd-e8e7-46cc-aa72-f4cddbbd0078">
+					<datasetRun subDataset="RestrictionsDataSource" uuid="a53875fd-e8e7-46cc-aa72-f4cddbbd0078">
 						<datasetParameter name="REPORT_DATA_SOURCE">
-							<datasetParameterExpression><![CDATA[$F{restrictions}]]></datasetParameterExpression>
+							<datasetParameterExpression><![CDATA[$F{RestrictionsDataSource}]]></datasetParameterExpression>
 						</datasetParameter>
 						<datasetParameter name="propertyarea">
 							<datasetParameterExpression><![CDATA[$P{propertyarea}]]></datasetParameterExpression>
@@ -346,12 +346,12 @@
 			<componentElement>
 				<reportElement x="193" y="0" width="300" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="6a57ce50-ae3a-4155-ba2e-d5f9692aa318">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value="bboxlegend"/>
+					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value="BBOXLegendDataSource"/>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-					<datasetRun subDataset="bboxlegend" uuid="b4cc21e5-4f5c-4f1c-920f-1a6059df9480">
+					<datasetRun subDataset="BBOXLegendDataSource" uuid="b4cc21e5-4f5c-4f1c-920f-1a6059df9480">
 						<datasetParameter name="REPORT_DATA_SOURCE">
-							<datasetParameterExpression><![CDATA[$F{bboxlegend}]]></datasetParameterExpression>
+							<datasetParameterExpression><![CDATA[$F{BBOXLegendDataSource}]]></datasetParameterExpression>
 						</datasetParameter>
 					</datasetRun>
 					<jr:listContents height="15" width="300">
@@ -432,9 +432,9 @@
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-					<datasetRun subDataset="legalprovisions" uuid="83735ea8-e658-4242-9f53-2056ed41c253">
+					<datasetRun subDataset="LegalprovisionsDataSource" uuid="83735ea8-e658-4242-9f53-2056ed41c253">
 						<datasetParameter name="REPORT_DATA_SOURCE">
-							<datasetParameterExpression><![CDATA[$F{legalprovisions}]]></datasetParameterExpression>
+							<datasetParameterExpression><![CDATA[$F{LegalprovisionsDataSource}]]></datasetParameterExpression>
 						</datasetParameter>
 					</datasetRun>
 					<jr:listContents height="30" width="300">
@@ -486,9 +486,9 @@
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-					<datasetRun subDataset="legalbases" uuid="abdee3ba-8f7d-4862-8eb3-01a4b4a71645">
+					<datasetRun subDataset="LegalbasesDataSource" uuid="abdee3ba-8f7d-4862-8eb3-01a4b4a71645">
 						<datasetParameter name="REPORT_DATA_SOURCE">
-							<datasetParameterExpression><![CDATA[$F{legalbases}]]></datasetParameterExpression>
+							<datasetParameterExpression><![CDATA[$F{LegalbasesDataSource}]]></datasetParameterExpression>
 						</datasetParameter>
 					</datasetRun>
 					<jr:listContents height="30" width="300">
@@ -537,9 +537,9 @@
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-					<datasetRun subDataset="references" uuid="d4c0bb25-3c38-4215-8aa7-f34d78dfb2de">
+					<datasetRun subDataset="ReferencesDataSource" uuid="d4c0bb25-3c38-4215-8aa7-f34d78dfb2de">
 						<datasetParameter name="REPORT_DATA_SOURCE">
-							<datasetParameterExpression><![CDATA[$F{references}]]></datasetParameterExpression>
+							<datasetParameterExpression><![CDATA[$F{ReferencesDataSource}]]></datasetParameterExpression>
 						</datasetParameter>
 					</datasetRun>
 					<jr:listContents height="30" width="300">
@@ -591,9 +591,9 @@
 			<componentElement>
 				<reportElement x="193" y="0" width="300" height="30" uuid="c450bdfe-ef29-401a-8d06-ed29c9f7f9c7"/>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-					<datasetRun subDataset="authority" uuid="289340b3-0b01-4053-bf37-4d99ce522e81">
+					<datasetRun subDataset="AuthorityDataSource" uuid="289340b3-0b01-4053-bf37-4d99ce522e81">
 						<datasetParameter name="REPORT_DATA_SOURCE">
-							<datasetParameterExpression><![CDATA[$F{authority}]]></datasetParameterExpression>
+							<datasetParameterExpression><![CDATA[$F{AuthorityDataSource}]]></datasetParameterExpression>
 						</datasetParameter>
 					</datasetRun>
 					<jr:listContents height="30" width="300">
