@@ -117,6 +117,7 @@ templates:
           legalprovisions: !datasource
             attributes:
               officialtitle: !string {}
+              title: !string {}
               remoteurl: !string {}
           references: !datasource
             attributes:
@@ -172,6 +173,7 @@ templates:
         directory: '.'
       inputMapper: {concernedtopics: datasource}
       outputMapper: {jrDataSource: ConcernedTopicsDataSource}
+      #reportTemplate: appendices.jrxml
       processors:
       - !prepareTable
         inputMapper: {documentlist: table}
@@ -211,7 +213,7 @@ templates:
         - !reportBuilder # compile all reports in current directory
           directory: '.'
         inputMapper: {legalprovisions: datasource}
-        outputMapper: {jrDataSource: LegalprovisionsDataSource}
+        outputMapper: {jrDataSource: LegalProvisionsDataSource}
       - !createDataSource
         processors:
         - !reportBuilder # compile all reports in current directory

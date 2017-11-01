@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TocReport" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" whenResourceMissingType="Empty" uuid="6e74177b-d551-4a75-ae51-6cdde3f284ce">
-	<property name="net.sf.jasperreports.bookmarks.data.source.parameter" value="REPORT_DATA_SOURCE"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
@@ -11,6 +10,7 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
 	<style name="Default" isDefault="true" fontName="Cadastra" fontSize="8.5"/>
 	<style name="Title" hTextAlign="Right" hImageAlign="Right" fontSize="32">
 		<box>
@@ -38,6 +38,8 @@
 	</style>
 	<style name="HeadingLabel3" style="Heading3"/>
 	<style name="HeadingIndex3" style="Heading3"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="BookmarkDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="ch_logo" class="java.lang.String"/>
 	<parameter name="canton_logo" class="java.lang.String"/>
 	<parameter name="municipalitylogopath" class="java.lang.String"/>
@@ -60,15 +62,9 @@
 	<parameter name="notconcernedtopics" class="java.lang.String"/>
 	<parameter name="emptytopics" class="java.lang.String"/>
 	<parameter name="ConcernedTopicsDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
-	<field name="level" class="java.lang.Integer"/>
-	<field name="label" class="java.lang.String"/>
-	<field name="pageIndex" class="java.lang.Integer"/>
-	<variable name="level2Index" class="java.lang.Integer">
-		<variableExpression><![CDATA[$F{level} == 1 ? 0 : ($F{level} == 2 ? ($V{level2Index} + 1) : $V{level2Index})]]></variableExpression>
-	</variable>
-	<variable name="status" class="java.lang.Integer"/>
-	<variable name="current_topic" class="java.lang.String">
-		<variableExpression><![CDATA[$V{current_topic}]]></variableExpression>
+	<parameter name="TOC_Appendices" class="java.util.Map"/>
+	<variable name="count" class="java.lang.Integer">
+		<initialValueExpression><![CDATA[3]]></initialValueExpression>
 	</variable>
 	<pageHeader>
 		<band height="60">
@@ -144,7 +140,6 @@
 	<detail>
 		<band height="116">
 			<property name="local_mesure_unitheight" value="pixel"/>
-			<printWhenExpression><![CDATA[($V{PAGE_NUMBER} + $F{pageIndex} + 2) == 3]]></printWhenExpression>
 			<textField>
 				<reportElement x="0" y="51" width="493" height="22" uuid="1d2f3ea4-50f0-4030-9b6b-acedb4216005">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -193,66 +188,19 @@
 				<textFieldExpression><![CDATA[$P{appendiceslistlabel}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="17">
-			<printWhenExpression><![CDATA[$F{level} == 1]]></printWhenExpression>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="LocalAnchor">
-				<reportElement style="HeadingLabel1" stretchType="RelativeToTallestObject" x="0" y="0" width="494" height="17" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="c7dfd2ec-2cdd-4131-b727-b23f03a7ecd8">
-					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="local_mesure_unity" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<box>
-					<bottomPen lineWidth="0.2" lineStyle="Solid"/>
-				</box>
-				<textElement verticalAlignment="Top">
-					<font fontName="Cadastra" size="8.5" isBold="false"/>
-					<paragraph lineSpacing="Single" leftIndent="19" rightIndent="265" spacingBefore="3"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{label}]]></textFieldExpression>
-				<hyperlinkAnchorExpression><![CDATA[$F{label}]]></hyperlinkAnchorExpression>
-			</textField>
-			<textField isBlankWhenNull="false" hyperlinkType="LocalAnchor">
-				<reportElement style="HeadingLabel1" x="0" y="0" width="20" height="16" uuid="01c634be-add1-4588-8dd7-f03cab4d5de3">
-					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="local_mesure_unity" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Cadastra" size="8.5" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER} + $F{pageIndex} + 2]]></textFieldExpression>
-				<hyperlinkAnchorExpression><![CDATA[$F{label}]]></hyperlinkAnchorExpression>
-			</textField>
+		<band height="29">
 			<subreport>
-				<reportElement x="227" y="0" width="265" height="17" uuid="f7d5f2fa-e00e-4c78-92c5-fc039e703756"/>
-				<subreportParameter name="label">
-					<subreportParameterExpression><![CDATA[$F{label}]]></subreportParameterExpression>
+				<reportElement x="0" y="0" width="492" height="29" isPrintWhenDetailOverflows="true" uuid="f7d5f2fa-e00e-4c78-92c5-fc039e703756"/>
+				<subreportParameter name="TOC_Appendices">
+					<subreportParameterExpression><![CDATA[$P{TOC_Appendices}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="REPORT_DATA_SOURCE">
-					<subreportParameterExpression><![CDATA[$P{ConcernedTopicsDataSource}]]></subreportParameterExpression>
-				</subreportParameter>
-				<dataSourceExpression><![CDATA[$P{ConcernedTopicsDataSource}]]></dataSourceExpression>
-				<returnValue subreportVariable="current_topic" toVariable="current_topic"/>
-				<returnValue subreportVariable="status" toVariable="status"/>
+				<dataSourceExpression><![CDATA[$P{BookmarkDataSource}]]></dataSourceExpression>
 				<subreportExpression><![CDATA["appendices.jasper"]]></subreportExpression>
 			</subreport>
-			<returnValue toVariable="status">
-				<expression><![CDATA[$V{status}]]></expression>
-			</returnValue>
 		</band>
 		<band height="64">
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<printWhenExpression><![CDATA[($V{status} == 0)]]></printWhenExpression>
 			<textField>
 				<reportElement x="0" y="28" width="493" height="17" uuid="26bc8336-77bd-4624-92a9-58bb947c6098">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
@@ -265,10 +213,9 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{pdfNotConcernedTopicsLabel}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="0" y="47" width="493" height="17" isRemoveLineWhenBlank="true" uuid="87a3ff8e-f1d1-4bac-a97c-d17219622b5a">
+			<textField isStretchWithOverflow="true" evaluationTime="Page">
+				<reportElement isPrintRepeatedValues="false" x="0" y="45" width="493" height="19" uuid="7031f21e-bb89-47f7-a32c-8832c4f27c93">
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement>
 					<font fontName="Cadastra" size="8.5"/>
@@ -280,7 +227,6 @@
 		<band height="50">
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<printWhenExpression><![CDATA[$V{status} == 0]]></printWhenExpression>
 			<textField>
 				<reportElement key="" x="0" y="14" width="493" height="17" uuid="de8e740f-3672-4620-8d7d-b68c68018d9f">
 					<printWhenExpression><![CDATA["hallo" == "hallo"]]></printWhenExpression>
@@ -306,7 +252,6 @@
 		</band>
 		<band height="130">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-			<printWhenExpression><![CDATA[$V{status} == 0]]></printWhenExpression>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="37" width="230" height="57" uuid="9463b6fb-b28a-4793-9bc1-1c24749e48c4"/>
 				<textElement>
