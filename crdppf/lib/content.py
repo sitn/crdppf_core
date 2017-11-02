@@ -128,7 +128,6 @@ def get_legend_classes(bbox, layername, translations, srid):
     # transform coordinates from wkt to SpatialElement for intersection
     polygon = WKTElement(bbox.wkt, srid)
     mapfeatures = get_features_function(polygon, {'layerList': layername, 'translations': translations})
-
     if mapfeatures is not None:
         classes = []
         for mapfeature in mapfeatures:
@@ -415,6 +414,7 @@ def get_content(id, request):
                 for doctype in appconfig["doctypes"].split(','):
                     docidlist = get_document_ref(docfilters)
                     topicdata[str(topic.topicid)][doctype] = set_documents(request, str(topic.topicid), doctype, docidlist, featureinfo, True, topicdata)
+
         else:
             if str(topic.topicid) in appconfig['emptytopics']:
                 emptytopics.append(topic.topicname)
