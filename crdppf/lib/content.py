@@ -7,7 +7,7 @@ from crdppf.extract import Extract
 from crdppf.lib.wmts_parsing import wmts_layer
 from crdppf.lib.geometry_functions import get_feature_bbox, get_print_format, get_feature_center
 
-from crdppf.views.get_features import get_features_function
+from crdppf.util.get_feature_functions import get_features_function
 from crdppf.util.documents import get_document_ref, get_documents
 from crdppf.util.pdf_functions import get_feature_info, get_translations
 
@@ -17,6 +17,37 @@ from geoalchemy2.shape import to_shape, WKTElement
 import logging
 
 log = logging.getLogger(__name__)
+
+
+def get_mapbox(feature_center, scale, height, width, fitratio):
+    """Function to calculate the coordinates of the map bounding box in the real world
+        height: map height in mm
+        width: map width in mm
+        scale: the map scale denominator
+        feature_center: center point (X/Y) of the real estate feature
+    """
+
+    delta_Y = round((height*scale/1000)/2, 1)
+    delta_X = round((width*scale/1000)/2, 1)
+    X = round(feature_center[0], 1)
+    Y = round(feature_center[1], 1)
+
+    map_bbox = ''.join([
+        'POLYGON((',
+        str(X-delta_X)+' ',
+        str(Y-delta_Y)+',',
+        str(X-delta_X)+' ',
+        str(Y+delta_Y)+',',
+        str(X+delta_X)+' ',
+        str(Y+delta_Y)+',',
+        str(X+delta_X)+' ',
+        str(Y-delta_Y)+',',
+        str(X-delta_X)+' ',
+        str(Y-delta_Y),
+        '))'
+    ])
+
+    return map_bbox
 
 
 def set_documents(request, topicid, doctype, docids, featureinfo, geofilter, topicdata):
@@ -61,7 +92,7 @@ def set_documents(request, topicid, doctype, docids, featureinfo, geofilter, top
                 documents.append({"officialtitle": doc['officialtitle'], "title": doc['title'], "remoteurl": doc['remoteurl']})
                 if doc['doctype'] != u'legalbase' and doc['documentid'] not in doclist:
                     appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(doc['officialtitle']).encode('iso-8859-1'),
-                        unicode(doc['title']).encode('iso-8859-1'), unicode(
+                                                   unicode(doc['title']).encode('iso-8859-1'), unicode(
                         doc['remoteurl']).encode('iso-8859-1'), doc['localurl'], topicdata))
                 if doc['documentid'] not in doclist:
                     doclist.append(doc)
@@ -259,6 +290,8 @@ def get_content(id, request):
 
     # Get the print BOX
     print_box = get_print_format(bbox, request.registry.settings['pdf_config']['fitratio'])
+    map_bbox = get_mapbox(feature_center, print_box['scale'], print_box['height'], print_box['width'],
+                          request.registry.settings['pdf_config']['fitratio'])
 
     log.warning('Calling feature: %s' % request.route_url('get_property')+'?id='+id)
 
@@ -326,7 +359,7 @@ def get_content(id, request):
         topicdata[str(topic.topicid)] = {
             "categorie": 0,
             "topicname": topic.topicname,
-            "bboxlegend": [{"codegenre": "", "teneur": ""}],
+            "bboxlegend": [],
             "layers": {},
             "legalbase": {},
             "legalprovision": [{
@@ -365,7 +398,7 @@ def get_content(id, request):
 
                 # get the legend entries in the map bbox not touching the features
                 featurelegend = get_legend_classes(to_shape(featureinfo['geom']), layer.layername, translations, extract.srid)
-                bboxlegend = get_legend_classes(to_shape(WKTElement(wkt_polygon)), layer.layername, translations, extract.srid)
+                bboxlegend = get_legend_classes(to_shape(WKTElement(map_bbox)), layer.layername, translations, extract.srid)
                 bboxitems = set()
                 for legenditem in bboxlegend:
                     if legenditem not in featurelegend:
@@ -374,8 +407,7 @@ def get_content(id, request):
                     for el in bboxitems:
                         legendclass = dict((x, y) for x, y in el)
                         legendclass['codegenre'] = legenddir+legendclass['codegenre']+".png"
-                    topicdata[str(topic.topicid)]["bboxlegend"].append(legendclass)
-
+                        topicdata[str(topic.topicid)]["bboxlegend"].append(legendclass)
             # Get the list of documents related to a topic with layers and results
             if topicdata[str(layer.topicfk)]["categorie"] == 3:
                 docfilters = [str(topic.topicid)]
@@ -464,27 +496,36 @@ def get_content(id, request):
                 "center": feature_center,
                 "scale": print_box['scale']*1.1,
                 "longitudeFirst": "true",
-                "layers": [{
-                    "type": "geojson",
-                    "geoJson": request.route_url('get_property')+'?id='+id,
-                    "style": {
-                        "version": "2",
-                        "strokeColor": "gray",
-                        "strokeLinecap": "round",
-                        "strokeOpacity": 0.6,
-                        "[INTERSECTS(geometry, "+wkt_polygon+")]": {
-                            "symbolizers": [{
-                                "strokeColor": "green",
-                                "strokeWidth": 2,
-                                "type": "line"
-                            }]
+                "layers": [
+                    {
+                        "type": "geojson",
+                        "geoJson": request.route_url('get_property')+'?id='+id,
+                        "style": {
+                            "version": "2",
+                            "strokeColor": "gray",
+                            "strokeLinecap": "round",
+                            "strokeOpacity": 0.6,
+                            "[INTERSECTS(geometry, "+wkt_polygon+")]": {
+                                "symbolizers": [
+                                    {
+                                        "strokeColor": "green",
+                                        "strokeWidth": 2,
+                                        "type": "line"
+                                    }
+                                ]
+                            }
                         }
-                    }
-                },
-                topiclayers,
-                wmts_layer_
+                    },
+                    topiclayers,
+                    wmts_layer_
                 ]
             }
+
+            if topicdata[str(topic.topicid)]["bboxlegend"] == []:
+                topicdata[str(topic.topicid)]["bboxlegend"] = [{
+                    "codegenre": "",
+                    "teneur": ""
+                    }]
 
             data.append({
                 "topicname": topic.topicname,
@@ -529,7 +570,6 @@ def get_content(id, request):
         "layout": "report",
         "outputFormat": "pdf"
     }
-    # sdf
 
     # import json
     # # pretty printed json data for the extract
