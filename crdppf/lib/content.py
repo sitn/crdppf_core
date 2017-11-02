@@ -49,6 +49,7 @@ def get_mapbox(feature_center, scale, height, width, fitratio):
 
     return map_bbox
 
+
 def set_documents(request, topicid, doctype, docids, featureinfo, geofilter, topicdata):
     """ Function to fetch the documents related to the restriction:
     legal provisions, temporary provisions, references
@@ -91,7 +92,7 @@ def set_documents(request, topicid, doctype, docids, featureinfo, geofilter, top
                 documents.append({"officialtitle": doc['officialtitle'], "title": doc['title'], "remoteurl": doc['remoteurl']})
                 if doc['doctype'] != u'legalbase' and doc['documentid'] not in doclist:
                     appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(doc['officialtitle']).encode('iso-8859-1'),
-                        unicode(doc['title']).encode('iso-8859-1'), unicode(
+                                                   unicode(doc['title']).encode('iso-8859-1'), unicode(
                         doc['remoteurl']).encode('iso-8859-1'), doc['localurl'], topicdata))
                 if doc['documentid'] not in doclist:
                     doclist.append(doc)
@@ -291,7 +292,7 @@ def get_content(id, request):
     # Get the print BOX
     print_box = get_print_format(bbox, request.registry.settings['pdf_config']['fitratio'])
     map_bbox = get_mapbox(feature_center, print_box['scale'], print_box['height'], print_box['width'],
-                        request.registry.settings['pdf_config']['fitratio'])
+                          request.registry.settings['pdf_config']['fitratio'])
 
     log.warning('Calling feature: %s' % request.route_url('get_property')+'?id='+id)
 
@@ -495,31 +496,34 @@ def get_content(id, request):
                 "center": feature_center,
                 "scale": print_box['scale']*1.1,
                 "longitudeFirst": "true",
-                "layers": [{
-                    "type": "geojson",
-                    "geoJson": request.route_url('get_property')+'?id='+id,
-                    "style": {
-                        "version": "2",
-                        "strokeColor": "gray",
-                        "strokeLinecap": "round",
-                        "strokeOpacity": 0.6,
-                        "[INTERSECTS(geometry, "+wkt_polygon+")]": {
-                            "symbolizers": [{
-                                "strokeColor": "green",
-                                "strokeWidth": 2,
-                                "type": "line"
-                            }]
+                "layers": [
+                    {
+                        "type": "geojson",
+                        "geoJson": request.route_url('get_property')+'?id='+id,
+                        "style": {
+                            "version": "2",
+                            "strokeColor": "gray",
+                            "strokeLinecap": "round",
+                            "strokeOpacity": 0.6,
+                            "[INTERSECTS(geometry, "+wkt_polygon+")]": {
+                                "symbolizers": [
+                                    {
+                                        "strokeColor": "green",
+                                        "strokeWidth": 2,
+                                        "type": "line"
+                                    }
+                                ]
+                            }
                         }
-                    }
-                },
-                topiclayers,
-                wmts_layer_
+                    },
+                    topiclayers,
+                    wmts_layer_
                 ]
             }
 
             if topicdata[str(topic.topicid)]["bboxlegend"] == []:
                 topicdata[str(topic.topicid)]["bboxlegend"] = [{
-                    "codegenre": "", 
+                    "codegenre": "",
                     "teneur": ""
                     }]
 
