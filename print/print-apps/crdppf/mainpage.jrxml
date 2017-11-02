@@ -47,7 +47,7 @@
 	<parameter name="basemap" class="java.lang.String"/>
 	<parameter name="northArrowSubReport" class="java.lang.String"/>
 	<parameter name="scalebarSubReport" class="java.lang.String"/>
-	<parameter name="titlepage" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="TitlepageDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<field name="title" class="java.lang.String"/>
 	<field name="certificationtext" class="java.lang.String"/>
 	<field name="certificationinstance" class="java.lang.String"/>

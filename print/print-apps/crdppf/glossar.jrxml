@@ -14,7 +14,7 @@
 	<parameter name="extractid" class="java.lang.String"/>
 	<parameter name="pagelabel" class="java.lang.String"/>
 	<field name="glossarlabel" class="java.lang.String"/>
-	<field name="definitions" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<field name="DefinitionsTableSource" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<field name="term" class="java.lang.String"/>
 	<field name="definition" class="java.lang.String"/>
 	<pageHeader>
@@ -101,7 +101,7 @@
 		<band height="30">
 			<subreport>
 				<reportElement x="0" y="9" width="493" height="21" uuid="16848c63-ce33-4b3a-9e67-2d949e8d3c10"/>
-				<dataSourceExpression><![CDATA[$F{definitions}]]></dataSourceExpression>
+				<dataSourceExpression><![CDATA[$F{DefinitionsTableSource}]]></dataSourceExpression>
 				<subreportExpression><![CDATA["table.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
