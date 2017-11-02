@@ -257,6 +257,7 @@ def get_content(id, request):
 
     # Get the print BOX
     print_box = get_print_format(bbox, request.registry.settings['pdf_config']['fitratio'])
+    map_bbox = feature_center
 
     log.warning('Calling feature: %s' % request.route_url('get_property')+'?id='+id)
 
@@ -526,7 +527,6 @@ def get_content(id, request):
         "layout": "report",
         "outputFormat": "pdf"
     }
-    # sdf
 
     # import json
     # # pretty printed json data for the extract
