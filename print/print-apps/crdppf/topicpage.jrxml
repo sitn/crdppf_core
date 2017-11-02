@@ -294,7 +294,7 @@
 							</textElement>
 							<textFieldExpression><![CDATA[$F{teneur}]]></textFieldExpression>
 						</textField>
-						<textField>
+						<textField isBlankWhenNull="true">
 							<reportElement x="200" y="0" width="52" height="15" uuid="d381043e-83fe-4886-b5a3-542585b6179a"/>
 							<textElement textAlignment="Right" verticalAlignment="Middle">
 								<font fontName="Cadastra" size="8.5"/>
@@ -418,11 +418,12 @@
 				<hyperlinkReferenceExpression><![CDATA[($F{completelegend}.equals("") || $F{completelegend}== null) ? null : $F{completelegend}]]></hyperlinkReferenceExpression>
 			</textField>
 		</band>
-		<band height="30">
+		<band height="17">
 			<textField>
-				<reportElement x="0" y="0" width="493" height="19" uuid="bc365be9-27bf-41cb-8f51-82a3b7af3eda">
+				<reportElement x="0" y="0" width="493" height="17" uuid="bc365be9-27bf-41cb-8f51-82a3b7af3eda">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.2"/>
@@ -433,8 +434,9 @@
 				<textFieldExpression><![CDATA[$P{legalprovisionslabel}]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement x="193" y="0" width="300" height="30" uuid="82469bd1-ca20-42a3-96da-02fd9f05c5d6">
+				<reportElement x="193" y="0" width="300" height="17" uuid="82469bd1-ca20-42a3-96da-02fd9f05c5d6">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<subreportParameter name="TOC_Appendices">
 					<subreportParameterExpression><![CDATA[$P{TOC_Appendices}]]></subreportParameterExpression>
@@ -446,11 +448,12 @@
 				<subreportExpression><![CDATA["legalprovision.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="30">
+		<band height="19">
 			<textField>
-				<reportElement x="0" y="0" width="493" height="19" uuid="8f553e43-b8da-410e-b472-0116a8793b6d">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="493" height="17" isPrintWhenDetailOverflows="true" uuid="8f553e43-b8da-410e-b472-0116a8793b6d">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.2"/>
@@ -460,44 +463,16 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{legalbaseslabel}]]></textFieldExpression>
 			</textField>
-			<componentElement>
-				<reportElement x="193" y="0" width="300" height="30" uuid="4af0347d-5970-4277-b499-4b8d0608531e">
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
+			<subreport>
+				<reportElement x="193" y="0" width="300" height="17" uuid="b3e8ffe7-9916-4000-965b-43e194ecc6cc">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-					<datasetRun subDataset="LegalbasesDataSource" uuid="abdee3ba-8f7d-4862-8eb3-01a4b4a71645">
-						<datasetParameter name="REPORT_DATA_SOURCE">
-							<datasetParameterExpression><![CDATA[$F{LegalbasesDataSource}]]></datasetParameterExpression>
-						</datasetParameter>
-					</datasetRun>
-					<jr:listContents height="30" width="300">
-						<textField>
-							<reportElement x="0" y="0" width="300" height="15" uuid="2d20685e-3f3c-40c7-bf03-bf0c130e12af">
-								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-							</reportElement>
-							<textElement verticalAlignment="Middle">
-								<font fontName="Cadastra" size="8.5"/>
-							</textElement>
-							<textFieldExpression><![CDATA[$F{officialtitle}]]></textFieldExpression>
-						</textField>
-						<textField isBlankWhenNull="true" hyperlinkType="Reference" hyperlinkTarget="Blank">
-							<reportElement x="0" y="15" width="300" height="15" forecolor="#4C8FBA" uuid="012c3659-c108-45bf-b5ca-84748d11947b">
-								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-							</reportElement>
-							<textElement>
-								<font fontName="Cadastra" size="6"/>
-								<paragraph leftIndent="8" rightIndent="0" spacingBefore="2"/>
-							</textElement>
-							<textFieldExpression><![CDATA[($F{remoteurl}.equals("") || $F{remoteurl} == null) ? null : $F{remoteurl}]]></textFieldExpression>
-							<hyperlinkReferenceExpression><![CDATA[($F{remoteurl}.equals("") || $F{remoteurl} == null) ? null : $F{remoteurl}]]></hyperlinkReferenceExpression>
-						</textField>
-					</jr:listContents>
-				</jr:list>
-			</componentElement>
+				<dataSourceExpression><![CDATA[$F{LegalbasesDataSource}]]></dataSourceExpression>
+				<subreportExpression><![CDATA["legalbase.jasper"]]></subreportExpression>
+			</subreport>
 		</band>
-		<band height="30">
+		<band height="19">
 			<textField>
 				<reportElement x="0" y="0" width="493" height="19" uuid="94ac5c43-32f0-4769-ba84-96a56cb660b6">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
@@ -513,42 +488,20 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{referenceslabel}]]></textFieldExpression>
 			</textField>
-			<componentElement>
-				<reportElement x="193" y="0" width="300" height="30" uuid="0969a96a-e3da-40b2-a5a2-a167f42c1b7d">
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+			<subreport>
+				<reportElement x="193" y="0" width="300" height="17" uuid="7eefd4c2-6f32-4b4f-8428-2cb26f04c0a0">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-					<datasetRun subDataset="ReferencesDataSource" uuid="d4c0bb25-3c38-4215-8aa7-f34d78dfb2de">
-						<datasetParameter name="REPORT_DATA_SOURCE">
-							<datasetParameterExpression><![CDATA[$F{ReferencesDataSource}]]></datasetParameterExpression>
-						</datasetParameter>
-					</datasetRun>
-					<jr:listContents height="30" width="300">
-						<textField>
-							<reportElement x="0" y="0" width="300" height="15" uuid="79583210-a916-4dd7-bccd-7db2fef35a19">
-								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-							</reportElement>
-							<textElement verticalAlignment="Middle">
-								<font fontName="Cadastra" size="8.5"/>
-								<paragraph leftIndent="0"/>
-							</textElement>
-							<textFieldExpression><![CDATA[$F{officialtitle}]]></textFieldExpression>
-						</textField>
-						<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference" hyperlinkTarget="Blank">
-							<reportElement x="0" y="15" width="300" height="15" forecolor="#4C8FBA" uuid="4faf0273-1fe1-4915-9c19-e26c2d2adf17">
-								<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-							</reportElement>
-							<textElement>
-								<font fontName="Cadastra" size="6"/>
-								<paragraph leftIndent="8" spacingBefore="2"/>
-							</textElement>
-							<textFieldExpression><![CDATA[($F{remoteurl}.equals("") || $F{remoteurl} == null) ? null : $F{remoteurl}]]></textFieldExpression>
-							<hyperlinkReferenceExpression><![CDATA[($F{remoteurl}.equals("") || $F{remoteurl} == null) ? null : $F{remoteurl}]]></hyperlinkReferenceExpression>
-						</textField>
-					</jr:listContents>
-				</jr:list>
-			</componentElement>
+				<subreportParameter name="TOC_Appendices">
+					<subreportParameterExpression><![CDATA[$P{TOC_Appendices}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="topicname">
+					<subreportParameterExpression><![CDATA[$F{topicname}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[$F{ReferencesDataSource}]]></dataSourceExpression>
+				<subreportExpression><![CDATA["legalprovision.jasper"]]></subreportExpression>
+			</subreport>
 		</band>
 		<band height="32">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>

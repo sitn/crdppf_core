@@ -198,7 +198,7 @@
 				<subreportExpression><![CDATA["appendices.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="64">
+		<band height="62">
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField>
@@ -214,8 +214,8 @@
 				<textFieldExpression><![CDATA[$P{pdfNotConcernedTopicsLabel}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" evaluationTime="Page">
-				<reportElement isPrintRepeatedValues="false" x="0" y="45" width="493" height="19" uuid="7031f21e-bb89-47f7-a32c-8832c4f27c93">
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				<reportElement isPrintRepeatedValues="false" x="0" y="45" width="493" height="17" uuid="7031f21e-bb89-47f7-a32c-8832c4f27c93">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement>
 					<font fontName="Cadastra" size="8.5"/>
@@ -224,7 +224,7 @@
 				<textFieldExpression><![CDATA[$P{notconcernedtopics}.replace(";", "\n")]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="50">
+		<band height="48">
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField>
@@ -240,8 +240,9 @@
 				<textFieldExpression><![CDATA[$P{pdfEmptyTopicsLabel}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" evaluationTime="Page">
-				<reportElement isPrintRepeatedValues="false" x="0" y="33" width="493" height="17" uuid="d5bb9d69-0474-46d1-be03-fe9e277c5f33">
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				<reportElement isPrintRepeatedValues="false" x="0" y="31" width="493" height="17" uuid="d5bb9d69-0474-46d1-be03-fe9e277c5f33">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement>
 					<font fontName="Cadastra" size="8.5"/>
