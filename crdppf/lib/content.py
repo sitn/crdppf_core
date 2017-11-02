@@ -27,8 +27,8 @@ def get_mapbox(feature_center, scale, height, width, fitratio):
         feature_center: center point (X/Y) of the real estate feature
     """
 
-    delta_Y = round(height*scale*fitratio/2000, 1)
-    delta_X = round(width*scale*fitratio/2000, 1)
+    delta_Y = round((height*scale/1000)/2, 1)
+    delta_X = round((width*scale/1000)/2, 1)
     X = round(feature_center[0], 1)
     Y = round(feature_center[1], 1)
 
@@ -359,7 +359,7 @@ def get_content(id, request):
         topicdata[str(topic.topicid)] = {
             "categorie": 0,
             "topicname": topic.topicname,
-            "bboxlegend": [{"codegenre": "", "teneur": ""}],
+            "bboxlegend": [],
             "layers": {},
             "legalbase": {},
             "legalprovision": [{
@@ -407,15 +407,13 @@ def get_content(id, request):
                     for el in bboxitems:
                         legendclass = dict((x, y) for x, y in el)
                         legendclass['codegenre'] = legenddir+legendclass['codegenre']+".png"
-                    topicdata[str(topic.topicid)]["bboxlegend"].append(legendclass)
-
+                        topicdata[str(topic.topicid)]["bboxlegend"].append(legendclass)
             # Get the list of documents related to a topic with layers and results
             if topicdata[str(layer.topicfk)]["categorie"] == 3:
                 docfilters = [str(topic.topicid)]
                 for doctype in appconfig["doctypes"].split(','):
                     docidlist = get_document_ref(docfilters)
                     topicdata[str(topic.topicid)][doctype] = set_documents(request, str(topic.topicid), doctype, docidlist, featureinfo, True, topicdata)
-
         else:
             if str(topic.topicid) in appconfig['emptytopics']:
                 emptytopics.append(topic.topicname)
@@ -518,6 +516,12 @@ def get_content(id, request):
                 wmts_layer_
                 ]
             }
+
+            if topicdata[str(topic.topicid)]["bboxlegend"] == []:
+                topicdata[str(topic.topicid)]["bboxlegend"] = [{
+                    "codegenre": "", 
+                    "teneur": ""
+                    }]
 
             data.append({
                 "topicname": topic.topicname,
