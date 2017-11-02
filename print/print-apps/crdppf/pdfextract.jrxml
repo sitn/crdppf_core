@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-06-15T12:03:58 -->
+<!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pdfextract" pageWidth="595" pageHeight="842" sectionType="Part" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30" whenResourceMissingType="Error" uuid="d2716064-8ae4-40cf-a575-33afba400e3a">
 	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
 	<property name="net.sf.jasperreports.export.pdfa.icc.profile.path" value="sRGB_IEC61966-2-1_black_scaled.icc"/>
@@ -48,15 +47,18 @@
 	<parameter name="pdfGeneralInformationTxt" class="java.lang.String"/>
 	<parameter name="pdfBaseDataTxt" class="java.lang.String"/>
 	<parameter name="pdfBaseDataLabel" class="java.lang.String"/>
-	<parameter name="titlepage" class="net.sf.jasperreports.engine.JRDataSource"/>
-	<parameter name="concernedtopics" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="TitlepageDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="notconcernedtopics" class="java.lang.String"/>
 	<parameter name="emptytopics" class="java.lang.String"/>
-	<parameter name="glossar" class="net.sf.jasperreports.engine.JRDataSource"/>
-	<parameter name="jrDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="GlossaryDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="MainDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="basemap" class="java.lang.String"/>
 	<parameter name="northArrowSubReport" class="java.lang.String"/>
 	<parameter name="scalebarSubReport" class="java.lang.String"/>
+	<parameter name="ConcernedTopicsDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<variable name="TOC_Appendices" class="java.util.Map">
+		<variableExpression><![CDATA[new java.util.HashMap()]]></variableExpression>
+	</variable>
 	<group name="Titlepage and TOC">
 		<groupHeader>
 			<part uuid="1e51d81b-2bac-4806-a6ab-2d666891cc25">
@@ -143,16 +145,19 @@
 						<subreportParameterExpression><![CDATA[$P{creationdatelabel}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="REPORT_DATA_SOURCE">
-						<subreportParameterExpression><![CDATA[$P{titlepage}]]></subreportParameterExpression>
+						<subreportParameterExpression><![CDATA[$P{TitlepageDataSource}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="pagelabel">
 						<subreportParameterExpression><![CDATA[$P{pagelabel}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+						<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportExpression><![CDATA["mainpage.jasper"]]></subreportExpression>
 				</p:subreportPart>
 			</part>
 			<part evaluationTime="Report" uuid="1e51d81b-2bac-4806-a6ab-2d666891cc25">
-				<property name="net.sf.jasperreports.bookmarks.data.source.parameter" value="REPORT_DATA_SOURCE"/>
+				<property name="net.sf.jasperreports.bookmarks.data.source.parameter" value="BookmarkDataSource"/>
 				<p:subreportPart xmlns:p="http://jasperreports.sourceforge.net/jasperreports/parts" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/parts http://jasperreports.sourceforge.net/xsd/parts.xsd">
 					<subreportParameter name="REPORT_CONNECTION">
 						<subreportParameterExpression><![CDATA[$P{REPORT_CONNECTION}]]></subreportParameterExpression>
@@ -190,8 +195,8 @@
 					<subreportParameter name="propertynumber">
 						<subreportParameterExpression><![CDATA[$P{propertynumber}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="concernedtopics">
-						<subreportParameterExpression><![CDATA[$P{concernedtopics}]]></subreportParameterExpression>
+					<subreportParameter name="ConcernedTopicsDataSource">
+						<subreportParameterExpression><![CDATA[$P{ConcernedTopicsDataSource}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="notconcernedtopics">
 						<subreportParameterExpression><![CDATA[$P{notconcernedtopics}]]></subreportParameterExpression>
@@ -223,6 +228,12 @@
 					<subreportParameter name="pdfBaseDataLabel">
 						<subreportParameterExpression><![CDATA[$P{pdfBaseDataLabel}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter name="REPORT_DATA_SOURCE">
+						<subreportParameterExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="TOC_Appendices">
+						<subreportParameterExpression><![CDATA[$V{TOC_Appendices}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportExpression><![CDATA["toc.jasper"]]></subreportExpression>
 				</p:subreportPart>
 			</part>
@@ -234,7 +245,7 @@
 						<subreportParameterExpression><![CDATA[$P{REPORT_CONNECTION}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="REPORT_DATA_SOURCE">
-						<subreportParameterExpression><![CDATA[$P{glossar}]]></subreportParameterExpression>
+						<subreportParameterExpression><![CDATA[$P{GlossaryDataSource}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="canton_logo">
 						<subreportParameterExpression><![CDATA[$P{canton_logo}]]></subreportParameterExpression>
@@ -260,6 +271,9 @@
 					<subreportParameter name="pagelabel">
 						<subreportParameterExpression><![CDATA[$P{pagelabel}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+						<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportExpression><![CDATA["glossar.jasper"]]></subreportExpression>
 				</p:subreportPart>
 			</part>
@@ -272,7 +286,7 @@
 					<subreportParameterExpression><![CDATA[$P{REPORT_CONNECTION}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="REPORT_DATA_SOURCE">
-					<subreportParameterExpression><![CDATA[$P{jrDataSource}]]></subreportParameterExpression>
+					<subreportParameterExpression><![CDATA[$P{MainDataSource}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="canton_logo">
 					<subreportParameterExpression><![CDATA[$P{canton_logo}]]></subreportParameterExpression>
@@ -318,6 +332,12 @@
 				</subreportParameter>
 				<subreportParameter name="extractid">
 					<subreportParameterExpression><![CDATA[$P{extractid}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOC_Appendices">
+					<subreportParameterExpression><![CDATA[$V{TOC_Appendices}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportExpression><![CDATA["topicpage.jasper"]]></subreportExpression>
 			</p:subreportPart>

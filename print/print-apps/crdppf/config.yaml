@@ -69,7 +69,7 @@ templates:
         attributes:
           glossarlabel: !string {}
           definitions: !table {}
-      
+
       # Variables for topic page
       legendlabel: !string {}
       bboxlegendlabel: !string {}
@@ -92,7 +92,7 @@ templates:
         maxDpi: 400
         width: 493
         height: 280
-        
+
       datasource: !datasource
         attributes:
           topicname: !string {}
@@ -117,6 +117,7 @@ templates:
           legalprovisions: !datasource
             attributes:
               officialtitle: !string {}
+              title: !string {}
               remoteurl: !string {}
           references: !datasource
             attributes:
@@ -155,33 +156,34 @@ templates:
       - !reportBuilder # compile all reports in current directory
         directory: '.'
       inputMapper: {glossar: datasource}
-      outputMapper: {jrDataSource: glossar}
+      outputMapper: {jrDataSource: GlossaryDataSource}
       processors:
       - !prepareTable
         inputMapper: {definitions: table}
-        outputMapper: {table: definitions}
+        outputMapper: {tableDataSource: DefinitionsTableSource}
     - !createDataSource
       processors:
       - !reportBuilder # compile all reports in current directory
         directory: '.'
       inputMapper: {titlepage: datasource}
-      outputMapper: {jrDataSource: titlepage}
+      outputMapper: {jrDataSource: TitlepageDataSource}
     - !createDataSource
       processors:
       - !reportBuilder # compile all reports in current directory
         directory: '.'
       inputMapper: {concernedtopics: datasource}
-      outputMapper: {jrDataSource: concernedtopics}
+      outputMapper: {jrDataSource: ConcernedTopicsDataSource}
+      #reportTemplate: appendices.jrxml
       processors:
       - !prepareTable
         inputMapper: {documentlist: table}
-        outputMapper: {table: documentlist}
+        outputMapper: {tableDataSource: DocumentlistTableSource}
     - !createDataSource
       processors:
       - !reportBuilder # compile all reports in current directory
         directory: '.'
       inputMapper: {datasource: datasource}
-      outputMapper: {jrDataSource: jrDataSource}
+      outputMapper: {jrDataSource: MainDataSource}
       processors:
       - !createNorthArrow {}
       - !createMap
@@ -193,34 +195,34 @@ templates:
         - !reportBuilder # compile all reports in current directory
           directory: '.'
         inputMapper: {bboxlegend: datasource}
-        outputMapper: {jrDataSource: bboxlegend}
+        outputMapper: {jrDataSource: BBOXLegendDataSource}
       - !createDataSource
         processors:
         - !reportBuilder # compile all reports in current directory
           directory: '.'
         inputMapper: {restrictions: datasource}
-        outputMapper: {jrDataSource: restrictions}
+        outputMapper: {jrDataSource: RestrictionsDataSource}
       - !createDataSource
         processors:
         - !reportBuilder # compile all reports in current directory
           directory: '.'
         inputMapper: {legalbases: datasource}
-        outputMapper: {jrDataSource: legalbases}
+        outputMapper: {jrDataSource: LegalbasesDataSource}
       - !createDataSource
         processors:
         - !reportBuilder # compile all reports in current directory
           directory: '.'
         inputMapper: {legalprovisions: datasource}
-        outputMapper: {jrDataSource: legalprovisions}
+        outputMapper: {jrDataSource: LegalProvisionsDataSource}
       - !createDataSource
         processors:
         - !reportBuilder # compile all reports in current directory
           directory: '.'
         inputMapper: {references: datasource}
-        outputMapper: {jrDataSource: references}
+        outputMapper: {jrDataSource: ReferencesDataSource}
       - !createDataSource
         processors:
         - !reportBuilder # compile all reports in current directory
           directory: '.'
         inputMapper: {authority: datasource}
-        outputMapper: {jrDataSource: authority}
+        outputMapper: {jrDataSource: AuthorityDataSource}

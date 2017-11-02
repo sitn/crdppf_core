@@ -80,21 +80,23 @@ def set_documents(request, topicid, doctype, docids, featureinfo, geofilter, top
         doc = ""
         for doc in docs:
             if doc['doctype'] == doctype and doc['documentid'] in docids:
-                documents.append({"officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl']})
+                documents.append({"officialtitle": doc['officialtitle'], "title": doc['title'], "remoteurl": doc['remoteurl']})
                 if doc['doctype'] != u'legalbase' and doc['documentid'] not in doclist:
                     appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(
-                        doc['officialtitle']).encode('iso-8859-1'), unicode(doc['remoteurl']).encode('iso-8859-1'), doc['localurl'], topicdata))
+                        doc['officialtitle']).encode('iso-8859-1'), unicode(doc['title']).encode('iso-8859-1'), unicode(
+                            doc['remoteurl']).encode('iso-8859-1'), doc['localurl'], topicdata))
                 if doc['documentid'] not in doclist:
                     doclist.append(doc)
             if doc['doctype'] == doctype and geofilter is True and doc['documentid'] not in docids:
-                documents.append({"officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl']})
+                documents.append({"officialtitle": doc['officialtitle'], "title": doc['title'], "remoteurl": doc['remoteurl']})
                 if doc['doctype'] != u'legalbase' and doc['documentid'] not in doclist:
-                    appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(doc['officialtitle']).encode('iso-8859-1'), unicode(
+                    appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(doc['officialtitle']).encode('iso-8859-1'),
+                        unicode(doc['title']).encode('iso-8859-1'), unicode(
                         doc['remoteurl']).encode('iso-8859-1'), doc['localurl'], topicdata))
                 if doc['documentid'] not in doclist:
                     doclist.append(doc)
     if documents == []:
-        documents = [{"officialtitle": "", "remoteurl": ""}]
+        documents = [{"officialtitle": "", "title": "", "remoteurl": ""}]
 
     return documents
 
@@ -106,10 +108,10 @@ def add_toc_entry(topicid, num, label, categorie, appendices):
     return tocentries
 
 
-def add_appendix(topicid, num, label, url, filepath, topicdata):
+def add_appendix(topicid, num, officialtitle, title, url, filepath, topicdata):
     toc_entries = topicdata['toc_entries']
     appendix_entries = []
-    appendix_entries.append({'topicid': topicid, 'no_page': num, 'title': label, 'url': url, 'path': filepath})
+    appendix_entries.append({'topicid': topicid, 'no_page': num, 'officialtitle': officialtitle, 'title': title, 'url': url, 'path': filepath})
 
     if topicid in toc_entries[topicid]:
         toc_entries[topicid]['appendices'].add(num)
@@ -362,6 +364,7 @@ def get_content(id, request):
             "legalbase": {},
             "legalprovision": [{
                 "officialtitle": "",
+                "title": "",
                 "remoteurl": ""
             }],
             "reference": [{
