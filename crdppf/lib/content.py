@@ -7,7 +7,7 @@ from crdppf.extract import Extract
 from crdppf.lib.wmts_parsing import wmts_layer
 from crdppf.lib.geometry_functions import get_feature_bbox, get_print_format, get_feature_center
 
-from crdppf.views.get_features import get_features_function
+from crdppf.util.get_feature_functions import get_features_function
 from crdppf.util.documents import get_document_ref, get_documents
 from crdppf.util.pdf_functions import get_feature_info, get_translations
 
@@ -18,6 +18,36 @@ import logging
 
 log = logging.getLogger(__name__)
 
+
+def get_mapbox(feature_center, scale, height, width, fitratio):
+    """Function to calculate the coordinates of the map bounding box in the real world
+        height: map height in mm
+        width: map width in mm
+        scale: the map scale denominator
+        feature_center: center point (X/Y) of the real estate feature
+    """
+
+    delta_Y = round(height*scale*fitratio/2000, 1)
+    delta_X = round(width*scale*fitratio/2000, 1)
+    X = round(feature_center[0], 1)
+    Y = round(feature_center[1], 1)
+
+    map_bbox = ''.join([
+        'POLYGON((',
+        str(X-delta_X)+' ',
+        str(Y-delta_Y)+',',
+        str(X-delta_X)+' ',
+        str(Y+delta_Y)+',',
+        str(X+delta_X)+' ',
+        str(Y+delta_Y)+',',
+        str(X+delta_X)+' ',
+        str(Y-delta_Y)+',',
+        str(X-delta_X)+' ',
+        str(Y-delta_Y),
+        '))'
+    ])
+
+    return map_bbox
 
 def set_documents(request, topicid, doctype, docids, featureinfo, geofilter, topicdata):
     """ Function to fetch the documents related to the restriction:
@@ -95,6 +125,7 @@ def get_legend_classes(bbox, layername, translations, srid):
     # transform coordinates from wkt to SpatialElement for intersection
     polygon = WKTElement(bbox.wkt, srid)
     mapfeatures = get_features_function(polygon, {'layerList': layername, 'translations': translations})
+
     if mapfeatures is not None:
         classes = []
         for mapfeature in mapfeatures:
@@ -257,7 +288,8 @@ def get_content(id, request):
 
     # Get the print BOX
     print_box = get_print_format(bbox, request.registry.settings['pdf_config']['fitratio'])
-    map_bbox = feature_center
+    map_bbox = get_mapbox(feature_center, print_box['scale'], print_box['height'], print_box['width'],
+                        request.registry.settings['pdf_config']['fitratio'])
 
     log.warning('Calling feature: %s' % request.route_url('get_property')+'?id='+id)
 
@@ -363,7 +395,7 @@ def get_content(id, request):
 
                 # get the legend entries in the map bbox not touching the features
                 featurelegend = get_legend_classes(to_shape(featureinfo['geom']), layer.layername, translations, extract.srid)
-                bboxlegend = get_legend_classes(to_shape(WKTElement(wkt_polygon)), layer.layername, translations, extract.srid)
+                bboxlegend = get_legend_classes(to_shape(WKTElement(map_bbox)), layer.layername, translations, extract.srid)
                 bboxitems = set()
                 for legenditem in bboxlegend:
                     if legenditem not in featurelegend:
