@@ -432,10 +432,12 @@ def get_content(id, request):
 
         if topicdata[topic.topicid]["categorie"] == 3:
             appendiceslist = []
+            pdf_to_join = set()
             for i, legalprovision in enumerate(topicdata[str(topic.topicid)]["legalprovision"]):
                 if not legalprovision["officialtitle"] == "":
                     appendiceslist.append(['A'+str(i+1), legalprovision["officialtitle"]])
-
+                pdf_to_join.update([legalprovision["remoteurl"]])
+                
             concernedtopics.append({
                 "topicname": topic.topicname,
                 "documentlist": {
@@ -543,6 +545,7 @@ def get_content(id, request):
 
     d = {
         "attributes": {
+            "reporttype": type,
             "extractcreationdate": extract.creationdate,
             "filename": extract.filename,
             "extractid": extract.id,
@@ -570,6 +573,9 @@ def get_content(id, request):
         "layout": "report",
         "outputFormat": "pdf"
     }
+    
+    if type != 'reduced' and pdf_to_join != set():
+        d["pdfappendices"] = pdf_to_join
 
     # import json
     # # pretty printed json data for the extract

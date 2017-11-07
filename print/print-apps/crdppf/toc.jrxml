@@ -40,6 +40,7 @@
 	<style name="HeadingIndex3" style="Heading3"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="BookmarkDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="reporttype" class="java.lang.String"/>
 	<parameter name="ch_logo" class="java.lang.String"/>
 	<parameter name="canton_logo" class="java.lang.String"/>
 	<parameter name="municipalitylogopath" class="java.lang.String"/>
@@ -175,12 +176,13 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{pagelabel}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="232" y="106" width="261" height="10" uuid="251529c6-aece-4be0-ba1d-a8a9f8c49c72">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<printWhenExpression><![CDATA[!($P{reporttype}.equals("reduced"))]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Top">
 					<font fontName="Cadastra" size="7" isBold="true"/>
@@ -188,11 +190,16 @@
 				<textFieldExpression><![CDATA[$P{appendiceslistlabel}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="29">
+		<band height="17">
 			<subreport>
-				<reportElement x="0" y="0" width="492" height="29" isPrintWhenDetailOverflows="true" uuid="f7d5f2fa-e00e-4c78-92c5-fc039e703756"/>
+				<reportElement x="0" y="0" width="492" height="17" isPrintWhenDetailOverflows="true" uuid="f7d5f2fa-e00e-4c78-92c5-fc039e703756">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
 				<subreportParameter name="TOC_Appendices">
 					<subreportParameterExpression><![CDATA[$P{TOC_Appendices}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="reporttype">
+					<subreportParameterExpression><![CDATA[$P{reporttype}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[$P{BookmarkDataSource}]]></dataSourceExpression>
 				<subreportExpression><![CDATA["appendices.jasper"]]></subreportExpression>
