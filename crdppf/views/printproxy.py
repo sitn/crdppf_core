@@ -27,14 +27,14 @@
 # of the authors and should not be interpreted as representing official policies,
 # either expressed or implied, of the FreeBSD Project.
 
-
-import logging
 import subprocess
 import sys
 import tempfile
-import requests
-import time
 
+import requests
+import logging
+
+import time
 import simplejson as json
 if sys.version_info.major == 2:
     import urlparse
@@ -90,7 +90,8 @@ class PrintProxy(Proxy):  # pragma: no cover
         body["attributes"].update(dynamic_content["attributes"])
         if 'pdfappendices' in dynamic_content.keys():
             for appendix in dynamic_content["pdfappendices"]:
-                pdfs_to_join.append(appendix)
+                if appendix != '':
+                    pdfs_to_join.append(appendix)
 
         _string = "%s/%s/buildreport.%s" % (
             self.config['print_url'],
@@ -99,7 +100,7 @@ class PrintProxy(Proxy):  # pragma: no cover
         )
 
         body = json.dumps(body)
-
+        
         # Specify correct content type in headers
         h = dict(self.request.headers)
         h["Content-Type"] = "application/json"
@@ -110,47 +111,29 @@ class PrintProxy(Proxy):  # pragma: no cover
             method='POST',
             headers=h
         )
-        
-        #~ content = result.body
-        #~ with open('output.pdf', 'wb') as f:
-            #~ f.write(content)
-        #~ f.close()
-
-        #~ merger = PdfFileMerger()
+          
         if len(pdfs_to_join) > 0:
-            #~ merger.append(PdfFileReader(open('output.pdf', 'rb')))
-            #~ for pdfurl in pdfs_to_join:
-                #~ if not pdfurl == '':
-                    #~ pdf = urlopen(Request(pdfurl)).read()
-                    #~ memoryFile = StringIO(pdf)
-                    #~ try:
-                        #~ merger.append(PdfFileReader(memoryFile))
-                    #~ except:
-                        #~ print 'file not found'
-                        #~ pass
-                #~ else:
-                    #~ pass
-            #~ merger.write('result.pdf')
-            #~ outputStream = file("result.pdf", "rb")
-            #~ result.body = outputStream.read()
-            main = tempfile.NamedTemporaryFile()
+            main = tempfile.NamedTemporaryFile(suffix='.pdf')
             main.file.write(print_result.body)
+            main.flush()
             cmd = ['pdftk', main.name]
             temp_files = [main]
-            for pdfurl in pdfs_to_join:
-                if not pdfurl == '':
-                    tmp_file = tempfile.NamedTemporaryFile()
-                    result = requests.get(pdfurl)
-                    tmp_file.write(result.content)
-                    temp_files.append(tmp_file)
-                    cmd.append(tmp_file.name)
-                out = tempfile.NamedTemporaryFile()
-                cmd += ['cat', 'output', out.name]
-                print(cmd)
-                sys.stdout.flush()
-                time.sleep(0.1)
-                subprocess.check_call(cmd)
-                print_result.body = out.file.read()
+            for url in pdfs_to_join:
+                tmp_file = tempfile.NamedTemporaryFile(suffix='.pdf')
+                #~ result = requests.get(url)
+                #~ tmp_file.write(result.content)
+                pdf = urlopen(Request(url)).read()
+                tmp_file.write(pdf)
+                tmp_file.flush()
+                temp_files.append(tmp_file)
+                cmd.append(tmp_file.name)
+            out = tempfile.NamedTemporaryFile(suffix='.pdf')
+            cmd += ['cat', 'output', out.name]
+            sys.stdout.flush()
+            time.sleep(0.1)
+            subprocess.check_call(cmd)
+            print_result.body = out.file.read()
+            result = print_result
         else:
             result = print_result
             #~ content = print_result.body
