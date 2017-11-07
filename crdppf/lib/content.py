@@ -346,6 +346,7 @@ def get_content(id, request):
     concernedtopics = []
     notconcernedtopics = []
     emptytopics = []
+    pdf_to_join = set()
 
     for topic in extract.topics:
 
@@ -432,7 +433,6 @@ def get_content(id, request):
 
         if topicdata[topic.topicid]["categorie"] == 3:
             appendiceslist = []
-            pdf_to_join = set()
             for i, legalprovision in enumerate(topicdata[str(topic.topicid)]["legalprovision"]):
                 if not legalprovision["officialtitle"] == "":
                     appendiceslist.append(['A'+str(i+1), legalprovision["officialtitle"]])
