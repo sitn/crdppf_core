@@ -120,10 +120,10 @@ class PrintProxy(Proxy):  # pragma: no cover
             temp_files = [main]
             for url in pdfs_to_join:
                 tmp_file = tempfile.NamedTemporaryFile(suffix='.pdf')
-                #~ result = requests.get(url)
-                #~ tmp_file.write(result.content)
-                pdf = urlopen(Request(url)).read()
-                tmp_file.write(pdf)
+                result = requests.get(url)
+                tmp_file.write(result.content)
+                #~ pdf = urlopen(Request(url)).read()
+                #~ tmp_file.write(pdf)
                 tmp_file.flush()
                 temp_files.append(tmp_file)
                 cmd.append(tmp_file.name)
