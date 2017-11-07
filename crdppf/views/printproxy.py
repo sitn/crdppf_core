@@ -88,7 +88,7 @@ class PrintProxy(Proxy):  # pragma: no cover
 
         body["attributes"].update(cached_content)
         body["attributes"].update(dynamic_content["attributes"])
-        if dynamic_content["pdfappendices"]:
+        if 'pdfappendices' in dynamic_content.keys():
             for appendix in dynamic_content["pdfappendices"]:
                 pdfs_to_join.append(appendix)
 
@@ -104,36 +104,57 @@ class PrintProxy(Proxy):  # pragma: no cover
         h = dict(self.request.headers)
         h["Content-Type"] = "application/json"
 
-        result = self._proxy_response(
+        print_result = self._proxy_response(
             _string,
             body=body,
             method='POST',
             headers=h
         )
+        
+        #~ content = result.body
+        #~ with open('output.pdf', 'wb') as f:
+            #~ f.write(content)
+        #~ f.close()
 
-        content = result.body
-        with open('output.pdf', 'wb') as f:
-            f.write(content)
-        f.close()
-
-        merger = PdfFileMerger()
+        #~ merger = PdfFileMerger()
         if len(pdfs_to_join) > 0:
-            merger.append(PdfFileReader(open('output.pdf', 'rb')))
+            #~ merger.append(PdfFileReader(open('output.pdf', 'rb')))
+            #~ for pdfurl in pdfs_to_join:
+                #~ if not pdfurl == '':
+                    #~ pdf = urlopen(Request(pdfurl)).read()
+                    #~ memoryFile = StringIO(pdf)
+                    #~ try:
+                        #~ merger.append(PdfFileReader(memoryFile))
+                    #~ except:
+                        #~ print 'file not found'
+                        #~ pass
+                #~ else:
+                    #~ pass
+            #~ merger.write('result.pdf')
+            #~ outputStream = file("result.pdf", "rb")
+            #~ result.body = outputStream.read()
+            main = tempfile.NamedTemporaryFile()
+            main.file.write(print_result.body)
+            cmd = ['pdftk', main.name]
+            temp_files = [main]
             for pdfurl in pdfs_to_join:
                 if not pdfurl == '':
-                    pdf = urlopen(Request(pdfurl)).read()
-                    memoryFile = StringIO(pdf)
-                    try:
-                        merger.append(PdfFileReader(memoryFile))
-                    except:
-                        print 'file not found'
-                        pass
-                else:
-                    pass
-            merger.write('result.pdf')
-            outputStream = file("result.pdf", "rb")
-            result.body = outputStream.read()
-
+                    tmp_file = tempfile.NamedTemporaryFile()
+                    result = requests.get(pdfurl)
+                    tmp_file.write(result.content)
+                    temp_files.append(tmp_file)
+                    cmd.append(tmp_file.name)
+                out = tempfile.NamedTemporaryFile()
+                cmd += ['cat', 'output', out.name]
+                print(cmd)
+                sys.stdout.flush()
+                time.sleep(0.1)
+                subprocess.check_call(cmd)
+                print_result.body = out.file.read()
+        else:
+            result = print_result
+            #~ content = print_result.body
+        
         return result
 
     @view_config(route_name='printproxy_status')
