@@ -7,6 +7,7 @@
 	<property name="net.sf.jasperreports.styles.inherit.from.default" value="false"/>
 	<style name="Default" isDefault="true" fontName="Cadastra" fontSize="8.5"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="reporttype" class="java.lang.String"/>
 	<parameter name="ch_logo" class="java.lang.String"/>
 	<parameter name="canton_logo" class="java.lang.String"/>
 	<parameter name="municipalitylogopath" class="java.lang.String"/>
@@ -233,6 +234,9 @@
 					</subreportParameter>
 					<subreportParameter name="TOC_Appendices">
 						<subreportParameterExpression><![CDATA[$V{TOC_Appendices}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reporttype">
+						<subreportParameterExpression><![CDATA[$P{reporttype}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportExpression><![CDATA["toc.jasper"]]></subreportExpression>
 				</p:subreportPart>

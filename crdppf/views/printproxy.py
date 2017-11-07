@@ -29,9 +29,20 @@
 
 
 import logging
+import subprocess
+import sys
+import tempfile
+import requests
+import time
 
 import simplejson as json
-
+if sys.version_info.major == 2:
+    import urlparse
+else:
+    from urllib import parse as urlparse
+from urllib2 import Request, urlopen
+from StringIO import StringIO
+from PyPDF2 import PdfFileMerger, PdfFileReader
 
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPBadRequest
@@ -56,6 +67,7 @@ class PrintProxy(Proxy):  # pragma: no cover
 
         id = self.request.matchdict.get("id")
         # type_ = self.request.matchdict.get("type_")
+        pdfs_to_join = []
 
         body = {
             "layout": "report",
@@ -69,9 +81,6 @@ class PrintProxy(Proxy):  # pragma: no cover
         )))
 
         cached_content = get_cached_content(self.request)
-
-        print cached_content
-
         dynamic_content = get_content(id, self.request)
 
         if dynamic_content is False:
@@ -79,8 +88,11 @@ class PrintProxy(Proxy):  # pragma: no cover
 
         body["attributes"].update(cached_content)
         body["attributes"].update(dynamic_content["attributes"])
+        if dynamic_content["pdfappendices"]:
+            for appendix in dynamic_content["pdfappendices"]:
+                pdfs_to_join.append(appendix)
 
-        _string = "%s/%s/report.%s" % (
+        _string = "%s/%s/buildreport.%s" % (
             self.config['print_url'],
             "crdppf",
             "pdf"
@@ -92,12 +104,37 @@ class PrintProxy(Proxy):  # pragma: no cover
         h = dict(self.request.headers)
         h["Content-Type"] = "application/json"
 
-        return self._proxy_response(
+        result = self._proxy_response(
             _string,
             body=body,
             method='POST',
             headers=h
         )
+
+        content = result.body
+        with open('output.pdf', 'wb') as f:
+            f.write(content)
+        f.close()
+
+        merger = PdfFileMerger()
+        if len(pdfs_to_join) > 0:
+            merger.append(PdfFileReader(open('output.pdf', 'rb')))
+            for pdfurl in pdfs_to_join:
+                if not pdfurl == '':
+                    pdf = urlopen(Request(pdfurl)).read()
+                    memoryFile = StringIO(pdf)
+                    try:
+                        merger.append(PdfFileReader(memoryFile))
+                    except:
+                        print 'file not found'
+                        pass
+                else:
+                    pass
+            merger.write('result.pdf')
+            outputStream = file("result.pdf", "rb")
+            result.body = outputStream.read()
+
+        return result
 
     @view_config(route_name='printproxy_status')
     def status(self):
