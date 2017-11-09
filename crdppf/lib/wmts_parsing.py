@@ -79,6 +79,8 @@ def wmts_layer(url, layer):
                 format = format[0]
 
             tilematrixset = layer_.getElementsByTagName("TileMatrixSet")[0].firstChild.nodeValue
+            if requestEncoding == "REST":
+                baseUrl = layer_.getElementsByTagName("ResourceURL")[0].attributes["template"].nodeValue
             dimensions_ = layer_.getElementsByTagName("Dimension")
             if len(dimensions_) > 0:
                 for dimension_ in dimensions_:
