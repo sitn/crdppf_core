@@ -17,8 +17,7 @@ Crdppf.Report= {
             success: function(response) {
                 var result = Ext.decode(response.responseText);
                 this.currentStatus = 0;
-               // this.printManager(result.ref, false);
-                this.getReport(result.ref);
+                this.printManager(result.ref, false);
             },
             method: 'GET',
             failure: function () {
@@ -29,45 +28,43 @@ Crdppf.Report= {
         }); 
     },
 
-    //~ printManager: function(ref, status) {
+    printManager: function(ref, status) {
 
-        //~ var me = this;
+        var me = this;
 
-        //~ if (!this.interval) {
-            //~ this.interval = setInterval(function() {
-                //~ me.getStatus(ref, status);
-            //~ }, Math.max(500, this.currentStatus * 0.6));
-        //~ }
-        //~ if (status === true) {
-            //~ clearInterval(this.interval);
-            //~ this.getReport(ref);
-        //~ }
-    //~ },
+        if (!this.interval) {
+            this.interval = setInterval(function() {
+                me.getStatus(ref, status);
+            }, Math.max(500, this.currentStatus * 0.6));
+        }
+        if (status === true) {
+            clearInterval(this.interval);
+            this.getReport(ref);
+        }
+    },
 
-    //~ getStatus: function(ref) {
+    getStatus: function(ref) {
 
-        //~ Ext.Ajax.request({
-            //~ url: Crdppf.printReportStatusUrl+ref+'.json',
-            //~ method: 'GET',
-            //~ success: function(response) {
-                 //~ console.log('second')
-                //~ this.printManager(ref, Ext.decode(response.responseText).done);
-            //~ },
-            //~ failure: function(response) {
-                 //~ console.log('thirs')
-                //~ Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
-                //~ clearInterval(this.interval);
-                //~ this.pdfMask.hide();
-                //~ this.interval = null;
-                //~ this.currentStatus = null;
-                //~ this.pdfMask = null;
-                //~ this.interval = null;
-                //~ return;
-            //~ },
-            //~ params: this.baseParams,
-            //~ scope: this
-        //~ });
-    //~ },
+        Ext.Ajax.request({
+            url: Crdppf.printReportStatusUrl+ref+'.json',
+            method: 'GET',
+            success: function(response) {
+                this.printManager(ref, Ext.decode(response.responseText).done);
+            },
+            failure: function(response) {
+                Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
+                clearInterval(this.interval);
+                this.pdfMask.hide();
+                this.interval = null;
+                this.currentStatus = null;
+                this.pdfMask = null;
+                this.interval = null;
+                return;
+            },
+            params: this.baseParams,
+            scope: this
+        });
+    },
 
     getReport: function(ref) {
         var pdfurl = [
