@@ -461,7 +461,7 @@ def get_content(id, request):
                                     topicdata[str(topic.topicid)]["restrictions"].append({
                                         "codegenre": legenddir+feature['codegenre']+".png",
                                         "teneur": feature['teneur'],
-                                        "area": feature['intersectionMeasure'].replace(' : ', '').replace(' - ', ''),
+                                        "area": feature['intersectionMeasure'].replace(' : ', '').replace(' - ', '').replace('[m2]', 'm<sup>2</sup>'),
                                         "area_pct": round((float(
                                             feature['intersectionMeasure'].replace(' : ', '').replace(' - ', '').replace(' [m2]', ''))*100)/propertyarea, 1)
                                     })
@@ -469,8 +469,8 @@ def get_content(id, request):
                                     topicdata[str(topic.topicid)]["restrictions"].append({
                                         "codegenre": legenddir+feature['codegenre']+".png",
                                         "teneur": feature['teneur'],
-                                        "area": feature['intersectionMeasure'].replace(' - ', '').replace(' : ', ''),
-                                        "area_pct": 0
+                                        "area": feature['intersectionMeasure'].replace(' - ', '').replace(' : ', '').replace('[m]', 'm'),
+                                        "area_pct": -1
                                     })
                             else:
                                 for property, value in feature.iteritems():
@@ -573,7 +573,7 @@ def get_content(id, request):
         "layout": "report",
         "outputFormat": "pdf"
     }
-    
+
     if type != 'reduced' and pdf_to_join != set():
         d["pdfappendices"] = pdf_to_join
 

@@ -252,13 +252,14 @@
 				<textFieldExpression><![CDATA[$P{TOC_Appendices}.put($F{topicname}, new java.util.ArrayList()) instanceof String ? "" : ""]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="19">
+		<band height="18">
+			<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 			<textField>
-				<reportElement x="0" y="0" width="493" height="19" uuid="8ef5ca32-4156-4f98-ba33-972d48815976">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="493" height="18" uuid="8ef5ca32-4156-4f98-ba33-972d48815976">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.2"/>
@@ -269,9 +270,10 @@
 				<textFieldExpression><![CDATA[$P{legendlabel}]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement x="193" y="0" width="300" height="15" isPrintWhenDetailOverflows="true" uuid="6a57ce50-ae3a-4155-ba2e-d5f9692aa318">
+				<reportElement x="193" y="0" width="300" height="18" isPrintWhenDetailOverflows="true" uuid="6a57ce50-ae3a-4155-ba2e-d5f9692aa318">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="RestrictionsDataSource" uuid="a53875fd-e8e7-46cc-aa72-f4cddbbd0078">
@@ -282,21 +284,20 @@
 							<datasetParameterExpression><![CDATA[$P{propertyarea}]]></datasetParameterExpression>
 						</datasetParameter>
 					</datasetRun>
-					<jr:listContents height="15" width="300">
-						<textField isStretchWithOverflow="true">
-							<reportElement x="28" y="0" width="172" height="15" uuid="d1ed7191-1b04-4902-aa4f-4cd36b9271c7">
-								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<jr:listContents height="18" width="300">
+						<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+							<reportElement x="28" y="0" width="172" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="d1ed7191-1b04-4902-aa4f-4cd36b9271c7">
 								<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 							</reportElement>
 							<textElement verticalAlignment="Middle">
-								<font fontName="Cadastra" size="8.5"/>
+								<font fontName="Cadastra" size="9"/>
 							</textElement>
 							<textFieldExpression><![CDATA[$F{teneur}]]></textFieldExpression>
 						</textField>
-						<textField isBlankWhenNull="true">
-							<reportElement x="200" y="0" width="52" height="15" uuid="d381043e-83fe-4886-b5a3-542585b6179a"/>
-							<textElement textAlignment="Right" verticalAlignment="Middle">
+						<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+							<reportElement x="200" y="0" width="52" height="15" isPrintWhenDetailOverflows="true" uuid="d381043e-83fe-4886-b5a3-542585b6179a"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle" markup="html">
 								<font fontName="Cadastra" size="8.5"/>
 							</textElement>
 							<textFieldExpression><![CDATA[$F{area}]]></textFieldExpression>
@@ -308,7 +309,7 @@
 							<textElement textAlignment="Right" verticalAlignment="Middle">
 								<font fontName="Cadastra" size="8.5"/>
 							</textElement>
-							<textFieldExpression><![CDATA[($F{area_pct} == 0.00 || $F{area_pct}.equals( 0.0 )) ? "" : $F{area_pct}.toString()+" %"]]></textFieldExpression>
+							<textFieldExpression><![CDATA[($F{area_pct} == -1 || $F{area_pct}.equals( -1.0 )) ? null : $F{area_pct}.toString()+" %"]]></textFieldExpression>
 						</textField>
 						<image>
 							<reportElement x="0" y="2" width="17" height="10" uuid="59924620-de92-45f8-bc85-ec77a6f50822">
@@ -329,12 +330,11 @@
 				</jr:list>
 			</componentElement>
 		</band>
-		<band height="19">
+		<band height="18">
 			<textField isBlankWhenNull="false">
-				<reportElement x="0" y="0" width="493" height="19" uuid="c7bafe02-64a5-407f-b511-dde165687582">
+				<reportElement x="0" y="0" width="493" height="18" uuid="c7bafe02-64a5-407f-b511-dde165687582">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -349,9 +349,10 @@
 				<textFieldExpression><![CDATA[$P{bboxlegendlabel}]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement x="193" y="0" width="300" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="6a57ce50-ae3a-4155-ba2e-d5f9692aa318">
+				<reportElement x="193" y="0" width="300" height="18" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="6a57ce50-ae3a-4155-ba2e-d5f9692aa318">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value="BBOXLegendDataSource"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="BBOXLegendDataSource" uuid="b4cc21e5-4f5c-4f1c-920f-1a6059df9480">
@@ -359,7 +360,7 @@
 							<datasetParameterExpression><![CDATA[$F{BBOXLegendDataSource}]]></datasetParameterExpression>
 						</datasetParameter>
 					</datasetRun>
-					<jr:listContents height="15" width="300">
+					<jr:listContents height="18" width="300">
 						<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 							<reportElement x="28" y="0" width="272" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="d1ed7191-1b04-4902-aa4f-4cd36b9271c7">
 								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -390,13 +391,13 @@
 				</jr:list>
 			</componentElement>
 		</band>
-		<band height="19">
+		<band height="18">
 			<textField>
-				<reportElement x="0" y="0" width="493" height="19" uuid="fc59437f-651b-423a-9edc-0bd82cdc4811">
+				<reportElement x="0" y="0" width="493" height="18" uuid="fc59437f-651b-423a-9edc-0bd82cdc4811">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.2"/>
@@ -407,9 +408,7 @@
 				<textFieldExpression><![CDATA[$P{completlegendlabel}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference" hyperlinkTarget="Blank">
-				<reportElement x="193" y="0" width="300" height="19" forecolor="#4C8FBA" uuid="47fd6019-dbc8-4b63-88aa-6dac899b6bf1">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
+				<reportElement x="193" y="0" width="300" height="17" forecolor="#4C8FBA" uuid="47fd6019-dbc8-4b63-88aa-6dac899b6bf1"/>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="Cadastra" size="6"/>
 					<paragraph lineSpacing="Single" spacingBefore="2"/>
@@ -418,7 +417,8 @@
 				<hyperlinkReferenceExpression><![CDATA[($F{completelegend}.equals("") || $F{completelegend}== null) ? null : $F{completelegend}]]></hyperlinkReferenceExpression>
 			</textField>
 		</band>
-		<band height="17">
+		<band height="18">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField>
 				<reportElement x="0" y="0" width="493" height="17" uuid="bc365be9-27bf-41cb-8f51-82a3b7af3eda">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -434,9 +434,8 @@
 				<textFieldExpression><![CDATA[$P{legalprovisionslabel}]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement x="193" y="0" width="300" height="17" uuid="82469bd1-ca20-42a3-96da-02fd9f05c5d6">
+				<reportElement x="193" y="0" width="300" height="18" uuid="82469bd1-ca20-42a3-96da-02fd9f05c5d6">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<subreportParameter name="TOC_Appendices">
 					<subreportParameterExpression><![CDATA[$P{TOC_Appendices}]]></subreportParameterExpression>
@@ -448,12 +447,11 @@
 				<subreportExpression><![CDATA["legalprovision.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="19">
+		<band height="18">
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="493" height="17" isPrintWhenDetailOverflows="true" uuid="8f553e43-b8da-410e-b472-0116a8793b6d">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="493" height="18" isPrintWhenDetailOverflows="true" uuid="8f553e43-b8da-410e-b472-0116a8793b6d">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.2"/>
@@ -464,21 +462,20 @@
 				<textFieldExpression><![CDATA[$P{legalbaseslabel}]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement x="193" y="0" width="300" height="17" uuid="b3e8ffe7-9916-4000-965b-43e194ecc6cc">
+				<reportElement x="193" y="0" width="300" height="18" uuid="b3e8ffe7-9916-4000-965b-43e194ecc6cc">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<dataSourceExpression><![CDATA[$F{LegalbasesDataSource}]]></dataSourceExpression>
 				<subreportExpression><![CDATA["legalbase.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="19">
+		<band height="18">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField>
-				<reportElement x="0" y="0" width="493" height="19" uuid="94ac5c43-32f0-4769-ba84-96a56cb660b6">
+				<reportElement x="0" y="0" width="493" height="18" uuid="94ac5c43-32f0-4769-ba84-96a56cb660b6">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.2"/>
@@ -489,9 +486,8 @@
 				<textFieldExpression><![CDATA[$P{referenceslabel}]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement x="193" y="0" width="300" height="17" uuid="7eefd4c2-6f32-4b4f-8428-2cb26f04c0a0">
+				<reportElement x="193" y="0" width="300" height="18" uuid="7eefd4c2-6f32-4b4f-8428-2cb26f04c0a0">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<subreportParameter name="TOC_Appendices">
 					<subreportParameterExpression><![CDATA[$P{TOC_Appendices}]]></subreportParameterExpression>
