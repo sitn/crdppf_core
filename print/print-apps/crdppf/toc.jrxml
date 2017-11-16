@@ -229,7 +229,7 @@
 				<textFieldExpression><![CDATA[$P{notconcernedtopics}.replace(";", "\n")]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="46">
+		<band height="61">
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField>
@@ -244,15 +244,16 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{pdfEmptyTopicsLabel}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" evaluationTime="Page" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="31" width="493" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="d5bb9d69-0474-46d1-be03-fe9e277c5f33">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="31" width="493" height="30" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="9528864f-e5af-4fe8-8517-d5230620d830">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement>
 					<font fontName="Cadastra" size="8.5"/>
-					<paragraph lineSpacingSize="1.0"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{emptytopics}.replace(";","\n")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{emptytopics}.replace(";", "\n")]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="130">

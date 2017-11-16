@@ -428,9 +428,6 @@ def get_content(id, request):
         if topicdata[str(topic.topicid)]['categorie'] == 1:
             notconcernedtopics.append(topic.topicname)
 
-        if topicdata[str(topic.topicid)]['categorie'] == 0:
-            emptytopics.append(topic.topicname)
-
         if topicdata[topic.topicid]["categorie"] == 3:
             appendiceslist = []
             for i, legalprovision in enumerate(topicdata[str(topic.topicid)]["legalprovision"]):
@@ -583,5 +580,4 @@ def get_content(id, request):
     # jsondata = json.dumps(d, indent=4)
     # jsonfile.write(jsondata)
     # jsonfile.close()
-
     return d
