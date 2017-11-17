@@ -50,14 +50,13 @@ def get_mapbox(feature_center, scale, height, width, fitratio):
     return map_bbox
 
 
-def set_documents(request, topicid, doctype, docids, featureinfo, geofilter, topicdata):
+def set_documents(topicid, doctype, docids, featureinfo, geofilter, doclist):
     """ Function to fetch the documents related to the restriction:
     legal provisions, temporary provisions, references
     """
 
     docs = []
     documents = []
-    doclist = topicdata["doclist"]
 
     if geofilter is True:
         filters = {
@@ -74,52 +73,17 @@ def set_documents(request, topicid, doctype, docids, featureinfo, geofilter, top
     else:
         docs = []
 
-    appendices = []
-
     # store the documents in a list
     if len(docs) > 0:
         doc = ""
         for doc in docs:
-            if doc['doctype'] == doctype and doc['documentid'] in docids:
-                documents.append({"officialtitle": doc['officialtitle'], "title": doc['title'], "remoteurl": doc['remoteurl']})
-                if doc['doctype'] != u'legalbase' and doc['documentid'] not in doclist:
-                    appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(
-                        doc['officialtitle']).encode('iso-8859-1'), unicode(doc['title']).encode('iso-8859-1'), unicode(
-                            doc['remoteurl']).encode('iso-8859-1'), doc['localurl'], topicdata))
-                if doc['documentid'] not in doclist:
-                    doclist.append(doc)
+            if doc['doctype'] == doctype and doc['documentid'] in docids and doc['documentid'] not in doclist:
+                documents.append({"documentid": doc['documentid'], "officialtitle": doc['officialtitle'], "title": doc['title'], "remoteurl": doc['remoteurl']})
+
             if doc['doctype'] == doctype and geofilter is True and doc['documentid'] not in docids:
-                documents.append({"officialtitle": doc['officialtitle'], "title": doc['title'], "remoteurl": doc['remoteurl']})
-                if doc['doctype'] != u'legalbase' and doc['documentid'] not in doclist:
-                    appendices.append(add_appendix(topicid, 'A'+str(len(appendices)+1), unicode(doc['officialtitle']).encode('iso-8859-1'),
-                                                   unicode(doc['title']).encode('iso-8859-1'), unicode(
-                        doc['remoteurl']).encode('iso-8859-1'), doc['localurl'], topicdata))
-                if doc['documentid'] not in doclist:
-                    doclist.append(doc)
-    if documents == []:
-        documents = [{"officialtitle": "", "title": "", "remoteurl": ""}]
+                documents.append({"documentid": doc['documentid'], "officialtitle": doc['officialtitle'], "title": doc['title'], "remoteurl": doc['remoteurl']})
 
     return documents
-
-
-def add_toc_entry(topicid, num, label, categorie, appendices):
-    tocentries = {}
-    tocentries[str(topicid)] = {'no_page': num, 'title': label, 'categorie': int(categorie), 'appendices': set()}
-
-    return tocentries
-
-
-def add_appendix(topicid, num, officialtitle, title, url, filepath, topicdata):
-    toc_entries = topicdata['toc_entries']
-    appendix_entries = []
-    appendix_entries.append({'topicid': topicid, 'no_page': num, 'officialtitle': officialtitle, 'title': title, 'url': url, 'path': filepath})
-
-    if topicid in toc_entries[topicid]:
-        toc_entries[topicid]['appendices'].add(num)
-    else:
-        pass
-
-    return appendix_entries
 
 
 def get_legend_classes(bbox, layername, translations, srid):
@@ -140,39 +104,26 @@ def get_legend_classes(bbox, layername, translations, srid):
     return classes
 
 
-def add_layer(request, layer, featureid, featureinfo, translations, appconfig, topicdata):
+def add_layer(layer, featureid, featureinfo, translations, appconfig, topicdata):
 
     layerlist = {}
     results = get_features_function(featureinfo['geom'], {'layerList': layer.layername, 'id': featureid, 'translations': appconfig['translations']})
 
     if results:
         layerlist[str(layer.layerid)] = {'layername': layer.layername, 'features': []}
+        resultlist = set([])
         for result in results:
-            # for each restriction object we check for related documents
-            docfilters = [str(result['id'])]
-            for doctype in appconfig['doctypes'].split(','):
-                docfilters.append(doctype)
-                docidlist = get_document_ref(docfilters)
-                result['properties'][doctype] = set_documents(request, str(layer.topicfk), doctype, docidlist, featureinfo, False, topicdata)
+            for property in ['geometry', 'type']:
+                del result[property]
+            for idx in ['theme', 'layerName']:
+                del result['properties'][idx]
+            resultlist.add(str(result['id']))
             layerlist[str(layer.layerid)]['features'].append(result['properties'])
-
-        # we also check for documents on the layer level - if there are any results - else we don't need to bother
-        docfilters = [layer.layername]
-        for doctype in appconfig['doctypes'].split(','):
-            docfilters.append(doctype)
-            docidlist = get_document_ref(docfilters)
-            topicdata[str(layer.topicfk)]['layers'][layer.layerid][doctype] = set_documents(
-                request, str(layer.topicfk), doctype, docidlist, featureinfo, True,  topicdata)
-
-        topicdata[str(layer.topicfk)]['categorie'] = 3
-        topicdata[str(layer.topicfk)]['no_page'] = 'tocpg_'+str(layer.topicfk)
-        topicdata[str(layer.topicfk)]['layers'][layer.layerid]['features'] = layerlist[str(layer.layerid)]['features']
+        layerlist[str(layer.layerid)]['ids'] = resultlist
     else:
-        layerlist[str(layer.layerid)] = {'layername': layer.layername, 'features': None}
-        if topicdata[str(layer.topicfk)]['categorie'] != 3:
-            topicdata[str(layer.topicfk)]['categorie'] = 1
+        layerlist = None
 
-    return topicdata
+    return layerlist
 
 
 def get_content(id, request):
@@ -339,9 +290,7 @@ def get_content(id, request):
 
     data = []
     topicdata = {}
-    topicdata["toc_entries"] = {}
     topicdata["doclist"] = []
-    topicdata["appendix_entries"] = []
     appconfig = extract.baseconfig
     concernedtopics = []
     notconcernedtopics = []
@@ -359,19 +308,13 @@ def get_content(id, request):
 
         topicdata[str(topic.topicid)] = {
             "categorie": 0,
+            "docids": set([]),
             "topicname": topic.topicname,
             "bboxlegend": [],
             "layers": {},
-            "legalbase": {},
-            "legalprovision": [{
-                "officialtitle": "",
-                "title": "",
-                "remoteurl": ""
-            }],
-            "reference": [{
-                "officialtitle": "",
-                "remoteurl": ""
-            }],
+            "legalbase": [],
+            "legalprovision": [],
+            "reference": [],
             "authority": {
                 "authorityuuid": topic.authority.authorityid,
                 "authorityname": topic.authority.authorityname,
@@ -386,7 +329,6 @@ def get_content(id, request):
         # check for each layer the information regarding the features touching the property
         if topic.layers:
             topicdata[str(topic.topicid)]['wmslayerlist'] = []
-            topicdata["toc_entries"].update(add_toc_entry(topic.topicid, '', str(topic.topicname.encode('iso-8859-1')), 1, ''))
 
             for layer in topic.layers:
                 topicdata[str(topic.topicid)]["layers"][layer.layerid] = {
@@ -394,8 +336,26 @@ def get_content(id, request):
                     "features": None
                     }
                 topicdata[str(topic.topicid)]['wmslayerlist'].append(layer.layername)
+
                 # intersects a given layer with the feature and adds the results to the topicdata- see method add_layer
-                topicdata[str(topic.topicid)].update(add_layer(request, layer, propertynumber, featureinfo, translations, appconfig, topicdata))
+                layerdata = add_layer(layer, propertynumber, featureinfo, translations, appconfig, topicdata)
+                if layerdata is not None:
+                    topicdata[str(topic.topicid)]['layers'][layer.layerid]['features'] = layerdata[str(layer.layerid)]['features']
+                    topicdata[str(topic.topicid)]['categorie'] = 3
+                    for restrictionid in layerdata[str(layer.layerid)]['ids']:
+                        docfilters = [restrictionid]
+                        for doctype in appconfig['doctypes'].split(','):
+                            docfilters.append(doctype)
+                            docidlist = get_document_ref(docfilters)
+                            docs = set_documents(str(layer.topicfk), doctype, docidlist, featureinfo, False, topicdata[str(topic.topicid)]['docids'])
+                            for doc in docs:
+                                topicdata[str(topic.topicid)]['docids'].add(doc['documentid'])
+                                del doc['documentid']
+                                topicdata[str(topic.topicid)][doctype].append(doc)
+                else:
+                    topicdata[str(topic.topicid)]['layers'][layer.layerid] = {'layername': layer.layername, 'features': None}
+                    if topicdata[str(topic.topicid)]['categorie'] != 3:
+                        topicdata[str(topic.topicid)]['categorie'] = 1
 
                 # get the legend entries in the map bbox not touching the features
                 featurelegend = get_legend_classes(to_shape(featureinfo['geom']), layer.layername, translations, extract.srid)
@@ -414,8 +374,11 @@ def get_content(id, request):
                 docfilters = [str(topic.topicid)]
                 for doctype in appconfig["doctypes"].split(','):
                     docidlist = get_document_ref(docfilters)
-                    topicdata[str(topic.topicid)][doctype] = set_documents(request, str(topic.topicid), doctype, docidlist, featureinfo, True, topicdata)
-
+                    docs = set_documents(str(topic.topicid), doctype, docidlist, featureinfo, True, topicdata[str(topic.topicid)]['docids'])
+                    for doc in docs:
+                        topicdata[str(topic.topicid)]['docids'].add(doc['documentid'])
+                        del doc['documentid']
+                        topicdata[str(topic.topicid)][doctype].append(doc)
         else:
             if str(topic.topicid) in appconfig['emptytopics']:
                 emptytopics.append(topic.topicname)
@@ -430,11 +393,19 @@ def get_content(id, request):
 
         if topicdata[topic.topicid]["categorie"] == 3:
             appendiceslist = []
+
             for i, legalprovision in enumerate(topicdata[str(topic.topicid)]["legalprovision"]):
-                if not legalprovision["officialtitle"] == "":
+                if legalprovision["officialtitle"] != "":
                     appendiceslist.append(['A'+str(i+1), legalprovision["officialtitle"]])
                 pdf_to_join.update([legalprovision["remoteurl"]])
-                
+            for doctype in appconfig["doctypes"].split(','):
+                if topicdata[str(topic.topicid)][doctype] == []:
+                    topicdata[str(topic.topicid)][doctype] = [{
+                        "officialtitle": "",
+                        "title": "",
+                        "remoteurl": ""
+                    }]
+
             concernedtopics.append({
                 "topicname": topic.topicname,
                 "documentlist": {
@@ -575,9 +546,10 @@ def get_content(id, request):
         d["pdfappendices"] = pdf_to_join
 
     # import json
-    # # pretty printed json data for the extract
+    # pretty printed json data for the extract
     # jsonfile = open('C:/Temp/extractdata.json', 'w')
     # jsondata = json.dumps(d, indent=4)
     # jsonfile.write(jsondata)
     # jsonfile.close()
+    # sdf
     return d
