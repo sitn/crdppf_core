@@ -93,7 +93,7 @@ class PrintProxy(Proxy):  # pragma: no cover
                 if appendix != '':
                     pdfs_to_join.append(appendix)
 
-        _string = "%s/%s/buildreport.%s" % (
+        _string = "%s/%s/report.%s" % (
             self.config['print_url'],
             "crdppf",
             "pdf"
