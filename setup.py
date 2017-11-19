@@ -27,7 +27,7 @@ setup(
         'papyrus',
         'GeoAlchemy2',
         'OWSLib',
-        'fpdf',
+        'pypdftk',
         'httplib2',
         'pillow',
         'pyyaml',

@@ -27,11 +27,22 @@
 # of the authors and should not be interpreted as representing official policies,
 # either expressed or implied, of the FreeBSD Project.
 
+import subprocess
+import sys
+import tempfile
 
+import requests
 import logging
 
+import time
 import simplejson as json
-
+if sys.version_info.major == 2:
+    import urlparse
+else:
+    from urllib import parse as urlparse
+from urllib2 import Request, urlopen
+from StringIO import StringIO
+from PyPDF2 import PdfFileMerger, PdfFileReader
 
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPBadRequest
@@ -56,6 +67,7 @@ class PrintProxy(Proxy):  # pragma: no cover
 
         id = self.request.matchdict.get("id")
         # type_ = self.request.matchdict.get("type_")
+        pdfs_to_join = []
 
         body = {
             "layout": "report",
@@ -69,9 +81,6 @@ class PrintProxy(Proxy):  # pragma: no cover
         )))
 
         cached_content = get_cached_content(self.request)
-
-        print cached_content
-
         dynamic_content = get_content(id, self.request)
 
         if dynamic_content is False:
@@ -79,25 +88,57 @@ class PrintProxy(Proxy):  # pragma: no cover
 
         body["attributes"].update(cached_content)
         body["attributes"].update(dynamic_content["attributes"])
+        if 'pdfappendices' in dynamic_content.keys():
+            for appendix in dynamic_content["pdfappendices"]:
+                if appendix != '':
+                    pdfs_to_join.append(appendix)
 
-        _string = "%s/%s/report.%s" % (
+        _string = "%s/%s/buildreport.%s" % (
             self.config['print_url'],
             "crdppf",
             "pdf"
         )
 
         body = json.dumps(body)
-
+        
         # Specify correct content type in headers
         h = dict(self.request.headers)
         h["Content-Type"] = "application/json"
 
-        return self._proxy_response(
+        print_result = self._proxy_response(
             _string,
             body=body,
             method='POST',
             headers=h
         )
+          
+        if len(pdfs_to_join) > 0:
+            main = tempfile.NamedTemporaryFile(suffix='.pdf')
+            main.file.write(print_result.body)
+            main.flush()
+            cmd = ['pdftk', main.name]
+            temp_files = [main]
+            for url in pdfs_to_join:
+                tmp_file = tempfile.NamedTemporaryFile(suffix='.pdf')
+                result = requests.get(url)
+                tmp_file.write(result.content)
+                #~ pdf = urlopen(Request(url)).read()
+                #~ tmp_file.write(pdf)
+                tmp_file.flush()
+                temp_files.append(tmp_file)
+                cmd.append(tmp_file.name)
+            out = tempfile.NamedTemporaryFile(suffix='.pdf')
+            cmd += ['cat', 'output', out.name]
+            sys.stdout.flush()
+            time.sleep(0.1)
+            subprocess.check_call(cmd)
+            print_result.body = out.file.read()
+            result = print_result
+        else:
+            result = print_result
+            #~ content = print_result.body
+        
+        return result
 
     @view_config(route_name='printproxy_status')
     def status(self):
