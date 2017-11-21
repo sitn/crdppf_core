@@ -1,20 +1,20 @@
 Ext.namespace('Crdppf');
 
-Crdppf.filterlist = {'topic' : [], 'layers': [], 'chmunicipalitynb': null, 'cadastrenb': null, 'objectids': []};
+Crdppf.filterlist = {'topic': [], 'layers': [], 'chmunicipalitynb': null, 'cadastrenb': null, 'objectids': []};
 
-Crdppf.docfilters = function(filter) {
+Crdppf.docfilters = function (filter) {
     // little helper function to check for the existence of an value in an array
-    function isInArray(value, array) {
+    function isInArray (value, array) {
         return array.indexOf(value) > -1;
     }
 
     if ('objectids' in filter) {
         if (filter.objectids.length > 0) {
             for (var i = 0; i < filter.objectids.length; i++) {
-                if (!(isInArray(filter.objectids[i], Crdppf.filterlist.objectids))){
+                if (!(isInArray(filter.objectids[i], Crdppf.filterlist.objectids))) {
                     Crdppf.filterlist.objectids.push(filter.objectids[i]);
                 } else {
-                    if (isInArray(filter.objectids[i], Crdppf.filterlist.objectids)){
+                    if (isInArray(filter.objectids[i], Crdppf.filterlist.objectids)) {
                         Crdppf.filterlist.objectids.splice(Crdppf.filterlist.objectids.indexOf(filter.objectids[i]), 1);
                     }
                 }
@@ -24,22 +24,25 @@ Crdppf.docfilters = function(filter) {
 
     Crdppf.legalDocuments.store.clearFilter();
     Crdppf.legalDocuments.store.filterBy(function (record) {
-
         if (Crdppf.filterlist.topic.length > 0) {
-            for (var j = 0; j < Crdppf.filterlist.topic.length; j++){
+            for (var j = 0; j < Crdppf.filterlist.topic.length; j++) {
             // if the topicid is in the filterlist show the corresponding documents
-                if (record.get('origins').indexOf(Crdppf.filterlist.topic[j]) > -1 && Crdppf.filterlist.chmunicipalitynb != null) {
+                if (record.get('origins').indexOf(Crdppf.filterlist.topic[j]) > -1 && Crdppf.filterlist.chmunicipalitynb !== null) {
                     // documents related to a topic and a municipality but no selected object
                     if ((record.get('cadastrenb') === null && record.get('chmunicipalitynb') === null) ||
-                        record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb) {
+                        (record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb && record.get('cadastrenb') === null) ||
+                        (record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb &&
+                         record.get('cadastrenb') === Crdppf.filterlist.cadastrenb)) {
                       return record;
                     }
-                } else if (record.get('origins').indexOf(Crdppf.filterlist.topic[j]) > -1 && Crdppf.filterlist.chmunicipalitynb == null) {
+                } else if (record.get('origins').indexOf(Crdppf.filterlist.topic[j]) > -1 && Crdppf.filterlist.chmunicipalitynb === null) {
                   return record;
                 }
             }
         } else {
+          if (Crdppf.filterlist.topic.length === 0 && record.get('doctype') === 'legalbase') {
               return record;
+          }
         }
     });
 
@@ -58,7 +61,7 @@ Crdppf.legalDocuments = function() {
     });
 
     // definition of datastore
-    Crdppf.legalDocuments.store =  new Ext.data.Store({
+    Crdppf.legalDocuments.store = new Ext.data.Store({
         autoDestroy: true,
         autoLoad: true,
         proxy: proxy,
@@ -88,20 +91,20 @@ Crdppf.legalDocuments = function() {
             {name: 'remoteurl'},
             {name: 'localurl'},
             {name: 'legalstate'},
-            {name: 'sanctiondate', type:'date'},
-            {name: 'abolishingdate', type:'date'}, //date d'abrogation
-            {name: 'entrydate', type:'date'}, // creation date
-            {name: 'publicationdate', type:'date'},
-            {name: 'revisiondate', type:'date'}, //date de modification
+            {name: 'sanctiondate', type: 'date'},
+            {name: 'abolishingdate', type: 'date'}, // date d'abrogation
+            {name: 'entrydate', type: 'date'}, // creation date
+            {name: 'publicationdate', type: 'date'},
+            {name: 'revisiondate', type: 'date'}, // date de modification
             {name: 'operator'},
             {name: 'origins'}
-            //{name: 'validationdate', type:'date'},  //date validation
-            //{name: 'modifiedby'},
-            //{name: 'status'} //for historization P:provisory, V:valid; A:archived; D:deleted
+            // {name: 'validationdate', type:'date'},  //date validation
+            // {name: 'modifiedby'},
+            // {name: 'status'} //for historization P:provisory, V:valid; A:archived; D:deleted
             ]
         ),
-            listeners:{
-                load: function() {
+            listeners: {
+                load: function () {
                     Crdppf.loadingCounter += 1;
                     Crdppf.triggerFunction(Crdppf.loadingCounter);
                 }
@@ -109,11 +112,11 @@ Crdppf.legalDocuments = function() {
     });
 };
 
-Crdppf.legalDocuments.createView = function(labels) {
+Crdppf.legalDocuments.createView = function (labels) {
 
     var legalDocumentsStore = null;
 
-    if (Crdppf.legalDocuments.store.getTotalCount()> 0) {
+    if (Crdppf.legalDocuments.store.getTotalCount () > 0) {
         // Parse the legal documents and apply the corresponding template
         var templates = new Ext.XTemplate(
             // Bases légales/legal bases
