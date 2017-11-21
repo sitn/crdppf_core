@@ -28,26 +28,18 @@ Crdppf.docfilters = function(filter) {
         if (Crdppf.filterlist.topic.length > 0) {
             for (var j = 0; j < Crdppf.filterlist.topic.length; j++){
             // if the topicid is in the filterlist show the corresponding documents
-                if (record.get('origins').indexOf(Crdppf.filterlist.topic[j]) > -1) {
+                if (record.get('origins').indexOf(Crdppf.filterlist.topic[j]) > -1 && Crdppf.filterlist.chmunicipalitynb != null) {
                     // documents related to a topic and a municipality but no selected object
-                    if (Crdppf.filterlist.cadastrenb === null && Crdppf.filterlist.chmunicipalitynb === null || 
-                        (record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb  && Crdppf.filterlist.cadastrenb === null)) {
-                        return record;
-                    // documents related to a topic and a cadastre but no selected object
-                    } else if ((record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb && Crdppf.filterlist.cadastrenb === null) ||
-                        (record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb || record.get('cadastrenb') === Crdppf.filterlist.cadastrenb)) {
-                        return record;
+                    if ((record.get('cadastrenb') === null && record.get('chmunicipalitynb') === null) ||
+                        record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb) {
+                      return record;
                     }
+                } else if (record.get('origins').indexOf(Crdppf.filterlist.topic[j]) > -1 && Crdppf.filterlist.chmunicipalitynb == null) {
+                  return record;
                 }
             }
         } else {
-            if (Crdppf.filterlist.cadastrenb === null && Crdppf.filterlist.chmunicipalitynb === null || Crdppf.filterlist.cadastrenb === record.get('cadastrenb')) {
               return record;
-            } else if (Crdppf.filterlist.cadastrenb === null && Crdppf.filterlist.chmunicipalitynb === null || Crdppf.filterlist.chmunicipalitynb === record.get('chmunicipalitynb')) {
-              return record;
-            } else if (Crdppf.filterlist.cadastrenb === null && Crdppf.filterlist.chmunicipalitynb === null) {
-              return record;
-            }
         }
     });
 
