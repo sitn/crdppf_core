@@ -186,8 +186,8 @@
 					<subreportExpression><![CDATA[$F{mapSubReport}]]></subreportExpression>
 				</subreport>
 			</frame>
-			<textField bookmarkLevel="1">
-				<reportElement x="0" y="28" width="493" height="22" uuid="22c80cf5-78d8-4791-9eb9-ac621df1a041">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true" bookmarkLevel="1">
+				<reportElement x="0" y="28" width="493" height="22" isPrintWhenDetailOverflows="true" uuid="22c80cf5-78d8-4791-9eb9-ac621df1a041">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
@@ -330,23 +330,22 @@
 				</jr:list>
 			</componentElement>
 		</band>
-		<band height="18">
-			<textField isBlankWhenNull="false">
-				<reportElement x="0" y="0" width="493" height="18" uuid="c7bafe02-64a5-407f-b511-dde165687582">
-					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+		<band height="24">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="493" height="24" isPrintWhenDetailOverflows="true" uuid="e9640e9e-1db8-4ac9-918a-9349ff134a1a">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
-					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.2"/>
 				</box>
 				<textElement>
 					<font fontName="Cadastra" size="8.5" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{bboxlegendlabel}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
 			</textField>
 			<componentElement>
 				<reportElement x="193" y="0" width="300" height="18" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="6a57ce50-ae3a-4155-ba2e-d5f9692aa318">
@@ -390,6 +389,17 @@
 					</jr:listContents>
 				</jr:list>
 			</componentElement>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="190" height="18" isPrintWhenDetailOverflows="true" uuid="94931f05-4b3a-47f7-82f1-d4dfc237285d">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement markup="html">
+					<font fontName="Cadastra" size="8.5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{bboxlegendlabel}]]></textFieldExpression>
+			</textField>
 		</band>
 		<band height="18">
 			<textField>
@@ -469,13 +479,13 @@
 				<subreportExpression><![CDATA["legalbase.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="18">
-			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-			<textField>
-				<reportElement x="0" y="0" width="493" height="18" uuid="94ac5c43-32f0-4769-ba84-96a56cb660b6">
+		<band height="24">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="493" height="24" isPrintWhenDetailOverflows="true" uuid="94ac5c43-32f0-4769-ba84-96a56cb660b6">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.2"/>
@@ -483,7 +493,7 @@
 				<textElement>
 					<font fontName="Cadastra" size="8.5" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{referenceslabel}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
 			</textField>
 			<subreport>
 				<reportElement x="193" y="0" width="300" height="18" uuid="7eefd4c2-6f32-4b4f-8428-2cb26f04c0a0">
@@ -498,6 +508,17 @@
 				<dataSourceExpression><![CDATA[$F{ReferencesDataSource}]]></dataSourceExpression>
 				<subreportExpression><![CDATA["legalprovision.jasper"]]></subreportExpression>
 			</subreport>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="115" height="14" isPrintWhenDetailOverflows="true" uuid="1965bca2-114c-4e0f-9885-0d60c78e0581">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Cadastra" size="8.5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{referenceslabel}]]></textFieldExpression>
+			</textField>
 		</band>
 		<band height="32">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
