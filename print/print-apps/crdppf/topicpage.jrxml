@@ -390,7 +390,7 @@
 				</jr:list>
 			</componentElement>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="0" y="0" width="190" height="18" isPrintWhenDetailOverflows="true" uuid="94931f05-4b3a-47f7-82f1-d4dfc237285d">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="190" height="24" isPrintWhenDetailOverflows="true" uuid="94931f05-4b3a-47f7-82f1-d4dfc237285d">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>

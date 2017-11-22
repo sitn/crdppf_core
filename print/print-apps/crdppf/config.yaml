@@ -40,6 +40,7 @@ templates:
       creationdatelabel: !string {}
       extractcreationdate: !string {}
       extractoperatorlabel: !string {}
+      responsibleauthoritylabel: !string {}
       certificationlabel: !string {}
       titlepage: !datasource
         attributes:
@@ -145,7 +146,7 @@ templates:
     processors:
     - !reportBuilder # compile all reports in current directory
       directory: '.'
-    - !configureHttpRequests
+    - !configureHttpRequests  &configureHttpRequests
         httpProcessors:    # NEEDED FOR SITJ
         - !forwardHeaders
             matchers:
@@ -185,7 +186,6 @@ templates:
         directory: '.'
       inputMapper: {concernedtopics: datasource}
       outputMapper: {jrDataSource: ConcernedTopicsDataSource}
-      #reportTemplate: appendices.jrxml
       processors:
       - !prepareTable
         inputMapper: {documentlist: table}
