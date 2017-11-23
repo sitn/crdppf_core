@@ -27,11 +27,17 @@
 # of the authors and should not be interpreted as representing official policies,
 # either expressed or implied, of the FreeBSD Project.
 
-
+import sys
 import logging
 
 import simplejson as json
-
+if sys.version_info.major == 2:
+    import urlparse
+else:
+    from urllib import parse as urlparse
+from urllib2 import Request, urlopen
+from StringIO import StringIO
+from PyPDF2 import PdfFileMerger, PdfFileReader
 
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPBadRequest
@@ -55,7 +61,6 @@ class PrintProxy(Proxy):  # pragma: no cover
         """ Create PDF. """
 
         id = self.request.matchdict.get("id")
-        # type_ = self.request.matchdict.get("type_")
 
         body = {
             "layout": "report",
@@ -69,9 +74,6 @@ class PrintProxy(Proxy):  # pragma: no cover
         )))
 
         cached_content = get_cached_content(self.request)
-
-        print cached_content
-
         dynamic_content = get_content(id, self.request)
 
         if dynamic_content is False:
@@ -87,17 +89,19 @@ class PrintProxy(Proxy):  # pragma: no cover
         )
 
         body = json.dumps(body)
-
+        
         # Specify correct content type in headers
         h = dict(self.request.headers)
         h["Content-Type"] = "application/json"
 
-        return self._proxy_response(
+        print_result = self._proxy_response(
             _string,
             body=body,
             method='POST',
             headers=h
         )
+          
+        return print_result
 
     @view_config(route_name='printproxy_status')
     def status(self):

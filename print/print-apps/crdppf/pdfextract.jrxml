@@ -7,6 +7,7 @@
 	<property name="net.sf.jasperreports.styles.inherit.from.default" value="false"/>
 	<style name="Default" isDefault="true" fontName="Cadastra" fontSize="8.5"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="reporttype" class="java.lang.String"/>
 	<parameter name="ch_logo" class="java.lang.String"/>
 	<parameter name="canton_logo" class="java.lang.String"/>
 	<parameter name="municipalitylogopath" class="java.lang.String"/>
@@ -34,6 +35,7 @@
 	<parameter name="propertyarea" class="java.lang.String"/>
 	<parameter name="creationdatelabel" class="java.lang.String"/>
 	<parameter name="competentauthority" class="java.lang.String"/>
+	<parameter name="responsibleauthoritylabel" class="java.lang.String"/>
 	<parameter name="placeholderlabel" class="java.lang.String"/>
 	<parameter name="pagelabel" class="java.lang.String"/>
 	<parameter name="appendiceslistlabel" class="java.lang.String"/>
@@ -153,6 +155,9 @@
 					<subreportParameter name="REPORT_RESOURCE_BUNDLE">
 						<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter name="responsibleauthoritylabel">
+						<subreportParameterExpression><![CDATA[$P{responsibleauthoritylabel}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportExpression><![CDATA["mainpage.jasper"]]></subreportExpression>
 				</p:subreportPart>
 			</part>
@@ -233,6 +238,9 @@
 					</subreportParameter>
 					<subreportParameter name="TOC_Appendices">
 						<subreportParameterExpression><![CDATA[$V{TOC_Appendices}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reporttype">
+						<subreportParameterExpression><![CDATA[$P{reporttype}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportExpression><![CDATA["toc.jasper"]]></subreportExpression>
 				</p:subreportPart>

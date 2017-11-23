@@ -40,6 +40,7 @@
 	<style name="HeadingIndex3" style="Heading3"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="BookmarkDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="reporttype" class="java.lang.String"/>
 	<parameter name="ch_logo" class="java.lang.String"/>
 	<parameter name="canton_logo" class="java.lang.String"/>
 	<parameter name="municipalitylogopath" class="java.lang.String"/>
@@ -152,7 +153,7 @@
 				<textFieldExpression><![CDATA[$P{toclabel}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="89" width="493" height="17" uuid="6822cf3d-da48-4e67-b365-60a5a9f7f56c">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="89" width="493" height="17" isPrintWhenDetailOverflows="true" uuid="6822cf3d-da48-4e67-b365-60a5a9f7f56c">
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
@@ -175,12 +176,13 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{pagelabel}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="232" y="106" width="261" height="10" uuid="251529c6-aece-4be0-ba1d-a8a9f8c49c72">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<printWhenExpression><![CDATA[!($P{reporttype}.equals("reduced"))]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Top">
 					<font fontName="Cadastra" size="7" isBold="true"/>
@@ -188,17 +190,22 @@
 				<textFieldExpression><![CDATA[$P{appendiceslistlabel}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="29">
+		<band height="17">
 			<subreport>
-				<reportElement x="0" y="0" width="492" height="29" isPrintWhenDetailOverflows="true" uuid="f7d5f2fa-e00e-4c78-92c5-fc039e703756"/>
+				<reportElement x="0" y="0" width="492" height="17" isPrintWhenDetailOverflows="true" uuid="f7d5f2fa-e00e-4c78-92c5-fc039e703756">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
 				<subreportParameter name="TOC_Appendices">
 					<subreportParameterExpression><![CDATA[$P{TOC_Appendices}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="reporttype">
+					<subreportParameterExpression><![CDATA[$P{reporttype}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[$P{BookmarkDataSource}]]></dataSourceExpression>
 				<subreportExpression><![CDATA["appendices.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="62">
+		<band height="60">
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField>
@@ -213,18 +220,16 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{pdfNotConcernedTopicsLabel}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" evaluationTime="Page">
-				<reportElement isPrintRepeatedValues="false" x="0" y="45" width="493" height="17" uuid="7031f21e-bb89-47f7-a32c-8832c4f27c93">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="45" width="493" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="7031f21e-bb89-47f7-a32c-8832c4f27c93"/>
 				<textElement>
 					<font fontName="Cadastra" size="8.5"/>
-					<paragraph lineSpacing="Proportional" lineSpacingSize="1.3"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="1.0"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{notconcernedtopics}.replace(";", "\n")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{notconcernedtopics}.replace(";", "\n")+"\n"]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="48">
+		<band height="61">
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField>
@@ -239,14 +244,14 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{pdfEmptyTopicsLabel}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" evaluationTime="Page">
-				<reportElement isPrintRepeatedValues="false" x="0" y="31" width="493" height="17" uuid="d5bb9d69-0474-46d1-be03-fe9e277c5f33">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="31" width="493" height="30" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="9528864f-e5af-4fe8-8517-d5230620d830">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement>
 					<font fontName="Cadastra" size="8.5"/>
-					<paragraph lineSpacing="Proportional" lineSpacingSize="1.3"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{emptytopics}.replace(";", "\n")]]></textFieldExpression>
 			</textField>
