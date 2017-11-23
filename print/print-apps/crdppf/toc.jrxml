@@ -153,7 +153,7 @@
 				<textFieldExpression><![CDATA[$P{toclabel}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="89" width="493" height="17" isPrintWhenDetailOverflows="true" uuid="6822cf3d-da48-4e67-b365-60a5a9f7f56c">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="89" width="493" height="17" isPrintWhenDetailOverflows="true" uuid="6822cf3d-da48-4e67-b365-60a5a9f7f56c">
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
@@ -226,7 +226,7 @@
 					<font fontName="Cadastra" size="8.5"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{notconcernedtopics}.replace(";", "\n")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{notconcernedtopics}.replace(";", "\n")+"\n"]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="61">

@@ -26,7 +26,8 @@ def get_mapbox(feature_center, scale, height, width, fitratio):
         scale: the map scale denominator
         feature_center: center point (X/Y) of the real estate feature
     """
-
+    
+    scale = scale*1.1
     delta_Y = round((height*scale/1000)/2, 1)
     delta_X = round((width*scale/1000)/2, 1)
     X = round(feature_center[0], 1)
@@ -295,7 +296,6 @@ def get_content(id, request):
     concernedtopics = []
     notconcernedtopics = []
     emptytopics = []
-    pdf_to_join = set()
 
     for topic in extract.topics:
 
@@ -397,7 +397,6 @@ def get_content(id, request):
             for i, legalprovision in enumerate(topicdata[str(topic.topicid)]["legalprovision"]):
                 if legalprovision["officialtitle"] != "":
                     appendiceslist.append(['A'+str(i+1), legalprovision["officialtitle"]])
-                pdf_to_join.update([legalprovision["remoteurl"]])
             for doctype in appconfig["doctypes"].split(','):
                 if topicdata[str(topic.topicid)][doctype] == []:
                     topicdata[str(topic.topicid)][doctype] = [{
@@ -478,7 +477,7 @@ def get_content(id, request):
                             "[INTERSECTS(geometry, "+wkt_polygon+")]": {
                                 "symbolizers": [
                                     {
-                                        "strokeColor": "green",
+                                        "strokeColor": "red",
                                         "strokeWidth": 2,
                                         "type": "line"
                                     }
@@ -542,14 +541,10 @@ def get_content(id, request):
         "outputFormat": "pdf"
     }
 
-    if type != 'reduced' and pdf_to_join != set():
-        d["pdfappendices"] = pdf_to_join
-
     # import json
     # pretty printed json data for the extract
     # jsonfile = open('C:/Temp/extractdata.json', 'w')
     # jsondata = json.dumps(d, indent=4)
     # jsonfile.write(jsondata)
     # jsonfile.close()
-    # sdf
     return d

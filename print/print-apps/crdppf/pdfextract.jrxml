@@ -35,6 +35,7 @@
 	<parameter name="propertyarea" class="java.lang.String"/>
 	<parameter name="creationdatelabel" class="java.lang.String"/>
 	<parameter name="competentauthority" class="java.lang.String"/>
+	<parameter name="responsibleauthoritylabel" class="java.lang.String"/>
 	<parameter name="placeholderlabel" class="java.lang.String"/>
 	<parameter name="pagelabel" class="java.lang.String"/>
 	<parameter name="appendiceslistlabel" class="java.lang.String"/>
@@ -153,6 +154,9 @@
 					</subreportParameter>
 					<subreportParameter name="REPORT_RESOURCE_BUNDLE">
 						<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="responsibleauthoritylabel">
+						<subreportParameterExpression><![CDATA[$P{responsibleauthoritylabel}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportExpression><![CDATA["mainpage.jasper"]]></subreportExpression>
 				</p:subreportPart>
