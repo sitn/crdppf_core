@@ -34,7 +34,8 @@ setup(
         'PyPDF2',
         'dogpile.cache',
         'simplejson',
-        'flake8'
+        'flake8',
+        'c2c.template',
     ],
     packages=find_packages(exclude=['ez_setup']),
     include_package_data=True,
