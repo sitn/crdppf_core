@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
 import sqlahelper
-from pyramid.session import UnencryptedCookieSessionFactoryConfig
 
 from pyramid_mako import add_mako_renderer
 
@@ -33,18 +31,16 @@ def includeme(config):
     """
     
     settings = config.get_settings()
-    
-    engine = engine_from_config(
-        settings,
-        'sqlalchemy.',
-        convert_unicode=False,
-        encoding='utf-8'
-        )
+
+    settings.update(yaml.load(file(settings.get("app.cfg"))))
+    print settings
+    engine = engine_from_config(settings, 'sqlalchemy.')
+
     sqlahelper.add_engine(engine)
 
     global db_config
-    db_config = yaml.load(file(settings.get('db.cfg')))['db_config']
-    settings.update(yaml.load(file(settings.get('app.cfg'))))
+    db_config = yaml.load(file(settings.get('database.cfg')))['db_config']
+    settings.update(yaml.load(file(settings.get('pdf.cfg'))))
 
     config.include(papyrus.includeme)
     config.include('pyramid_mako')
