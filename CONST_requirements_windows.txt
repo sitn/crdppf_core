@@ -1,0 +1,3 @@
+-r CONST_versions.txt
+crdppf_core/wheels/Shapely-1.5.13-cp27-none-win32.whl
+-e crdppf_core

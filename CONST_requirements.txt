@@ -1,0 +1,3 @@
+-r CONST_versions.txt
+Shapely==1.5.13
+-e crdppf_core
