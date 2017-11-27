@@ -60,6 +60,7 @@ CONFIG_VARS += \
 	mapOverviewSizeW \
 	mapOverviewSizeH \
 	keymap \
+	crdppf_wms \
 	authtkt_cookie_name \
 	authtkt_secret \
 	disclaimer \
