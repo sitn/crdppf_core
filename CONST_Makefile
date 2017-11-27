@@ -61,6 +61,8 @@ CONFIG_VARS += \
 	mapOverviewSizeH \
 	keymap \
 	disclaimer \
+	jsbuild_root_dir \
+	jsbuild_cfg \
 	pdf.cfg \
 	logon
 

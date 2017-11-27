@@ -90,6 +90,8 @@ vars:
 
     tile_date_file: "{directory}/tile_date.yaml"
     specific_root_dir: "{directory}/crdppfportal"
+    jsbuild_cfg: "{directory}/crdppf_core/jsbuild/app.cfg"
+    jsbuild_root_dir: "{directory}"
   
 interpreted:
     python:
