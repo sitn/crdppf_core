@@ -1,7 +1,7 @@
 vars:
     # Project instance_id
     instanceid: INSTANCE_ID
-    
+    development: DEVELOPMENT
     # Host of the application
     host: overwrite_me
 
@@ -36,7 +36,7 @@ vars:
         Deny from all
 
     # CRDPPF webapp definitions
-    crdppf_wms: http://localhost/{instanceid}/wmscrdppf
+    crdppf_wms: "http://localhost/{instanceid}/wmscrdppf"
 
     # FEDERAL WEBSERVICES
     ch_wms: http://wms.geo.admin.ch/
@@ -99,7 +99,9 @@ vars:
   
 interpreted:
     python:
+    - authtkt_secret
     - python_path
     - directory
     environment:
     - instanceid
+    - development
