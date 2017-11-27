@@ -3,6 +3,7 @@ from sqlalchemy import engine_from_config
 import sqlahelper
 
 from pyramid_mako import add_mako_renderer
+from pyramid.session import SignedCookieSessionFactory
 
 from papyrus.renderers import GeoJSON
 import papyrus
@@ -29,11 +30,20 @@ def read_app_config(settings):
 def includeme(config):
     """ This function returns a Pyramid WSGI application.
     """
-    
+
     settings = config.get_settings()
 
-    settings.update(yaml.load(file(settings.get("app.cfg"))))
-    print settings
+    yaml_config = yaml.load(file(settings.get("app.cfg")))
+    settings.update(yaml_config)
+
+    my_session_factory = SignedCookieSessionFactory(
+        yaml_config['authtkt_secret'],
+        cookie_name=yaml_config['authtkt_cookie_name'],
+        timeout=8200
+    )
+    
+    config.set_session_factory(my_session_factory)
+    
     engine = engine_from_config(settings, 'sqlalchemy.')
 
     sqlahelper.add_engine(engine)
