@@ -41,6 +41,7 @@ VARS_DEPENDS += $(VARS_FILES)
 CONFIG_VARS += \
 	sqlalchemy.url \
 	instanceid \
+	development \
 	specific_root_dir \
 	database.cfg \
 	tile_date_file \
