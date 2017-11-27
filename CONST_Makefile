@@ -60,6 +60,8 @@ CONFIG_VARS += \
 	mapOverviewSizeW \
 	mapOverviewSizeH \
 	keymap \
+	authtkt_cookie_name \
+	authtkt_secret \
 	disclaimer \
 	jsbuild_root_dir \
 	jsbuild_cfg \

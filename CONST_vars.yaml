@@ -88,6 +88,10 @@ vars:
     pdf:
         cfg: "{directory}/config_pdf.yaml"
 
+      # cookie session secret
+    authtkt_secret: __import__('uuid').uuid4().hex
+    authtkt_cookie_name: auth_tkt_{instanceid}
+
     tile_date_file: "{directory}/tile_date.yaml"
     specific_root_dir: "{directory}/crdppfportal"
     jsbuild_cfg: "{directory}/crdppf_core/jsbuild/app.cfg"
