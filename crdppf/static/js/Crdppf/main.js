@@ -278,8 +278,7 @@ Crdppf.init_main = function(lang) {
             id: 'extractRadioGroup',
             fieldLabel: 'Auto Layout',
             items: [
-                {boxLabel: Crdppf.labels.reducedExtract, name: 'rb-auto', inputValue: 'reduced',  cls: 'radioExtractCls', checked: true},
-                {boxLabel: Crdppf.labels.extendedExtract, name: 'rb-auto', inputValue: 'standard',  cls: 'radioExtractCls'}
+                {boxLabel: Crdppf.labels.reducedExtract, name: 'rb-auto', inputValue: 'reduced',  cls: 'radioExtractCls', checked: true}
             ]
         },{
             xtype: 'buttongroup',
@@ -572,7 +571,7 @@ Crdppf.init_main = function(lang) {
         autoScroll: true,
         flex: 1.0,
         defaults: {
-            style: 'padding:5px',
+            style: 'padding:5px; width:30px;',
             baseParams: {
                 FORMAT: 'image/png',
                 LEGEND_OPTIONS: 'forceLabels:on',
