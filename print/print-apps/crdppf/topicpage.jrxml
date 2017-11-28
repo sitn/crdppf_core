@@ -254,7 +254,7 @@
 		</band>
 		<band height="18">
 			<property name="com.jaspersoft.studio.unit.height" value="mm"/>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="493" height="18" uuid="8ef5ca32-4156-4f98-ba33-972d48815976">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -265,7 +265,7 @@
 					<topPen lineWidth="0.2"/>
 				</box>
 				<textElement>
-					<font fontName="Cadastra" size="8.5" isBold="true"/>
+					<font fontName="Cadastra" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{legendlabel}]]></textFieldExpression>
 			</textField>
@@ -298,16 +298,16 @@
 						<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 							<reportElement x="200" y="0" width="52" height="15" isPrintWhenDetailOverflows="true" uuid="d381043e-83fe-4886-b5a3-542585b6179a"/>
 							<textElement textAlignment="Right" verticalAlignment="Middle" markup="html">
-								<font fontName="Cadastra" size="8.5"/>
+								<font fontName="Cadastra" size="9"/>
 							</textElement>
 							<textFieldExpression><![CDATA[$F{area}]]></textFieldExpression>
 						</textField>
-						<textField isBlankWhenNull="true">
+						<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 							<reportElement x="252" y="0" width="48" height="15" isRemoveLineWhenBlank="true" uuid="fa72dc93-e88e-4b4b-bd9b-b3c7bfe51469">
 								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 							</reportElement>
 							<textElement textAlignment="Right" verticalAlignment="Middle">
-								<font fontName="Cadastra" size="8.5"/>
+								<font fontName="Cadastra" size="9"/>
 							</textElement>
 							<textFieldExpression><![CDATA[($F{area_pct} == -1 || $F{area_pct}.equals( -1.0 )) ? null : $F{area_pct}.toString()+" %"]]></textFieldExpression>
 						</textField>
@@ -367,7 +367,7 @@
 								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 							</reportElement>
 							<textElement verticalAlignment="Middle">
-								<font fontName="Cadastra" size="8.5"/>
+								<font fontName="Cadastra" size="9"/>
 							</textElement>
 							<textFieldExpression><![CDATA[($F{teneur}.equals("") || $F{teneur} == null) ? null : $F{teneur}]]></textFieldExpression>
 						</textField>
@@ -396,7 +396,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement markup="html">
-					<font fontName="Cadastra" size="8.5" isBold="true"/>
+					<font fontName="Cadastra" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{bboxlegendlabel}]]></textFieldExpression>
 			</textField>
@@ -413,7 +413,7 @@
 					<topPen lineWidth="0.2"/>
 				</box>
 				<textElement>
-					<font fontName="Cadastra" size="8.5" isBold="true"/>
+					<font fontName="Cadastra" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{completlegendlabel}]]></textFieldExpression>
 			</textField>
@@ -439,7 +439,7 @@
 					<topPen lineWidth="0.2"/>
 				</box>
 				<textElement>
-					<font fontName="Cadastra" size="8.5" isBold="true"/>
+					<font fontName="Cadastra" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{legalprovisionslabel}]]></textFieldExpression>
 			</textField>
@@ -467,7 +467,7 @@
 					<topPen lineWidth="0.2"/>
 				</box>
 				<textElement>
-					<font fontName="Cadastra" size="8.5" isBold="true"/>
+					<font fontName="Cadastra" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{legalbaseslabel}]]></textFieldExpression>
 			</textField>
@@ -509,13 +509,13 @@
 				<subreportExpression><![CDATA["legalprovision.jasper"]]></subreportExpression>
 			</subreport>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="115" height="14" isPrintWhenDetailOverflows="true" uuid="1965bca2-114c-4e0f-9885-0d60c78e0581">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="160" height="14" isPrintWhenDetailOverflows="true" uuid="1965bca2-114c-4e0f-9885-0d60c78e0581">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Cadastra" size="8.5" isBold="true"/>
+					<font fontName="Cadastra" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{referenceslabel}]]></textFieldExpression>
 			</textField>
@@ -535,7 +535,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement>
-					<font fontName="Cadastra" size="8.5" isBold="true"/>
+					<font fontName="Cadastra" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{competentauthoritylabel}]]></textFieldExpression>
 			</textField>
@@ -553,7 +553,7 @@
 								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 							</reportElement>
 							<textElement verticalAlignment="Middle">
-								<font fontName="Cadastra" size="8.5"/>
+								<font fontName="Cadastra" size="9"/>
 								<paragraph leftIndent="0"/>
 							</textElement>
 							<textFieldExpression><![CDATA[$F{authorityname}]]></textFieldExpression>
