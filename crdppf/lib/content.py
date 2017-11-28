@@ -267,7 +267,7 @@ def get_content(id, request):
         "dpi": 150,
         "rotation": 0,
         "center": feature_center,
-        "scale": print_box['scale']*1.5,
+        "scale": print_box['scale']*1.3,
         "longitudeFirst": "true",
         "layers": [{
             "type": "geojson",
