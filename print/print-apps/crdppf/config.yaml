@@ -89,9 +89,9 @@ templates:
         width: 93
         height: 15
         default:
-          fontSize: 7
+          fontSize: 6
           align: "center"
-          padding: 1
+          padding: 2
           backgroundColor: "rgba(255, 255, 255, 255)"
       map: !map
         maxDpi: 400
@@ -140,9 +140,9 @@ templates:
             width: 93
             height: 15
             default:
-              fontSize: 7
+              fontSize: 6
               align: "center"
-              padding: 1
+              padding: 2
               backgroundColor: "rgba(255, 255, 255, 255)"
           map: !map
             maxDpi: 400
