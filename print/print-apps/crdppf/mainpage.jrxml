@@ -54,10 +54,11 @@
 	<title>
 		<band height="755">
 			<textField isStretchWithOverflow="true">
-				<reportElement x="0" y="620" width="493" height="18" uuid="0c55df3f-a295-450f-9b65-cf35ac42a85b">
+				<reportElement x="0" y="620" width="493" height="19" uuid="0c55df3f-a295-450f-9b65-cf35ac42a85b">
 					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box bottomPadding="0">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -71,10 +72,8 @@
 				<textFieldExpression><![CDATA[$P{responsibleauthoritylabel}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="620" width="493" height="18" isPrintWhenDetailOverflows="true" uuid="a724bf8b-0f64-4a7a-b751-81ccfaad8191">
-					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="620" width="493" height="19" isPrintWhenDetailOverflows="true" uuid="a724bf8b-0f64-4a7a-b751-81ccfaad8191"/>
+
 				<box>
 					<bottomPen lineWidth="0.2"/>
 				</box>
@@ -164,11 +163,10 @@
 				<subreportExpression><![CDATA[$P{scalebarSubReport}]]></subreportExpression>
 			</subreport>
 			<subreport>
-				<reportElement key="" mode="Transparent" x="43" y="395" width="17" height="17" uuid="8e2148b7-b04a-439e-aee3-b28c205b995f">
-					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				<reportElement key="" mode="Transparent" x="43" y="395" width="19" height="19" uuid="8e2148b7-b04a-439e-aee3-b28c205b995f">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<subreportExpression><![CDATA[$P{northArrowSubReport}]]></subreportExpression>
 			</subreport>

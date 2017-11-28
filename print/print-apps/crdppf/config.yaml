@@ -82,7 +82,7 @@ templates:
       competentauthoritylabel: !string {}
 
       basemapNorthArrow: !northArrow
-        size: 17
+        size: 19
         default:
           graphic: "file:///north.svg"
       scalebar: !scalebar
@@ -90,6 +90,9 @@ templates:
         height: 15
         default:
           fontSize: 7
+          align: "center"
+          padding: 1
+          backgroundColor: "rgba(255, 255, 255, 255)"
       map: !map
         maxDpi: 400
         width: 493
@@ -130,7 +133,7 @@ templates:
               authorityname: !string {}
               authorityurl: !string {}
           northArrow: !northArrow
-            size: 17
+            size: 19
             default:
               graphic: "file:///north.svg"
           scalebar: !scalebar
@@ -138,6 +141,9 @@ templates:
             height: 15
             default:
               fontSize: 7
+              align: "center"
+              padding: 1
+              backgroundColor: "rgba(255, 255, 255, 255)"
           map: !map
             maxDpi: 400
             width: 493
