@@ -144,7 +144,7 @@ def get_content(id, request):
             extract.baseconfig[config.parameter] = config.paramvalue
     extract.srid = db_config['srid']
 
-    extract.topiclegenddir = request.static_url('crdppf:static/public/legend/')
+    extract.topiclegenddir = request.static_url('crdppfportal:static/public/legend/')
 
     # Define language to get multilingual labels for the selected language
     # defaults to 'fr': french - this may be changed in the appconfig
