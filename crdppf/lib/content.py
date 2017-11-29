@@ -177,6 +177,19 @@ def get_content(id, request):
 
     wmts_layer_ = wmts_layer(wmts['url'], wmts['layer'])
     extract.baseconfig['wmts'] = wmts
+    
+    base_wms_layers = request.registry.settings['app_config']['crdppf_wms_layers']
+    basemaplayers = {
+        "baseURL": request.registry.settings['crdppf_wms'],
+        "opacity": 1,
+        "type": "WMS",
+        "layers": base_wms_layers,
+        "imageFormat": "image/png",
+        "styles": "default",
+        "customParams": {
+            "TRANSPARENT": "true"
+        }
+    }
 
     municipality = featureinfo['nomcom'].strip()
     cadastre = featureinfo['nomcad'].strip()
@@ -486,7 +499,7 @@ def get_content(id, request):
                         }
                     },
                     topiclayers,
-                    wmts_layer_
+                    basemaplayers
                 ]
             }
 
