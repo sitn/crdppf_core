@@ -41,6 +41,7 @@ templates:
       extractcreationdate: !string {}
       extractoperatorlabel: !string {}
       responsibleauthoritylabel: !string {}
+      responsibleauthorityTxt: !string {}
       certificationlabel: !string {}
       titlepage: !datasource
         attributes:
@@ -57,6 +58,8 @@ templates:
       pdfEmptyTopicsLabel: !string {}
       pdfGeneralInformationLabel: !string {}
       pdfGeneralInformationTxt: !string {}
+      pdfFurtherInformationLabel: !string {}
+      pdfFurtherInformationTxt: !string {}
       pdfBaseDataLabel: !string {}
       pdfBaseDataTxt: !string {}
       concernedtopics: !datasource
@@ -91,7 +94,7 @@ templates:
         default:
           fontSize: 6
           align: "center"
-          padding: 1
+          padding: 2
           backgroundColor: "rgba(255, 255, 255, 255)"
       map: !map
         maxDpi: 400
@@ -142,7 +145,7 @@ templates:
             default:
               fontSize: 6
               align: "center"
-              padding: 1
+              padding: 2
               backgroundColor: "rgba(255, 255, 255, 255)"
           map: !map
             maxDpi: 400
