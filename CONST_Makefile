@@ -5,6 +5,8 @@ PACKAGE = crdppfportal
 SUB_PROJECT = crdppf_core
 SUB_PACKAGE = $(SUB_PROJECT)/crdppf
 
+DEVELOPMENT = FALSE
+
 PIP_CMD ?= $(VENV_BIN)/pip
 PIP_INSTALL_ARGS += install
 PIP_VERSION ?= pip>=9
@@ -182,6 +184,7 @@ ifeq ($(origin VARS_FILE), undefined)
 	@echo "Error: the variable VARS_FILE is required."
 	exit 1
 endif
+	@echo $(C2C_TEMPLATE_CMD)
 	$(C2C_TEMPLATE_CMD) --engine mako --files $<
 
 %: %.jinja $(INSTANCE_ID_MARKER)
@@ -211,6 +214,7 @@ $(VENV_BIN)/flake8: .build/dev-requirements.timestamp
 
 .build/crdppf_core.timestamp:
 	$(PIP_CMD) $(PIP_INSTALL_ARGS) -r $(CONST_REQUIREMENT_LOCAL_FILE)
+	$(PIP_CMD) $(PIP_INSTALL_ARGS) -r $(CONST_REQUIREMENT)
 	touch $@
 
 .PHONY: build-javascript
@@ -233,9 +237,9 @@ update-git-submodules:  .build/git-submodules.timestamp
 # Print
 
 .PHONY: print
-print: $(PRINT_OUTPUT)/$(PRINT_WAR)
+print: .build/print.timestamp
 
-$(PRINT_OUTPUT)/$(PRINT_WAR): $(PRINT_REQUIREMENT)
+.build/print.timestamp: $(PRINT_OUTPUT)/$(PRINT_WAR) $(PRINT_REQUIREMENT)
 # If Linux else windows
 ifeq ($(VENV_BIN), .build/venv/bin)
 	cp $(PRINT_BASE_DIR)/$(PRINT_BASE_WAR) $(PRINT_TMP)/$(PRINT_WAR)
@@ -263,3 +267,4 @@ endif
 ifneq ($(TOMCAT_START_COMMAND),)
 	$(TOMCAT_START_COMMAND)
 endif
+	touch $@
