@@ -248,6 +248,12 @@
 					<subreportParameter name="reporttype">
 						<subreportParameterExpression><![CDATA[$P{reporttype}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter name="pdfFurtherInformationTxt">
+						<subreportParameterExpression><![CDATA[$P{pdfFurtherInformationTxt}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="pdfFurtherInformationLabel">
+						<subreportParameterExpression><![CDATA[$P{pdfFurtherInformationLabel}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportExpression><![CDATA["toc.jasper"]]></subreportExpression>
 				</p:subreportPart>
 			</part>
