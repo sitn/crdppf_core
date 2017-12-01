@@ -36,6 +36,7 @@
 	<parameter name="creationdatelabel" class="java.lang.String"/>
 	<parameter name="competentauthority" class="java.lang.String"/>
 	<parameter name="responsibleauthoritylabel" class="java.lang.String"/>
+	<parameter name="responsibleauthorityTxt" class="java.lang.String"/>
 	<parameter name="placeholderlabel" class="java.lang.String"/>
 	<parameter name="pagelabel" class="java.lang.String"/>
 	<parameter name="appendiceslistlabel" class="java.lang.String"/>
@@ -47,6 +48,8 @@
 	<parameter name="pdfEmptyTopicsLabel" class="java.lang.String"/>
 	<parameter name="pdfGeneralInformationLabel" class="java.lang.String"/>
 	<parameter name="pdfGeneralInformationTxt" class="java.lang.String"/>
+	<parameter name="pdfFurtherInformationLabel" class="java.lang.String"/>
+	<parameter name="pdfFurtherInformationTxt" class="java.lang.String"/>
 	<parameter name="pdfBaseDataTxt" class="java.lang.String"/>
 	<parameter name="pdfBaseDataLabel" class="java.lang.String"/>
 	<parameter name="TitlepageDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
@@ -158,6 +161,9 @@
 					<subreportParameter name="responsibleauthoritylabel">
 						<subreportParameterExpression><![CDATA[$P{responsibleauthoritylabel}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter name="responsibleauthorityTxt">
+						<subreportParameterExpression><![CDATA[$P{responsibleauthorityTxt}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportExpression><![CDATA["mainpage.jasper"]]></subreportExpression>
 				</p:subreportPart>
 			</part>
@@ -241,6 +247,12 @@
 					</subreportParameter>
 					<subreportParameter name="reporttype">
 						<subreportParameterExpression><![CDATA[$P{reporttype}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="pdfFurtherInformationTxt">
+						<subreportParameterExpression><![CDATA[$P{pdfFurtherInformationTxt}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="pdfFurtherInformationLabel">
+						<subreportParameterExpression><![CDATA[$P{pdfFurtherInformationLabel}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportExpression><![CDATA["toc.jasper"]]></subreportExpression>
 				</p:subreportPart>
