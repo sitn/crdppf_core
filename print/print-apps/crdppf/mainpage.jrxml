@@ -30,6 +30,7 @@
 	<parameter name="referenceslabel" class="java.lang.String"/>
 	<parameter name="competentauthoritylabel" class="java.lang.String"/>
 	<parameter name="responsibleauthoritylabel" class="java.lang.String"/>
+	<parameter name="responsibleauthorityTxt" class="java.lang.String"/>
 	<parameter name="extractcreationdate" class="java.lang.String"/>
 	<parameter name="extractid" class="java.lang.String"/>
 	<parameter name="pdfExtractIdLabel" class="java.lang.String"/>
@@ -82,7 +83,7 @@
 					<font fontName="Cadastra" size="9" isBold="false"/>
 					<paragraph leftIndent="243" spacingBefore="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{competentauthority}.replace(";", "\n")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{responsibleauthorityTxt}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="85" width="493" height="65" uuid="91967381-ca0a-45ff-98d9-b3f085b93036">
