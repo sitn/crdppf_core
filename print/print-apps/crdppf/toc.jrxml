@@ -57,6 +57,8 @@
 	<parameter name="pdfEmptyTopicsLabel" class="java.lang.String"/>
 	<parameter name="pdfGeneralInformationLabel" class="java.lang.String"/>
 	<parameter name="pdfGeneralInformationTxt" class="java.lang.String"/>
+	<parameter name="pdfFurtherInformationLabel" class="java.lang.String"/>
+	<parameter name="pdfFurtherInformationTxt" class="java.lang.String"/>
 	<parameter name="pdfBaseDataTxt" class="java.lang.String"/>
 	<parameter name="pdfBaseDataLabel" class="java.lang.String"/>
 	<parameter name="extractid" class="java.lang.String"/>
@@ -286,15 +288,14 @@
 				<textElement verticalAlignment="Top" markup="none">
 					<font fontName="Cadastra" size="6" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Vous trouverez d’autres informations sur les RDPPF sous"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{pdfFurtherInformationLabel}]]></textFieldExpression>
 			</textField>
-			<textField hyperlinkType="Reference" hyperlinkTarget="Blank">
+			<textField isStretchWithOverflow="true" hyperlinkTarget="Blank">
 				<reportElement x="260" y="105" width="232" height="11" forecolor="#4C8FBA" uuid="423aa9b7-82cf-47fe-8581-6ac646500ca7"/>
 				<textElement verticalAlignment="Top" markup="none">
 					<font fontName="Cadastra" size="6" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["www.ne.ch/sgrf"]]></textFieldExpression>
-				<hyperlinkReferenceExpression><![CDATA["www.ne.ch/sgrf"]]></hyperlinkReferenceExpression>
+				<textFieldExpression><![CDATA[$P{pdfFurtherInformationTxt}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="26" width="230" height="11" uuid="e8e72f34-6553-41ad-a3cd-75273b060f24">
