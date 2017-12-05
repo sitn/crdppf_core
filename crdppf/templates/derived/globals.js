@@ -24,7 +24,7 @@ Crdppf.printReportCreateUrl = "${print_report}";
 Crdppf.printReportStatusUrl = "${print_status}";
 Crdppf.printReportGetUrl = "${request.route_url('printproxy_report_get', ref='')}";
 Crdppf.fulltextsearchUrl = "${request.registry.settings['fulltextsearch_url']}";
-Crdppf.mapproxyUrl = [${request.registry.settings['mapproxyurl']|n}];
+Crdppf.mapproxyUrl = [${','.join(request.registry.settings['mapproxyurl'])|n}];
 Crdppf.mapExtent = [${request.registry.settings['mapExtent']|n}];
 Crdppf.mapMaxExtent= [${request.registry.settings['mapMaxExtent']|n}];
 Crdppf.mapCenter = [${request.registry.settings['mapCenter']|n}];

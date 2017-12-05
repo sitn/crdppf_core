@@ -1,7 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-import ast
-
 from crdppf import db_config
 from crdppf.extract import Extract
 from crdppf.lib.wmts_parsing import wmts_layer
@@ -168,7 +166,8 @@ def get_content(id, request):
     extract.topics = DBSession.query(Topics).order_by(Topics.topicorder).all()
 
     # Configure the WMTS background layer
-    defaultTiles = ast.literal_eval("{"+request.registry.settings['defaultTiles']+"}")
+    
+    defaultTiles = request.registry.settings['defaultTiles']
     wmts = {
         'url': request.registry.settings['wmts_getcapabilities_url'],
         'defaultTiles': defaultTiles,
