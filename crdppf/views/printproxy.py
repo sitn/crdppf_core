@@ -113,9 +113,15 @@ class PrintProxy(Proxy):  # pragma: no cover
     def report_get(self):
         """ Get the PDF. """
 
-        return self._proxy_response(
+        pdf = self._proxy_response(
             "%s/report/%s" % (
                 self.config['print_url'],
                 self.request.matchdict.get('ref')
             ),
         )
+        filename = pdf.content_disposition.split('=')[1]
+        with open('C:/Temp/'+filename, 'wb') as f:
+            f.write(pdf.body)
+            f.close()
+
+        return pdf
