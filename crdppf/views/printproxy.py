@@ -113,7 +113,10 @@ class PrintProxy(Proxy):  # pragma: no cover
     def report_get(self):
         """ Get the PDF. """
 
-        archive_path = self.config['pdf_archive_path']
+        try:
+            archive_path = self.config['pdf_archive_path']
+        except: 
+            archive_path = None
 
         pdf = self._proxy_response(
             "%s/report/%s" % (
@@ -121,8 +124,10 @@ class PrintProxy(Proxy):  # pragma: no cover
                 self.request.matchdict.get('ref')
             ),
         )
-        filename = pdf.content_disposition.split('=')[1]
-        with open(archive_path+filename, 'wb') as f:
-            f.write(pdf.body)
+        
+        if archive_path is not None:
+            filename = pdf.content_disposition.split('=')[1]
+            with open(archive_path+filename, 'wb') as f:
+                f.write(pdf.body)
         
         return pdf
