@@ -132,7 +132,7 @@ class PrintProxy(Proxy):  # pragma: no cover
             filename = pdf.content_disposition.split('=')[1]
             if id is not None:
                 parts = filename.split('_')
-                filename = parts[0]+id+'_'+parts[1]
+                filename = str(parts[0])+str(id)+str('_')+str(parts[1])
             with open(os.path.join(archive_path, filename), 'wb') as f:
                 f.write(pdf.body)
 
