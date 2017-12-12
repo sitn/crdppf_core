@@ -27,6 +27,8 @@
 # of the authors and should not be interpreted as representing official policies,
 # either expressed or implied, of the FreeBSD Project.
 
+# Adapted for the specific needs of the PLR cataster project by FV-SITN
+
 import logging
 
 import simplejson as json
@@ -128,6 +130,10 @@ class PrintProxy(Proxy):  # pragma: no cover
         if archive_path is not None:
             import os
             filename = pdf.content_disposition.split('=')[1]
+            if self.request.matchdict.get("id"):
+                id = self.request.matchdict.get("id")
+                parts = filename.split('_')
+                filename = parts[0]+id+'_'+parts[1]
             with open(os.path.join(archive_path, filename), 'wb') as f:
                 f.write(pdf.body)
         
