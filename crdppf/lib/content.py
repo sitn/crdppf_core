@@ -27,7 +27,7 @@ def get_mapbox(feature_center, scale, height, width, fitratio):
         feature_center: center point (X/Y) of the real estate feature
     """
 
-    scale = scale*1.1
+    scale = scale*1.3
     delta_Y = round((height*scale/1000)/2, 1)
     delta_X = round((width*scale/1000)/2, 1)
     X = round(feature_center[0], 1)
