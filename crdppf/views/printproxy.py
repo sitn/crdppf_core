@@ -124,17 +124,16 @@ class PrintProxy(Proxy):  # pragma: no cover
 
         try:
             archive_path = self.config['pdf_archive_path']
-        except: 
+        except:
             archive_path = None
-            
+
         if archive_path is not None:
             import os
             filename = pdf.content_disposition.split('=')[1]
-            if self.request.matchdict.get("id"):
-                id = self.request.matchdict.get("id")
+            if id is not None:
                 parts = filename.split('_')
                 filename = parts[0]+id+'_'+parts[1]
             with open(os.path.join(archive_path, filename), 'wb') as f:
                 f.write(pdf.body)
-        
+
         return pdf
