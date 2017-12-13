@@ -121,10 +121,10 @@ class PrintProxy(Proxy):  # pragma: no cover
                 self.request.matchdict.get('ref')
             ),
         )
+        id = self.config['id']
 
         try:
             archive_path = self.config['pdf_archive_path']
-            id = self.config['id']
         except:
             archive_path = None
 
