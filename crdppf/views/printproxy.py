@@ -94,7 +94,7 @@ class PrintProxy(Proxy):  # pragma: no cover
             method='POST',
             headers=h
         )
-
+        self.config['id'] = self.request.matchdict.get("id")
         return print_result
 
     @view_config(route_name='printproxy_status')
@@ -124,6 +124,7 @@ class PrintProxy(Proxy):  # pragma: no cover
 
         try:
             archive_path = self.config['pdf_archive_path']
+            id = self.config['id']
         except:
             archive_path = None
 
@@ -132,7 +133,7 @@ class PrintProxy(Proxy):  # pragma: no cover
             filename = pdf.content_disposition.split('=')[1]
             if id is not None:
                 parts = filename.split('_')
-                filename = str(parts[0])+str(id)+str('_')+str(parts[1])
+                filename = str(parts[0])+id+str('_')+str(parts[1])
             with open(os.path.join(archive_path, filename), 'wb') as f:
                 f.write(pdf.body)
 
