@@ -75,7 +75,7 @@ class PrintProxy(Proxy):  # pragma: no cover
 
         body["attributes"].update(cached_content)
         body["attributes"].update(dynamic_content["attributes"])
-
+        
         _string = "%s/%s/report.%s" % (
             self.config['print_url'],
             "crdppf",
@@ -94,7 +94,8 @@ class PrintProxy(Proxy):  # pragma: no cover
             method='POST',
             headers=h
         )
-        self.config['id'] = self.request.matchdict.get("id")
+
+        self.request.session['parcel_id'] = self.request.matchdict.get("id")
         return print_result
 
     @view_config(route_name='printproxy_status')
@@ -121,19 +122,23 @@ class PrintProxy(Proxy):  # pragma: no cover
                 self.request.matchdict.get('ref')
             ),
         )
+        
+        try:
+            parcel_id = self.request.session['parcel_id']
+        except:
+            parcel_id = None
 
         try:
             archive_path = self.config['pdf_archive_path']
-            id = self.config['id']
         except:
             archive_path = None
 
         if archive_path is not None:
             import os
             filename = pdf.content_disposition.split('=')[1]
-            if id is not None:
+            if parcel_id is not None:
                 parts = filename.split('_')
-                filename = str(parts[0])+id+str('_')+str(parts[1])
+                filename = str(parts[0])+parcel_id+str('_')+str(parts[1])
             with open(os.path.join(archive_path, filename), 'wb') as f:
                 f.write(pdf.body)
 
