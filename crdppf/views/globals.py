@@ -77,12 +77,13 @@ def initjs(request):
             layerDico['tile_format'] = defaultTiles['tile_format']
             baselayers.append(layerDico)
 
-    disclaimer = True
-    if request.registry.settings['disclaimer'] == False:
-        if request.registry.settings['disclaimer'] == 'False' or request.registry.settings['disclaimer'] == 'false':
+
+    try:
+        disclaimer = request.registry.settings['disclaimer']
+        if disclaimer == 'False' or request.registry.settings['disclaimer'] == 'false':
             disclaimer = False
-        else:
-            disclaimer = request.registry.settings['disclaimer']
+    else:
+        disclaimer = True
 
     init = {'fr': locals, 'layerlist': layerlist, 'baseLayers': baselayers, 'disclaimer': disclaimer}
     request.response.content = 'application/javascript'
