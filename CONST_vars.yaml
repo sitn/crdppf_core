@@ -27,6 +27,9 @@ vars:
 
     # APACHE
     apache24_location: ""
+    
+    # Set this variable to WSGIApplicationGroup %{GLOBAL} if the application fails to load through mod_wsgi / Apache
+    apache24_modwsgi: ""
 
     # MAPSERVER
     mapserv_allow: overwrite_me
