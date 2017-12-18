@@ -77,7 +77,6 @@ def initjs(request):
             layerDico['tile_format'] = defaultTiles['tile_format']
             baselayers.append(layerDico)
 
-
     try:
         disclaimer = request.registry.settings['disclaimer']
         if disclaimer == 'False' or request.registry.settings['disclaimer'] == 'false':
