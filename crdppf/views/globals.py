@@ -81,7 +81,7 @@ def initjs(request):
         disclaimer = request.registry.settings['disclaimer']
         if disclaimer == 'False' or request.registry.settings['disclaimer'] == 'false':
             disclaimer = False
-    else:
+    except:
         disclaimer = True
 
     init = {'fr': locals, 'layerlist': layerlist, 'baseLayers': baselayers, 'disclaimer': disclaimer}
