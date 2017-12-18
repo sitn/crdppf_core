@@ -78,9 +78,9 @@ def initjs(request):
             baselayers.append(layerDico)
 
     disclaimer = True
-    if request.registry.settings['disclaimer']:
+    if request.registry.settings['disclaimer'] == False:
         if request.registry.settings['disclaimer'] == 'False' or request.registry.settings['disclaimer'] == 'false':
-            disclaimer = None
+            disclaimer = False
         else:
             disclaimer = request.registry.settings['disclaimer']
 
