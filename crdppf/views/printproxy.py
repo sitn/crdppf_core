@@ -74,11 +74,18 @@ class PrintProxy(Proxy):  # pragma: no cover
         body["attributes"].update(cached_content)
         body["attributes"].update(dynamic_content["attributes"])
 
-        _string = "%s/%s/report.%s" % (
-            self.config['print_url'],
-            "crdppf",
-            "pdf"
-        )
+        if body["attributes"]['directprint'] is True:
+            _string = "%s/%s/buildreport.%s" % (
+                self.config['print_url'],
+                "crdppf",
+                "pdf"
+            )
+        else:
+            _string = "%s/%s/report.%s" % (
+                self.config['print_url'],
+                "crdppf",
+                "pdf"
+            )
 
         body = json.dumps(body)
 

@@ -136,7 +136,10 @@ def get_content(id, request):
     # initalize extract object
     extract = Extract(request)
     type = request.matchdict.get("type_")
-
+    directprint = False
+    if type == 'file':
+        type = 'reduced'
+        directprint = True
     for config in configs:
         if config.parameter not in ['crdppflogopath', 'cantonlogopath']:
             extract.baseconfig[config.parameter] = config.paramvalue
@@ -525,6 +528,7 @@ def get_content(id, request):
     d = {
         "attributes": {
             "reporttype": type,
+            "directprint": directprint,
             "extractcreationdate": extract.creationdate,
             "filename": extract.filename,
             "extractid": extract.id,
