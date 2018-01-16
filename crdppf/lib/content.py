@@ -17,7 +17,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def get_mapbox(feature_center, scale, height, width, fitratio):
+def get_mapbox(feature_center, scale, buffer, height, width, fitratio):
     """Function to calculate the coordinates of the map bounding box in the real world
         height: map height in mm
         width: map width in mm
@@ -25,7 +25,7 @@ def get_mapbox(feature_center, scale, height, width, fitratio):
         feature_center: center point (X/Y) of the real estate feature
     """
 
-    scale = scale*1.1
+    scale = scale*buffer
     delta_Y = round((height*scale/1000)/2, 1)
     delta_X = round((width*scale/1000)/2, 1)
     X = round(feature_center[0], 1)
@@ -181,6 +181,7 @@ def get_content(id, request):
     extract.baseconfig['wmts'] = wmts
     
     base_wms_layers = request.registry.settings['app_config']['crdppf_wms_layers']
+    map_buffer = request.registry.settings['app_config']['map_buffer']
     basemaplayers = {
         "baseURL": request.registry.settings['crdppf_wms'],
         "opacity": 1,
@@ -257,7 +258,7 @@ def get_content(id, request):
 
     # Get the print BOX
     print_box = get_print_format(bbox, request.registry.settings['pdf_config']['fitratio'])
-    map_bbox = get_mapbox(feature_center, print_box['scale'], print_box['height'], print_box['width'],
+    map_bbox = get_mapbox(feature_center, print_box['scale'], map_buffer, print_box['height'], print_box['width'],
                           request.registry.settings['pdf_config']['fitratio'])
 
     log.warning('Calling feature: %s' % request.route_url('get_property')+'?id='+id)
@@ -282,7 +283,7 @@ def get_content(id, request):
         "dpi": 150,
         "rotation": 0,
         "center": feature_center,
-        "scale": print_box['scale']*1.3,
+        "scale": print_box['scale']*map_buffer,
         "longitudeFirst": "true",
         "layers": [{
             "type": "geojson",
@@ -478,7 +479,7 @@ def get_content(id, request):
                 "dpi": 150,
                 "rotation": 0,
                 "center": feature_center,
-                "scale": print_box['scale']*1.1,
+                "scale": print_box['scale']*map_buffer,
                 "longitudeFirst": "true",
                 "layers": [
                     {
