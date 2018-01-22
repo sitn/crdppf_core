@@ -118,11 +118,24 @@ class PrintProxy(Proxy):  # pragma: no cover
 
     @view_config(route_name='printproxy_report_get')
     def report_get(self):
-        """ Get the PDF. """
+        """ Get the PDF and store a copy for archive purposes"""
 
-        return self._proxy_response(
+        pdf = self._proxy_response(
             "%s/report/%s" % (
                 self.config['print_url'],
                 self.request.matchdict.get('ref')
             ),
         )
+
+        try:
+            archive_path = self.config['pdf_archive_path']
+        except: 
+            archive_path = None
+            
+        if archive_path is not None:
+            import os
+            filename = pdf.content_disposition.split('=')[1]
+            with open(os.path.join(archive_path, filename), 'wb') as f:
+                f.write(pdf.body)
+        
+        return pdf
