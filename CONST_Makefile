@@ -239,9 +239,9 @@ update-git-submodules:  .build/git-submodules.timestamp
 # Print
 
 .PHONY: print
-print: .build/print.timestamp
+print: $(PRINT_OUTPUT)/$(PRINT_WAR)
 
-.build/print.timestamp: $(PRINT_OUTPUT)/$(PRINT_WAR) $(PRINT_REQUIREMENT)
+$(PRINT_OUTPUT)/$(PRINT_WAR):  $(PRINT_REQUIREMENT)
 # If Linux else windows
 ifeq ($(VENV_BIN), .build/venv/bin)
 	cp $(PRINT_BASE_DIR)/$(PRINT_BASE_WAR) /$(PRINT_TMP)/$(PRINT_WAR)
