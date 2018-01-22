@@ -157,6 +157,13 @@ clean: template-clean
 cleanall: clean
 	rm -rf .build
 
+.PHONY: checks
+checks: flake8 $(CLIENT_CHECK_RULE) $(WEB_RULE)
+
+.PHONY: flake8
+flake8: $(VENV_BIN)/flake8
+	$(VENV_BIN)/flake8 $(PACKAGE)
+
 .PHONY: echostuff
 echostuff:
 	@echo $(MAKO_FILES:.mako=)
@@ -199,7 +206,7 @@ endif
 .build/config.yaml: $(INSTANCE_ID_MARKER) $(VENV_BIN)/c2c-template $(VARS_DEPENDS) $(MAKE_FILES)
 	$(C2C_TEMPLATE_CMD) --get-config .build/config.yaml $(CONFIG_VARS)
 
-$(VENV_BIN)/flake8: .build/dev-requirements.timestamp
+$(VENV_BIN)/flake8: .build/requirements.timestamp
 
 # Venv
 
@@ -226,8 +233,8 @@ build-javascript: .build/jsbuild.timestamp
 	mkdir -p $(OUTPUT_DIR)
 	$(VENV_BIN)/jsbuild $(JSBUILD_MAIN_CONFIG) -o $(OUTPUT_DIR)
 	touch $@
-    
-    
+
+
 .PHONY: update-git-submodules
 update-git-submodules:  .build/git-submodules.timestamp
 
@@ -241,7 +248,7 @@ update-git-submodules:  .build/git-submodules.timestamp
 .PHONY: print
 print: $(PRINT_OUTPUT)/$(PRINT_WAR)
 
-$(PRINT_OUTPUT)/$(PRINT_WAR):  $(PRINT_REQUIREMENT)
+$(PRINT_OUTPUT)/$(PRINT_WAR): $(PRINT_REQUIREMENT)
 # If Linux else windows
 ifeq ($(VENV_BIN), .build/venv/bin)
 	cp $(PRINT_BASE_DIR)/$(PRINT_BASE_WAR) /$(PRINT_TMP)/$(PRINT_WAR)
