@@ -77,7 +77,7 @@ class PrintProxy(Proxy):  # pragma: no cover
 
         directprint = False
         if body["attributes"]['directprint'] is True:
-            directprint =  body["attributes"]['directprint']
+            directprint = body["attributes"]['directprint']
             _string = "%s/%s/buildreport.%s" % (
                 self.config['print_url'],
                 "crdppf",
@@ -108,7 +108,6 @@ class PrintProxy(Proxy):  # pragma: no cover
                 parcel_id = self.request.session['parcel_id']
             except: 
                 parcel_id = None
-
             try:
                 archive_path = self.config['pdf_archive_path']
             except: 
@@ -156,7 +155,6 @@ class PrintProxy(Proxy):  # pragma: no cover
             parcel_id = self.request.session['parcel_id']
         except: 
             parcel_id = None
-
         try:
             archive_path = self.config['pdf_archive_path']
         except: 
