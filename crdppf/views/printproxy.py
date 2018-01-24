@@ -52,8 +52,6 @@ class PrintProxy(Proxy):  # pragma: no cover
     def report_create(self):
         """ Create PDF. """
 
-        id = self.request.matchdict.get("id")
-
         body = {
             "layout": "report",
             "outputFormat": "pdf",
@@ -100,6 +98,7 @@ class PrintProxy(Proxy):  # pragma: no cover
             headers=h
         )
 
+        self.request.session['parcel_id'] = self.request.matchdict.get("id")
         return print_result
 
     @view_config(route_name='printproxy_status')
@@ -128,6 +127,11 @@ class PrintProxy(Proxy):  # pragma: no cover
         )
 
         try:
+            parcel_id = self.request.session['parcel_id']
+        except: 
+            parcel_id = None
+
+        try:
             archive_path = self.config['pdf_archive_path']
         except: 
             archive_path = None
@@ -135,6 +139,9 @@ class PrintProxy(Proxy):  # pragma: no cover
         if archive_path is not None:
             import os
             filename = pdf.content_disposition.split('=')[1]
+            if parcel_id is not None:
+                parts = filename.split('_')
+                filename = str(parts[0])+parcel_id+str('_')+str(parts[1])
             with open(os.path.join(archive_path, filename), 'wb') as f:
                 f.write(pdf.body)
         
