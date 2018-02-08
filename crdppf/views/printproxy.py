@@ -53,6 +53,7 @@ class PrintProxy(Proxy):  # pragma: no cover
         """ Create PDF. """
 
         id = self.request.matchdict.get("id")
+        self.request.session['parcel_id'] = id
 
         body = {
             "layout": "report",
@@ -74,7 +75,9 @@ class PrintProxy(Proxy):  # pragma: no cover
         body["attributes"].update(cached_content)
         body["attributes"].update(dynamic_content["attributes"])
 
+        directprint = False
         if body["attributes"]['directprint'] is True:
+            directprint = body["attributes"]['directprint']
             _string = "%s/%s/buildreport.%s" % (
                 self.config['print_url'],
                 "crdppf",
@@ -99,6 +102,27 @@ class PrintProxy(Proxy):  # pragma: no cover
             method='POST',
             headers=h
         )
+
+        if directprint is True:
+            try:
+                parcel_id = self.request.session['parcel_id']
+            except: 
+                parcel_id = None
+            try:
+                archive_path = self.config['pdf_archive_path']
+            except: 
+                archive_path = None
+                
+            if archive_path is not None:
+                import os
+                filename = print_result.content_disposition.split('=')[1]
+                if parcel_id is not None:
+                    parts = filename.split('_')
+                    filename = str(parts[0])+parcel_id+str('_')+str(parts[1])
+                with open(os.path.join(archive_path, filename), 'wb') as f:
+                    f.write(print_result.body)
+        else:
+            pass
 
         return print_result
 
@@ -128,6 +152,10 @@ class PrintProxy(Proxy):  # pragma: no cover
         )
 
         try:
+            parcel_id = self.request.session['parcel_id']
+        except: 
+            parcel_id = None
+        try:
             archive_path = self.config['pdf_archive_path']
         except: 
             archive_path = None
@@ -135,6 +163,9 @@ class PrintProxy(Proxy):  # pragma: no cover
         if archive_path is not None:
             import os
             filename = pdf.content_disposition.split('=')[1]
+            if parcel_id is not None:
+                parts = filename.split('_')
+                filename = str(parts[0])+parcel_id+str('_')+str(parts[1])
             with open(os.path.join(archive_path, filename), 'wb') as f:
                 f.write(pdf.body)
         
