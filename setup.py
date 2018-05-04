@@ -9,7 +9,7 @@ except ImportError:
 
 setup(
     name='crdppf_core',
-    version='2.5.0',
+    version='2.6.0',
     description='sitn, a crdppf project',
     author='sitn',
     author_email='sitn@ne.ch',
