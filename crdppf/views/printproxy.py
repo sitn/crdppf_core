@@ -58,6 +58,7 @@ class PrintProxy(Proxy):  # pragma: no cover
         body = {
             "layout": "report",
             "outputFormat": "pdf",
+            "outputFilename": "extract_",
             "attributes": {}
         }
 
@@ -74,6 +75,9 @@ class PrintProxy(Proxy):  # pragma: no cover
 
         body["attributes"].update(cached_content)
         body["attributes"].update(dynamic_content["attributes"])
+
+        if dynamic_content["outputFilename"]:
+            body["outputFilename"]= dynamic_content["outputFilename"]
 
         directprint = False
         if body["attributes"]['directprint'] is True:
