@@ -77,7 +77,7 @@ class PrintProxy(Proxy):  # pragma: no cover
         body["attributes"].update(dynamic_content["attributes"])
 
         if dynamic_content["outputFilename"]:
-            body["outputFilename"]= dynamic_content["outputFilename"]
+            body["outputFilename"] = dynamic_content["outputFilename"]
 
         directprint = False
         if body["attributes"]['directprint'] is True:
