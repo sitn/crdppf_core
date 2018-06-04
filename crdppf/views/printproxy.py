@@ -50,7 +50,7 @@ class PrintProxy(Proxy):  # pragma: no cover
 
     @view_config(route_name='printproxy_report_create')
     def report_create(self):
-        """ Create PDF and store a copy for archive purposes """
+        """ Create PDF and store a copy for archive purposes. """
 
         id = self.request.matchdict.get("id")
         self.request.session['parcel_id'] = id
@@ -139,7 +139,7 @@ class PrintProxy(Proxy):  # pragma: no cover
 
     @view_config(route_name='printproxy_report_get')
     def report_get(self):
-        """ Get the PDF"""
+        """ Get the PDF. """
 
         pdf = self._proxy_response(
             "%s/report/%s" % (
