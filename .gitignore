@@ -3,5 +3,6 @@
 /apache/*.conf
 /crdppf/static/build/crdppf.js
 /crdppf/crdppf_core/print/WEB-INF/classes/logback.xml
+print/tmp/
 print/print-apps/crdppf/config.yaml.bkp
 print/print-apps/crdppf/report_A4.jrxml.bkp

@@ -76,10 +76,14 @@ def set_documents(topicid, doctype, docids, featureinfo, geofilter, doclist):
     if len(docs) > 0:
         doc = ""
         for doc in docs:
+            if doc['title'] == '' or doc['title'] is None:
+                doc['title'] = doc['officialtitle']
             if doc['doctype'] == doctype and doc['documentid'] in docids and doc['documentid'] not in doclist:
                 documents.append({"documentid": doc['documentid'], "officialtitle": doc['officialtitle'], "title": doc['title'], "remoteurl": doc['remoteurl']})
 
             if doc['doctype'] == doctype and geofilter is True and doc['documentid'] not in docids:
+                if doc['title'] == '' or doc['title'] is None:
+                    doc['title'] = doc['officialtitle']
                 documents.append({"documentid": doc['documentid'], "officialtitle": doc['officialtitle'], "title": doc['title'], "remoteurl": doc['remoteurl']})
 
     return documents
@@ -417,7 +421,7 @@ def get_content(id, request):
                 if topicdata[str(topic.topicid)][doctype] == []:
                     topicdata[str(topic.topicid)][doctype] = [{
                         "officialtitle": "",
-                        "title": "",
+                        "title": '',
                         "remoteurl": ""
                     }]
 
@@ -555,6 +559,7 @@ def get_content(id, request):
             "datasource": data
         },
         "layout": "report",
+        "outputFilename": extract.filename,
         "outputFormat": "pdf"
     }
 
@@ -564,4 +569,5 @@ def get_content(id, request):
     # jsondata = json.dumps(d, indent=4)
     # jsonfile.write(jsondata)
     # jsonfile.close()
+    
     return d
