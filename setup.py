@@ -8,13 +8,21 @@ except ImportError:
     from setuptools import setup, find_packages
 
 setup(
-    name='crdppf_core',
+    name='crdppf',
     version='2.6.0',
     description='sitn, a crdppf project',
     author='sitn',
     author_email='sitn@ne.ch',
     url='http://www.camptocamp.com/geospatial-solutions',
-    install_requires=[],
+    install_requires=[
+        'c2c.template',
+        'dogpile.cache',
+        'httplib2',
+        'jstools',
+        'papyrus',
+        'pyramid_tm',
+        'sqlahelper',
+    ],
     packages=find_packages(exclude=['ez_setup']),
     include_package_data=True,
     zip_safe=False,

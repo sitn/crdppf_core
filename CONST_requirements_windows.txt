@@ -1,3 +1,2 @@
 -r CONST_versions.txt
-crdppf_core/wheels/Shapely-1.6.2-cp27-cp27m-win32.whl
 -e crdppf_core
