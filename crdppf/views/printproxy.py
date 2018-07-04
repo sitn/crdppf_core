@@ -119,7 +119,7 @@ class PrintProxy(Proxy):  # pragma: no cover
             with open(os.path.join(archive_path, outputFilename+'.pdf'), 'wb') as f:
                 f.write(print_result.body)
         else:
-            print 'Optional archive_path not set.'
+            print ('Optional archive_path not set.')
 
         return print_result
 

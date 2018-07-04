@@ -14,7 +14,7 @@ import pkg_resources
 import argparse
 
 import httplib2
-from urllib import urlencode
+from urllib.parse import urlencode
 
 from pyramid.paster import get_app
 from xml.dom.minidom import parseString
