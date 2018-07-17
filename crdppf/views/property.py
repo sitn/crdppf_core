@@ -20,7 +20,7 @@ def get_property(request):
 
     id_ = DBSession.query(Property.noobj).filter(Property.id==id_).first()
 
-    if 'id_' is None:
+    if id_ is None:
         return HTTPBadRequest(detail='No object has been found for this id')
 
     return proto.read(request, id=id_)
