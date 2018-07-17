@@ -4,7 +4,7 @@ from pyramid.view import view_config
 
 import httplib2
 import urllib
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from crdppf.lib.wfsparsing import is_get_feature, limit_featurecollection
 

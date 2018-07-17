@@ -20,8 +20,7 @@ OUTPUT_DIR = $(SUB_PACKAGE)/static/build
 # Make rules
 
 # Requirements
-CONST_REQUIREMENT_FILE ?= CONST_requirements.txt
-CONST_REQUIREMENT ?= $(SUB_PROJECT)/$(CONST_REQUIREMENT_FILE)
+CONST_REQUIREMENT ?= $(SUB_PROJECT)/CONST_requirements.txt
 
 CONST_REQUIREMENT_LOCAL_FILE ?= CONST_requirements.txt
 
@@ -212,18 +211,20 @@ $(VENV_BIN)/flake8: .build/requirements.timestamp
 
 .build/venv.timestamp-noclean:
 	mkdir -p $(dir $@)
-	virtualenv --setuptools --no-site-packages .build/venv
-	$(PIP_CMD) install \
-		'$(PIP_VERSION)' '$(SETUPTOOL_VERSION)'
+	python -m venv --system-site-packages .build/venv
+	.build/venv/Scripts/python -m pip install --upgrade pip
 	touch $@
 
 .build/requirements.timestamp: $(EGGS_DEPENDENCIES)
-	$(PIP_CMD) $(PIP_INSTALL_ARGS) $(REQUIREMENTS) $(PIP_REDIRECT)
+	$(VENV_BIN)/python -m pip install $(REQUIREMENTS) $(PIP_REDIRECT)
+	$(VENV_BIN)/python -m pip install --editable=crdppf_core
+	$(VENV_BIN)/python -m compileall -q .build/venv 2&>/dev/null|| true
+	$(VENV_BIN)/python -m compileall -q crdppf_core 2&>/dev/null|| true
 	touch $@
 
 .build/crdppf_core.timestamp:
-	$(PIP_CMD) $(PIP_INSTALL_ARGS) -r $(CONST_REQUIREMENT_LOCAL_FILE)
-	$(PIP_CMD) $(PIP_INSTALL_ARGS) -r $(CONST_REQUIREMENT)
+	$(VENV_BIN)/python -m pip install -r $(CONST_REQUIREMENT_LOCAL_FILE)
+	$(VENV_BIN)/python -m pip install -r $(CONST_REQUIREMENT)
 	touch $@
 
 .PHONY: build-javascript

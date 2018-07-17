@@ -33,8 +33,9 @@ import httplib2
 import urllib
 import logging
 
-from cStringIO import StringIO
-from urlparse import urlparse, parse_qs
+from io import StringIO
+
+from urllib.parse import urlparse, parse_qs
 
 from pyramid.response import Response
 from pyramid.httpexceptions import HTTPBadGateway, HTTPInternalServerError

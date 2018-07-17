@@ -1,6 +1,6 @@
 vars:
     # Project instance_id
-    instanceid: INSTANCE_ID
+    instanceid: '{INSTANCE_ID}'
     development: DEVELOPMENT
     # Host of the application
     host: overwrite_me
@@ -81,7 +81,7 @@ vars:
     tomcat_webapp_folder: OVERWRITEME
     
     directory: __import__('os').getcwd()
-    python_path: __import__('distutils').sysconfig.get_python_lib()
+    python_path: "{directory}/.build/venv/lib/site-packages"
 
     sqlalchemy:
         url: postgresql://{dbuser}:{dbpassword}@{dbhost}:{dbport}/{db}
@@ -103,8 +103,7 @@ vars:
 interpreted:
     python:
     - authtkt_secret
-    - python_path
     - directory
-    environment:
-    - instanceid
-    - development
+
+environment:
+    - INSTANCE_ID

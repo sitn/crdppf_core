@@ -1,3 +1,7 @@
+/*
+ * @requires OpenLayers/Layer/Vector.js
+*/
+
 Ext.namespace('Crdppf');
 
 Crdppf.MeasureTool = function(map){
