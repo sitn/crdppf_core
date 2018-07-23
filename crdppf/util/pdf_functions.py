@@ -350,10 +350,10 @@ def get_feature_info(id, srid, translations):
 
     parcelInfo['nummai'] = queryresult.nummai  # Parcel number
     parcelInfo['type'] = queryresult.typimm  # Parcel type
-    if 'no_egrid' in queryresult.__table__.columns.keys():
-        parcelInfo['no_egrid'] = queryresult.no_egrid
+    if 'egrid' in queryresult.__table__.columns.keys() and queryresult.egrid is not None:
+        parcelInfo['egrid'] = queryresult.egrid
     else:
-        parcelInfo['no_egrid'] = translations['noEGRIDtext']
+        parcelInfo['egrid'] = translations['noEGRIDtext']
 
     if parcelInfo['type'] is None:
         parcelInfo['type'] = translations['UndefinedPropertyType']
