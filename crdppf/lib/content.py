@@ -165,7 +165,6 @@ def get_content(id, request):
     # else get the ID (id) of the selected parcel first using X/Y coordinates of the center
     # ---------------------------------------------------------------------------------------------------
     featureinfo = get_feature_info(id, extract.srid, translations)  # '1_14127' # test parcel or '1_11340'
-    featureinfo = featureinfo
     extract.filename = extract.id + featureinfo['featureid']
 
     # 3) Get the list of all the restrictions by topicorder set in a column
@@ -543,7 +542,7 @@ def get_content(id, request):
             "cadastrelabel": "Cadastre",
             "propertytype": propertytype,
             "propertynumber": propertynumber,
-            "EGRIDnumber": featureinfo['no_egrid'],
+            "EGRIDnumber": featureinfo['egrid'],
             "municipalitylogopath": municipalitylogopath,
             "federalmunicipalitynumber": featureinfo['nufeco'],
             "competentauthority": extract.baseconfig['competentauthority'],
