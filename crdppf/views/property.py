@@ -18,9 +18,6 @@ def get_property(request):
 
     proto = Protocol(DBSession, Property, 'geom')
 
-    id_ = DBSession.query(Property.noobj).filter(Property.id==id_).first()
+    filter = "id IN ('" + id_ + "')"
 
-    if id_ is None:
-        return HTTPBadRequest(detail='No object has been found for this id')
-
-    return proto.read(request, id=id_)
+    return proto.read(request, filter=filter)
