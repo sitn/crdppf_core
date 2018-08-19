@@ -342,7 +342,7 @@ def get_feature_info(id, srid, translations):
     parcelInfo['geom'] = queryresult.geom
     parcelInfo['area'] = int(round(DBSession.scalar(queryresult.geom.ST_Area()), 0))
 
-    if isinstance(LocalName, (types.ClassType)) is False:
+    if isinstance(LocalName, type) is False:
         queryresult1 = DBSession.query(LocalName).filter(LocalName.geom.ST_Intersects(parcelInfo['geom'])).first()
         parcelInfo['lieu_dit'] = queryresult1.nomloc  # Flurname
 

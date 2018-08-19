@@ -112,9 +112,9 @@ class PrintProxy(Proxy):  # pragma: no cover
         try:
             archive_path = self.config['pdf_archive_path']
         except:
-            archive_path = None
+            archive_path = "None"
 
-        if archive_path is not None:
+        if archive_path != "None":
             import os
             with open(os.path.join(archive_path, outputFilename+'.pdf'), 'wb') as f:
                 f.write(print_result.body)
