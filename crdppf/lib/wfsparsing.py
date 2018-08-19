@@ -57,16 +57,6 @@ class _XMLFilterLimit(XMLFilterBase):
             self._downstream.characters(content)
 
 
-class _StringIO(StringIO):
-    """
-    A specific io.StringIO implementation that converts the
-    string object to a unicode object before writing into
-    the stream.
-    """
-    def write(self, s):
-        return StringIO.write(self, unicode(s, 'utf-8'))
-
-
 def is_get_feature(content):
     """
     Determine if the XML string is a WFS GetFeature
@@ -78,9 +68,7 @@ def is_get_feature(content):
     parser.setContentHandler(_filter)
     input_source = InputSource()
 
-    if isinstance(content, str):
-        content = unicode(content, 'utf-8')
-    _input = BytesIO(content.encode('utf-8'))
+    _input = BytesIO(content)
 
     input_source.setByteStream(_input)
     parser.parse(input_source)
@@ -96,15 +84,12 @@ def limit_featurecollection(content, limit=200):
 
     parser = make_parser()
 
-    if isinstance(content, str):
-        content = unicode(content, 'utf-8')
-
-    _input = BytesIO(content.encode('utf-8'))
+    _input = BytesIO(content)
 
     input_source = InputSource()
     input_source.setByteStream(_input)
 
-    output = _StringIO()
+    output = StringIO()
     downstream = XMLGenerator(output, 'utf-8')
 
     _filter = _XMLFilterLimit(parser, downstream, limit=limit)

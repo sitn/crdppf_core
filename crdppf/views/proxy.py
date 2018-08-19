@@ -35,7 +35,7 @@ import logging
 
 from io import StringIO
 
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, urlencode
 
 from pyramid.response import Response
 from pyramid.httpexceptions import HTTPBadGateway, HTTPInternalServerError
@@ -59,9 +59,8 @@ class Proxy:
             all_params[p] = ",".join(all_params[p])
         all_params.update(params)
         params_encoded = {}
-        for k, v in all_params.iteritems():
-            params_encoded[k] = unicode(v).encode("utf-8")
-        query_string = urllib.urlencode(params_encoded)
+
+        query_string = urlencode(all_params)
 
         if parsed_url.port is None:
             url = "%s://%s%s?%s" % (
