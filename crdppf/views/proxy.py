@@ -86,6 +86,15 @@ class Proxy:
                 headers.pop("Host")
 
         headers["Cache-Control"] = "no-cache"
+  
+        # Other problematic headers
+        for header in [
+            "Content-Length",
+            "Content-Location",
+            "Content-Encoding",
+        ]:  # pragma: no cover
+            if header in headers:
+                del headers[header]
 
         if method in ["POST", "PUT"] and body is None:  # pragma: nocover
             body = StringIO(self.request.body)

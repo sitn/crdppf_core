@@ -156,16 +156,31 @@ templates:
     - !reportBuilder # compile all reports in current directory
       directory: '.'
     - !configureHttpRequests  &configureHttpRequests
-        httpProcessors:    # NEEDED FOR SITJ
+        httpProcessors:
         - !forwardHeaders
             matchers:
             - !localMatch {}
+            - !dnsMatch {}
             headers:
             - Cookie
             - Host
         - !forwardHeaders
             headers:
             - Referer
+        - !restrictUris
+            matchers:
+            - !localMatch
+              pathRegex: /dev_crdppf/*
+            - !dnsMatch
+              host: localhost
+              port: 6566
+            - !dnsMatch
+              host: localhost
+              port: 80
+            - !dnsMatch
+              host: sitn.ne.ch
+              port: 443
+            - !acceptAll {}
     - !createNorthArrow
       inputMapper: {basemapNorthArrow: northArrow}
       outputMapper: {northArrowSubReport: northArrowSubReport}
