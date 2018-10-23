@@ -109,17 +109,18 @@ class PrintProxy(Proxy):  # pragma: no cover
             headers=h
         )
 
-        try:
-            archive_path = self.config['pdf_archive_path']
-        except:
-            archive_path = None
+        if directprint is True:
+            try:
+                archive_path = self.config['pdf_archive_path']
+            except:
+                archive_path = None
 
-        if archive_path is not None:
-            import os
-            with open(os.path.join(archive_path, outputFilename+'.pdf'), 'wb') as f:
-                f.write(print_result.body)
-        else:
-            print 'Optional archive_path not set.'
+            if archive_path is not None:
+                import os
+                with open(os.path.join(archive_path, outputFilename+'.pdf'), 'wb') as f:
+                    f.write(print_result.body)
+            else:
+                print 'Optional archive_path not set.'
 
         return print_result
 
@@ -147,5 +148,18 @@ class PrintProxy(Proxy):  # pragma: no cover
                 self.request.matchdict.get('ref')
             ),
         )
+
+        try:
+            archive_path = self.config['pdf_archive_path']
+        except:
+            archive_path = None
+
+        if archive_path is not None:
+            import os
+            filename = pdf.content_disposition.split('=')[1]
+            with open(os.path.join(archive_path, filename), 'wb') as f:
+                f.write(pdf.body)
+        else:
+            print 'Optional archive_path not set.'
 
         return pdf
