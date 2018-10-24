@@ -28,6 +28,7 @@
 # either expressed or implied, of the FreeBSD Project.
 
 import logging
+import os
 
 import simplejson as json
 
@@ -116,11 +117,10 @@ class PrintProxy(Proxy):  # pragma: no cover
                 archive_path = None
 
             if archive_path is not None:
-                import os
                 with open(os.path.join(archive_path, outputFilename+'.pdf'), 'wb') as f:
                     f.write(print_result.body)
             else:
-                print 'Optional archive_path not set.'
+                log.warning('Optional archive_path not set.')
 
         return print_result
 
@@ -155,11 +155,10 @@ class PrintProxy(Proxy):  # pragma: no cover
             archive_path = None
 
         if archive_path is not None:
-            import os
             filename = pdf.content_disposition.split('=')[1]
             with open(os.path.join(archive_path, filename), 'wb') as f:
                 f.write(pdf.body)
         else:
-            print 'Optional archive_path not set.'
+            log.warning('Optional archive_path not set.')
 
         return pdf
