@@ -1,2 +1,3 @@
 -r CONST_versions.txt
+Shapely==1.6.4post
 -e crdppf_core
