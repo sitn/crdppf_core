@@ -141,7 +141,7 @@ if 'property' in db_config['tables']:
         egrid = Column(table_def_['att_egrid'], String)
         nummai = Column(table_def_['att_property_number'], String)
         typimm = Column(table_def_['att_property_type'], String)
-        geom = Column(Geometry("GEOMETRY", srid=srid_))
+        geom = Column(table_def_['att_property_geom'], Geometry("GEOMETRY", srid=srid_))
 else:
     class Property():
         pass

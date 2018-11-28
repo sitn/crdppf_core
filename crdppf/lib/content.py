@@ -172,7 +172,7 @@ def get_content(id, request):
     extract.topics = DBSession.query(Topics).order_by(Topics.topicorder).all()
 
     # Configure the WMTS background layer
-    
+
     defaultTiles = request.registry.settings['defaultTiles']
     wmts = {
         'url': request.registry.settings['wmts_getcapabilities_url'],
@@ -182,7 +182,7 @@ def get_content(id, request):
 
     wmts_layer_ = wmts_layer(wmts['url'], wmts['layer'])
     extract.baseconfig['wmts'] = wmts
-    
+
     base_wms_layers = request.registry.settings['app_config']['crdppf_wms_layers']
     map_buffer = request.registry.settings['app_config']['map_buffer']
     basemaplayers = {
@@ -564,9 +564,9 @@ def get_content(id, request):
 
     # import json
     # pretty printed json data for the extract
-    # jsonfile = open('C:/Temp/extractdata.json', 'w')
+    # jsonfile = open('C:/Temp/'+extract.filename+'.json', 'w')
     # jsondata = json.dumps(d, indent=4)
     # jsonfile.write(jsondata)
     # jsonfile.close()
-    
+
     return d
