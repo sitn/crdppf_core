@@ -24,15 +24,21 @@ Crdppf.docfilters = function (filter) {
 
     Crdppf.legalDocuments.store.clearFilter();
     Crdppf.legalDocuments.store.filterBy(function (record) {
+        // Check if a topic has been selected
         if (Crdppf.filterlist.topic.length > 0) {
             for (var j = 0; j < Crdppf.filterlist.topic.length; j++) {
+              for (var o = 0; o < Crdppf.filterlist.objectids.length; o++) {
+                if (record.get('origins').indexOf(Crdppf.filterlist.objectids[o]) > 1) {
+                  return record;
+                }
+              }
             // if the topicid is in the filterlist show the corresponding documents
                 if (record.get('origins').indexOf(Crdppf.filterlist.topic[j]) > -1 && Crdppf.filterlist.chmunicipalitynb !== null) {
                     // documents related to a topic and a municipality but no selected object
-                    if ((record.get('cadastrenb') === null && record.get('chmunicipalitynb') === null) ||
+                    if (record.get('doctype') === 'legalbase' && ((record.get('cadastrenb') === null && record.get('chmunicipalitynb') === null) ||
                         (record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb && record.get('cadastrenb') === null) ||
                         (record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb &&
-                         record.get('cadastrenb') === Crdppf.filterlist.cadastrenb)) {
+                         record.get('cadastrenb') === Crdppf.filterlist.cadastrenb))) {
                       return record;
                     }
                 } else if (record.get('origins').indexOf(Crdppf.filterlist.topic[j]) > -1 && Crdppf.filterlist.chmunicipalitynb === null) {
@@ -40,6 +46,7 @@ Crdppf.docfilters = function (filter) {
                 }
             }
         } else {
+          // if no topic is selected display only legal bases
           if (Crdppf.filterlist.topic.length === 0 && record.get('doctype') === 'legalbase') {
               return record;
           }
@@ -181,6 +188,9 @@ Crdppf.legalDocuments.createView = function (labels) {
                                 '</div>',
                             '</tpl>',
                         '</tpl>',
+                        '<tpl if="(values && values.length)">',
+                            '<p>Aucun document trouv&eacute; pour cette cat&eacute;gorie</p>',
+                        '</tpl>',
                     '</tpl>',
                 '</div>',
             '</div>',
@@ -287,11 +297,29 @@ Crdppf.legalDocuments.createView = function (labels) {
                 '<div style="font-family:Arial;margin-left:10px;">',
                     '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.federalLevelTxt+'</h2>',
                     '<tpl for=".">',
-                        '<tpl if="this.isReference(doctype) &amp;&amp; this.isFederal(state, municipalityname)">',
+                        '<tpl if="this.isReference(doctype) &amp;&amp; this.isFederal(state, municipalityname) &amp;&amp; this.isOfficialnb(officialnb)">',
                             '<tpl for=".">',
                                 '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
-                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
-                                    '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                                  '<tpl if="sanctiondate !== null">',
+                                      '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                  '</tpl>',
+                                  '<tpl if="sanctiondate === null">',
+                                      '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle}</h3>',
+                                  '</tpl>',
+                                      '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                                '</div>',
+                            '</tpl>',
+                        '</tpl>',
+                        '<tpl if="this.isReference(doctype) &amp;&amp; this.isFederal(state, municipalityname) &amp;&amp; this.isOfficialnb(officialnb) == false">',
+                            '<tpl for=".">',
+                                '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
+                                  '<tpl if="sanctiondate !== null">',
+                                      '<h3 class="doctitle">{officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                  '</tpl>',
+                                  '<tpl if="sanctiondate === null">',
+                                      '<h3 class="doctitle">{officialtitle}</h3>',
+                                  '</tpl>',
+                                  '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
                                 '</div>',
                             '</tpl>',
                         '</tpl>',
@@ -299,11 +327,29 @@ Crdppf.legalDocuments.createView = function (labels) {
 
                     '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.cantonalLevelTxt+'</h2>',
                     '<tpl for=".">',
-                        '<tpl if="this.isReference(doctype) &amp;&amp; this.isCantonal(state, municipalityname)">',
+                        '<tpl if="this.isReference(doctype) &amp;&amp; this.isCantonal(state, municipalityname) &amp;&amp; this.isOfficialnb(officialnb)">',
                             '<tpl for=".">',
-                                '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}"">',
-                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
-                                    '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                                '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
+                                  '<tpl if="sanctiondate !== null">',
+                                      '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                  '</tpl>',
+                                  '<tpl if="sanctiondate === null">',
+                                      '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle}</h3>',
+                                  '</tpl>',
+                                      '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                                '</div>',
+                            '</tpl>',
+                        '</tpl>',
+                        '<tpl if="this.isReference(doctype) &amp;&amp; this.isCantonal(state, municipalityname) &amp;&amp; this.isOfficialnb(officialnb) == false">',
+                            '<tpl for=".">',
+                                '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
+                                  '<tpl if="sanctiondate !== null">',
+                                      '<h3 class="doctitle">{officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                  '</tpl>',
+                                  '<tpl if="sanctiondate === null">',
+                                      '<h3 class="doctitle">{officialtitle}</h3>',
+                                  '</tpl>',
+                                  '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
                                 '</div>',
                             '</tpl>',
                         '</tpl>',
@@ -311,11 +357,29 @@ Crdppf.legalDocuments.createView = function (labels) {
 
                     '<h2 style="margin-top:10px;margin-bottom:5px;">'+labels.municipalityLevelTxt+'</h2>',
                     '<tpl for=".">',
-                        '<tpl if="this.isReference(doctype) &amp;&amp; this.isCommunal(state, municipalityname)">',
+                        '<tpl if="this.isReference(doctype) &amp;&amp; this.isCommunal(state, municipalityname) &amp;&amp; this.isOfficialnb(officialnb)">',
                             '<tpl for=".">',
                                 '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
-                                    '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
-                                    '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                                  '<tpl if="sanctiondate !== null">',
+                                      '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                  '</tpl>',
+                                  '<tpl if="sanctiondate === null">',
+                                      '<h3 class="doctitle"><a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{officialnb}</a> - {officialtitle}</h3>',
+                                  '</tpl>',
+                                      '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
+                                '</div>',
+                            '</tpl>',
+                        '</tpl>',
+                        '<tpl if="this.isReference(doctype) &amp;&amp; this.isCommunal(state, municipalityname) &amp;&amp; this.isOfficialnb(officialnb) == false">',
+                            '<tpl for=".">',
+                                '<div style="font-size:10pt;padding:5px 15px;background-color:{[xindex % 2 === 0 ? "#FFF" : "#F5F5F5"]}">',
+                                  '<tpl if="sanctiondate !== null">',
+                                      '<h3 class="doctitle">{officialtitle} du {sanctiondate:date("d.m.Y")}</h3>',
+                                  '</tpl>',
+                                  '<tpl if="sanctiondate === null">',
+                                      '<h3 class="doctitle">{officialtitle}</h3>',
+                                  '</tpl>',
+                                  '<p class="docurl"><b>URL:</b> <a href="#" onClick="window.open(\'{remoteurl}\');" target="_blank">{remoteurl}</a></p>',
                                 '</div>',
                             '</tpl>',
                         '</tpl>',
