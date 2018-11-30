@@ -4,6 +4,7 @@
  * @requires OpenLayers/Request.js
  * @requires OpenLayers/Layer/WMTS.js
  * @requires OpenLayers/Layer/Image.js
+ * @requires OpenLayers/Layer/Vector.js
  * @requires OpenLayers/Control/LayerSwitcher.js
  * @requires OpenLayers/Control/OverviewMap.js
  * @requires OpenLayers/Control/PanZoomBar.js
@@ -17,7 +18,6 @@
  * @requires OpenLayers/Rule.js
  * @requires OpenLayers/Control/Navigation.js
  * @include OpenLayers/Layer/WMS.js
- * @include OpenLayers/Layer/Vector.js
  * @include OpenLayers/Format/GML.js
  * @include OpenLayers/Format/GeoJSON.js
  * @include OpenLayers/Renderer/Canvas.js
