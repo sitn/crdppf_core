@@ -1,9 +1,9 @@
 /*
  * @include OpenLayers/Projection.js
  * @include OpenLayers/Map.js
- * @requires OpenLayers/Request.js 
- * @requires OpenLayers/Layer/WMTS.js 
- * @requires OpenLayers/Layer/Image.js 
+ * @requires OpenLayers/Request.js
+ * @requires OpenLayers/Layer/WMTS.js
+ * @requires OpenLayers/Layer/Image.js
  * @requires OpenLayers/Layer/Vector.js
  * @requires OpenLayers/Control/LayerSwitcher.js
  * @requires OpenLayers/Control/OverviewMap.js
@@ -14,7 +14,7 @@
  * @requires OpenLayers/Handler/Path.js
  * @requires OpenLayers/Handler/Polygon.js
  * @requires OpenLayers/Handler.js
- * @requires OpenLayers/Util.js 
+ * @requires OpenLayers/Util.js
  * @requires OpenLayers/Rule.js
  * @requires OpenLayers/Control/Navigation.js
  * @include OpenLayers/Layer/WMS.js
@@ -29,7 +29,7 @@
  */
 
 Ext.namespace('Crdppf');
-OpenLayers.ImgPath = Crdppf.OLImgPath;  
+OpenLayers.ImgPath = Crdppf.OLImgPath;
 
 Crdppf.Map = function (){
     this.mapInit();
@@ -75,10 +75,10 @@ Crdppf.Map.prototype = {
             // if there is more than one feature, we present the user with a selection window
             if (e.features.length > 1) {
                 Crdppf.FeaturePanel.PropertySelection(e.features, Crdppf.labels);
-            // else the selected feature is highlighted 
+            // else the selected feature is highlighted
             } else {
                 property = e.features[0];
-                Crdppf.currentProperty = property;                
+                Crdppf.currentProperty = property;
                 Crdppf.FeaturePanel.featureSelection(property);
             }
         });
@@ -98,13 +98,13 @@ Crdppf.Map.prototype = {
         "Selection",
         {
             styleMap: new OpenLayers.Style({
-                'strokeColor': '#00ff00',
-                'fillOpacity': '0.5',
-                'fillColor': '#00ff00',
+                'strokeColor': '#ff0000',
+                'fillOpacity': '0',
+                'fillColor': '#ffffff',
                 'strokeWidth': '3',
                 'pointRadius': '20'
             }),
-            fixedLayer: true, 
+            fixedLayer: true,
             displayInLayerSwitcher: false
     }),
     /**
@@ -130,7 +130,7 @@ Crdppf.Map.prototype = {
     * Object: map base layer
     * Parameters:
     * none
-    */ 
+    */
     baseLayer: new OpenLayers.Layer.WMTS({
         url: Crdppf.mapproxyUrl,
         layer: Crdppf.defaultTiles.wmtsname,
@@ -146,7 +146,7 @@ Crdppf.Map.prototype = {
     * Object: OpenLayers map object
     * Parameters:
     * none
-    */ 
+    */
     map: new OpenLayers.Map({
         projection: new OpenLayers.Projection(Crdppf.mapSRS),
         resolutions: Crdppf.mapResolutions,
@@ -203,8 +203,8 @@ Crdppf.Map.prototype = {
         });
 
         // Set layers'id
-        this.intersectLayer.id = 'intersectLayer';    
-        this.selectLayer.id = 'selectionLayer';  
+        this.intersectLayer.id = 'intersectLayer';
+        this.selectLayer.id = 'selectionLayer';
         this.baseLayer.id = 'baseLayer';
 
         // layers to map
@@ -221,7 +221,7 @@ Crdppf.Map.prototype = {
     *
     * Parameters:
     * none
-    */ 
+    */
     setOverlays: function() {
 
         // Deactivate infoControl
@@ -236,7 +236,7 @@ Crdppf.Map.prototype = {
         if(Crdppf.LayerTreePanel.overlaysList.length > 0){
             var loadMask = new Ext.LoadMask(Ext.getCmp('themePanel').body, {msg: Crdppf.labels.layerLoadingMaskMsg});
             var overlays = new OpenLayers.Layer.WMS(
-                layerName, 
+                layerName,
                 Crdppf.wmsUrl,
                 {
                     layers: Crdppf.LayerTreePanel.overlaysList,
@@ -253,11 +253,11 @@ Crdppf.Map.prototype = {
                 if (Crdppf.LayerTreePanel.overlaysList.length > 0) {
                     loadMask.show();
                 }
-            });        
+            });
             overlays.events.register("loadend", overlays, function() {
                 loadMask.hide();
             });
-  
+
             overlays.events.register("tileloaded", overlays, function() {
                 loadMask.hide();
             });
@@ -266,8 +266,8 @@ Crdppf.Map.prototype = {
             this.map.addLayer(overlays);
             this.map.raiseLayer(this.selectLayer, this.map.layers.length);
         }
-        
-        //Update restrictions 
+
+        //Update restrictions
         if(Crdppf.currentProperty){
             Crdppf.FeaturePanel.featureSelection(Crdppf.currentProperty);
         }
