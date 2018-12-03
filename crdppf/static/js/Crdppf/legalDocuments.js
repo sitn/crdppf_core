@@ -36,7 +36,7 @@ Crdppf.docfilters = function (filter) {
             // if the topicid is in the filterlist show the corresponding documents
                 if (record.get('origins').indexOf(Crdppf.filterlist.topic[j]) > -1 && Crdppf.filterlist.chmunicipalitynb !== null) {
                     // documents related to a topic and a municipality but no selected object
-                    if ((record.get('cadastrenb') === null && record.get('chmunicipalitynb') === null ||
+                    if (record.get('doctype') === 'legalbase' && ((record.get('cadastrenb') === null && record.get('chmunicipalitynb') === null) ||
                         (record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb && record.get('cadastrenb') === null) ||
                         (record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb &&
                          record.get('cadastrenb') === Crdppf.filterlist.cadastrenb))) {
