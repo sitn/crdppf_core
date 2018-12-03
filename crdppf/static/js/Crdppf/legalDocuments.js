@@ -29,7 +29,7 @@ Crdppf.docfilters = function (filter) {
             for (var j = 0; j < Crdppf.filterlist.topic.length; j++) {
               // for a given topic, get documents related to a restriction object
               for (var o = 0; o < Crdppf.filterlist.objectids.length; o++) {
-                if (record.get('origins').indexOf(Crdppf.filterlist.objectids[o]) > 1) {
+                if (record.get('origins').indexOf(Crdppf.filterlist.objectids[o]) > -1) {
                   return record;
                 }
               }
