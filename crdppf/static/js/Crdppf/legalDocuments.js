@@ -29,14 +29,14 @@ Crdppf.docfilters = function (filter) {
             for (var j = 0; j < Crdppf.filterlist.topic.length; j++) {
               // for a given topic, get documents related to a restriction object
               for (var o = 0; o < Crdppf.filterlist.objectids.length; o++) {
-                if (record.get('origins').indexOf(Crdppf.filterlist.objectids[o]) > 1) {
+                if (record.get('origins').indexOf(Crdppf.filterlist.objectids[o]) > -1) {
                   return record;
                 }
               }
             // if the topicid is in the filterlist show the corresponding documents
                 if (record.get('origins').indexOf(Crdppf.filterlist.topic[j]) > -1 && Crdppf.filterlist.chmunicipalitynb !== null) {
                     // documents related to a topic and a municipality but no selected object
-                    if (record.get('doctype') === 'legalbase' && ((record.get('cadastrenb') === null && record.get('chmunicipalitynb') === null) ||
+                    if ((record.get('cadastrenb') === null && record.get('chmunicipalitynb') === null ||
                         (record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb && record.get('cadastrenb') === null) ||
                         (record.get('chmunicipalitynb') === Crdppf.filterlist.chmunicipalitynb &&
                          record.get('cadastrenb') === Crdppf.filterlist.cadastrenb))) {
