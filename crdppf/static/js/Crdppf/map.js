@@ -83,6 +83,11 @@ Crdppf.Map.prototype = {
             }
         });
         control.events.register("featureunselected", this, function(e) {
+          // unset the filter criterias of the property related document list
+            Crdppf.filterlist.cadastrenb = null;
+            Crdppf.filterlist.chmunicipalitynb = null;
+            Crdppf.filterlist.objectids = [];
+          // empty the info panel
             Crdppf.FeaturePanel.root.removeAll(true);
         });
         this.infoControl = control;
