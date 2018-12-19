@@ -86,7 +86,7 @@ Crdppf.Map.prototype = {
           // unset the filter criterias of the property related document list
             Crdppf.filterlist.cadastrenb = null;
             Crdppf.filterlist.chmunicipalitynb = null;
-            Crdppf.filterlist.objectids.length = [];
+            Crdppf.filterlist.objectids = [];
           // empty the info panel
             Crdppf.FeaturePanel.root.removeAll(true);
         });
