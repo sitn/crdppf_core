@@ -6,6 +6,19 @@ This has to be used as a submodule in your own CRDPPF project.
 
 See https://github.com/sitn/crdppf
 
+## Requirements for Linux
+
+For Linux, you will need python-dev and python-venv, which
+can be installed with:
+
+    sudo apt-get install python3-dev
+    sudo apt-get install python3-venv
+
+In your Makfile, you should also overwrite the following variables:
+
+    VENV_BIN ?= .build/venv/bin
+    PYTHON_EXE ?= python3
+
 ## Development
 
 ### Python code
