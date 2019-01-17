@@ -1,7 +1,7 @@
 # TO BE SET ACCORDINGLY TO YOUR ENVIRONNEMENT IN THE MAKE FILE
 VENV_BIN ?= .build/venv/Scripts
 
-PYTHON_VERSION = $(shell $(VENV_BIN)/python -c "import sys; print('%i.%i' % (sys.version_info.major, sys.version_info.minor))" 2> /dev/null)
+PYTHON_EXE ?= python
 
 PACKAGE = crdppfportal
 SUB_PROJECT = crdppf_core
@@ -211,20 +211,20 @@ $(VENV_BIN)/flake8: .build/requirements.timestamp
 
 .build/venv.timestamp-noclean:
 	mkdir -p $(dir $@)
-	python -m venv --system-site-packages .build/venv
-	.build/venv/Scripts/python -m pip install --upgrade pip
+	$(PYTHON_EXE) -m venv --system-site-packages .build/venv
+	$(VENV_BIN)/$(PYTHON_EXE) -m pip install --upgrade pip
 	touch $@
 
 .build/requirements.timestamp: $(EGGS_DEPENDENCIES)
-	$(VENV_BIN)/python -m pip install $(REQUIREMENTS) $(PIP_REDIRECT)
-	$(VENV_BIN)/python -m pip install --editable=crdppf_core
-	$(VENV_BIN)/python -m compileall -q .build/venv 2&>/dev/null|| true
-	$(VENV_BIN)/python -m compileall -q crdppf_core 2&>/dev/null|| true
+	$(VENV_BIN)/$(PYTHON_EXE) -m pip install $(REQUIREMENTS) $(PIP_REDIRECT)
+	$(VENV_BIN)/$(PYTHON_EXE) -m pip install --editable=crdppf_core
+	$(VENV_BIN)/$(PYTHON_EXE) -m compileall -q .build/venv 2&>/dev/null|| true
+	$(VENV_BIN)/$(PYTHON_EXE) -m compileall -q crdppf_core 2&>/dev/null|| true
 	touch $@
 
 .build/crdppf_core.timestamp:
-	$(VENV_BIN)/python -m pip install -r $(CONST_REQUIREMENT_LOCAL_FILE)
-	$(VENV_BIN)/python -m pip install -r $(CONST_REQUIREMENT)
+	$(VENV_BIN)/$(PYTHON_EXE) -m pip install -r $(CONST_REQUIREMENT_LOCAL_FILE)
+	$(VENV_BIN)/$(PYTHON_EXE) -m pip install -r $(CONST_REQUIREMENT)
 	touch $@
 
 .PHONY: build-javascript
