@@ -79,12 +79,12 @@ def set_documents(topicid, doctype, docids, featureinfo, geofilter, doclist):
             if doc['title'] == '' or doc['title'] is None:
                 doc['title'] = doc['officialtitle']
             if doc['doctype'] == doctype and doc['documentid'] in docids and doc['documentid'] not in doclist:
-                documents.append({"documentid": doc['documentid'], "officialtitle": doc['officialtitle'], "title": doc['title'], "remoteurl": doc['remoteurl']})
+                documents.append({"documentid": doc['documentid'], "officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl']})
 
             if doc['doctype'] == doctype and geofilter is True and doc['documentid'] not in docids:
                 if doc['title'] == '' or doc['title'] is None:
                     doc['title'] = doc['officialtitle']
-                documents.append({"documentid": doc['documentid'], "officialtitle": doc['officialtitle'], "title": doc['title'], "remoteurl": doc['remoteurl']})
+                documents.append({"documentid": doc['documentid'], "officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl']})
 
     return documents
 
@@ -420,7 +420,7 @@ def get_content(id, request):
                 if topicdata[str(topic.topicid)][doctype] == []:
                     topicdata[str(topic.topicid)][doctype] = [{
                         "officialtitle": "",
-#                        "title": "",
+                        "title": "",
                         "remoteurl": ""
                     }]
 
