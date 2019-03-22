@@ -125,7 +125,6 @@ templates:
           legalprovisions: !datasource
             attributes:
               officialtitle: !string {}
-              title: !string {}
               remoteurl: !string {}
           references: !datasource
             attributes:
