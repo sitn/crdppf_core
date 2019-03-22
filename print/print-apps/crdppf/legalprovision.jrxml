@@ -23,7 +23,6 @@
 	<parameter name="topicname" class="java.lang.String"/>
 	<field name="remoteurl" class="java.lang.String"/>
 	<field name="officialtitle" class="java.lang.String"/>
-	<field name="Field_1" class="java.lang.String"/>
 	<detail>
 		<band height="30">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference" hyperlinkTarget="Blank">

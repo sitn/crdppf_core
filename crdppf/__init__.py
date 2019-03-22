@@ -11,13 +11,14 @@ import papyrus
 import os
 import yaml
 
+db_config = 'to_overwrite'
+
 # GET THE INITIAL CONFIGURATION FROM THE DB
 def read_app_config(settings):
     """
     Read the initial app config
     """
     from crdppf.models import DBSession, Base, AppConfig
-
     results = {}
     results = DBSession.query(AppConfig).all()
 
@@ -33,7 +34,7 @@ def includeme(config):
 
     settings = config.get_settings()
 
-    yaml_config = yaml.load(file(settings.get("app.cfg")))
+    yaml_config = yaml.load(open(settings.get("app.cfg")))['vars']
     settings.update(yaml_config)
 
     my_session_factory = SignedCookieSessionFactory(
@@ -43,14 +44,17 @@ def includeme(config):
     )
     
     config.set_session_factory(my_session_factory)
-    
-    engine = engine_from_config(settings, 'sqlalchemy.')
-
-    sqlahelper.add_engine(engine)
 
     global db_config
-    db_config = yaml.load(file(settings.get('database.cfg')))['db_config']
-    settings.update(yaml.load(file(settings.get('pdf.cfg'))))
+    db_config = yaml.load(open(settings.get('database.cfg')))['db_config']
+
+    settings.update(yaml.load(open(settings.get('pdf.cfg'))))
+
+    engine = engine_from_config(settings, 'sqlalchemy.')
+    sqlahelper.add_engine(engine)
+
+    # add app configuration from db
+    read_app_config(settings)
 
     config.include(papyrus.includeme)
     config.include('pyramid_mako')
@@ -58,9 +62,6 @@ def includeme(config):
     add_mako_renderer(config, ".js")
 
     config.add_renderer('geojson', GeoJSON())
-
-    # add app configuration from db
-    read_app_config(settings)
 
     specific_tmp_path = os.path.join(settings['specific_root_dir'], 'templates')
     specific_static_path = os.path.join(settings['specific_root_dir'], 'static')
@@ -113,7 +114,8 @@ def includeme(config):
 
     config.add_route('catchall_static', '/*subpath')
     config.add_view('crdppf.static.static_view', route_name='catchall_static')
-    
-    config.scan()
 
-
+    config.scan(ignore=[
+        "crdppf.utilities"
+        "crdppf.util"
+    ])

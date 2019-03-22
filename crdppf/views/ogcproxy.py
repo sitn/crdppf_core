@@ -3,8 +3,8 @@ from pyramid.response import Response
 from pyramid.view import view_config
 
 import httplib2
-import urllib
-from urlparse import urlparse
+from urllib.parse import urlencode
+from urllib.parse import urlparse
 
 from crdppf.lib.wfsparsing import is_get_feature, limit_featurecollection
 
@@ -16,11 +16,11 @@ def ogcproxy(request):
 
     params_encoded = {}
 
-    for k, v in params.iteritems():
+    for k, v in params.items():
         if k == 'callback':
             continue
-        params_encoded[k] = unicode(v).encode('utf-8')
-    query_string = urllib.urlencode(params_encoded)
+        params_encoded[k] = v
+    query_string = urlencode(params_encoded)
 
     if len(params_encoded) > 0:
         _url = '?' + query_string
