@@ -6,6 +6,7 @@ from pyramid.view import view_config
 from crdppf.models import DBSession
 from papyrus.protocol import Protocol
 from crdppf.models import Property
+from sqlalchemy.sql import text
 
 
 @view_config(route_name='get_property', renderer='geojson')
@@ -18,6 +19,6 @@ def get_property(request):
 
     proto = Protocol(DBSession, Property, 'geom')
 
-    filter = "id IN ('" + id_ + "')"
+    filter = text("id IN ('" + id_ + "')")
 
     return proto.read(request, filter=filter)
