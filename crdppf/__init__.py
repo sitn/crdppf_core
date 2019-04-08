@@ -26,15 +26,15 @@ def read_app_config(settings):
         settings['app_config'].update({str(result.parameter):str(result.paramvalue)})
 
     return True
-   
-# INCLUDE THE CORE CONFIGURATION AND CREATE THE APPLICATION   
+
+# INCLUDE THE CORE CONFIGURATION AND CREATE THE APPLICATION
 def includeme(config):
     """ This function returns a Pyramid WSGI application.
     """
 
     settings = config.get_settings()
 
-    yaml_config = yaml.load(open(settings.get("app.cfg")))['vars']
+    yaml_config = yaml.load(open(settings.get("app.cfg")), Loader=yaml.SafeLoader)['vars']
     settings.update(yaml_config)
 
     my_session_factory = SignedCookieSessionFactory(
@@ -42,13 +42,13 @@ def includeme(config):
         cookie_name=yaml_config['authtkt_cookie_name'],
         timeout=8200
     )
-    
+
     config.set_session_factory(my_session_factory)
 
     global db_config
-    db_config = yaml.load(open(settings.get('database.cfg')))['db_config']
+    db_config = yaml.load(open(settings.get('database.cfg')), Loader=yaml.SafeLoader)['db_config']
 
-    settings.update(yaml.load(open(settings.get('pdf.cfg'))))
+    settings.update(yaml.load(open(settings.get('pdf.cfg')), Loader=yaml.SafeLoader))
 
     engine = engine_from_config(settings, 'sqlalchemy.')
     sqlahelper.add_engine(engine)
@@ -67,11 +67,11 @@ def includeme(config):
     specific_static_path = os.path.join(settings['specific_root_dir'], 'static')
     settings.setdefault('mako.directories',['crdppf:templates', specific_tmp_path])
     settings.setdefault('reload_templates',True)
-    
+
     # add the static view (for static resources)
     config.add_static_view('static', 'crdppf:static',cache_max_age=3600)
     config.add_static_view('proj', 'crdppfportal:static', cache_max_age=3600)
-     
+
     # ROUTES
     config.add_route('home', '/')
     config.add_route('images', '/static/images/')
@@ -93,12 +93,12 @@ def includeme(config):
     config.add_route('legal_documents', 'getLegalDocuments')
     config.add_route('map', 'map')
     config.add_route('configpanel', 'configpanel')
-    
+
     config.add_route('initjs', '/init.js')
     config.add_route('globalsjs', '/globals.js')
 
     config.add_route('ogcproxy', '/ogcproxy')
-    
+
     # CLIENT VIEWS
     config.add_view('crdppf.views.entry.Entry', route_name = 'images')
     config.add_view('crdppf.views.entry.Entry', route_name='test')

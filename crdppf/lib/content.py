@@ -420,7 +420,6 @@ def get_content(id, request):
                 if topicdata[str(topic.topicid)][doctype] == []:
                     topicdata[str(topic.topicid)][doctype] = [{
                         "officialtitle": "",
-                        "title": "",
                         "remoteurl": ""
                     }]
 
