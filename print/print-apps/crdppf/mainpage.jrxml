@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainpage" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" uuid="ec5a2ca3-0f18-45f7-bcd3-6113b53cad98">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -83,7 +83,7 @@
 					<font fontName="Cadastra" size="9" isBold="false"/>
 					<paragraph leftIndent="243" spacingBefore="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{responsibleauthorityTxt}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{responsibleauthorityTxt}.split(";")[0]+"\n"+$P{responsibleauthorityTxt}.split(";")[1]+"\n"+$P{responsibleauthorityTxt}.split(";")[2]]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="85" width="493" height="65" uuid="91967381-ca0a-45ff-98d9-b3f085b93036">
