@@ -76,15 +76,17 @@ def set_documents(topicid, doctype, docids, featureinfo, geofilter, doclist):
     if len(docs) > 0:
         doc = ""
         for doc in docs:
+            if doc['officialnb'] is None:
+                doc['officialnb'] = ""
             if doc['title'] == '' or doc['title'] is None:
                 doc['title'] = doc['officialtitle']
             if doc['doctype'] == doctype and doc['documentid'] in docids and doc['documentid'] not in doclist:
-                documents.append({"documentid": doc['documentid'], "officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl']})
+                documents.append({"documentid": doc['documentid'], "officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl'], "officialnb": doc['officialnb']})
 
             if doc['doctype'] == doctype and geofilter is True and doc['documentid'] not in docids:
                 if doc['title'] == '' or doc['title'] is None:
                     doc['title'] = doc['officialtitle']
-                documents.append({"documentid": doc['documentid'], "officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl']})
+                documents.append({"documentid": doc['documentid'], "officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl'], "officialnb": doc['officialnb']})
 
     return documents
 
@@ -420,6 +422,7 @@ def get_content(id, request):
                 if topicdata[str(topic.topicid)][doctype] == []:
                     topicdata[str(topic.topicid)][doctype] = [{
                         "officialtitle": "",
+                        "officialnb": "",
                         "remoteurl": ""
                     }]
 
@@ -561,11 +564,11 @@ def get_content(id, request):
         "outputFormat": "pdf"
     }
 
-    # import json
+    import json
     # pretty printed json data for the extract
-    # jsonfile = open('C:/Temp/'+extract.filename+'.json', 'w')
-    # jsondata = json.dumps(d, indent=4)
-    # jsonfile.write(jsondata)
-    # jsonfile.close()
+    jsonfile = open('C:/Temp/'+extract.filename+'.json', 'w')
+    jsondata = json.dumps(d, indent=4)
+    jsonfile.write(jsondata)
+    jsonfile.close()
 
     return d
