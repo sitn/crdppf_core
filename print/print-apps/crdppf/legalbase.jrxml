@@ -32,14 +32,14 @@
 				<hyperlinkReferenceExpression><![CDATA[($F{remoteurl}.equals("") || $F{remoteurl} == null) ? null : $F{remoteurl}]]></hyperlinkReferenceExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true" bookmarkLevel="2">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="300" height="15" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="114a9f86-a715-4eb3-a8a3-5b17bad23c1a">
+				<reportElement stretchType="ContainerHeight" x="0" y="0" width="300" height="15" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="114a9f86-a715-4eb3-a8a3-5b17bad23c1a">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Cadastra" size="8"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{officialtitle}+(($F{officialnb}.equals("") || $F{officialnb} == null) ? "" : ", "+$F{officialnb})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{officialtitle}.equals("") || $F{officialtitle} == null ? "-" : $F{officialtitle}) + (($F{officialnb}.equals("") || $F{officialnb} == null) ? "" : ", " +$F{officialnb})]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
