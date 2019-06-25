@@ -1,4 +1,4 @@
-throwErrorOnExtraParameters: true
+throwErrorOnExtraParameters: false
 
 templates:
   report: !template
@@ -121,14 +121,17 @@ templates:
           legalbases: !datasource
             attributes:
               officialtitle: !string {}
+              officialnb: !string {}
               remoteurl: !string {}
           legalprovisions: !datasource
             attributes:
               officialtitle: !string {}
+              officialnb: !string {}
               remoteurl: !string {}
           references: !datasource
             attributes:
               officialtitle: !string {}
+              officialnb: !string {}
               remoteurl: !string {}
           authority: !datasource
             attributes:
