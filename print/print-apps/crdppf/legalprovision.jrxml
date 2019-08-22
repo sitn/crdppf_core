@@ -33,7 +33,7 @@
 				</reportElement>
 				<textElement verticalAlignment="Top">
 					<font fontName="Cadastra" size="6"/>
-					<paragraph leftIndent="8" spacingAfter="3"/>
+					<paragraph leftIndent="8" spacingAfter="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{remoteurl}.equals("") || $F{remoteurl} == null) ? null : $F{remoteurl}]]></textFieldExpression>
 				<hyperlinkReferenceExpression><![CDATA[($F{remoteurl}.equals("") || $F{remoteurl} == null) ? null : $F{remoteurl}]]></hyperlinkReferenceExpression>
