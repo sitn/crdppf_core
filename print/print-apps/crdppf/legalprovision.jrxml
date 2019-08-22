@@ -25,15 +25,15 @@
 	<field name="officialnb" class="java.lang.String"/>
 	<field name="officialtitle" class="java.lang.String"/>
 	<detail>
-		<band height="30">
+		<band height="26">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference" hyperlinkTarget="Blank">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="17" width="300" height="13" isPrintWhenDetailOverflows="true" forecolor="#4C8FBA" uuid="010fa648-c53e-4fa5-82ab-ce9a63ed9bd5">
+				<reportElement positionType="Float" x="0" y="13" width="300" height="12" isPrintWhenDetailOverflows="true" forecolor="#4C8FBA" uuid="010fa648-c53e-4fa5-82ab-ce9a63ed9bd5">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement verticalAlignment="Top">
 					<font fontName="Cadastra" size="6"/>
-					<paragraph leftIndent="8" spacingBefore="0" spacingAfter="2"/>
+					<paragraph leftIndent="8" spacingAfter="3"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{remoteurl}.equals("") || $F{remoteurl} == null) ? null : $F{remoteurl}]]></textFieldExpression>
 				<hyperlinkReferenceExpression><![CDATA[($F{remoteurl}.equals("") || $F{remoteurl} == null) ? null : $F{remoteurl}]]></hyperlinkReferenceExpression>
@@ -43,14 +43,14 @@
 				<textFieldExpression><![CDATA[((ArrayList)$P{TOC_Appendices}.get($P{topicname})).add($F{officialtitle}) ? "" : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true" bookmarkLevel="2">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="300" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="114a9f86-a715-4eb3-a8a3-5b17bad23c1a">
+				<reportElement x="0" y="0" width="300" height="13" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="114a9f86-a715-4eb3-a8a3-5b17bad23c1a">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Cadastra" size="8"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{officialtitle}.equals("") || $F{officialtitle} == null ? "-" : $F{officialtitle}) + (($F{officialnb}.equals("") || $F{officialnb} == null) ? "" : ", " +$F{officialnb})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{officialtitle}.equals("") || $F{officialtitle} == null ? "–" : $F{officialtitle}) + (($F{officialnb}.equals("") || $F{officialnb} == null) ? "" : ", " +$F{officialnb})]]></textFieldExpression>
 				<hyperlinkReferenceExpression><![CDATA["http://crdppf.ne.ch"]]></hyperlinkReferenceExpression>
 			</textField>
 		</band>
