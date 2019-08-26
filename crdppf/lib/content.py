@@ -564,8 +564,8 @@ def get_content(id, request):
         "outputFormat": "pdf"
     }
 
-    # import json
     # pretty printed json data for the extract
+    # import json
     # jsonfile = open('C:/Temp/'+extract.filename+'.json', 'w')
     # jsondata = json.dumps(d, indent=4)
     # jsonfile.write(jsondata)
