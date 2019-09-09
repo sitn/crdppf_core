@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TocReport" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="493" leftMargin="51" rightMargin="51" topMargin="28" bottomMargin="20" whenResourceMissingType="Empty" uuid="6e74177b-d551-4a75-ae51-6cdde3f284ce">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -155,7 +155,7 @@
 				<textFieldExpression><![CDATA[$P{toclabel}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="89" width="493" height="17" isPrintWhenDetailOverflows="true" uuid="6822cf3d-da48-4e67-b365-60a5a9f7f56c">
+				<reportElement x="0" y="89" width="493" height="17" isPrintWhenDetailOverflows="true" uuid="6822cf3d-da48-4e67-b365-60a5a9f7f56c">
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
@@ -163,12 +163,13 @@
 					<bottomPen lineWidth="0.2"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Cadastra" size="8.5" isBold="true"/>
+					<font fontName="Cadastra" size="9" isBold="true"/>
+					<paragraph spacingAfter="1"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{pdfConcernedTopicsLabel1} +" " + $P{propertynumber} + " " + $P{pdfConcernedTopicsLabel2} + " " + $P{municipality}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="0" y="106" width="100" height="10" uuid="88a99a64-0d91-4411-a6d0-0c0427eede31">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="106" width="100" height="10" uuid="88a99a64-0d91-4411-a6d0-0c0427eede31">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -178,8 +179,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{pagelabel}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="232" y="106" width="261" height="10" uuid="251529c6-aece-4be0-ba1d-a8a9f8c49c72">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="232" y="106" width="261" height="10" uuid="251529c6-aece-4be0-ba1d-a8a9f8c49c72">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -210,7 +211,7 @@
 		<band height="60">
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="28" width="493" height="17" uuid="26bc8336-77bd-4624-92a9-58bb947c6098">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
@@ -218,14 +219,14 @@
 					<bottomPen lineWidth="0.2"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Cadastra" size="8.5" isBold="true"/>
+					<font fontName="Cadastra" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{pdfNotConcernedTopicsLabel}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="45" width="493" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="7031f21e-bb89-47f7-a32c-8832c4f27c93"/>
 				<textElement>
-					<font fontName="Cadastra" size="8.5"/>
+					<font fontName="Cadastra" size="9"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{notconcernedtopics}.replace(";", "\n")+"\n"]]></textFieldExpression>
@@ -234,7 +235,7 @@
 		<band height="61">
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement key="" x="0" y="14" width="493" height="17" uuid="de8e740f-3672-4620-8d7d-b68c68018d9f">
 					<printWhenExpression><![CDATA["hallo" == "hallo"]]></printWhenExpression>
 				</reportElement>
@@ -242,7 +243,7 @@
 					<bottomPen lineWidth="0.2"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Cadastra" size="8.5" isBold="true"/>
+					<font fontName="Cadastra" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{pdfEmptyTopicsLabel}]]></textFieldExpression>
 			</textField>
@@ -252,7 +253,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Cadastra" size="8.5"/>
+					<font fontName="Cadastra" size="9"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{emptytopics}.replace(";", "\n")]]></textFieldExpression>
