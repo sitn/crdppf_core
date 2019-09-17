@@ -193,7 +193,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 				</reportElement>
 				<textElement>
-					<font size="16" isBold="true"/>
+					<font fontName="Cadastra" size="15" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{topicname}]]></textFieldExpression>
 				<anchorNameExpression><![CDATA[$F{topicname}]]></anchorNameExpression>
@@ -258,7 +258,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
-				<box>
+				<box bottomPadding="2">
 					<topPen lineWidth="0.2"/>
 				</box>
 				<textElement>
@@ -336,7 +336,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
-				<box>
+				<box bottomPadding="2">
 					<topPen lineWidth="0.2"/>
 				</box>
 				<textElement>
@@ -432,7 +432,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
-				<box>
+				<box bottomPadding="2">
 					<topPen lineWidth="0.2"/>
 				</box>
 				<textElement>
@@ -460,7 +460,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
-				<box>
+				<box bottomPadding="2">
 					<topPen lineWidth="0.2"/>
 				</box>
 				<textElement>
@@ -484,7 +484,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
-				<box>
+				<box bottomPadding="2">
 					<topPen lineWidth="0.2"/>
 				</box>
 				<textElement>

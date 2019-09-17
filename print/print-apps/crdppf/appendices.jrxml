@@ -31,7 +31,7 @@
 				<box>
 					<bottomPen lineWidth="0.2"/>
 				</box>
-				<textElement verticalAlignment="Top">
+				<textElement verticalAlignment="Middle">
 					<font fontName="Cadastra" size="8.5" isBold="false"/>
 					<paragraph lineSpacing="Single" leftIndent="19" rightIndent="0"/>
 				</textElement>
@@ -52,7 +52,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Top">
+				<textElement verticalAlignment="Middle">
 					<font size="8.5" isBold="false"/>
 					<paragraph leftIndent="0"/>
 				</textElement>
@@ -66,7 +66,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
-				<textElement verticalAlignment="Top">
+				<textElement verticalAlignment="Middle">
 					<font fontName="Cadastra" size="8.5" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER} + $F{pageIndex} + 2]]></textFieldExpression>

@@ -39,7 +39,7 @@
 					<font fontName="Cadastra" size="8"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{officialtitle}.equals("") || $F{officialtitle} == null ? "–" : $F{officialtitle}) + (($F{officialnb}.equals("") || $F{officialnb} == null) ? "" : ", " +$F{officialnb})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{officialtitle}.equals("") || $F{officialtitle} == null ? "–" : $F{officialtitle}) + (($F{title}.equals("") || $F{title} == null) ? "" : " (" +$F{title}+") ") + (($F{officialnb}.equals("") || $F{officialnb} == null) ? "" : ", " +$F{officialnb})]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
