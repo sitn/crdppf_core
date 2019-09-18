@@ -81,7 +81,7 @@
 				</box>
 				<textElement verticalAlignment="Top">
 					<font fontName="Cadastra" size="9" isBold="false"/>
-					<paragraph leftIndent="243" spacingBefore="2"/>
+					<paragraph leftIndent="193" spacingBefore="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{responsibleauthorityTxt}.split(";")[0]+"\n"+$P{responsibleauthorityTxt}.split(";")[1]+"\n"+$P{responsibleauthorityTxt}.split(";")[2]]]></textFieldExpression>
 			</textField>
@@ -115,7 +115,7 @@
 				<textFieldExpression><![CDATA[$P{propertylabel}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="243" y="472" width="250" height="17" uuid="c128610b-3544-4fe8-af79-dca94a0085bf">
+				<reportElement x="193" y="472" width="300" height="17" uuid="c128610b-3544-4fe8-af79-dca94a0085bf">
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
 				</reportElement>
@@ -308,7 +308,7 @@
 				<textFieldExpression><![CDATA[$P{propertyarealabel}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="243" y="540" width="250" height="17" uuid="2cf99ffd-b64c-4cf5-9b58-f117c0946680">
+				<reportElement x="193" y="540" width="300" height="17" uuid="2cf99ffd-b64c-4cf5-9b58-f117c0946680">
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 				</reportElement>
@@ -318,7 +318,7 @@
 				<textFieldExpression><![CDATA[$P{propertyarea} + " m<sup>2</sup>"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="243" y="506" width="250" height="17" uuid="c8e2dad6-786b-48ea-8aac-5b7f4d9be7e5">
+				<reportElement x="193" y="506" width="300" height="17" uuid="c8e2dad6-786b-48ea-8aac-5b7f4d9be7e5">
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
@@ -347,7 +347,7 @@
 				<textFieldExpression><![CDATA[$P{creationdatelabel}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="243" y="489" width="250" height="17" uuid="57903a67-1d85-4d76-bd3c-666f78b93943">
+				<reportElement x="193" y="489" width="300" height="17" uuid="57903a67-1d85-4d76-bd3c-666f78b93943">
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 				</reportElement>
@@ -357,7 +357,7 @@
 				<textFieldExpression><![CDATA[$P{EGRIDnumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="243" y="603" width="250" height="17" uuid="7acb6195-718c-4f66-8357-b25cb37dac38">
+				<reportElement x="193" y="603" width="300" height="17" uuid="7acb6195-718c-4f66-8357-b25cb37dac38">
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 				</reportElement>
@@ -384,7 +384,7 @@
 				<textFieldExpression><![CDATA[$P{pdfExtractIdLabel}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="243" y="586" width="250" height="17" uuid="95a742b4-e13c-470c-8a60-590d349b66e8">
+				<reportElement x="193" y="586" width="300" height="17" uuid="95a742b4-e13c-470c-8a60-590d349b66e8">
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
@@ -413,7 +413,7 @@
 				<textFieldExpression><![CDATA[$P{cadastrelabel}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="243" y="523" width="250" height="17" uuid="e98180d4-6f4b-4c21-8234-95a356e337f8">
+				<reportElement x="193" y="523" width="300" height="17" uuid="e98180d4-6f4b-4c21-8234-95a356e337f8">
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="mm"/>

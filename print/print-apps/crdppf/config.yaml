@@ -172,7 +172,7 @@ templates:
         - !restrictUris
             matchers:
             - !localMatch
-              pathRegex: /dev_crdppf/*
+              pathRegex: /crdppf_dev/*
             - !dnsMatch
               host: localhost
               port: 6566
