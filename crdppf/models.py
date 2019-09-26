@@ -103,6 +103,16 @@ class Glossar(Base):
     __tablename__ = 'glossar'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
 
+
+class Informations(Base):
+    __tablename__ = 'informations'
+    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+
+
+class ExclusionsResponsabilite(Base):
+    __tablename__ = 'exclusions_responsabilite'
+    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+
 # DATA SECTION
 if 'town' in db_config['tables']:
     table_def_ = db_config['tables']['town']
