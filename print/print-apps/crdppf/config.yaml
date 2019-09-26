@@ -68,6 +68,10 @@ templates:
           documentlist: !table {}
       notconcernedtopics: !string {}
       emptytopics: !string {}
+      informations: !table {}
+      disclaimers: !datasource
+        attributes:
+          exclusions_of_liability: !table {}
 
       # Variables for Glossar
       glossar: !datasource
@@ -172,7 +176,7 @@ templates:
         - !restrictUris
             matchers:
             - !localMatch
-              pathRegex: /dev_crdppf/*
+              pathRegex: /crdppf_dev/*
             - !dnsMatch
               host: localhost
               port: 6566
@@ -190,6 +194,19 @@ templates:
       inputMapper: {map: map}
       outputMapper: {mapSubReport: basemap}
     - !createScalebar {}
+    - !prepareTable
+      inputMapper: {informations: table}
+      outputMapper: {tableDataSource: InformationsTableSource}
+    - !createDataSource
+      processors:
+      - !reportBuilder # compile all reports in current directory
+        directory: '.'
+      inputMapper: {disclaimers: datasource}
+      outputMapper: {jrDataSource: DisclaimersDataSource}
+      processors:
+      - !prepareTable
+        inputMapper: {exclusions_of_liability: table}
+        outputMapper: {tableDataSource: ExclusionsOfLiabilityDataSource}
     - !createDataSource
       processors:
       - !reportBuilder # compile all reports in current directory

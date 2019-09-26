@@ -81,12 +81,12 @@ def set_documents(topicid, doctype, docids, featureinfo, geofilter, doclist):
             if doc['title'] == '' or doc['title'] is None:
                 doc['title'] = doc['officialtitle']
             if doc['doctype'] == doctype and doc['documentid'] in docids and doc['documentid'] not in doclist:
-                documents.append({"documentid": doc['documentid'], "officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl'], "officialnb": doc['officialnb']})
+                documents.append({"documentid": doc['documentid'], "title": doc['title'], "officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl'], "officialnb": doc['officialnb']})
 
             if doc['doctype'] == doctype and geofilter is True and doc['documentid'] not in docids:
                 if doc['title'] == '' or doc['title'] is None:
                     doc['title'] = doc['officialtitle']
-                documents.append({"documentid": doc['documentid'], "officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl'], "officialnb": doc['officialnb']})
+                documents.append({"documentid": doc['documentid'], "title": doc['title'], "officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl'], "officialnb": doc['officialnb']})
 
     return documents
 
@@ -421,6 +421,7 @@ def get_content(id, request):
             for doctype in appconfig["doctypes"].split(','):
                 if topicdata[str(topic.topicid)][doctype] == []:
                     topicdata[str(topic.topicid)][doctype] = [{
+                        "title": "",
                         "officialtitle": "",
                         "officialnb": "",
                         "remoteurl": ""
