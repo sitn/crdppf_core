@@ -264,25 +264,8 @@
 		</band>
 		<band height="130">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="37" width="230" height="52" uuid="9463b6fb-b28a-4793-9bc1-1c24749e48c4"/>
-				<textElement>
-					<font fontName="Cadastra" size="6"/>
-					<paragraph spacingBefore="2"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{pdfGeneralInformationTxt}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="0" y="26" width="230" height="11" uuid="e834b965-7821-4998-ac78-82c63301b2e1">
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
-				</reportElement>
-				<textElement verticalAlignment="Top">
-					<font fontName="Cadastra" size="6" isBold="true"/>
-				</textElement>
-				<text><![CDATA[]]></text>
-			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="0" y="100" width="230" height="18" uuid="9566b603-8d58-4b07-af92-ff3236440849"/>
+				<reportElement x="0" y="71" width="230" height="18" uuid="9566b603-8d58-4b07-af92-ff3236440849"/>
 				<textElement>
 					<font fontName="Cadastra" size="6"/>
 					<paragraph spacingBefore="2"/>
@@ -290,34 +273,24 @@
 				<textFieldExpression><![CDATA[$P{pdfBaseDataTxt}+ " " + $P{extractcreationdate}.toString().substring(0,10) + "."]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="260" y="26" width="232" height="11" uuid="28e9af56-04ab-47d6-b9f0-7589e23fffa9"/>
+				<reportElement x="260" y="60" width="232" height="11" uuid="28e9af56-04ab-47d6-b9f0-7589e23fffa9">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
 				<textElement verticalAlignment="Top" markup="none">
 					<font fontName="Cadastra" size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{pdfFurtherInformationLabel}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" hyperlinkTarget="Blank">
-				<reportElement x="260" y="37" width="232" height="11" forecolor="#4C8FBA" uuid="423aa9b7-82cf-47fe-8581-6ac646500ca7"/>
+				<reportElement positionType="Float" x="260" y="71" width="232" height="11" forecolor="#4C8FBA" uuid="423aa9b7-82cf-47fe-8581-6ac646500ca7"/>
 				<textElement verticalAlignment="Top" markup="none">
 					<font fontName="Cadastra" size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{pdfFurtherInformationTxt}]]></textFieldExpression>
 				<hyperlinkReferenceExpression><![CDATA[$P{pdfFurtherInformationTxt}]]></hyperlinkReferenceExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="26" width="230" height="11" uuid="e8e72f34-6553-41ad-a3cd-75273b060f24">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
-					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
-				</reportElement>
-				<textElement>
-					<font fontName="Cadastra" size="6" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{pdfGeneralInformationLabel}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" x="0" y="89" width="230" height="11" uuid="1b6e1c03-762a-4541-b8af-44f454c30353">
+			<textField>
+				<reportElement positionType="Float" x="0" y="60" width="230" height="11" uuid="1b6e1c03-762a-4541-b8af-44f454c30353">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
@@ -330,12 +303,15 @@
 				<textFieldExpression><![CDATA[$P{pdfBaseDataLabel}]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement x="266" y="26" width="227" height="29" uuid="6170c44d-bd51-4271-a486-93c9b97a9739"/>
+				<reportElement x="260" y="26" width="232" height="34" uuid="6170c44d-bd51-4271-a486-93c9b97a9739">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
 				<dataSourceExpression><![CDATA[$P{DisclaimersTableSource}]]></dataSourceExpression>
 				<subreportExpression><![CDATA["exclusion_of_liability.jasper"]]></subreportExpression>
 			</subreport>
-			<subreport>
-				<reportElement x="266" y="55" width="227" height="29" uuid="f953e0fe-0f93-4e73-9772-4cd310dfd089"/>
+			<subreport runToBottom="true">
+				<reportElement x="0" y="26" width="230" height="34" isPrintWhenDetailOverflows="true" uuid="f953e0fe-0f93-4e73-9772-4cd310dfd089"/>
 				<dataSourceExpression><![CDATA[$P{InformationsTableSource}]]></dataSourceExpression>
 				<subreportExpression><![CDATA["further_informations.jasper"]]></subreportExpression>
 			</subreport>
