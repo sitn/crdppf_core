@@ -68,7 +68,6 @@ templates:
           documentlist: !table {}
       notconcernedtopics: !string {}
       emptytopics: !string {}
-      # informations: !table {}
       disclaimers: !table {}
 
       # Variables for Glossar

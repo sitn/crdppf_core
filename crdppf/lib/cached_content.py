@@ -61,22 +61,25 @@ def get_cached_content_l10n(lang):
             log.warning("There is a undefined translation")
             d[str(translation.varstr)] = u'undefined'
 
+    # TODO : Try to get this working, as it seems that MFP has issues
+    # with multiple table/datasources!
+
     # Second get all the complemtary informations for the TOC
-    infos = DBSession.query(Informations).filter_by(lang=lang).all()
+    #    infos = DBSession.query(Informations).filter_by(lang=lang).all()
 
-    informations = []
-    for information in infos:
-        if not information.contenu == '':
-            informations.append([
-                information.titre, information.contenu
-            ])
-        else:
-            log.warning("There is a empty information element")
+    #    informations = []
+    #    for information in infos:
+    #        if not information.contenu == '':
+    #            informations.append([
+    #                information.titre, information.contenu
+    #            ])
+    #        else:
+    #            log.warning("There is a empty information element")
 
-    d["informations"] = {
-            "columns": ["titre", "contenu"],
-            "data": informations
-        }
+    #    d["informations"] = {
+    #            "columns": ["titre", "contenu"],
+    #            "data": informations
+    #        }
 
     # Third get all the disclaimers for the different topics
     disclaimers = DBSession.query(ExclusionsResponsabilite).filter_by(lang=lang).all()
@@ -90,12 +93,10 @@ def get_cached_content_l10n(lang):
         else:
             log.warning("There is a empty disclaimer element")
 
-    d["disclaimers"] = [{
-        "exclusions_of_liability" : {
+    d["disclaimers"] = {
             "columns": ["titre", "contenu"],
             "data": exclusions
         }
-    }]
 
     # Fourth get all the definitions for the selected language
     glossar = DBSession.query(Glossar).filter_by(lang=lang).all()

@@ -295,7 +295,7 @@
 				<dataSourceExpression><![CDATA[$P{DisclaimersTableSource}]]></dataSourceExpression>
 				<subreportExpression><![CDATA["exclusion_of_liability.jasper"]]></subreportExpression>
 			</subreport>
-			<textField isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="26" width="235" height="11" isPrintWhenDetailOverflows="true" uuid="76a18d83-a2d8-4411-80dd-5ff01129a013">
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
