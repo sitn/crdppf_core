@@ -566,10 +566,10 @@ def get_content(id, request):
     }
 
     # pretty printed json data for the extract
-    #     import json
-    #     jsonfile = open('C:/Temp/'+extract.filename+'.json', 'w')
-    #     jsondata = json.dumps(d, indent=4)
-    #     jsonfile.write(jsondata)
-    #     jsonfile.close()
+    # import json
+    # jsonfile = open('C:/Temp/'+extract.filename+'.json', 'w')
+    # jsondata = json.dumps(d, indent=4)
+    # jsonfile.write(jsondata)
+    # jsonfile.close()
 
     return d
