@@ -55,8 +55,7 @@
 	<parameter name="TitlepageDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="notconcernedtopics" class="java.lang.String"/>
 	<parameter name="emptytopics" class="java.lang.String"/>
-	<parameter name="InformationsTableSource" class="net.sf.jasperreports.engine.JRDataSource"/>
-	<parameter name="DisclaimersDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="DisclaimersTableSource" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="GlossaryDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="MainDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="basemap" class="java.lang.String"/>
@@ -211,6 +210,9 @@
 					<subreportParameter name="ConcernedTopicsDataSource">
 						<subreportParameterExpression><![CDATA[$P{ConcernedTopicsDataSource}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter name="DisclaimersTableSource">
+						<subreportParameterExpression><![CDATA[$P{DisclaimersTableSource}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="notconcernedtopics">
 						<subreportParameterExpression><![CDATA[$P{notconcernedtopics}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -255,12 +257,6 @@
 					</subreportParameter>
 					<subreportParameter name="pdfFurtherInformationLabel">
 						<subreportParameterExpression><![CDATA[$P{pdfFurtherInformationLabel}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="DisclaimersDataSource">
-						<subreportParameterExpression><![CDATA[$P{DisclaimersDataSource}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="InformationsTableSource">
-						<subreportParameterExpression><![CDATA[$P{InformationsTableSource}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportExpression><![CDATA["toc.jasper"]]></subreportExpression>
 				</p:subreportPart>

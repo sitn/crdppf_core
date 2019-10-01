@@ -64,9 +64,8 @@
 	<parameter name="extractid" class="java.lang.String"/>
 	<parameter name="notconcernedtopics" class="java.lang.String"/>
 	<parameter name="emptytopics" class="java.lang.String"/>
-	<parameter name="InformationsTableSource" class="net.sf.jasperreports.engine.JRDataSource"/>
-	<parameter name="DisclaimersTableSource" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="ConcernedTopicsDataSource" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<parameter name="DisclaimersTableSource" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="TOC_Appendices" class="java.util.Map"/>
 	<variable name="count" class="java.lang.Integer">
 		<initialValueExpression><![CDATA[3]]></initialValueExpression>
@@ -263,38 +262,23 @@
 			</textField>
 		</band>
 		<band height="130">
-			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="71" width="230" height="18" uuid="9566b603-8d58-4b07-af92-ff3236440849"/>
+				<reportElement positionType="Float" x="0" y="100" width="235" height="18" uuid="9566b603-8d58-4b07-af92-ff3236440849">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
 				<textElement>
 					<font fontName="Cadastra" size="6"/>
 					<paragraph spacingBefore="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{pdfBaseDataTxt}+ " " + $P{extractcreationdate}.toString().substring(0,10) + "."]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="260" y="60" width="232" height="11" uuid="28e9af56-04ab-47d6-b9f0-7589e23fffa9">
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-				</reportElement>
-				<textElement verticalAlignment="Top" markup="none">
-					<font fontName="Cadastra" size="6" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{pdfFurtherInformationLabel}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" hyperlinkTarget="Blank">
-				<reportElement positionType="Float" x="260" y="71" width="232" height="11" forecolor="#4C8FBA" uuid="423aa9b7-82cf-47fe-8581-6ac646500ca7"/>
-				<textElement verticalAlignment="Top" markup="none">
-					<font fontName="Cadastra" size="6" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{pdfFurtherInformationTxt}]]></textFieldExpression>
-				<hyperlinkReferenceExpression><![CDATA[$P{pdfFurtherInformationTxt}]]></hyperlinkReferenceExpression>
-			</textField>
-			<textField>
-				<reportElement positionType="Float" x="0" y="60" width="230" height="11" uuid="1b6e1c03-762a-4541-b8af-44f454c30353">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="89" width="235" height="11" uuid="1b6e1c03-762a-4541-b8af-44f454c30353">
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement>
 					<font fontName="Cadastra" size="6" isBold="true"/>
@@ -303,18 +287,35 @@
 				<textFieldExpression><![CDATA[$P{pdfBaseDataLabel}]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement x="260" y="26" width="232" height="34" uuid="6170c44d-bd51-4271-a486-93c9b97a9739">
+				<reportElement x="258" y="26" width="235" height="92" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="2c9794e1-c7e8-4314-9d31-5f47df025cd9">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<dataSourceExpression><![CDATA[$P{DisclaimersTableSource}]]></dataSourceExpression>
 				<subreportExpression><![CDATA["exclusion_of_liability.jasper"]]></subreportExpression>
 			</subreport>
-			<subreport runToBottom="true">
-				<reportElement x="0" y="26" width="230" height="34" isPrintWhenDetailOverflows="true" uuid="f953e0fe-0f93-4e73-9772-4cd310dfd089"/>
-				<dataSourceExpression><![CDATA[$P{InformationsTableSource}]]></dataSourceExpression>
-				<subreportExpression><![CDATA["further_informations.jasper"]]></subreportExpression>
-			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="26" width="235" height="11" isPrintWhenDetailOverflows="true" uuid="76a18d83-a2d8-4411-80dd-5ff01129a013">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Cadastra" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pdfGeneralInformationLabel}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="37" width="235" height="52" uuid="0665e7e2-d019-4c41-ab14-dda40dd65ac4">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Cadastra" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pdfGeneralInformationTxt}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<pageFooter>
