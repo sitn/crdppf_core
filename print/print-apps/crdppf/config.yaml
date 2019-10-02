@@ -68,6 +68,7 @@ templates:
           documentlist: !table {}
       notconcernedtopics: !string {}
       emptytopics: !string {}
+      disclaimers: !table {}
 
       # Variables for Glossar
       glossar: !datasource
@@ -120,16 +121,19 @@ templates:
               area_pct: !float {}
           legalbases: !datasource
             attributes:
+              title: !string {}
               officialtitle: !string {}
               officialnb: !string {}
               remoteurl: !string {}
           legalprovisions: !datasource
             attributes:
+              title: !string {}
               officialtitle: !string {}
               officialnb: !string {}
               remoteurl: !string {}
           references: !datasource
             attributes:
+              title: !string {}
               officialtitle: !string {}
               officialnb: !string {}
               remoteurl: !string {}
@@ -190,6 +194,9 @@ templates:
       inputMapper: {map: map}
       outputMapper: {mapSubReport: basemap}
     - !createScalebar {}
+    - !prepareTable
+      inputMapper: {disclaimers: table}
+      outputMapper: {tableDataSource: DisclaimersTableSource}
     - !createDataSource
       processors:
       - !reportBuilder # compile all reports in current directory
