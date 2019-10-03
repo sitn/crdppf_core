@@ -117,13 +117,32 @@ def add_layer(layer, featureid, featureinfo, translations, appconfig, topicdata)
     if results:
         layerlist[str(layer.layerid)] = {'layername': layer.layername, 'features': []}
         resultlist = set([])
+        codegenres = set([])
+
         for result in results:
+            codegenres.add(result['properties']['codegenre'])
             for property in ['geometry', 'type']:
                 del result[property]
             for idx in ['theme', 'layerName']:
                 del result['properties'][idx]
             resultlist.add(str(result['id']))
-            layerlist[str(layer.layerid)]['features'].append(result['properties'])
+        groupedresult = {}
+        for code in codegenres:
+            for result in results:
+                measure = int(result['properties']['intersectionMeasure'].replace(' : ', '').replace(' - ', '').replace('[m2]', '').replace('[m]', ''))
+                if result['properties']['codegenre'] == code:
+                    if code in groupedresult:
+                        groupedresult[code]["intersectionMeasure"] += measure
+                    else:
+                        groupedresult[code] = {
+                            'teneur': result['properties']['teneur'],
+                            'codegenre':result['properties']['codegenre'],
+                            'statutjuridique': result['properties']['statutjuridique'],
+                            'datepublication': result['properties']['datepublication'],
+                            'geomType': result['properties']['geomType'],
+                            "intersectionMeasure": measure
+                            }
+            layerlist[str(layer.layerid)]['features'].append(groupedresult[code])
         layerlist[str(layer.layerid)]['ids'] = resultlist
     else:
         layerlist = None
@@ -450,15 +469,15 @@ def get_content(id, request):
                                     topicdata[str(topic.topicid)]["restrictions"].append({
                                         "codegenre": legenddir+feature['codegenre']+".png",
                                         "teneur": feature['teneur'],
-                                        "area": feature['intersectionMeasure'].replace(' : ', '').replace(' - ', '').replace('[m2]', 'm<sup>2</sup>'),
+                                        "area": str(feature['intersectionMeasure'])+' m<sup>2</sup>',
                                         "area_pct": round((float(
-                                            feature['intersectionMeasure'].replace(' : ', '').replace(' - ', '').replace(' [m2]', ''))*100)/propertyarea, 1)
+                                            feature['intersectionMeasure'])*100)/propertyarea, 1)
                                     })
                                 else:
                                     topicdata[str(topic.topicid)]["restrictions"].append({
                                         "codegenre": legenddir+feature['codegenre']+".png",
                                         "teneur": feature['teneur'],
-                                        "area": feature['intersectionMeasure'].replace(' - ', '').replace(' : ', '').replace('[m]', 'm'),
+                                        "area": str(feature['intersectionMeasure'])+ ' m',
                                         "area_pct": -1
                                     })
                             else:
