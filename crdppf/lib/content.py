@@ -316,11 +316,11 @@ def get_content(id, request):
                 "version": "2",
                 "strokeColor": "gray",
                 "strokeLinecap": "round",
-                "strokeOpacity": 0.6,
+                "strokeOpacity": 0.5,
                 "[INTERSECTS(geometry, "+wkt_polygon+")]": {
                     "symbolizers": [{
                         "strokeColor": "red",
-                        "strokeWidth": 2,
+                        "strokeWidth": 4,
                         "type": "line"
                     }]
                 }
@@ -514,12 +514,12 @@ def get_content(id, request):
                             "version": "2",
                             "strokeColor": "gray",
                             "strokeLinecap": "round",
-                            "strokeOpacity": 0.6,
+                            "strokeOpacity": 0.5,
                             "[INTERSECTS(geometry, "+wkt_polygon+")]": {
                                 "symbolizers": [
                                     {
                                         "strokeColor": "red",
-                                        "strokeWidth": 2,
+                                        "strokeWidth": 4,
                                         "type": "line"
                                     }
                                 ]
