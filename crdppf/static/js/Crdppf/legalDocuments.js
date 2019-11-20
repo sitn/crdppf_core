@@ -1,6 +1,6 @@
 Ext.namespace('Crdppf');
 
-Crdppf.filterlist = {'topic': [], 'layers': [], 'chmunicipalitynb': null, 'cadastrenb': null, 'objectids': []};
+Crdppf.filterlist = {'topic': [], 'layers': [], 'chmunicipalitynb': null, 'cadastrenb': null, 'objectids': [], 'docids': []};
 
 Crdppf.docfilters = function (filter) {
     // little helper function to check for the existence of an value in an array
@@ -22,6 +22,20 @@ Crdppf.docfilters = function (filter) {
         }
     }
 
+    if ('docids' in filter) {
+        if (filter.docids.length > 0) {
+            for (var h = 0; h < filter.docids.length; h++) {
+                if (!(isInArray(filter.docids[h], Crdppf.filterlist.docids))) {
+                    Crdppf.filterlist.docids.push(filter.docids[h]);
+                } else {
+                    if (isInArray(filter.docids[h], Crdppf.filterlist.docids)) {
+                        Crdppf.filterlist.docids.splice(Crdppf.filterlist.docids.indexOf(filter.docids[h]), 1);
+                    }
+                }
+            }
+        }
+    }
+
     Crdppf.legalDocuments.store.clearFilter();
     Crdppf.legalDocuments.store.filterBy(function (record) {
         // Check if a topic has been selected
@@ -30,6 +44,14 @@ Crdppf.docfilters = function (filter) {
               // for a given topic, get documents related to a restriction object
               for (var o = 0; o < Crdppf.filterlist.objectids.length; o++) {
                 if (record.get('origins').indexOf(Crdppf.filterlist.objectids[o]) > -1) {
+                  if (!(isInArray(record.get('documentid'), Crdppf.filterlist.docids))) {
+                      Crdppf.filterlist.docids.push(record.get('documentid'));
+                  }
+                  return record;
+                }
+              }
+              for (var p = 0; p < Crdppf.filterlist.docids.length; p++) {
+                if (record.get('origins').indexOf(Crdppf.filterlist.docids[p]) > -1 && record.get('doctype') === 'reference') {
                   return record;
                 }
               }
