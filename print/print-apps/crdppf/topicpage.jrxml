@@ -550,7 +550,7 @@
 								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 							</reportElement>
 							<textElement verticalAlignment="Middle">
-								<font fontName="Cadastra" size="9"/>
+								<font fontName="Cadastra" size="8.5"/>
 								<paragraph leftIndent="0"/>
 							</textElement>
 							<textFieldExpression><![CDATA[$F{authorityname}]]></textFieldExpression>

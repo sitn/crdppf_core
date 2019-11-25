@@ -78,15 +78,17 @@ def set_documents(topicid, doctype, docids, featureinfo, geofilter, doclist):
         for doc in docs:
             if doc['officialnb'] is None:
                 doc['officialnb'] = ""
+            if doc['abbreviation'] is None:
+                doc['abbreviation'] = ""
             if doc['title'] == '' or doc['title'] is None:
                 doc['title'] = doc['officialtitle']
             if doc['doctype'] == doctype and doc['documentid'] in docids and doc['documentid'] not in doclist:
-                documents.append({"documentid": doc['documentid'], "title": doc['title'], "officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl'], "officialnb": doc['officialnb']})
+                documents.append({"documentid": doc['documentid'], "title": doc['title'], "officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl'], "abbreviation": doc['abbreviation'], "officialnb": doc['officialnb']})
 
             if doc['doctype'] == doctype and geofilter is True and doc['documentid'] not in docids:
                 if doc['title'] == '' or doc['title'] is None:
                     doc['title'] = doc['officialtitle']
-                documents.append({"documentid": doc['documentid'], "title": doc['title'], "officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl'], "officialnb": doc['officialnb']})
+                documents.append({"documentid": doc['documentid'], "title": doc['title'], "officialtitle": doc['officialtitle'], "remoteurl": doc['remoteurl'], "abbreviation": doc['abbreviation'], "officialnb": doc['officialnb']})
 
     return documents
 
@@ -443,6 +445,7 @@ def get_content(id, request):
                         "title": "",
                         "officialtitle": "",
                         "officialnb": "",
+                        "abbreviation": "",
                         "remoteurl": ""
                     }]
 
