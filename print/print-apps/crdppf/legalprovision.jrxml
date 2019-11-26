@@ -21,10 +21,11 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="TOC_Appendices" class="java.util.Map"/>
 	<parameter name="topicname" class="java.lang.String"/>
+	<field name="officialtitle" class="java.lang.String"/>
 	<field name="title" class="java.lang.String"/>
 	<field name="remoteurl" class="java.lang.String"/>
+	<field name="abbreviation" class="java.lang.String"/>
 	<field name="officialnb" class="java.lang.String"/>
-	<field name="officialtitle" class="java.lang.String"/>
 	<detail>
 		<band height="26">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference" hyperlinkTarget="Blank">
@@ -51,7 +52,7 @@
 					<font fontName="Cadastra" size="8.5"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{officialtitle}.equals("") || $F{officialtitle} == null ?"&mdash;" : $F{officialtitle}) + (($F{officialnb}.equals("") || $F{officialnb} == null) ? "" : ", " +$F{officialnb})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{title}.equals("") || $F{title} == null ? ($F{officialtitle}.equals("") || $F{officialtitle} == null ? "&mdash;" :   $F{officialtitle}): $F{title}) + (($F{abbreviation}.equals("") || $F{abbreviation} == null) ? "" : " (" + $F{abbreviation} + ")") + (($F{officialnb}.equals("") || $F{officialnb} == null) ? "" : ", " + $F{officialnb})]]></textFieldExpression>
 				<hyperlinkReferenceExpression><![CDATA["http://crdppf.ne.ch"]]></hyperlinkReferenceExpression>
 			</textField>
 		</band>

@@ -26,7 +26,10 @@
 			<![CDATA[]]>
 		</queryString>
 		<field name="officialtitle" class="java.lang.String"/>
+		<field name="title" class="java.lang.String"/>
 		<field name="remoteurl" class="java.lang.String"/>
+		<field name="abbreviation" class="java.lang.String"/>
+		<field name="officialnb" class="java.lang.String"/>
 	</subDataset>
 	<subDataset name="LegalProvisionsDataSource" uuid="5f77d94f-5f61-48d9-ad0a-eba04cb7a940">
 		<queryString>
@@ -35,13 +38,18 @@
 		<field name="officialtitle" class="java.lang.String"/>
 		<field name="title" class="java.lang.String"/>
 		<field name="remoteurl" class="java.lang.String"/>
+		<field name="abbreviation" class="java.lang.String"/>
+		<field name="officialnb" class="java.lang.String"/>
 	</subDataset>
 	<subDataset name="ReferencesDataSource" uuid="15455023-00f1-4b7d-9e91-d37b6e6ad77c">
 		<queryString>
 			<![CDATA[]]>
 		</queryString>
 		<field name="officialtitle" class="java.lang.String"/>
+		<field name="title" class="java.lang.String"/>
 		<field name="remoteurl" class="java.lang.String"/>
+		<field name="abbreviation" class="java.lang.String"/>
+		<field name="officialnb" class="java.lang.String"/>
 	</subDataset>
 	<subDataset name="AuthorityDataSource" uuid="d47f8fd5-7b9e-4ddc-a17d-ce81cd5777a2">
 		<queryString>
