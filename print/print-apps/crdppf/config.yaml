@@ -124,18 +124,21 @@ templates:
               title: !string {}
               officialtitle: !string {}
               officialnb: !string {}
+              abbreviation: !string {}
               remoteurl: !string {}
           legalprovisions: !datasource
             attributes:
               title: !string {}
               officialtitle: !string {}
               officialnb: !string {}
+              abbreviation: !string {}
               remoteurl: !string {}
           references: !datasource
             attributes:
               title: !string {}
               officialtitle: !string {}
               officialnb: !string {}
+              abbreviation: !string {}
               remoteurl: !string {}
           authority: !datasource
             attributes:
