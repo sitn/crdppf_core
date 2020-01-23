@@ -131,7 +131,10 @@ def add_layer(layer, featureid, featureinfo, translations, appconfig, topicdata)
         groupedresult = {}
         for code in codegenres:
             for result in results:
-                measure = int(result['properties']['intersectionMeasure'].replace(' : ', '').replace(' - ', '').replace('[m2]', '').replace('[m]', ''))
+                if result['properties']['intersectionMeasure'] == ' ':
+                    measure = None
+                else:
+                    measure = int(result['properties']['intersectionMeasure'].replace(' : ', '').replace(' - ', '').replace('[m2]', '').replace('[m]', ''))
                 if result['properties']['codegenre'] == code:
                     if code in groupedresult:
                         groupedresult[code]["intersectionMeasure"] += measure
@@ -475,6 +478,13 @@ def get_content(id, request):
                                         "area": str(feature['intersectionMeasure'])+' m<sup>2</sup>',
                                         "area_pct": round((float(
                                             feature['intersectionMeasure'])*100)/propertyarea, 1)
+                                    })
+                                elif feature['geomType'] == 'point':
+                                    topicdata[str(topic.topicid)]["restrictions"].append({
+                                        "codegenre": legenddir+feature['codegenre']+".png",
+                                        "teneur": feature['teneur'],
+                                        "area": '',
+                                        "area_pct": -1
                                     })
                                 else:
                                     topicdata[str(topic.topicid)]["restrictions"].append({
