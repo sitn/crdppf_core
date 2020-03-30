@@ -150,6 +150,7 @@ if 'property' in db_config['tables']:
         id = Column(table_def_['att_id_property'], String)
         egrid = Column(table_def_['att_egrid'], String)
         nummai = Column(table_def_['att_property_number'], String)
+        srfmai = Column(table_def_['att_property_area'], String)
         typimm = Column(table_def_['att_property_type'], String)
         geom = Column(Geometry("GEOMETRY", srid=srid_))
 else:
