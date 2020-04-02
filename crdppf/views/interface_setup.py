@@ -12,7 +12,7 @@ def get_interface_config(request):
     themes = DBSession.query(Themes).filter_by(publish=True).order_by(Themes.order).all()
     themeList = []
     for theme in themes:
-        layers = DBSession.query(Layers).filter_by(theme_id=theme.id).filter_by(baselayer=False).all()
+        layers = DBSession.query(Layers).filter_by(theme_id=theme.id).filter_by(baselayer=False).order_by(Layers.layerid).all()
         layerDico = {}
         for layer in layers:
             layerDico[layer.layername] = layer.layername
