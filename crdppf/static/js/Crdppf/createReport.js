@@ -12,25 +12,27 @@ Crdppf.Report= {
 
         this.pdfMask = pdfMask;
 
-        Ext.Ajax.request({
-            url: url,
-            success: function(response) {
-              if (Crdppf.pdfRenderEngine == 'crdppf_mfp'){
-                  var result = Ext.decode(response.responseText);
-                  this.currentStatus = 0;
-                  this.printManager(result.ref, false);
-              } else {
-                this.currentStatus = 0;
-                this.getReport(url);
-              }
-            },
-            method: 'GET',
-            failure: function () {
-                Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
-                pdfMask.hide();
-            },
-            scope: this
-        });
+        if (Crdppf.pdfRenderEngine == 'crdppf_mfp'){
+          Ext.Ajax.request({
+              url: url,
+              success: function(response) {
+                    var result = Ext.decode(response.responseText);
+                    this.currentStatus = 0;
+                    this.printManager(result.ref, false);
+
+              },
+              method: 'GET',
+              failure: function () {
+                  Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
+                  pdfMask.hide();
+              },
+              scope: this
+          });
+        } else {
+          window.location.href = url;
+          pdfMask.hide();
+          Ext.getCmp('pdfExtractWindow').hide();
+        }
     },
 
     printManager: function(ref, status) {

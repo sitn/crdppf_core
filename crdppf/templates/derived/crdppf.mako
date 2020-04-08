@@ -32,5 +32,5 @@
 % endif
         });
     </script>
-    
+
 <div id="main"></div>
