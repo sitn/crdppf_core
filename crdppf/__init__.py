@@ -106,7 +106,14 @@ def includeme(config):
     # Print proxy routes
     config.add_route('printproxy_report_get', '/printproxy/report/{ref}')
     config.add_route('printproxy_status', '/printproxy/status/{ref}.json')
-    config.add_route('printproxy_report_create', '/printproxy/report/{type_}/{id}')
+    try:
+        pdf_renderer = settings['pdf_render_engine']
+        if pdf_renderer == 'crdppf_mfp':
+            config.add_route('printproxy_report_create', '/printproxy/report/{type_}/{id}')
+        else:
+            config.add_route('printproxy_report_create', '/extract/{type_}/{format}/{id}')
+    except:
+        config.add_route('printproxy_report_create', '/extract/{type_}/{format}/{id}')
 
     #~ # ADMIN VIEWS
     #~ config.add_view('crdppf.views.administration.Config', route_name='configpanel')
