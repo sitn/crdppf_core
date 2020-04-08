@@ -15,9 +15,14 @@ Crdppf.Report= {
         Ext.Ajax.request({
             url: url,
             success: function(response) {
-                var result = Ext.decode(response.responseText);
+              if (Crdppf.pdfRenderEngine == 'crdppf_mfp'){
+                  var result = Ext.decode(response.responseText);
+                  this.currentStatus = 0;
+                  this.printManager(result.ref, false);
+              } else {
                 this.currentStatus = 0;
-                this.printManager(result.ref, false);
+                this.getReport(url);
+              }
             },
             method: 'GET',
             failure: function () {
@@ -25,7 +30,7 @@ Crdppf.Report= {
                 pdfMask.hide();
             },
             scope: this
-        }); 
+        });
     },
 
     printManager: function(ref, status) {
@@ -67,10 +72,14 @@ Crdppf.Report= {
     },
 
     getReport: function(ref) {
-        var pdfurl = [
-            Crdppf.printReportGetUrl,
-            ref
-        ].join('');
+        if (Crdppf.pdfRenderEngine == 'crdppf_mfp'){
+          var pdfurl = [
+              Crdppf.printReportGetUrl,
+              ref
+          ].join('');
+        } else {
+          var pdfurl = ref;
+        }
         var button = Ext.getCmp('pdfDisplayButton');
         button.setHandler(function() {window.open(pdfurl);});
         Ext.getCmp('pdfDisplayPanel').show();
