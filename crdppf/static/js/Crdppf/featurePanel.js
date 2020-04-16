@@ -1,8 +1,8 @@
 Ext.namespace('Crdppf');
-OpenLayers.ImgPath = Crdppf.OLImgPath;  
+OpenLayers.ImgPath = Crdppf.OLImgPath;
 
 // Constructor
-Crdppf.FeaturePanel = function Map() {    
+Crdppf.FeaturePanel = function Map() {
     this.init();
 };
 
@@ -69,10 +69,10 @@ Crdppf.FeaturePanel.prototype = {
     * Method: On multiple property selection (DP case) the user is ask to select only one
     * Parameters:
     * features:
-    * labels: 
+    * labels:
     */
     PropertySelection: function(features, labels) {
-        
+
         var propertySelectionWindow;
 
         if (features.length > 1) {
@@ -80,8 +80,9 @@ Crdppf.FeaturePanel.prototype = {
             for (var i = 0; i < features.length; i++){
                 properties[i] = [
                     i,
-                    features[i].data.typimm+': '+features[i].data.nummai+' '+features[i].data.cadastre,
+                    features[i].data.typimm+': '+features[i].data.nummai+' '+features[i].data.cadastre+' EGRID:'+features[i].data.egrid,
                     features[i].data.id,
+                    features[i].data.egrid,
                     features[i].data.source,
                     features[i].data.nufeco
                 ];
@@ -90,7 +91,7 @@ Crdppf.FeaturePanel.prototype = {
             var comboFeatureSelect = new Ext.form.ComboBox({
                 store: new Ext.data.ArrayStore({
                     fields: ['index','displaytxt','id','id'],
-                    data: properties 
+                    data: properties
                 }),
                 displayField: 'displaytxt',
                 valueField: 'index',
@@ -139,7 +140,7 @@ Crdppf.FeaturePanel.prototype = {
     insertRestrictions: function (request, me) {
         var geojson_format = new OpenLayers.Format.GeoJSON();
         var jsonData = geojson_format.read(request.responseText);
-        Crdppf.FeaturePanel.featureTree.setTitle(Crdppf.labels.restrictionPanelTxt + Crdppf.currentProperty.attributes.id);
+        Crdppf.FeaturePanel.featureTree.setTitle(Crdppf.labels.restrictionPanelTxt + Crdppf.currentProperty.attributes.id + ' EGRID:'+Crdppf.currentProperty.attributes.egrid);
         var lList = [];
         // iterate over the restrictions found
         Crdppf.FeaturePanel.root.removeAll(true);
@@ -152,7 +153,7 @@ Crdppf.FeaturePanel.prototype = {
                 for (var l=0; l < ll.length; l++){
                     for (var key in ll[l].layers){
                         if (lName == key){
-                            fullName = Crdppf.labels[key]; 
+                            fullName = Crdppf.labels[key];
                         }
                     }
                 }
@@ -228,10 +229,10 @@ Crdppf.FeaturePanel.prototype = {
     * Method: On multiple property selection (DP case) the user is ask to select only one
     * Parameters:
     * features:
-    * labels: 
+    * labels:
     */
     featureSelection: function(property) {
-        
+
         this.featureTree.expand(true);
         Crdppf.Map.intersectLayer.removeAllFeatures();
         Crdppf.Map.selectLayer.addFeatures([property]);
@@ -241,7 +242,7 @@ Crdppf.FeaturePanel.prototype = {
         Crdppf.filterlist.cadastrenb = parseInt(parcelId.split('_', 1)[0]);
         Crdppf.filterlist.chmunicipalitynb = Number(property.attributes.nufeco);
         Crdppf.docfilters(Crdppf.filterlist);
-        
+
         // If no result, display no results message
         if (Crdppf.LayerTreePanel.overlaysList.length === 0) {
             var top =  new Ext.tree.TreeNode({
@@ -277,7 +278,7 @@ Crdppf.FeaturePanel.prototype = {
         });
     },
     /***
-    * Method: initialize the feature tree 
+    * Method: initialize the feature tree
     */
     init: function () {
         this.featureTree.setRootNode(this.root);

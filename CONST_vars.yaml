@@ -22,12 +22,12 @@ vars:
 
     # default language (currently Fr or De)
     default_language: Fr
-    
+
     disclaimer: overwrite_me
 
     # APACHE
     apache24_location: ""
-    
+
     # Set this variable to WSGIApplicationGroup %{GLOBAL} if the application fails to load through mod_wsgi / Apache
     apache24_modwsgi: ""
 
@@ -75,11 +75,14 @@ vars:
     # Waitress port
     waitress_port: overwrite_me
 
+    # Render engine to use for the pdf extract: crdppf_mfp or pyramid_oereb_mfp
+    pdf_renderer: overwrite_me
+
     # Print level logger (DEBUG if development else ERROR)
     print_level_logger: ERROR
 
     tomcat_webapp_folder: OVERWRITEME
-    
+
     directory: __import__('os').getcwd()
     python_path: "{directory}/.build/venv/lib/site-packages"
 
@@ -99,7 +102,7 @@ vars:
     specific_root_dir: "{directory}/crdppfportal"
     jsbuild_cfg: "{directory}/crdppf_core/jsbuild/app.cfg"
     jsbuild_root_dir: "{directory}"
-  
+
 interpreted:
     python:
     - authtkt_secret

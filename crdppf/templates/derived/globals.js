@@ -14,8 +14,14 @@ Crdppf.getBaselayerConfigUrl = "${request.route_url('get_baselayers_config')}";
 Crdppf.wmsUrl = "${request.route_url('ogcproxy')}";
 Crdppf.ogcproxyUrl  = "${request.route_url('ogcproxy')}";
 Crdppf.printUrl = "${request.route_url('create_extract')}";
+Crdppf.pdfRenderEngine = "${request.registry.settings['pdf_render_engine']}";
 <%
-    print_report = request.route_url('printproxy_report_create', id='', type_='2split')
+    if request.registry.settings['pdf_render_engine'] == 'crdppf_mfp':
+      print_report = request.route_url('printproxy_report_create', id='', type_='2split')
+    else:
+      print_report = request.route_url('printproxy_report_create', id='', format='', type_='2split')
+    endif
+
     print_report = print_report.split('2split')[0]
     print_status = request.route_url('printproxy_status', ref='')
     print_status = print_status.split('.json')[0]

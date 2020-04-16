@@ -12,20 +12,27 @@ Crdppf.Report= {
 
         this.pdfMask = pdfMask;
 
-        Ext.Ajax.request({
-            url: url,
-            success: function(response) {
-                var result = Ext.decode(response.responseText);
-                this.currentStatus = 0;
-                this.printManager(result.ref, false);
-            },
-            method: 'GET',
-            failure: function () {
-                Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
-                pdfMask.hide();
-            },
-            scope: this
-        }); 
+        if (Crdppf.pdfRenderEngine == 'crdppf_mfp'){
+          Ext.Ajax.request({
+              url: url,
+              success: function(response) {
+                    var result = Ext.decode(response.responseText);
+                    this.currentStatus = 0;
+                    this.printManager(result.ref, false);
+
+              },
+              method: 'GET',
+              failure: function () {
+                  Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
+                  pdfMask.hide();
+              },
+              scope: this
+          });
+        } else {
+          window.location.href = url;
+          pdfMask.hide();
+          Ext.getCmp('pdfExtractWindow').hide();
+        }
     },
 
     printManager: function(ref, status) {
@@ -67,10 +74,14 @@ Crdppf.Report= {
     },
 
     getReport: function(ref) {
-        var pdfurl = [
-            Crdppf.printReportGetUrl,
-            ref
-        ].join('');
+        if (Crdppf.pdfRenderEngine == 'crdppf_mfp'){
+          var pdfurl = [
+              Crdppf.printReportGetUrl,
+              ref
+          ].join('');
+        } else {
+          var pdfurl = ref;
+        }
         var button = Ext.getCmp('pdfDisplayButton');
         button.setHandler(function() {window.open(pdfurl);});
         Ext.getCmp('pdfDisplayPanel').show();
