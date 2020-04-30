@@ -318,11 +318,11 @@
 							<textFieldExpression><![CDATA[($F{area_pct} == -1 || $F{area_pct}.equals( -1.0 )) ? null : $F{area_pct}.toString()+" %"]]></textFieldExpression>
 						</textField>
 						<image>
-							<reportElement x="0" y="2" width="17" height="10" uuid="59924620-de92-45f8-bc85-ec77a6f50822">
+							<reportElement x="0" y="3" width="18" height="9" uuid="59924620-de92-45f8-bc85-ec77a6f50822">
 								<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-								<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+								<property name="com.jaspersoft.studio.unit.y" value="px"/>
 							</reportElement>
 							<box>
 								<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -370,11 +370,11 @@
 							<textFieldExpression><![CDATA[($F{teneur}.equals("") || $F{teneur} == null) ? null : $F{teneur}]]></textFieldExpression>
 						</textField>
 						<image>
-							<reportElement x="0" y="2" width="17" height="10" isRemoveLineWhenBlank="true" uuid="d22901e2-d135-4440-8121-357008e9cb17">
+							<reportElement x="0" y="3" width="18" height="9" isRemoveLineWhenBlank="true" uuid="d22901e2-d135-4440-8121-357008e9cb17">
 								<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-								<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+								<property name="com.jaspersoft.studio.unit.y" value="px"/>
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							</reportElement>
 							<box>
 								<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
