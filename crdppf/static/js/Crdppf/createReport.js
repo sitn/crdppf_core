@@ -22,6 +22,7 @@ Crdppf.Report= {
 
               },
               method: 'GET',
+              timeout: 80000,
               failure: function () {
                   Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
                   pdfMask.hide();
