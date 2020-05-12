@@ -65,6 +65,7 @@ CONFIG_VARS += \
 	mapOverviewSizeH \
 	pdfRenderer \
 	keymap \
+	pdf_renderer \
 	crdppf_wms \
 	authtkt_cookie_name \
 	authtkt_secret \

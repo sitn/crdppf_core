@@ -1,6 +1,6 @@
 /*
  * @requires GeoExt/widgets/MapPanel.js
- * @requires GeoExt/widgets/LegendPanel.js 
+ * @requires GeoExt/widgets/LegendPanel.js
  * @requires GeoExt/widgets/WMSLegend.js
  * @include Crdppf/map.js
  * @include Crdppf/featurePanel.js
@@ -33,7 +33,7 @@ Ext.onReady(function() {
             var dlg = Ext.MessageBox.getDialog();
             var buttons = dlg.buttons;
             for (var i = 0; i < buttons.length; i++){
-                 buttons[i].addClass('msgButtonStyle'); 
+                 buttons[i].addClass('msgButtonStyle');
             }
             Ext.Msg.show({
                title: Crdppf.labels.disclaimerWindowTitle,
@@ -50,7 +50,7 @@ Ext.onReady(function() {
 
     Crdppf.triggerFunction = function(counter) {
         if (counter == 3) {
-            synchronize(sync); 
+            synchronize(sync);
         }
     };
 
@@ -59,7 +59,7 @@ Ext.onReady(function() {
             Crdppf.init_main(lang);
         } else {
             window.open(Crdppf.labels.disclaimerRedirectUrl, "_self");
-        }  
+        }
     };
 
     // Create LegalDocumentStore and load it
@@ -82,7 +82,7 @@ Ext.onReady(function() {
                 OpenLayers.Util.extend(OpenLayers.Lang.fr, Crdppf.labels);
             }
             Crdppf.loadingCounter += 1;
-            Crdppf.triggerFunction(Crdppf.loadingCounter);            
+            Crdppf.triggerFunction(Crdppf.loadingCounter);
         },
         method: 'POST',
         failure: function () {
@@ -97,13 +97,13 @@ Ext.onReady(function() {
             Crdppf.layerList = Ext.decode(response.responseText);
             sync += 1;
             Crdppf.loadingCounter += 1;
-            Crdppf.triggerFunction(Crdppf.loadingCounter);    
+            Crdppf.triggerFunction(Crdppf.loadingCounter);
         },
         method: 'POST',
         failure: function () {
             Ext.Msg.alert(Crdppf.labels.serverErrorMessage);
         }
-    }); 
+    });
 });
 
 Ext.namespace('Crdppf');
@@ -124,17 +124,17 @@ Crdppf.init_main = function(lang) {
     var mapOptions = {
         divMousePosition: 'mousepos'
     };
-    
+
     // Global static variable that keeps track of the currently selected property
     Crdppf.currentProperty = null;
-    
+
     // Instantiate the Map
     Crdppf.Map = new Crdppf.Map();
     var map = Crdppf.Map.map;
 
     // Instantiate the FeaturePanel
     Crdppf.FeaturePanel = new Crdppf.FeaturePanel();
-    
+
     // updateLayers: global static boolean variable to deal with IE
     Crdppf.updateLayers = true;
 
@@ -153,7 +153,7 @@ Crdppf.init_main = function(lang) {
                 if (pressed) {
                     Crdppf.FeaturePanel.setInfoControl();
                 }
-            }                  
+            }
         }
     });
 
@@ -175,7 +175,7 @@ Crdppf.init_main = function(lang) {
                     Crdppf.docfilters({'objectids':[Crdppf.filterlist.objectids[i-1]]});
                 }
                 infoButton.toggle(false);
-            }                  
+            }
         }
     });
 
@@ -225,7 +225,7 @@ Crdppf.init_main = function(lang) {
                                 Crdppf.measureTool.disableMeasureControl();
                                 infoButton.toggle(true);
                             }
-                        }   
+                        }
                     }
                 }
             ]
@@ -286,7 +286,7 @@ Crdppf.init_main = function(lang) {
             fieldLabel: 'Auto Layout',
             items: [{
                 xtype: 'button',
-                text: Crdppf.labels.generateExtract,  
+                text: Crdppf.labels.generateExtract,
                 cls: 'msgButtonStyle',
                 listeners: {
                     click: function(){
@@ -295,13 +295,21 @@ Crdppf.init_main = function(lang) {
 
                         var selectedRadio = Ext.getCmp('extractRadioGroup').getValue();
 
-                        var url = [
-                            Crdppf.printReportCreateUrl,
-                            selectedRadio.inputValue,
-                            "/",
-                            Crdppf.currentProperty.attributes.id
-                        ].join('');
-
+                        if(Crdppf.pdfRenderEngine == 'crdppf_mfp'){
+                          var url = [
+                              Crdppf.printReportCreateUrl,
+                              selectedRadio.inputValue,
+                              "/",
+                              Crdppf.currentProperty.attributes.id
+                          ].join('');
+                        } else {
+                          var url = [
+                              Crdppf.printReportCreateUrl,
+                              selectedRadio.inputValue,
+                              "/pdf/",
+                              Crdppf.currentProperty.attributes.egrid
+                          ].join('');
+                        }
                         this.Report.create(url, pdfMask);
 
                     },
@@ -311,7 +319,7 @@ Crdppf.init_main = function(lang) {
                     xtype: 'button',
                     cls: 'msgButtonStyle',
                     height: 20,
-                    width: 100,    
+                    width: 100,
                     text: Crdppf.labels.cancelExtract,
                     listeners: {
                         click: function(){
@@ -378,7 +386,7 @@ Crdppf.init_main = function(lang) {
         listeners:{
             click: function (){
                 Crdppf.Map.infoControl.deactivate();
-            }  
+            }
         }
     });
 
@@ -394,7 +402,7 @@ Crdppf.init_main = function(lang) {
         listeners:{
             click: function (){
                 Crdppf.Map.map.zoomIn();
-            }  
+            }
         }
     });
 
@@ -410,7 +418,7 @@ Crdppf.init_main = function(lang) {
         listeners:{
             click: function (){
                 Crdppf.Map.map.zoomOut();
-            }  
+            }
         }
     });
 
@@ -519,10 +527,10 @@ Crdppf.init_main = function(lang) {
         margins: '5 5 0 0',
         layout: 'border',
         items: [
-            mapPanel   
+            mapPanel
         ],
         bbar: bottomToolBar
-    }); 
+    });
 
     // create the header panel containing the page banner
     var headerPanel = new Ext.Panel({
@@ -554,8 +562,8 @@ Crdppf.init_main = function(lang) {
         width: 250,
         boxMinWidth: 225,
         items: [
-            searcher, 
-            themePanel, 
+            searcher,
+            themePanel,
             layerTree
         ],
         layoutConfig: {
@@ -565,7 +573,7 @@ Crdppf.init_main = function(lang) {
 
     //legend panel in the lower east layout part - serves to display the layer legends
     var legendPanel = new GeoExt.LegendPanel({
-        collapsible:true, 
+        collapsible:true,
         map: Crdppf.Map.map,
         title: Crdppf.labels.legendPanelTitle,
         autoScroll: true,
@@ -625,7 +633,7 @@ Crdppf.init_main = function(lang) {
         items: [
             headerPanel,
             navigationPanel,
-            infoPanel, 
+            infoPanel,
             centerPanel
         ]
     });
