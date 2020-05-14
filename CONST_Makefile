@@ -240,7 +240,7 @@ build-javascript: .build/jsbuild.timestamp
 .PHONY: update-git-submodules
 update-git-submodules:  .build/git-submodules.timestamp
 
-.build/git-submodules.timestamp: 
+.build/git-submodules.timestamp:
 	cd $(SUB_PROJECT) && git submodule sync
 	cd $(SUB_PROJECT) && git submodule update --init
 	touch $@
