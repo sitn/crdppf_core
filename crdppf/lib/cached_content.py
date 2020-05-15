@@ -7,8 +7,8 @@ cache_region.configure("dogpile.cache.memory")
 
 from crdppf.models import DBSession
 
-from crdppf.models import AppConfig, Translations, Glossar
-from crdppf.models import Informations, ExclusionsResponsabilite
+from crdppf.models.models import AppConfig, Translations, Glossar
+from crdppf.models.models import Informations, ExclusionsResponsabilite
 
 import logging
 

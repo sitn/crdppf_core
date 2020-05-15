@@ -1,7 +1,8 @@
 # -*- coding: UTF-8 -*-
 from pyramid.view import view_config
 
-from crdppf.models import DBSession, Translations, Layers
+from crdppf.models import DBSession
+from crdppf.models.models import Translations, Layers
 
 
 @view_config(route_name='initjs', renderer='crdppf:templates/derived/init.js')

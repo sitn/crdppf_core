@@ -2,7 +2,8 @@
 
 from sqlalchemy import or_
 
-from crdppf.models import DBSession, LegalDocuments, OriginReference
+from crdppf.models import DBSession
+from crdppf.models.models import LegalDocuments, OriginReference
 
 
 def get_documents(filters=None):

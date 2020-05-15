@@ -15,10 +15,10 @@ from geojson import loads
 from xml.dom.minidom import parseString
 
 from crdppf.models import DBSession
-from crdppf.models import Translations, PaperFormats
-from crdppf.models import Town, Property, LocalName
-from crdppf.models import CHAirportSecurityZonesPDF, CHAirportProjectZonesPDF
-from crdppf.models import CHPollutedSitesCivilAirportsPDF, CHPollutedSitesPublicTransportsPDF
+from crdppf.models.models import Translations, PaperFormats
+from crdppf.models.models import Town, Property, LocalName
+from crdppf.models.models import CHAirportSecurityZonesPDF, CHAirportProjectZonesPDF
+from crdppf.models.models import CHPollutedSitesCivilAirportsPDF, CHPollutedSitesPublicTransportsPDF
 
 
 def geom_from_coordinates(coords):

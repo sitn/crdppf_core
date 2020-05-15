@@ -9,7 +9,8 @@ from crdppf.util.get_feature_functions import get_features_function
 from crdppf.util.documents import get_document_ref, get_documents
 from crdppf.util.pdf_functions import get_feature_info, get_translations
 
-from crdppf.models import DBSession, Topics, AppConfig
+from crdppf.models import DBSession
+from crdppf.models.models import Topics, AppConfig
 
 from geoalchemy2.shape import to_shape, WKTElement
 import logging

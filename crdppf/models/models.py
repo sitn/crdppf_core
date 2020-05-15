@@ -6,10 +6,6 @@ from sqlalchemy import(
 
 from sqlalchemy.orm import relationship, backref
 
-import sqlahelper
-
-DBSession = sqlahelper.get_session()
-
 from papyrus.geo_interface import GeoInterface
 
 from geoalchemy2 import Geometry
@@ -18,7 +14,7 @@ from crdppf import db_config
 
 srid_ = db_config['srid']
 
-Base = sqlahelper.get_base()
+from crdppf.models import Base
 
 
 # Models for the configuration of the application

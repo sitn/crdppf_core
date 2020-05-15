@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from crdppf.models import DBSession
-from crdppf.models import Property, PaperFormats
+from crdppf.models.models import Property, PaperFormats
 
 from sqlalchemy.sql import func
 
