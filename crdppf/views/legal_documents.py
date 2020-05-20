@@ -4,8 +4,8 @@ from pyramid.view import view_config
 from simplejson import loads as sloads
 
 from crdppf.models import DBSession
-from crdppf.models import Topics, Town
-from crdppf.models import Documents
+from crdppf.models.models import Topics, Town
+from crdppf.models.models import Documents
 
 from crdppf.util.documents import get_documents, get_document_ref
 

@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 from pyramid.view import view_config
 from crdppf.models import DBSession
-from crdppf.models import Themes, Layers
+from crdppf.models.models import Themes, Layers
 
 
 @view_config(route_name='get_interface_config', renderer='json')

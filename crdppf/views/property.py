@@ -5,7 +5,7 @@ from pyramid.view import view_config
 
 from crdppf.models import DBSession
 from papyrus.protocol import Protocol
-from crdppf.models import Property
+from crdppf.models.models import Property
 from sqlalchemy.sql import text
 
 

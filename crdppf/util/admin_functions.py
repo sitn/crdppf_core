@@ -4,7 +4,8 @@ from pyramid.view import view_config
 from simplejson import loads
 # import types
 
-from crdppf.models import DBSession, Translations
+from crdppf.models import DBSession
+from crdppf.models.models import Translations
 
 
 @view_config(route_name='get_translations_list', renderer='json')
