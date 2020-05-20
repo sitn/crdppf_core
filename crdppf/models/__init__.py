@@ -6,7 +6,7 @@ from zope.sqlalchemy import register
 
 # CREATE PostgreSQL Session and base
 maker = orm.sessionmaker(autoflush=True, autocommit=False)
-
+register(maker)
 DBSession = orm.scoped_session(maker)
 
 Base = declarative_base()
