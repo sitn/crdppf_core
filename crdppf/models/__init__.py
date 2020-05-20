@@ -2,11 +2,10 @@
 
 import sqlalchemy.orm as orm
 from sqlalchemy.ext.declarative import declarative_base
-from zope.sqlalchemy import ZopeTransactionExtension
+from zope.sqlalchemy import register
 
 # CREATE PostgreSQL Session and base
-maker = orm.sessionmaker(autoflush=True, autocommit=False,
-                                        extension=ZopeTransactionExtension())
+maker = orm.sessionmaker(autoflush=True, autocommit=False)
 
 DBSession = orm.scoped_session(maker)
 
