@@ -9,7 +9,7 @@ except ImportError:
 
 setup(
     name='crdppf',
-    version='3.1.0',
+    version='3.1.1',
     description='SITN, public law restriction portal core',
     author='sitn',
     author_email='sitn@ne.ch',
@@ -21,7 +21,6 @@ setup(
         'jstools',
         'papyrus',
         'pyramid_tm',
-        'sqlahelper',
     ],
     packages=find_packages(exclude=['ez_setup']),
     include_package_data=True,
