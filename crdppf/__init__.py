@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from sqlalchemy import engine_from_config
-import sqlahelper
 
 from pyramid_mako import add_mako_renderer
 from pyramid.session import SignedCookieSessionFactory
