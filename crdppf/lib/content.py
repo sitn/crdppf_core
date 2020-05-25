@@ -133,7 +133,7 @@ def add_layer(layer, featureid, featureinfo, translations, appconfig, topicdata)
         for code in codegenres:
             for result in results:
                 if result['properties']['intersectionMeasure'] == ' ':
-                    measure = None
+                    measure = 1
                 else:
                     measure = int(result['properties']['intersectionMeasure'].replace(' : ', '').replace(' - ', '').replace('[m2]', '').replace('[m]', ''))
                 if result['properties']['codegenre'] == code:
@@ -484,7 +484,7 @@ def get_content(id, request):
                                     topicdata[str(topic.topicid)]["restrictions"].append({
                                         "codegenre": legenddir+feature['codegenre']+".png",
                                         "teneur": feature['teneur'],
-                                        "area": '',
+                                        "area": str(feature['intersectionMeasure']),
                                         "area_pct": -1
                                     })
                                 else:
