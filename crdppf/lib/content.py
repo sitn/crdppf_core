@@ -166,33 +166,25 @@ def get_content(id, request):
 
     # initalize extract object
     extract = Extract(request)
-    type = request.matchdict.get("type_")
     directprint = False
-    if type == 'file':
-        type = 'reduced'
+    if extract.reporttype == 'file':
+        extract.reporttype = 'reduced'
         directprint = True
+
     for config in configs:
         if config.parameter not in ['crdppflogopath', 'cantonlogopath']:
             extract.baseconfig[config.parameter] = config.paramvalue
-    extract.srid = db_config['srid']
 
     extract.topiclegenddir = request.static_url('crdppfportal:static/public/legend/')
 
-    # Define language to get multilingual labels for the selected language
-    # defaults to 'fr': french - this may be changed in the appconfig
-    if 'lang' not in session:
-        extract.baseconfig['lang'] = request.registry.settings['default_language'].lower()
-    else:
-        extract.baseconfig['lang'] = session['lang'].lower()
-    extract.baseconfig['translations'] = get_translations(extract.baseconfig['lang'])
     # for simplification
-    translations = extract.baseconfig['translations']
+    translations = extract.translations
 
     # 1) If the ID of the parcel is set get the basic attributs of the property
     # else get the ID (id) of the selected parcel first using X/Y coordinates of the center
     # ---------------------------------------------------------------------------------------------------
-    featureinfo = get_feature_info(id, extract.srid, translations)  # '1_14127' # test parcel or '1_11340'
-    extract.filename = extract.id + featureinfo['featureid']
+    featureinfo = extract.real_estate  # '1_14127' # test parcel or '1_11340'
+    sdf
 
     # 3) Get the list of all the restrictions by topicorder set in a column
     # ------------------------------------------

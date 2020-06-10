@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+from crdppf import db_config
 
+from pyramid.httpexceptions import HTTPBadRequest, HTTPNotFound
 from datetime import datetime
 
+from crdppf.util.pdf_functions import get_translations, get_feature_info
 
 # MAIN DOCUMENT
 class Extract(object):
@@ -14,10 +17,6 @@ class Extract(object):
         self.creationdate = datetime.now().strftime("%d.%m.%Y   %H:%M:%S")
         # same same but different use
         self.timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-        # setting the default  root filename of the PDF and temporary files
-        self.filename = 'thefilename'
-        # report type: [reduced, reduced certified, complete, complete certified]
-        self.reporttype = ''
         # output format of the report
         self.format = ''
         # basic configuration of the extract, like the language, translations and so on
@@ -47,6 +46,7 @@ class Extract(object):
         # dict to store the refernces data
         self.reference_entries = []
         self.appendix_links = []
+        self.srid = db_config['srid']
         self.basemap = {}
         self.wms_params = {}
         # setting the GetLegendGraphic option for a dynamic composition of the WMS URL
@@ -61,3 +61,29 @@ class Extract(object):
         self.wms_get_map = {
             'REQUEST': 'GetMap'
         }
+        # Get language to fetch multilingual labels for the selected language
+        # defaults to 'fr': french - this may be changed in the appconfig
+        if 'lang' not in request.session:
+            self.lang = request.registry.settings['default_language'].lower()
+        else:
+            self.lang = request.session['lang'].lower()
+        # Get all translation strings
+        self.translations = get_translations(self.lang)
+        # Set extract report type: [reduced, reduced certified, complete, complete certified]
+        try:
+            self.reporttype = request.matchdict.get("type_")
+        except:
+            raise HTTPBadRequest('No valid extract type was found.')
+        # Sets the real estate id if it exists. Else returns an error message.
+        try:
+            self.propertyid = request.matchdict.get("id")
+        except:
+            raise HTTPBadRequest('The real estate id could not be found.')
+        # setting the default  root filename of the PDF and temporary files
+        self.filename = self.id + self.propertyid
+
+        # Gets the basic attributs of the real estate if it exists
+        try:
+            self.real_estate = get_feature_info(self.propertyid, self.srid, self.translations)
+        except:
+            raise HTTPNotFound('No real estate with the given id could be found.')
