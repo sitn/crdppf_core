@@ -319,6 +319,17 @@ class PollutedSites(GeoInterface, Base):
     idobj = Column(Integer, primary_key=True)
     geom = Column(Geometry("GEOMETRY", srid=srid_))
 
+if 'military_polluted_sites' in db_config['restrictions']:
+    class ContaminatedMilitarySites(GeoInterface, Base):
+        __tablename__ = 'r117_vbs_belastete_standorte_militaer'
+        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom = Column(Geometry("GEOMETRY", srid=srid_))
+
+else:
+    class ContaminatedMilitarySites():
+        pass
+
 if 'airport_polluted_sites' in db_config['restrictions']:
     class CHPollutedSitesCivilAirports(GeoInterface, Base):
         __tablename__ = 'r118_bazl_belastete_standorte_zivilflugplaetze'
