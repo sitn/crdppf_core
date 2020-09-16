@@ -9,7 +9,7 @@ except ImportError:
 
 setup(
     name='crdppf',
-    version='3.1.1',
+    version='3.1.2',
     description='SITN, public law restriction portal core',
     author='sitn',
     author_email='sitn@ne.ch',
