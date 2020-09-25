@@ -67,5 +67,7 @@ def get_features_function(parcelGeom, params):
                     jsonFeature['properties']['intersectionMeasure'] = intersectionMeasureTxt
                     jsonFeature['properties']['geomType'] = 'point'
                     featureList.append(jsonFeature)
+                else:
+                    return('Error on geometry type:' + geometryType)
 
     return featureList
