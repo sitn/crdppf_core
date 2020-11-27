@@ -3,14 +3,13 @@
 from crdppf import db_config
 from crdppf.extract import Extract
 from crdppf.lib.wmts_parsing import wmts_layer
-from crdppf.lib.geometry_functions import get_feature_bbox, get_print_format, get_feature_center
+#from crdppf.lib.geometry_functions import get_feature_bbox, get_print_format, get_feature_center
 
 from crdppf.util.get_feature_functions import get_features_function
 from crdppf.util.documents import get_document_ref, get_documents
-from crdppf.util.pdf_functions import get_feature_info, get_translations
-
+from crdppf.util.pdf_functions import get_feature_info, get_translations, get_print_format
 from crdppf.models import DBSession
-from crdppf.models.models import Topics, AppConfig
+from crdppf.models.models import AppConfig
 
 from geoalchemy2.shape import to_shape, WKTElement
 import logging
@@ -115,7 +114,7 @@ def get_legend_classes(bbox, layername, translations, srid):
 def add_layer(layer, featureid, featureinfo, translations, appconfig, topicdata):
 
     layerlist = {}
-    results = get_features_function(featureinfo['geom'], {'layerList': layer.layername, 'id': featureid, 'translations': appconfig['translations']})
+    results = get_features_function(featureinfo['geom'], {'layerList': layer.layername, 'id': featureid, 'translations': translations})
 
     if results:
         layerlist[str(layer.layerid)] = {'layername': layer.layername, 'features': []}
@@ -170,6 +169,8 @@ def get_content(id, request):
     if extract.reporttype == 'file':
         extract.reporttype = 'reduced'
         directprint = True
+    else:
+        reporttype = extract.reporttype
 
     for config in configs:
         if config.parameter not in ['crdppflogopath', 'cantonlogopath']:
@@ -184,11 +185,11 @@ def get_content(id, request):
     # else get the ID (id) of the selected parcel first using X/Y coordinates of the center
     # ---------------------------------------------------------------------------------------------------
     featureinfo = extract.real_estate  # '1_14127' # test parcel or '1_11340'
-    sdf
 
     # 3) Get the list of all the restrictions by topicorder set in a column
     # ------------------------------------------
-    extract.topics = DBSession.query(Topics).order_by(Topics.topicorder).all()
+    topics = extract.topics
+    restrictions = extract.restrictions
 
     # Configure the WMTS background layer
 
@@ -202,13 +203,13 @@ def get_content(id, request):
     wmts_layer_ = wmts_layer(wmts['url'], wmts['layer'])
     extract.baseconfig['wmts'] = wmts
 
-    base_wms_layers = request.registry.settings['app_config']['crdppf_wms_layers']
+    wms_base_layers = request.registry.settings['app_config']['crdppf_wms_layers']
     map_buffer = request.registry.settings['app_config']['map_buffer']
     basemaplayers = {
         "baseURL": request.registry.settings['crdppf_wms'],
         "opacity": 1,
         "type": "WMS",
-        "layers": base_wms_layers,
+        "layers": wms_base_layers,
         "imageFormat": "image/png",
         "styles": "default",
         "customParams": {
@@ -221,7 +222,7 @@ def get_content(id, request):
     propertynumber = featureinfo['nummai'].strip()
     propertytype = featureinfo['type'].strip()
     propertyarea = featureinfo['area']
-    report_title = translations[str(type+'extracttitlelabel')]
+    report_title = translations[str(reporttype+'extracttitlelabel')]
 
     # AS does the german language, the french contains a few accents we have to replace to fetch the banner which has no accents in its pathname...
     conversion = [
@@ -251,28 +252,29 @@ def get_content(id, request):
 
     for char in conversion:
         municipality_escaped = municipality_escaped.replace(char[0], char[1])
-    extract.header['municipality_escaped'] = municipality_escaped
 
     municipalitylogodir = '/'.join([
         request.registry.settings['localhost_url'],
         'proj/images/ecussons/'])
     municipalitylogopath = municipalitylogodir + municipality_escaped + '.png'
-    extract.header['municipalitylogopath'] = municipalitylogopath
+
     legenddir = '/'.join([
         request.registry.settings['localhost_url'],
         'proj/images/icons/'])
 
     # Get the raw feature BBOX
-    extract.basemap['bbox'] = get_feature_bbox(id)
-    bbox = extract.basemap['bbox']
+    #extract.basemap['bbox'] = get_feature_bbox(id)
+    #bbox = extract.basemap['bbox']
+    bbox = extract.real_estate['BBOX']
 
     if bbox is False:
         log.warning('Found more then one bbox for id: %s' % id)
         return False
 
     # Get the feature center
-    extract.basemap['feature_center'] = get_feature_center(id)
-    feature_center = extract.basemap['feature_center']
+    #extract.basemap['feature_center'] = get_feature_center(id)
+    #feature_center = extract.basemap['feature_center']
+    feature_center = [extract.real_estate['centerX'], extract.real_estate['centerY']]
 
     if feature_center is False:
         log.warning('Found more then one geometry for id: %s' % id)
@@ -335,14 +337,8 @@ def get_content(id, request):
     notconcernedtopics = []
     emptytopics = []
 
-    for topic in extract.topics:
-
-        # for the federal data layers we get the restrictions calling the feature service and store the result in the DB
-        if topic.topicid in extract.baseconfig['ch_topics']:
-            xml_layers = []
-            for xml_layer in topic.layers:
-                xml_layers.append(xml_layer.layername)
-            #  get_XML(feature['geom'], topic.topicid, extractcreationdate, lang, translations)
+    for topic in topics:
+        log.warning('Parsing topic : %s' % topic.topicid)
 
         topicdata[str(topic.topicid)] = {
             "categorie": 0,
@@ -407,6 +403,7 @@ def get_content(id, request):
                         legendclass = dict((x, y) for x, y in el)
                         legendclass['codegenre'] = legenddir+legendclass['codegenre']+".png"
                         topicdata[str(topic.topicid)]["bboxlegend"].append(legendclass)
+
             # Get the list of documents related to a topic with layers and results
             if topicdata[str(layer.topicfk)]["categorie"] == 3:
                 docfilters = [str(topic.topicid)]
@@ -417,6 +414,7 @@ def get_content(id, request):
                         topicdata[str(topic.topicid)]['docids'].add(doc['documentid'])
                         del doc['documentid']
                         topicdata[str(topic.topicid)][doctype].append(doc)
+
         else:
             if str(topic.topicid) in appconfig['emptytopics']:
                 emptytopics.append(topic.topicname)
@@ -556,10 +554,11 @@ def get_content(id, request):
                     topicdata[str(topic.topicid)]["authority"]
                 ]
             })
+            sdf
 
     d = {
         "attributes": {
-            "reporttype": type,
+            "reporttype": extract.reporttype,
             "directprint": directprint,
             "extractcreationdate": extract.creationdate,
             "filename": extract.filename,
@@ -568,7 +567,7 @@ def get_content(id, request):
             "municipality": municipality,
             "cadastre": cadastre,
             "cadastrelabel": "Cadastre",
-            "propertytype": propertytype,
+            "propertytype": extract.real_estate['type'],
             "propertynumber": propertynumber,
             "EGRIDnumber": featureinfo['egrid'],
             "municipalitylogopath": municipalitylogopath,
@@ -581,7 +580,7 @@ def get_content(id, request):
             }],
             "concernedtopics":  concernedtopics,
             "notconcernedtopics": ";".join(notconcernedtopics),
-            "emptytopics": ";".join(emptytopics),
+            "emptytopics": ";".join(extract.emptytopics),
             "propertyarea": propertyarea,
             "datasource": data
         },
@@ -596,5 +595,5 @@ def get_content(id, request):
     # jsondata = json.dumps(d, indent=4)
     # jsonfile.write(jsondata)
     # jsonfile.close()
-
+    sdf
     return d
