@@ -85,6 +85,11 @@ class Extract(object):
         # fetch the PDF layout and configuration parameters
         self.pdfconfig = request.registry.settings['pdf_config']
 
+        # define the folder where the legendicons are stored
+        self.legenddir = '/'.join([
+            request.registry.settings['localhost_url'],
+            'proj/images/icons/'])
+
         # fetch the pyramid_oereb app settings
         self.pyramid_oereb = request.registry.settings['pyramid_oereb']
 
@@ -158,6 +163,7 @@ class Extract(object):
         self.set_mapbox()
         self.fetch_bbox_legend(request)
         self.set_topic_categorie()
+        self.set_topic_map(request)
 
 
     def set_wms_params(self, request):
@@ -183,6 +189,7 @@ class Extract(object):
                 else:
                     wmslayerlist = None
 
+                # TO BE DONE : put real layer list by topic
                 completelegend = 'https://sitn.ne.ch/ogc-pyramid-oereb-dev/wms?SINGLETILE=true&TRANSPARENT=true&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&LAYER=r73_amenagement&FORMAT=image%2Fpng&LEGEND_OPTIONS=forceLabels%3Aon&WIDTH=200&HEIGHT=100'
 
                 self.topiclist[topic.topicorder] = {
@@ -208,6 +215,89 @@ class Extract(object):
         else:
             raise HTTPBadRequest('No topic was found.')
 
+    def set_topic_map(self, request):
+        """
+        """
+
+        bbox = self.real_estate['BBOX']
+
+        wkt_polygon = ''.join([
+            'POLYGON((',
+            str(bbox['minX'])+' ',
+            str(bbox['minY'])+',',
+            str(bbox['minX'])+' ',
+            str(bbox['maxY'])+',',
+            str(bbox['maxX'])+' ',
+            str(bbox['maxY'])+',',
+            str(bbox['maxX'])+' ',
+            str(bbox['minY'])+',',
+            str(bbox['minX'])+' ',
+            str(bbox['minY']),
+            '))'
+        ])
+        wms_base_layers = request.registry.settings['app_config']['crdppf_wms_layers']
+        basemaplayers = {
+            "baseURL": request.registry.settings['crdppf_wms'],
+            "opacity": 1,
+            "type": "WMS",
+            "layers": wms_base_layers,
+            "imageFormat": "image/png",
+            "styles": "default",
+            "customParams": {
+                "TRANSPARENT": "true"
+            }
+        }
+
+        for topic in self.topics:
+            topiclayers = {
+                "baseURL": request.registry.settings['crdppf_wms'],
+                "opacity": 1,
+                "type": "WMS",
+                "layers": self.topiclist[topic.topicorder]['wmslayerlist'],
+                "imageFormat": "image/png",
+                "styles": "default",
+                "customParams": {
+                    "TRANSPARENT": "true"
+                }
+            }
+
+            map = {
+                "projection": "EPSG:"+str(self.srid),
+                "dpi": 150,
+                "rotation": 0,
+                "center": [self.real_estate['centerX'],self.real_estate['centerY']],
+                "scale": self.print_box['scale']*self.appconfig['map_buffer'],
+                "longitudeFirst": "true",
+                "layers": [
+                    {
+                        "type": "geojson",
+                        "geoJson": request.route_url('get_property')+'?id='+self.propertyid,
+                        "style": {
+                            "version": "2",
+                            "strokeColor": "gray",
+                            "strokeLinecap": "round",
+                            "strokeOpacity": 0.5,
+                            "[INTERSECTS(geometry, "+wkt_polygon+")]": {
+                                "symbolizers": [
+                                    {
+                                        "strokeColor": "red",
+                                        "strokeWidth": 4,
+                                        "type": "line"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    topiclayers,
+                    basemaplayers
+                ]
+            }
+            self.topiclist[topic.topicorder].update({'map': map})
+#            for restriction in self.restrictions:
+#                if restriction['topicid'] == topic.topicid:
+#                    restriction.update({'map': map})
+
+        return map
 
     def get_layers(self):
         """ Get the list of all PLR layers
@@ -243,6 +333,15 @@ class Extract(object):
 
                 if len(results) > 0:
                     for result in results:
+                        # make sure, all type codes are cast to string
+                        if isinstance(result['properties']['codegenre'], int):
+                            result['properties']['codegenre'] = str(result['properties']['codegenre'])
+                        # remove all text formatting for area calculation
+                        if result['properties']['intersectionMeasure'] == ' ':
+                            measure = 1
+                        else:
+                            measure = int(result['properties']['intersectionMeasure'].replace(' : ', '').replace(' - ', '').replace('[m2]', '').replace('[m]', ''))
+
                         restriction = {
                             'topicid': layer.topic.topicid,
                             'topicname': layer.topic.topicname,
@@ -252,7 +351,7 @@ class Extract(object):
                             'codegenre': result['properties']['codegenre'],
                             'statutjuridique': result['properties']['statutjuridique'],
                             'datepublication': result['properties']['datepublication'],
-                            'intersectionMeasure': result['properties']['intersectionMeasure'],
+                            'intersectionMeasure': measure,
                             'geomType': result['properties']['geomType']
                         }
 
@@ -262,7 +361,33 @@ class Extract(object):
 
                         # compile the restrictions list and push it back to the topiclist
                         restrictionlist.append(restriction)
-                        self.topiclist[layer.topic.topicorder]['restrictions'].append(restriction)
+
+                        propertyarea = self.real_estate['area']
+                        if isinstance(restriction['codegenre'], int):
+                            restriction['codegenre'] = str(restriction['codegenre'])
+                        if restriction['geomType'] == 'area':
+                            self.topiclist[layer.topic.topicorder]['restrictions'].append({
+                                "codegenre": self.legenddir+restriction['codegenre']+".png",
+                                "teneur": restriction['teneur'],
+                                "area": str(restriction['intersectionMeasure'])+' m<sup>2</sup>',
+                                "area_pct": round((float(
+                                    restriction['intersectionMeasure'])*100)/propertyarea, 1)
+                            })
+                        elif restriction['geomType'] == 'point':
+                            self.topiclist[layer.topic.topicorder]['restrictions'].append({
+                                "codegenre": self.legenddir+restriction['codegenre']+".png",
+                                "teneur": restriction['teneur'],
+                                "area": str(restriction['intersectionMeasure']),
+                                "area_pct": -1
+                            })
+                        else:
+                            self.topiclist[layer.topic.topicorder]['restrictions'].append({
+                                "codegenre": self.legenddir+restriction['codegenre']+".png",
+                                "teneur": restriction['teneur'],
+                                "area": str(restriction['intersectionMeasure'])+ ' m',
+                                "area_pct": -1
+                            })
+
                 del(results)
         else:
             raise HTTPBadRequest('No layer with restrictions found.')
@@ -279,16 +404,46 @@ class Extract(object):
                     ).order_by(OriginReference.docid).all()
 
                 if len(references) > 0:
-                    referencelist = []
+                    legalbases = []
+                    legalprovisions = []
+                    hints = []
+
                     for reference in references:
-                        referencelist.append({
-                            'docid': reference.docid,
-                            'doctype': reference.documents.doctype,
-                            'officialtitle': reference.documents.officialtitle,
-                            'officialnb': reference.documents.officialnb,
-                            'remoteurl': reference.documents.remoteurl
+                        if reference.documents.doctypes.value == 'legalbase':
+                            legalbases.append({
+                                'docid': reference.docid,
+                                'doctype': reference.documents.doctypes.value,
+                                'officialtitle': reference.documents.officialtitle,
+                                'officialnb': reference.documents.officialnb,
+                                'remoteurl': reference.documents.remoteurl
+                            })
+                        elif reference.documents.doctypes.value == 'legalprovision':
+                            legalprovisions.append({
+                                'docid': reference.docid,
+                                'doctype': reference.documents.doctypes.value,
+                                'officialtitle': reference.documents.officialtitle,
+                                'officialnb': reference.documents.officialnb,
+                                'remoteurl': reference.documents.remoteurl
+                            })
+                        else:
+                            hints.append({
+                                'docid': reference.docid,
+                                'doctype': reference.documents.doctypes.value,
+                                'officialtitle': reference.documents.officialtitle,
+                                'officialnb': reference.documents.officialnb,
+                                'remoteurl': reference.documents.remoteurl
+                            })
+                    restriction.update({
+                        'legalbases': legalbases,
+                        'legalprovisions': legalprovisions,
+                        'references': hints
                         })
-                restriction.update({'references': referencelist})
+                    del(restriction['restrictionid'])
+            self.topiclist[restriction['topicid']].update({
+                'legalbases': legalbases,
+                'legalprovisions': legalprovisions,
+                'references': hints
+                })
 
         return
 
@@ -361,9 +516,6 @@ class Extract(object):
     def fetch_bbox_legend(self, request):
         """get the legend entries in the map bbox not touching the features
         """
-        legenddir = '/'.join([
-            request.registry.settings['localhost_url'],
-            'proj/images/icons/'])
 
         for layer in self.layers:
 
@@ -377,5 +529,5 @@ class Extract(object):
             if len(bboxitems) > 0:
                 for el in bboxitems:
                     legendclass = dict((x, y) for x, y in el)
-                    legendclass['codegenre'] = legenddir+legendclass['codegenre']+".png"
+                    legendclass['codegenre'] = self.legenddir+legendclass['codegenre']+".png"
                     self.topiclist[layer.topic.topicorder]['bboxlegend'].append(legendclass)
