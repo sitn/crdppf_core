@@ -130,10 +130,10 @@ class Extract(object):
         # initalisation of an list of not concerned topics
         self.concernedtopics = []
 
-        #try:
-        self.topics = self.get_topics()
-        #except:
-        #    raise HTTPNotFound('There is an error regarding the topics for this municipality.')
+        try:
+            self.topics = self.get_topics()
+        except:
+            raise HTTPNotFound('There is an error regarding the topics for this municipality.')
 
         try:
             self.layers = self.get_layers()
