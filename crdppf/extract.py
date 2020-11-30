@@ -140,10 +140,13 @@ class Extract(object):
         self.print_box = self.set_print_format(request)
 
         # initalisation of an list of empty topics by definition
-        self.notconcernedtopics = []
+        self.emptytopics = []
 
         # initalisation of an list of not concerned topics
         self.notconcernedtopics = []
+
+        # initalisation of an list of not concerned topics
+        self.concernedtopics = []
 
         try:
             self.topics = self.get_topics()
@@ -178,6 +181,7 @@ class Extract(object):
         """
 
         topics = DBSession.query(Topics).order_by(Topics.topicorder).all()
+
         if len(topics) > 0:
             topiclist = {}
             for topic in topics:
@@ -189,6 +193,32 @@ class Extract(object):
                 else:
                     wmslayerlist = None
 
+                references = DBSession.query(OriginReference).filter(
+                    OriginReference.fkobj==topic.topicid
+                    ).order_by(OriginReference.docid).all()
+
+                legalbases = []
+                legalprovisions = []
+                hints = []
+                if len(references) > 0:
+                    for reference in references:
+                        if reference.documents is not None:
+                            if reference.documents.title is None:
+                                 reference.documents.title = reference.documents.officialtitle
+                            if reference.documents.officialnb is None:
+                                 reference.documents.officialnb = ''
+                            if reference.documents.abbreviation is None:
+                                 reference.documents.abbreviation = ''
+                            if reference.documents.doctypes.value == 'legalbase':
+                                legalbases.append({
+                                    'docid': reference.docid,
+                                    'doctype': reference.documents.doctypes.value,
+                                    'officialtitle': reference.documents.officialtitle,
+                                    'title': reference.documents.title,
+                                    'officialnb': reference.documents.officialnb,
+                                    'abbreviation': reference.documents.abbreviation,
+                                    'remoteurl': reference.documents.remoteurl
+                                })
                 # TO BE DONE : put real layer list by topic
                 completelegend = 'https://sitn.ne.ch/ogc-pyramid-oereb-dev/wms?SINGLETILE=true&TRANSPARENT=true&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&LAYER=r73_amenagement&FORMAT=image%2Fpng&LEGEND_OPTIONS=forceLabels%3Aon&WIDTH=200&HEIGHT=100'
 
@@ -206,6 +236,9 @@ class Extract(object):
                     'authorityfk': topic.authorityfk,
                     'publicationdate': topic.publicationdate,
                     'restrictions': [],
+                    'legalbases': legalbases,
+                    'legalprovisions': legalprovisions,
+                    'hints': hints,
                     'topiclegend': completelegend,
                     'bboxlegend': [],
                     'wmslayerlist': wmslayerlist
@@ -343,6 +376,7 @@ class Extract(object):
                             measure = int(result['properties']['intersectionMeasure'].replace(' : ', '').replace(' - ', '').replace('[m2]', '').replace('[m]', ''))
 
                         restriction = {
+                            'topicorder': layer.topic.topicorder,
                             'topicid': layer.topic.topicid,
                             'topicname': layer.topic.topicname,
                             'layername': layer.layername,
@@ -409,12 +443,27 @@ class Extract(object):
                     hints = []
 
                     for reference in references:
+                        if reference.documents.abbreviation is None:
+                             reference.documents.abbreviation = ''
+                        if reference.documents.officialnb is None:
+                             reference.documents.officialnb = ''
                         if reference.documents.doctypes.value == 'legalbase':
                             legalbases.append({
                                 'docid': reference.docid,
                                 'doctype': reference.documents.doctypes.value,
                                 'officialtitle': reference.documents.officialtitle,
+                                'title': reference.documents.title,
                                 'officialnb': reference.documents.officialnb,
+                                'abbreviation': reference.documents.abbreviation,
+                                'remoteurl': reference.documents.remoteurl
+                            })
+                            self.topiclist[restriction['topicorder']]['legalbases'].append({
+                                'docid': reference.docid,
+                                'doctype': reference.documents.doctypes.value,
+                                'officialtitle': reference.documents.officialtitle,
+                                'title': reference.documents.title,
+                                'officialnb': reference.documents.officialnb,
+                                'abbreviation': reference.documents.abbreviation,
                                 'remoteurl': reference.documents.remoteurl
                             })
                         elif reference.documents.doctypes.value == 'legalprovision':
@@ -422,13 +471,35 @@ class Extract(object):
                                 'docid': reference.docid,
                                 'doctype': reference.documents.doctypes.value,
                                 'officialtitle': reference.documents.officialtitle,
+                                'title': reference.documents.title,
                                 'officialnb': reference.documents.officialnb,
+                                'abbreviation': reference.documents.abbreviation,
+                                'remoteurl': reference.documents.remoteurl
+                            })
+                            self.topiclist[restriction['topicorder']]['legalprovisions'].append({
+                                'docid': reference.docid,
+                                'doctype': reference.documents.doctypes.value,
+                                'officialtitle': reference.documents.officialtitle,
+                                'title': reference.documents.title,
+                                'officialnb': reference.documents.officialnb,
+                                'abbreviation': reference.documents.abbreviation,
                                 'remoteurl': reference.documents.remoteurl
                             })
                         else:
                             hints.append({
                                 'docid': reference.docid,
                                 'doctype': reference.documents.doctypes.value,
+                                'officialtitle': reference.documents.officialtitle,
+                                'title': reference.documents.title,
+                                'officialnb': reference.documents.officialnb,
+                                'abbreviation': reference.documents.abbreviation,
+                                'remoteurl': reference.documents.remoteurl
+                            })
+                            self.topiclist[restriction['topicorder']]['hints'].append({
+                                'docid': reference.docid,
+                                'doctype': reference.documents.doctypes.value,
+                                'title': reference.documents.title,
+                                'abbreviation': reference.documents.abbreviation,
                                 'officialtitle': reference.documents.officialtitle,
                                 'officialnb': reference.documents.officialnb,
                                 'remoteurl': reference.documents.remoteurl
@@ -439,14 +510,8 @@ class Extract(object):
                         'references': hints
                         })
                     del(restriction['restrictionid'])
-            self.topiclist[restriction['topicid']].update({
-                'legalbases': legalbases,
-                'legalprovisions': legalprovisions,
-                'references': hints
-                })
 
         return
-
 
     def set_topic_categorie(self):
         """ Attribut all topics to one of the categories
@@ -459,6 +524,16 @@ class Extract(object):
             else:
                 if len(self.topiclist[topic.topicorder]['restrictions']) > 0:
                     self.topiclist[topic.topicorder]['categorie'] = 3
+                    self.concernedtopics.append({
+                        'topicname': topic.topicname,
+                        'documentlist': {
+                            "columns": [
+                                "appendixno",
+                                "appendixtitle"
+                            ],
+                            "data": []
+                            }
+                    })
                 else:
                     self.topiclist[topic.topicorder]['categorie'] = 1
                     self.notconcernedtopics.append(topic.topicname)
