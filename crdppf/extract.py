@@ -16,7 +16,7 @@ from crdppf.util.get_feature_functions import get_features_function
 from crdppf.lib.geometry_functions import get_feature_center, get_print_format
 
 from crdppf.models import DBSession
-from crdppf.models.models import Topics, Layers, OriginReference
+from crdppf.models.models import Topics, Layers, OriginReference, LegalDocuments
 
 def get_legend_classes(bbox, layername, translations, srid):
     """ Collects all the features in the map perimeter into a list to create a dynamic legend
@@ -326,9 +326,6 @@ class Extract(object):
                 ]
             }
             self.topiclist[topic.topicorder].update({'map': map})
-#            for restriction in self.restrictions:
-#                if restriction['topicid'] == topic.topicid:
-#                    restriction.update({'map': map})
 
         return map
 
@@ -365,6 +362,9 @@ class Extract(object):
                 results = get_features_function(parcelGeom, {'layerList': layer.layername})
 
                 if len(results) > 0:
+                    codegenre = None
+                    groupedrestriction = {}
+
                     for result in results:
                         # make sure, all type codes are cast to string
                         if isinstance(result['properties']['codegenre'], int):
@@ -399,26 +399,41 @@ class Extract(object):
                         propertyarea = self.real_estate['area']
                         if isinstance(restriction['codegenre'], int):
                             restriction['codegenre'] = str(restriction['codegenre'])
-                        if restriction['geomType'] == 'area':
+
+                        if codegenre == result['properties']['codegenre']:
+                            groupedmeasure =+ measure
+                            groupedrestriction[codegenre]['area'] = groupedmeasure
+                        else:
+                            codegenre = result['properties']['codegenre']
+                            groupedmeasure = measure
+                            groupedrestriction[codegenre] = {
+                                "codegenre": self.legenddir+result['properties']['codegenre']+".png",
+                                "teneur": result['properties']['teneur'],
+                                "geomType": result['properties']['geomType'],
+                                "area": groupedmeasure
+                            }
+
+                    for code in groupedrestriction:
+                        if groupedrestriction[code]['geomType'] == 'area':
                             self.topiclist[layer.topic.topicorder]['restrictions'].append({
-                                "codegenre": self.legenddir+restriction['codegenre']+".png",
-                                "teneur": restriction['teneur'],
-                                "area": str(restriction['intersectionMeasure'])+' m<sup>2</sup>',
+                                "codegenre": groupedrestriction[code]['codegenre'],
+                                "teneur": groupedrestriction[code]['teneur'],
+                                "area": str(groupedrestriction[code]['area'])+' m<sup>2</sup>',
                                 "area_pct": round((float(
-                                    restriction['intersectionMeasure'])*100)/propertyarea, 1)
+                                    groupedrestriction[code]['area'])*100)/propertyarea, 1)
                             })
-                        elif restriction['geomType'] == 'point':
+                        elif groupedrestriction[code]['geomType'] == 'point':
                             self.topiclist[layer.topic.topicorder]['restrictions'].append({
-                                "codegenre": self.legenddir+restriction['codegenre']+".png",
-                                "teneur": restriction['teneur'],
-                                "area": str(restriction['intersectionMeasure']),
+                                "codegenre": groupedrestriction[code]['codegenre'],
+                                "teneur": groupedrestriction[code]['teneur'],
+                                "area": str(groupedrestriction[code]['area']),
                                 "area_pct": -1
                             })
                         else:
                             self.topiclist[layer.topic.topicorder]['restrictions'].append({
-                                "codegenre": self.legenddir+restriction['codegenre']+".png",
-                                "teneur": restriction['teneur'],
-                                "area": str(restriction['intersectionMeasure'])+ ' m',
+                                "codegenre": groupedrestriction[code]['codegenre'],
+                                "teneur": groupedrestriction[code]['teneur'],
+                                "area": str(groupedrestriction[code]['area'])+ ' m',
                                 "area_pct": -1
                             })
 
@@ -432,6 +447,7 @@ class Extract(object):
         """ For each restriction get the references
         """
         if len(self.restrictions) > 0:
+            docids = {}
             for restriction in self.restrictions:
                 references = DBSession.query(OriginReference).filter(
                     OriginReference.fkobj==restriction['restrictionid']
@@ -442,74 +458,91 @@ class Extract(object):
                     legalprovisions = []
                     hints = []
 
+                    docidlist = set()
                     for reference in references:
-                        if reference.documents.abbreviation is None:
-                             reference.documents.abbreviation = ''
-                        if reference.documents.officialnb is None:
-                             reference.documents.officialnb = ''
-                        if reference.documents.doctypes.value == 'legalbase':
+                        if reference.docid in docidlist:
+                            pass
+                        else:
+                            docidlist.add(reference.docid)
+
+                        if restriction['topicid'] in docids.keys():
+                            docids[restriction['topicid']].update(docidlist)
+                        else:
+                            docids.update({restriction['topicid']: docidlist})
+
+            for topic in self.topics:
+                if topic.topicid in docids.keys():
+                    references = DBSession.query(LegalDocuments).filter(
+                        LegalDocuments.docid.in_(docids[topic.topicid])
+                        ).order_by(LegalDocuments.docid).all()
+
+                    for reference in references:
+                        if reference.abbreviation is None:
+                             reference.abbreviation = ''
+                        if reference.officialnb is None:
+                             reference.officialnb = ''
+                        if reference.doctypes.value == 'legalbase':
                             legalbases.append({
                                 'docid': reference.docid,
-                                'doctype': reference.documents.doctypes.value,
-                                'officialtitle': reference.documents.officialtitle,
-                                'title': reference.documents.title,
-                                'officialnb': reference.documents.officialnb,
-                                'abbreviation': reference.documents.abbreviation,
-                                'remoteurl': reference.documents.remoteurl
+                                'doctype': reference.doctypes.value,
+                                'officialtitle': reference.officialtitle,
+                                'title': reference.title,
+                                'officialnb': reference.officialnb,
+                                'abbreviation': reference.abbreviation,
+                                'remoteurl': reference.remoteurl
                             })
-                            self.topiclist[restriction['topicorder']]['legalbases'].append({
+                            self.topiclist[topic.topicorder]['legalbases'].append({
                                 'docid': reference.docid,
-                                'doctype': reference.documents.doctypes.value,
-                                'officialtitle': reference.documents.officialtitle,
-                                'title': reference.documents.title,
-                                'officialnb': reference.documents.officialnb,
-                                'abbreviation': reference.documents.abbreviation,
-                                'remoteurl': reference.documents.remoteurl
+                                'doctype': reference.doctypes.value,
+                                'officialtitle': reference.officialtitle,
+                                'title': reference.title,
+                                'officialnb': reference.officialnb,
+                                'abbreviation': reference.abbreviation,
+                                'remoteurl': reference.remoteurl
                             })
-                        elif reference.documents.doctypes.value == 'legalprovision':
+                        elif reference.doctypes.value == 'legalprovision':
                             legalprovisions.append({
                                 'docid': reference.docid,
-                                'doctype': reference.documents.doctypes.value,
-                                'officialtitle': reference.documents.officialtitle,
-                                'title': reference.documents.title,
-                                'officialnb': reference.documents.officialnb,
-                                'abbreviation': reference.documents.abbreviation,
-                                'remoteurl': reference.documents.remoteurl
+                                'doctype': reference.doctypes.value,
+                                'officialtitle': reference.officialtitle,
+                                'title': reference.title,
+                                'officialnb': reference.officialnb,
+                                'abbreviation': reference.abbreviation,
+                                'remoteurl': reference.remoteurl
                             })
-                            self.topiclist[restriction['topicorder']]['legalprovisions'].append({
+                            self.topiclist[topic.topicorder]['legalprovisions'].append({
                                 'docid': reference.docid,
-                                'doctype': reference.documents.doctypes.value,
-                                'officialtitle': reference.documents.officialtitle,
-                                'title': reference.documents.title,
-                                'officialnb': reference.documents.officialnb,
-                                'abbreviation': reference.documents.abbreviation,
-                                'remoteurl': reference.documents.remoteurl
+                                'doctype': reference.doctypes.value,
+                                'officialtitle': reference.officialtitle,
+                                'title': reference.title,
+                                'officialnb': reference.officialnb,
+                                'abbreviation': reference.abbreviation,
+                                'remoteurl': reference.remoteurl
                             })
                         else:
                             hints.append({
                                 'docid': reference.docid,
-                                'doctype': reference.documents.doctypes.value,
-                                'officialtitle': reference.documents.officialtitle,
-                                'title': reference.documents.title,
-                                'officialnb': reference.documents.officialnb,
-                                'abbreviation': reference.documents.abbreviation,
-                                'remoteurl': reference.documents.remoteurl
+                                'doctype': reference.doctypes.value,
+                                'officialtitle': reference.officialtitle,
+                                'title': reference.title,
+                                'officialnb': reference.officialnb,
+                                'abbreviation': reference.abbreviation,
+                                'remoteurl': reference.remoteurl
                             })
-                            self.topiclist[restriction['topicorder']]['hints'].append({
+                            self.topiclist[topic.topicorder]['hints'].append({
                                 'docid': reference.docid,
-                                'doctype': reference.documents.doctypes.value,
-                                'title': reference.documents.title,
-                                'abbreviation': reference.documents.abbreviation,
-                                'officialtitle': reference.documents.officialtitle,
-                                'officialnb': reference.documents.officialnb,
-                                'remoteurl': reference.documents.remoteurl
+                                'doctype': reference.doctypes.value,
+                                'title': reference.title,
+                                'abbreviation': reference.abbreviation,
+                                'officialtitle': reference.officialtitle,
+                                'officialnb': reference.officialnb,
+                                'remoteurl': reference.remoteurl
                             })
                     restriction.update({
                         'legalbases': legalbases,
                         'legalprovisions': legalprovisions,
                         'references': hints
                         })
-                    del(restriction['restrictionid'])
 
         return
 
