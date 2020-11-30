@@ -54,27 +54,6 @@ class Extract(object):
         self.topiclist = {}
         # dict holding the feature information
         self.feature = {}
-        # parameters for the header
-        #self.header = {}
-        # parameters for the footer
-        #self.footer = {}
-        # array with specific data for the titlepage
-        #self.titlepage = {}
-        # array holding the values for the table of content (toc)
-        #self.tocpage = {}
-        # array containing the content of the topicpages
-        #self.topicpages = {}
-        # array with the data of all appendices
-        #self.appendices = {}
-        # array with list of the concerned documents
-        #self.doclist = []
-        # dict used to store the entries of the table of content
-        #self.toc_entries = {}
-        # dict to store the values of the appendix list
-        #self.appendix_entries = []
-        # dict to store the refernces data
-        #self.reference_entries = []
-        #self.appendix_links = []
 
         # initalize configuration regarding the database
         self.db_config = db_config
@@ -474,7 +453,9 @@ class Extract(object):
                 if topic.topicid in docids.keys():
                     references = DBSession.query(LegalDocuments).filter(
                         LegalDocuments.docid.in_(docids[topic.topicid])
-                        ).order_by(LegalDocuments.docid).all()
+                        ).order_by(LegalDocuments.doctype
+                        ).order_by(LegalDocuments.state
+                        ).order_by(LegalDocuments.officialnb).all()
 
                     for reference in references:
                         if reference.abbreviation is None:
@@ -482,15 +463,6 @@ class Extract(object):
                         if reference.officialnb is None:
                              reference.officialnb = ''
                         if reference.doctypes.value == 'legalbase':
-                            legalbases.append({
-                                'docid': reference.docid,
-                                'doctype': reference.doctypes.value,
-                                'officialtitle': reference.officialtitle,
-                                'title': reference.title,
-                                'officialnb': reference.officialnb,
-                                'abbreviation': reference.abbreviation,
-                                'remoteurl': reference.remoteurl
-                            })
                             self.topiclist[topic.topicorder]['legalbases'].append({
                                 'docid': reference.docid,
                                 'doctype': reference.doctypes.value,
@@ -501,15 +473,6 @@ class Extract(object):
                                 'remoteurl': reference.remoteurl
                             })
                         elif reference.doctypes.value == 'legalprovision':
-                            legalprovisions.append({
-                                'docid': reference.docid,
-                                'doctype': reference.doctypes.value,
-                                'officialtitle': reference.officialtitle,
-                                'title': reference.title,
-                                'officialnb': reference.officialnb,
-                                'abbreviation': reference.abbreviation,
-                                'remoteurl': reference.remoteurl
-                            })
                             self.topiclist[topic.topicorder]['legalprovisions'].append({
                                 'docid': reference.docid,
                                 'doctype': reference.doctypes.value,
@@ -520,15 +483,6 @@ class Extract(object):
                                 'remoteurl': reference.remoteurl
                             })
                         else:
-                            hints.append({
-                                'docid': reference.docid,
-                                'doctype': reference.doctypes.value,
-                                'officialtitle': reference.officialtitle,
-                                'title': reference.title,
-                                'officialnb': reference.officialnb,
-                                'abbreviation': reference.abbreviation,
-                                'remoteurl': reference.remoteurl
-                            })
                             self.topiclist[topic.topicorder]['hints'].append({
                                 'docid': reference.docid,
                                 'doctype': reference.doctypes.value,
@@ -538,11 +492,6 @@ class Extract(object):
                                 'officialnb': reference.officialnb,
                                 'remoteurl': reference.remoteurl
                             })
-                    restriction.update({
-                        'legalbases': legalbases,
-                        'legalprovisions': legalprovisions,
-                        'references': hints
-                        })
 
         return
 
