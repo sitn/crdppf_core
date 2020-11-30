@@ -118,6 +118,9 @@ class Extract(object):
 
         self.print_box = self.set_print_format(request)
 
+        # dict to recieve unique docids per topic to avoid duplicata
+        self.docids = {}
+
         # initalisation of an list of empty topics by definition
         self.emptytopics = []
 
@@ -127,10 +130,10 @@ class Extract(object):
         # initalisation of an list of not concerned topics
         self.concernedtopics = []
 
-        try:
-            self.topics = self.get_topics()
-        except:
-            raise HTTPNotFound('There is an error regarding the topics for this municipality.')
+        #try:
+        self.topics = self.get_topics()
+        #except:
+        #    raise HTTPNotFound('There is an error regarding the topics for this municipality.')
 
         try:
             self.layers = self.get_layers()
@@ -179,27 +182,36 @@ class Extract(object):
                 legalbases = []
                 legalprovisions = []
                 hints = []
+                docidlist = set()
+
                 if len(references) > 0:
                     for reference in references:
                         if reference.documents is not None:
-                            if reference.documents.title is None:
-                                 reference.documents.title = reference.documents.officialtitle
-                            if reference.documents.officialnb is None:
-                                 reference.documents.officialnb = ''
-                            if reference.documents.abbreviation is None:
-                                 reference.documents.abbreviation = ''
-                            if reference.documents.doctypes.value == 'legalbase':
-                                legalbases.append({
-                                    'docid': reference.docid,
-                                    'doctype': reference.documents.doctypes.value,
-                                    'officialtitle': reference.documents.officialtitle,
-                                    'title': reference.documents.title,
-                                    'officialnb': reference.documents.officialnb,
-                                    'abbreviation': reference.documents.abbreviation,
-                                    'remoteurl': reference.documents.remoteurl
-                                })
+                            docidlist.add(reference.docid)
+                            if topic.topicid in self.docids.keys():
+                                self.docids[topic.topicid].update(docidlist)
+                            else:
+                                self.docids.update({topic.topicid: docidlist})
+
+                if topic.topicid == 'R073':
+                    legendlayers = 'r73_amenagement'
+                else:
+                    legendlayers = ','.join(wmslayerlist)
+
                 # TO BE DONE : put real layer list by topic
-                completelegend = 'https://sitn.ne.ch/ogc-pyramid-oereb-dev/wms?SINGLETILE=true&TRANSPARENT=true&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&LAYER=r73_amenagement&FORMAT=image%2Fpng&LEGEND_OPTIONS=forceLabels%3Aon&WIDTH=200&HEIGHT=100'
+                completelegend = ''.join([
+                    'https://sitn.ne.ch/ogc-pyramid-oereb-dev/wms?',
+                    'SINGLETILE=true&',
+                    'TRANSPARENT=true&',
+                    'SERVICE=WMS&VERSION=1.1.1&',
+                    'REQUEST=GetLegendGraphic&',
+                    'EXCEPTIONS=application%2Fvnd.ogc.se_xml&',
+                    'LAYER=',
+                    legendlayers,
+                    '&',
+                    'FORMAT=image%2Fpng&',
+                    'LEGEND_OPTIONS=forceLabels%3Aon&',
+                    'WIDTH=200&HEIGHT=100'])
 
                 self.topiclist[topic.topicorder] = {
                     'categorie': 0,
@@ -323,8 +335,6 @@ class Extract(object):
                     'layername': layer.layername,
                     'publicationdate': layer.publicationdate
                 })
-                # Done in get_topics for now - difference in performance/complexity/best practice?
-                #self.topiclist[layer.topic.topicorder]['wmslayerlist'].append(layer.layername)
 
         return layers
 
@@ -426,7 +436,6 @@ class Extract(object):
         """ For each restriction get the references
         """
         if len(self.restrictions) > 0:
-            docids = {}
             for restriction in self.restrictions:
                 references = DBSession.query(OriginReference).filter(
                     OriginReference.fkobj==restriction['restrictionid']
@@ -439,22 +448,22 @@ class Extract(object):
 
                     docidlist = set()
                     for reference in references:
+
                         if reference.docid in docidlist:
                             pass
                         else:
                             docidlist.add(reference.docid)
-
-                        if restriction['topicid'] in docids.keys():
-                            docids[restriction['topicid']].update(docidlist)
+                        if restriction['topicid'] in self.docids.keys():
+                            self.docids[restriction['topicid']].update(docidlist)
                         else:
-                            docids.update({restriction['topicid']: docidlist})
+                            self.docids.update({restriction['topicid']: docidlist})
 
             for topic in self.topics:
-                if topic.topicid in docids.keys():
+                if topic.topicid in self.docids.keys():
                     references = DBSession.query(LegalDocuments).filter(
-                        LegalDocuments.docid.in_(docids[topic.topicid])
+                        LegalDocuments.docid.in_(self.docids[topic.topicid])
                         ).order_by(LegalDocuments.doctype
-                        ).order_by(LegalDocuments.state
+                        ).order_by(LegalDocuments.state.desc()
                         ).order_by(LegalDocuments.officialnb).all()
 
                     for reference in references:
