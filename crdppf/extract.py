@@ -142,7 +142,7 @@ class Extract(object):
 
         self.restrictions = self.get_restrictions()
 
-        self.references = self.get_references()
+        self.get_references()
 
         self.set_wms_params(request)
         self.set_mapbox()
@@ -175,7 +175,7 @@ class Extract(object):
                 else:
                     wmslayerlist = None
 
-                references = DBSession.query(OriginReference).filter(
+                topicreferences = DBSession.query(OriginReference).filter(
                     OriginReference.fkobj==topic.topicid
                     ).order_by(OriginReference.docid).all()
 
@@ -184,10 +184,10 @@ class Extract(object):
                 hints = []
                 docidlist = set()
 
-                if len(references) > 0:
-                    for reference in references:
-                        if reference.documents is not None:
-                            docidlist.add(reference.docid)
+                if len(topicreferences) > 0:
+                    for topicreference in topicreferences:
+                        if topicreference.documents is not None:
+                            docidlist.add(topicreference.docid)
                             if topic.topicid in self.docids.keys():
                                 self.docids[topic.topicid].update(docidlist)
                             else:
@@ -435,24 +435,25 @@ class Extract(object):
     def get_references(self):
         """ For each restriction get the references
         """
+
         if len(self.restrictions) > 0:
             for restriction in self.restrictions:
-                references = DBSession.query(OriginReference).filter(
+                origin_references = DBSession.query(OriginReference).filter(
                     OriginReference.fkobj==restriction['restrictionid']
                     ).order_by(OriginReference.docid).all()
 
-                if len(references) > 0:
+                if len(origin_references) > 0:
                     legalbases = []
                     legalprovisions = []
                     hints = []
 
                     docidlist = set()
-                    for reference in references:
+                    for origin_reference in origin_references:
 
-                        if reference.docid in docidlist:
+                        if origin_reference.docid in docidlist:
                             pass
                         else:
-                            docidlist.add(reference.docid)
+                            docidlist.add(origin_reference.docid)
                         if restriction['topicid'] in self.docids.keys():
                             self.docids[restriction['topicid']].update(docidlist)
                         else:
@@ -460,49 +461,44 @@ class Extract(object):
 
             for topic in self.topics:
                 if topic.topicid in self.docids.keys():
-                    references = DBSession.query(LegalDocuments).filter(
+                    docs = DBSession.query(LegalDocuments).filter(
                         LegalDocuments.docid.in_(self.docids[topic.topicid])
                         ).order_by(LegalDocuments.doctype
                         ).order_by(LegalDocuments.state.desc()
                         ).order_by(LegalDocuments.officialnb).all()
 
-                    for reference in references:
-                        if reference.abbreviation is None:
-                             reference.abbreviation = ''
-                        if reference.officialnb is None:
-                             reference.officialnb = ''
-                        if reference.doctypes.value == 'legalbase':
+                    for doc in docs:
+                        if doc.doctypes.value == 'legalbase':
                             self.topiclist[topic.topicorder]['legalbases'].append({
-                                'docid': reference.docid,
-                                'doctype': reference.doctypes.value,
-                                'officialtitle': reference.officialtitle,
-                                'title': reference.title,
-                                'officialnb': reference.officialnb,
-                                'abbreviation': reference.abbreviation,
-                                'remoteurl': reference.remoteurl
+                                'docid': doc.docid,
+                                'doctype': doc.doctypes.value,
+                                'officialtitle': doc.officialtitle,
+                                'title': doc.title,
+                                'officialnb': doc.officialnb or '',
+                                'abbreviation': doc.abbreviation or '',
+                                'remoteurl': doc.remoteurl
                             })
-                        elif reference.doctypes.value == 'legalprovision':
+                        elif doc.doctypes.value == 'legalprovision':
                             self.topiclist[topic.topicorder]['legalprovisions'].append({
-                                'docid': reference.docid,
-                                'doctype': reference.doctypes.value,
-                                'officialtitle': reference.officialtitle,
-                                'title': reference.title,
-                                'officialnb': reference.officialnb,
-                                'abbreviation': reference.abbreviation,
-                                'remoteurl': reference.remoteurl
+                                'docid': doc.docid,
+                                'doctype': doc.doctypes.value,
+                                'officialtitle': doc.officialtitle,
+                                'title': doc.title,
+                                'officialnb': doc.officialnb or '',
+                                'abbreviation': doc.abbreviation or '',
+                                'remoteurl': doc.remoteurl
                             })
                         else:
                             self.topiclist[topic.topicorder]['hints'].append({
-                                'docid': reference.docid,
-                                'doctype': reference.doctypes.value,
-                                'title': reference.title,
-                                'abbreviation': reference.abbreviation,
-                                'officialtitle': reference.officialtitle,
-                                'officialnb': reference.officialnb,
-                                'remoteurl': reference.remoteurl
+                                'docid': doc.docid,
+                                'doctype': doc.doctypes.value,
+                                'title': doc.title,
+                                'abbreviation': doc.abbreviation,
+                                'officialnb': doc.officialnb or '',
+                                'abbreviation': doc.abbreviation or '',
+                                'remoteurl': doc.remoteurl
                             })
 
-        return
 
     def set_topic_categorie(self):
         """ Attribut all topics to one of the categories
