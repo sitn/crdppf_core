@@ -473,7 +473,7 @@ class Extract(object):
                                 'docid': doc.docid,
                                 'doctype': doc.doctypes.value,
                                 'officialtitle': doc.officialtitle,
-                                'title': doc.title,
+                                'title': doc.title or doc.officialtitle,
                                 'officialnb': doc.officialnb or '',
                                 'abbreviation': doc.abbreviation or '',
                                 'remoteurl': doc.remoteurl
@@ -483,7 +483,7 @@ class Extract(object):
                                 'docid': doc.docid,
                                 'doctype': doc.doctypes.value,
                                 'officialtitle': doc.officialtitle,
-                                'title': doc.title,
+                                'title': doc.title or doc.officialtitle,
                                 'officialnb': doc.officialnb or '',
                                 'abbreviation': doc.abbreviation or '',
                                 'remoteurl': doc.remoteurl
@@ -492,7 +492,8 @@ class Extract(object):
                             self.topiclist[topic.topicorder]['hints'].append({
                                 'docid': doc.docid,
                                 'doctype': doc.doctypes.value,
-                                'title': doc.title,
+                                'officialtitle': doc.officialtitle,
+                                'title': doc.title or doc.officialtitle,
                                 'abbreviation': doc.abbreviation,
                                 'officialnb': doc.officialnb or '',
                                 'abbreviation': doc.abbreviation or '',
