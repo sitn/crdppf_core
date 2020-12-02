@@ -245,20 +245,15 @@ class Extract(object):
 
         bbox = self.real_estate['BBOX']
 
-        wkt_polygon = ''.join([
-            'POLYGON((',
-            str(bbox['minX'])+' ',
-            str(bbox['minY'])+',',
-            str(bbox['minX'])+' ',
-            str(bbox['maxY'])+',',
-            str(bbox['maxX'])+' ',
-            str(bbox['maxY'])+',',
-            str(bbox['maxX'])+' ',
-            str(bbox['minY'])+',',
-            str(bbox['minX'])+' ',
-            str(bbox['minY']),
-            '))'
-        ])
+        from shapely.geometry import box
+        polygon = box(
+            bbox['minX'],
+            bbox['minY'],
+            bbox['maxX'],
+            bbox['maxY']
+        )
+        wkt_polygon = polygon.wkt
+
         wms_base_layers = request.registry.settings['app_config']['crdppf_wms_layers']
         basemaplayers = {
             "baseURL": request.registry.settings['crdppf_wms'],
@@ -387,9 +382,11 @@ class Extract(object):
                         restrictionlist.append(restriction)
 
                         propertyarea = self.real_estate['area']
+
                         # A difference between the calculated real_estate area and the area
                         # given in the land registry is compensated proportionally
                         areacompensation = self.real_estate['area_ratio']
+
                         if isinstance(restriction['codegenre'], int):
                             restriction['codegenre'] = str(restriction['codegenre'])
 
@@ -410,7 +407,7 @@ class Extract(object):
                             self.topiclist[layer.topic.topicorder]['restrictions'].append({
                                 "codegenre": groupedrestriction[code]['codegenre'],
                                 "teneur": groupedrestriction[code]['teneur'],
-                                "area": str(round(groupedrestriction[code]['area']*areacompensation,1)
+                                "area": str(int(round(groupedrestriction[code]['area']*areacompensation,0))
                                         )+' m<sup>2</sup>',
                                 "area_pct": round((float(
                                         groupedrestriction[code]['area'])*100)/propertyarea, 1)
