@@ -353,6 +353,7 @@ class Extract(object):
                 if len(results) > 0:
                     codegenre = None
                     groupedrestriction = {}
+                    measure = 0
 
                     for result in results:
                         # make sure, all type codes are cast to string
@@ -386,20 +387,22 @@ class Extract(object):
                         restrictionlist.append(restriction)
 
                         propertyarea = self.real_estate['area']
+                        # A difference between the calculated real_estate area and the area
+                        # given in the land registry is compensated proportionally
+                        areacompensation = self.real_estate['area_ratio']
                         if isinstance(restriction['codegenre'], int):
                             restriction['codegenre'] = str(restriction['codegenre'])
 
                         if codegenre == result['properties']['codegenre']:
-                            groupedmeasure =+ measure
-                            groupedrestriction[codegenre]['area'] = groupedmeasure
+                            groupedmeasure = groupedrestriction[codegenre]['area']
+                            groupedrestriction[codegenre].update({'area': groupedmeasure + measure})
                         else:
                             codegenre = result['properties']['codegenre']
-                            groupedmeasure = measure
                             groupedrestriction[codegenre] = {
                                 "codegenre": self.legenddir+result['properties']['codegenre']+".png",
                                 "teneur": result['properties']['teneur'],
                                 "geomType": result['properties']['geomType'],
-                                "area": groupedmeasure
+                                "area": measure
                             }
 
                     for code in groupedrestriction:
@@ -407,9 +410,10 @@ class Extract(object):
                             self.topiclist[layer.topic.topicorder]['restrictions'].append({
                                 "codegenre": groupedrestriction[code]['codegenre'],
                                 "teneur": groupedrestriction[code]['teneur'],
-                                "area": str(groupedrestriction[code]['area'])+' m<sup>2</sup>',
+                                "area": str(round(groupedrestriction[code]['area']*areacompensation,1)
+                                        )+' m<sup>2</sup>',
                                 "area_pct": round((float(
-                                    groupedrestriction[code]['area'])*100)/propertyarea, 1)
+                                        groupedrestriction[code]['area'])*100)/propertyarea, 1)
                             })
                         elif groupedrestriction[code]['geomType'] == 'point':
                             self.topiclist[layer.topic.topicorder]['restrictions'].append({
