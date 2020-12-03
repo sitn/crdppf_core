@@ -374,8 +374,8 @@ else:
 
 if 'road_noise' in db_config['restrictions']:
     class RoadNoise(GeoInterface, Base):
-        __tablename__ = 'r145_sens_bruit'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        __tablename__ = 'v_r145_sens_bruit'
+        __table_args__ = {'schema': 'noise_sensitivity_levels', 'autoload': True}
         idobj = Column(Integer, primary_key=True)
         geom = Column(Geometry("GEOMETRY", srid=srid_))
 else:
