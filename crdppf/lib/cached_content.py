@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-
+from pyramid.exceptions import ConfigurationError
 from dogpile.cache.region import make_region
 
 cache_region = make_region()
@@ -7,7 +7,7 @@ cache_region.configure("dogpile.cache.memory")
 
 from crdppf.models import DBSession
 
-from crdppf.models.models import AppConfig, Translations, Glossar
+from crdppf.models.models import Translations, Glossar
 from crdppf.models.models import Informations, ExclusionsResponsabilite
 
 import logging
@@ -20,26 +20,31 @@ def get_cached_content(request):
 
     d = {}
 
-    canton_logo = DBSession.query(AppConfig).filter_by(parameter='cantonlogopath').first()
-    ch_logo = DBSession.query(AppConfig).filter_by(parameter='CHlogopath').first()
-    crdppf_logo = DBSession.query(AppConfig).filter_by(parameter='crdppflogopath').first()
+    if request.registry.settings['pdf_config']:
+        settings = request.registry.settings['pdf_config']
+    else:
+        raise ConfigurationError('Missing mandatory configuration settings for the application to work.')
+
+    canton_logo = settings['cantonlogo']['path']
+    ch_logo = settings['CHlogopath']
+    crdppf_logo = settings['crdppflogopath']
 
     d['canton_logo'] = '/'.join([
         request.registry.settings['localhost_url'],
         'proj/images',
-        canton_logo.paramvalue
+        canton_logo
     ])
 
     d['ch_logo'] = '/'.join([
         request.registry.settings['localhost_url'],
         'proj/images',
-        ch_logo.paramvalue
+        ch_logo
     ])
 
     d['crdppf_logo'] = '/'.join([
         request.registry.settings['localhost_url'],
         'proj/images',
-        crdppf_logo.paramvalue
+        crdppf_logo
     ])
 
     return d

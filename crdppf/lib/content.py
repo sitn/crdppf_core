@@ -10,7 +10,7 @@ from crdppf.util.documents import get_document_ref, get_documents
 from crdppf.util.pdf_functions import get_feature_info, get_translations
 
 from crdppf.models import DBSession
-from crdppf.models.models import Topics, AppConfig
+from crdppf.models.models import Topics
 
 from geoalchemy2.shape import to_shape, WKTElement
 import logging
@@ -162,7 +162,7 @@ def get_content(id, request):
     """
     # Start a session
     session = request.session
-    configs = DBSession.query(AppConfig).all()
+    configs = request.registry.settings['app_config']
 
     # initalize extract object
     extract = Extract(request)
@@ -171,9 +171,8 @@ def get_content(id, request):
     if type == 'file':
         type = 'reduced'
         directprint = True
-    for config in configs:
-        if config.parameter not in ['crdppflogopath', 'cantonlogopath']:
-            extract.baseconfig[config.parameter] = config.paramvalue
+    for config in configs.keys():
+        extract.baseconfig[config] = configs[config]
     extract.srid = db_config['srid']
 
     extract.topiclegenddir = request.static_url('crdppfportal:static/public/legend/')

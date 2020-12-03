@@ -14,21 +14,6 @@ from crdppf.models import init_model
 
 db_config = 'to_overwrite'
 
-# GET THE INITIAL CONFIGURATION FROM THE DB
-def read_app_config(settings):
-    """
-    Read the initial app config
-    """
-    from crdppf.models import DBSession, Base
-    from crdppf.models.models import AppConfig
-    results = {}
-    results = DBSession.query(AppConfig).all()
-
-    for result in results :
-        settings['app_config'].update({str(result.parameter):str(result.paramvalue)})
-
-    return True
-
 # INCLUDE THE CORE CONFIGURATION AND CREATE THE APPLICATION
 def includeme(config):
     """ This function returns a Pyramid WSGI application.
@@ -54,9 +39,6 @@ def includeme(config):
 
     engine = engine_from_config(settings, 'sqlalchemy.')
     init_model(engine)
-
-    # add app configuration from db
-    read_app_config(settings)
 
     config.include(papyrus.includeme)
     config.include('pyramid_mako')

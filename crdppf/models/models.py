@@ -17,12 +17,6 @@ srid_ = db_config['srid']
 from crdppf.models import Base
 
 
-# Models for the configuration of the application
-class AppConfig(Base):
-    __tablename__ = 'appconfig'
-    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-
-
 # START models used for static extraction and general models
 class Topics(Base):
     __tablename__ = 'topics'
@@ -52,7 +46,6 @@ class OriginReference(Base):
     __tablename__ = 'origin_reference'
     __table_args__ = {'schema': db_config['schema'], 'autoload': True}
     docid = Column(String, ForeignKey('crdppf.documents.docid'))
-
 
 class LegalDocuments(Base):
     __tablename__ = 'documents'
@@ -170,56 +163,86 @@ else:
 
 # START models used for GetFeature queries
 # models for theme: allocation plan
-class PrimaryLandUseZones(GeoInterface, Base):
-    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    __tablename__ = 'r73_affectations_primaires'
-    idobj = Column(Integer, primary_key=True)
-    geom = Column(Geometry("GEOMETRY", srid=srid_))
 
+if 'land_use_plans_primary_use' in db_config['restrictions']:
+    table_def_ = db_config['tables']['land_use_plans_primary_use']
 
-class SecondaryLandUseZones(GeoInterface, Base):
-    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    __tablename__ = 'r73_zones_superposees'
-    idobj = Column(Integer, primary_key=True)
-    geom = Column(Geometry("GEOMETRY", srid=srid_))
+    class PrimaryLandUseZones(GeoInterface, Base):
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom = Column(Geometry("GEOMETRY", srid=srid_))
+else:
+    class PrimaryLandUseZones():
+        pass
 
+if 'land_use_plans_overlay_zones' in db_config['restrictions']:
+    table_def_ = db_config['tables']['land_use_plans_overlay_zones']
 
-class ComplementaryLandUsePerimeters(GeoInterface, Base):
-    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    __tablename__ = 'r73_perimetres_superposes'
-    idobj = Column(Integer, primary_key=True)
-    geom = Column(Geometry("GEOMETRY", srid=srid_))
+    class SecondaryLandUseZones(GeoInterface, Base):
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom = Column(Geometry("GEOMETRY", srid=srid_))
+else:
+    class SecondaryLandUseZones():
+        pass
 
+if 'land_use_plans_overlay_perimeters' in db_config['restrictions']:
+    table_def_ = db_config['tables']['land_use_plans_overlay_perimeters']
 
-class LandUseLinearConstraints(GeoInterface, Base):
-    __tablename__ = 'r73_contenus_lineaires'
-    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    idobj = Column(Integer, primary_key=True)
-    geom = Column(Geometry("MULTILINE", srid=srid_))
+    class ComplementaryLandUsePerimeters(GeoInterface, Base):
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom = Column(Geometry("GEOMETRY", srid=srid_))
+else:
+    class ComplementaryLandUsePerimeters():
+        pass
 
+if 'land_use_plans_linear_constraints' in db_config['restrictions']:
+    table_def_ = db_config['tables']['land_use_plans_linear_constraints']
 
-class LandUsePointConstraints(GeoInterface, Base):
-    __tablename__ = 'r73_contenus_ponctuels'
-    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    idobj = Column(Integer, primary_key=True)
-    geom = Column(Geometry("POINT", srid=srid_))
+    class LandUseLinearConstraints(GeoInterface, Base):
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom = Column(Geometry("MULTILINE", srid=srid_))
+else:
+    class LandUseLinearConstraints():
+        pass
+
+if 'land_use_plans_point_constraints' in db_config['restrictions']:
+    table_def_ = db_config['tables']['land_use_plans_point_constraints']
+
+    class LandUsePointConstraints(GeoInterface, Base):
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
+        idobj = Column(Integer, primary_key=True)
+        geom = Column(Geometry("POINT", srid=srid_))
+else:
+    class LandUsePointConstraints():
+        pass
 
 # models for the topic national roads
+if 'motorways_project_planing_zones' in db_config['restrictions']:
+    table_def_ = db_config['tables']['motorways_project_planing_zones']
 
-if 'highways_project_zones' in db_config['restrictions']:
     class CHHighwaysProjectZones(GeoInterface, Base):
-        __tablename__ = 'r87_astra_projektierungszonen_nationalstrassen'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
         idobj = Column(Integer, primary_key=True)
         geom = Column(Geometry("GEOMETRY", srid=srid_))
 else:
     class CHHighwaysProjectZones():
         pass
 
-if 'highways_construction_limits' in db_config['restrictions']:
+if 'motorways_building_lines' in db_config['restrictions']:
+    table_def_ = db_config['tables']['motorways_building_lines']
+
     class CHHighwaysConstructionLimits(GeoInterface, Base):
-        __tablename__ = 'r88_astra_baulinien_nationalstrassen'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
         idobj = Column(Integer, primary_key=True)
         geom = Column(Geometry("GEOMETRY", srid=srid_))
 else:
@@ -227,21 +250,24 @@ else:
         pass
 
 # models for the national railways
+if 'railways_project_planning_zones' in db_config['restrictions']:
+    table_def_ = db_config['tables']['railways_project_planning_zones']
 
-if 'railways_project_zones' in db_config['restrictions']:
     class CHRailwaysProjectZones(GeoInterface, Base):
-        __tablename__ = 'r96_bav_projektierungszonen_eisenbahnanlagen'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
         idobj = Column(Integer, primary_key=True)
         geom = Column(Geometry("GEOMETRY", srid=srid_))
 else:
     class CHRailwaysProjectZones():
         pass
 
-if 'railways_construction_limits' in db_config['restrictions']:
+if 'railways_building_lines' in db_config['restrictions']:
+    table_def_ = db_config['tables']['railways_building_lines']
+
     class CHRailwaysConstructionLimits(GeoInterface, Base):
-        __tablename__ = 'r97_bav_baulinien_eisenbahnanlagen'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
         idobj = Column(Integer, primary_key=True)
         geom = Column(Geometry("GEOMETRY", srid=srid_))
 else:
@@ -249,16 +275,12 @@ else:
         pass
 
 # models for airports
-if 'airport_security_zones' in db_config['restrictions']:
-    class CHAirportSecurityZones(GeoInterface, Base):
-        __tablename__ = 'r108_bazl_sicherheitszonenplan'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-        idobj = Column(Integer, primary_key=True)
-        geom = Column(Geometry("GEOMETRY", srid=srid_))
+if 'airports_security_zone_plans' in db_config['restrictions']:
+    table_def_ = db_config['tables']['airports_security_zone_plans']
 
-    class CHAirportSecurityZonesPDF(GeoInterface, Base):
-        __tablename__ = 'r108_bazl_sicherheitszonenplan_pdf'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+    class CHAirportSecurityZones(GeoInterface, Base):
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
         idobj = Column(Integer, primary_key=True)
         geom = Column(Geometry("GEOMETRY", srid=srid_))
         # ch.bazl.sicherheitszonenplan.oereb
@@ -266,152 +288,142 @@ else:
     class CHAirportSecurityZones():
         pass
 
-    class CHAirportSecurityZonesPDF():
-        pass
+if 'airports_project_planning_zones' in db_config['restrictions']:
+    table_def_ = db_config['tables']['airports_project_planning_zones']
 
-if 'airport_project_zones' in db_config['restrictions']:
     class CHAirportProjectZones(GeoInterface, Base):
-        __tablename__ = 'r103_bazl_projektierungszonen_flughafenanlagen'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-        idobj = Column(Integer, primary_key=True)
-        geom = Column(Geometry("GEOMETRY", srid=srid_))
-
-    class CHAirportProjectZonesPDF(GeoInterface, Base):
-        __tablename__ = 'r103_bazl_projektierungszonen_flughafenanlagen_pdf'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
         idobj = Column(Integer, primary_key=True)
         geom = Column(Geometry("GEOMETRY", srid=srid_))
         # ch.bazl.projektierungszonen-flughafenanlagen.oereb
-
 else:
     class CHAirportProjectZones():
         pass
 
-    class CHAirportProjectZonesPDF():
-        pass
 
-if 'airport_construction_limits' in db_config['restrictions']:
+if 'airports_building_lines' in db_config['restrictions']:
+    table_def_ = db_config['tables']['airports_building_lines']
+
     class CHAirportConstructionLimits(GeoInterface, Base):
-        __tablename__ = 'r104_bazl_baulinien_flughafenanlagen'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-        idobj = Column(Integer, primary_key=True)
-        geom = Column(Geometry("GEOMETRY", srid=srid_))
-
-    class CHAirportConstructionLimitsPDF(GeoInterface, Base):
-        __tablename__ = 'r104_bazl_baulinien_flughafenanlagen_pdf'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
         idobj = Column(Integer, primary_key=True)
         geom = Column(Geometry("GEOMETRY", srid=srid_))
         # ch.bazl.projektierungszonen-flughafenanlagen.oereb
-
 else:
     class CHAirportConstructionLimits():
         pass
 
-    class CHAirportConstructionLimitsPDF():
-        pass
-
 
 # models for theme: register of polluted sites
-class PollutedSites(GeoInterface, Base):
-    __tablename__ = 'r116_sites_pollues'
-    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    idobj = Column(Integer, primary_key=True)
-    geom = Column(Geometry("GEOMETRY", srid=srid_))
+if 'contaminated_sites' in db_config['restrictions']:
+    table_def_ = db_config['tables']['contaminated_sites']
 
-if 'military_polluted_sites' in db_config['restrictions']:
-    class ContaminatedMilitarySites(GeoInterface, Base):
-        __tablename__ = 'r117_vbs_belastete_standorte_militaer'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+    class PollutedSites(GeoInterface, Base):
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
         idobj = Column(Integer, primary_key=True)
         geom = Column(Geometry("GEOMETRY", srid=srid_))
+else:
+    class PollutedSites():
+        pass
 
+if 'contaminated_military_sites' in db_config['restrictions']:
+    table_def_ = db_config['tables']['contaminated_military_sites']
+
+    class ContaminatedMilitarySites(GeoInterface, Base):
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
+        idobj = Column(String, primary_key=True)
+        geom = Column(Geometry("GEOMETRY", srid=srid_))
 else:
     class ContaminatedMilitarySites():
         pass
 
-if 'airport_polluted_sites' in db_config['restrictions']:
+
+if 'contaminated_civil_aviation_sites' in db_config['restrictions']:
+    table_def_ = db_config['tables']['contaminated_civil_aviation_sites']
+
     class CHPollutedSitesCivilAirports(GeoInterface, Base):
-        __tablename__ = 'r118_bazl_belastete_standorte_zivilflugplaetze'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
         idobj = Column(Integer, primary_key=True)
         geom = Column(Geometry("GEOMETRY", srid=srid_))
-
-    class CHPollutedSitesCivilAirportsPDF(GeoInterface, Base):
-        __tablename__ = 'r118_bazl_belastete_standorte_zivilflugplaetze_pdf'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-        idobj = Column(Integer, primary_key=True)
-        geom = Column(Geometry("GEOMETRY", srid=srid_))
-
 else:
     class CHPollutedSitesCivilAirports():
         pass
 
-    class CHPollutedSitesCivilAirportsPDF():
-        pass
 
-if 'transportation_polluted_sites' in db_config['restrictions']:
+if 'contaminated_public_transport_sites' in db_config['restrictions']:
+    table_def_ = db_config['tables']['contaminated_public_transport_sites']
+
     class CHPollutedSitesPublicTransports(GeoInterface, Base):
-        __tablename__ = 'r119_bav_belastete_standorte_oev'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
         idobj = Column(Integer, primary_key=True)
         geom = Column(Geometry("GEOMETRY", srid=srid_))
-
-    class CHPollutedSitesPublicTransportsPDF(GeoInterface, Base):
-        __tablename__ = 'r119_bav_belastete_standorte_oev_pdf'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-        idobj = Column(Integer, primary_key=True)
-        geom = Column(Geometry("GEOMETRY", srid=srid_))
-
-    # ch.bav.kataster-belasteter-standorte-oev.oereb
+        # ch.bav.kataster-belasteter-standorte-oev.oereb
 else:
     class CHPollutedSitesPublicTransports():
         pass
 
-    class CHPollutedSitesPublicTransportsPDF():
-        pass
 # models for the topic noise
-
 if 'road_noise' in db_config['restrictions']:
+    table_def_ = db_config['tables']['noise_sensitivity_levels']
+
     class RoadNoise(GeoInterface, Base):
-        __tablename__ = 'r145_sens_bruit'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
         idobj = Column(Integer, primary_key=True)
         geom = Column(Geometry("GEOMETRY", srid=srid_))
 else:
     class RoadNoise():
         pass
 
-
 # models for water protection
-class WaterProtectionZones(GeoInterface, Base):
-    __tablename__ = 'r131_zone_prot_eau'
-    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    idobj = Column(String(40), primary_key=True)
-    geom = Column(Geometry("GEOMETRY", srid=srid_))
+if 'groundwater_protection_zones' in db_config['restrictions']:
+    table_def_ = db_config['tables']['groundwater_protection_zones']
+    class WaterProtectionZones(GeoInterface, Base):
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
+        idobj = Column(String(40), primary_key=True)
+        geom = Column(Geometry("GEOMETRY", srid=srid_))
+else:
+    class WaterProtectionZones():
+        pass
 
+if 'groundwater_protection_sites' in db_config['restrictions']:
+    table_def_ = db_config['tables']['groundwater_protection_sites']
 
-class WaterProtectionPerimeters(GeoInterface, Base):
-    __tablename__ = 'r132_perimetre_prot_eau'
-    __table_args__ = {'schema': db_config['schema'], 'autoload': True}
-    idobj = Column(String(40), primary_key=True)
-    geom = Column(Geometry("GEOMETRY", srid=srid_))
+    class WaterProtectionPerimeters(GeoInterface, Base):
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
+        idobj = Column(String(40), primary_key=True)
+        geom = Column(Geometry("GEOMETRY", srid=srid_))
+else:
+    class WaterProtectionPerimeters():
+        pass
 
 # models for the topic Forest
-if 'forest_limits' in db_config['restrictions']:
+if 'forest_perimeters' in db_config['restrictions']:
+    table_def_ = db_config['tables']['forest_perimeters']
+
     class ForestLimits(GeoInterface, Base):
-        __tablename__ = 'r157_lim_foret'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
         idobj = Column(Integer, primary_key=True)
         geom = Column(Geometry("GEOMETRY", srid=srid_))
 else:
     class ForestLimits():
         pass
 
-if 'forest_distances' in db_config['restrictions']:
+if 'forest_distance_lines' in db_config['restrictions']:
+    table_def_ = db_config['tables']['forest_distance_lines']
+
     class ForestDistances(GeoInterface, Base):
-        __tablename__ = 'r159_dist_foret'
-        __table_args__ = {'schema': db_config['schema'], 'autoload': True}
+        __tablename__ = table_def_['tablename']
+        __table_args__ = {'schema': table_def_['schema'], 'autoload': True}
         idobj = Column(Integer, primary_key=True)
         geom = Column(Geometry("GEOMETRY", srid=srid_))
 else:
