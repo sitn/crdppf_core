@@ -52,13 +52,13 @@ Ext.onReady(function() {
 
       var loadMask = new Ext.LoadMask(Ext.getBody(), {msg: 'Chargement en cours... Merci de patienter.'});
 
-        if (counter == 3) {
-            loadMask.hide();
-            synchronize(sync);
-        }
-        else {
-          loadMask.show();
-        }
+      if (counter == 3) {
+          loadMask.hide();
+          synchronize(sync);
+      }
+      else {
+        loadMask.show();
+      }
     };
 
     var redirectAfterDisclaimer = function(userChoice){
