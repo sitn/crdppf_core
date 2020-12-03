@@ -49,9 +49,16 @@ Ext.onReady(function() {
     };
 
     Crdppf.triggerFunction = function(counter) {
-        if (counter == 3) {
-            synchronize(sync);
-        }
+
+      var loadMask = new Ext.LoadMask(Ext.getBody(), {msg: 'Chargement en cours... Merci de patienter.'});
+
+      if (counter == 3) {
+          loadMask.hide();
+          synchronize(sync);
+      }
+      else {
+        loadMask.show();
+      }
     };
 
     var redirectAfterDisclaimer = function(userChoice){
