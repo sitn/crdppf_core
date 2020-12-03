@@ -30,7 +30,10 @@ def get_features_function(parcelGeom, params):
     featureList = []
     for layer in layerList:
         targetModel = table2model_match[layer]
-        intersectResult = DBSession.query(targetModel).filter(or_(targetModel.geom.ST_Intersects(parcelGeom), targetModel.geom.ST_Within(parcelGeom))).all()
+        intersectResult = DBSession.query(targetModel).filter(
+            or_(targetModel.geom.ST_Intersects(parcelGeom), targetModel.geom.ST_Within(parcelGeom))
+            ).order_by(targetModel.codegenre).all()
+
         if intersectResult:
             # create geojson output with custom attributes
             for feature in intersectResult:

@@ -3,14 +3,13 @@
 from crdppf import db_config
 from crdppf.extract import Extract
 from crdppf.lib.wmts_parsing import wmts_layer
-from crdppf.lib.geometry_functions import get_feature_bbox, get_print_format, get_feature_center
+#from crdppf.lib.geometry_functions import get_feature_bbox, get_print_format, get_feature_center
 
 from crdppf.util.get_feature_functions import get_features_function
 from crdppf.util.documents import get_document_ref, get_documents
-from crdppf.util.pdf_functions import get_feature_info, get_translations
-
+from crdppf.util.pdf_functions import get_feature_info, get_translations, get_print_format
 from crdppf.models import DBSession
-from crdppf.models.models import Topics, AppConfig
+from crdppf.models.models import AppConfig
 
 from geoalchemy2.shape import to_shape, WKTElement
 import logging
@@ -115,7 +114,7 @@ def get_legend_classes(bbox, layername, translations, srid):
 def add_layer(layer, featureid, featureinfo, translations, appconfig, topicdata):
 
     layerlist = {}
-    results = get_features_function(featureinfo['geom'], {'layerList': layer.layername, 'id': featureid, 'translations': appconfig['translations']})
+    results = get_features_function(featureinfo['geom'], {'layerList': layer.layername, 'id': featureid, 'translations': translations})
 
     if results:
         layerlist[str(layer.layerid)] = {'layername': layer.layername, 'features': []}
@@ -166,37 +165,31 @@ def get_content(id, request):
 
     # initalize extract object
     extract = Extract(request)
-    type = request.matchdict.get("type_")
     directprint = False
-    if type == 'file':
-        type = 'reduced'
+    if extract.reporttype == 'file':
+        extract.reporttype = 'reduced'
         directprint = True
+    else:
+        reporttype = extract.reporttype
+
     for config in configs:
         if config.parameter not in ['crdppflogopath', 'cantonlogopath']:
             extract.baseconfig[config.parameter] = config.paramvalue
-    extract.srid = db_config['srid']
 
     extract.topiclegenddir = request.static_url('crdppfportal:static/public/legend/')
 
-    # Define language to get multilingual labels for the selected language
-    # defaults to 'fr': french - this may be changed in the appconfig
-    if 'lang' not in session:
-        extract.baseconfig['lang'] = request.registry.settings['default_language'].lower()
-    else:
-        extract.baseconfig['lang'] = session['lang'].lower()
-    extract.baseconfig['translations'] = get_translations(extract.baseconfig['lang'])
     # for simplification
-    translations = extract.baseconfig['translations']
+    translations = extract.translations
 
     # 1) If the ID of the parcel is set get the basic attributs of the property
     # else get the ID (id) of the selected parcel first using X/Y coordinates of the center
     # ---------------------------------------------------------------------------------------------------
-    featureinfo = get_feature_info(id, extract.srid, translations)  # '1_14127' # test parcel or '1_11340'
-    extract.filename = extract.id + featureinfo['featureid']
+    featureinfo = extract.real_estate  # '1_14127' # test parcel or '1_11340'
 
     # 3) Get the list of all the restrictions by topicorder set in a column
     # ------------------------------------------
-    extract.topics = DBSession.query(Topics).order_by(Topics.topicorder).all()
+    topics = extract.topics
+    restrictions = extract.restrictions
 
     # Configure the WMTS background layer
 
@@ -210,13 +203,13 @@ def get_content(id, request):
     wmts_layer_ = wmts_layer(wmts['url'], wmts['layer'])
     extract.baseconfig['wmts'] = wmts
 
-    base_wms_layers = request.registry.settings['app_config']['crdppf_wms_layers']
+    wms_base_layers = request.registry.settings['app_config']['crdppf_wms_layers']
     map_buffer = request.registry.settings['app_config']['map_buffer']
     basemaplayers = {
         "baseURL": request.registry.settings['crdppf_wms'],
         "opacity": 1,
         "type": "WMS",
-        "layers": base_wms_layers,
+        "layers": wms_base_layers,
         "imageFormat": "image/png",
         "styles": "default",
         "customParams": {
@@ -229,7 +222,7 @@ def get_content(id, request):
     propertynumber = featureinfo['nummai'].strip()
     propertytype = featureinfo['type'].strip()
     propertyarea = featureinfo['area']
-    report_title = translations[str(type+'extracttitlelabel')]
+    report_title = translations[str(reporttype+'extracttitlelabel')]
 
     # AS does the german language, the french contains a few accents we have to replace to fetch the banner which has no accents in its pathname...
     conversion = [
@@ -259,28 +252,29 @@ def get_content(id, request):
 
     for char in conversion:
         municipality_escaped = municipality_escaped.replace(char[0], char[1])
-    extract.header['municipality_escaped'] = municipality_escaped
 
     municipalitylogodir = '/'.join([
         request.registry.settings['localhost_url'],
         'proj/images/ecussons/'])
     municipalitylogopath = municipalitylogodir + municipality_escaped + '.png'
-    extract.header['municipalitylogopath'] = municipalitylogopath
+
     legenddir = '/'.join([
         request.registry.settings['localhost_url'],
         'proj/images/icons/'])
 
     # Get the raw feature BBOX
-    extract.basemap['bbox'] = get_feature_bbox(id)
-    bbox = extract.basemap['bbox']
+    #extract.basemap['bbox'] = get_feature_bbox(id)
+    #bbox = extract.basemap['bbox']
+    bbox = extract.real_estate['BBOX']
 
     if bbox is False:
         log.warning('Found more then one bbox for id: %s' % id)
         return False
 
     # Get the feature center
-    extract.basemap['feature_center'] = get_feature_center(id)
-    feature_center = extract.basemap['feature_center']
+    #extract.basemap['feature_center'] = get_feature_center(id)
+    #feature_center = extract.basemap['feature_center']
+    feature_center = [extract.real_estate['centerX'], extract.real_estate['centerY']]
 
     if feature_center is False:
         log.warning('Found more then one geometry for id: %s' % id)
@@ -343,231 +337,58 @@ def get_content(id, request):
     notconcernedtopics = []
     emptytopics = []
 
-    for topic in extract.topics:
+    for topic in topics:
+        #log.warning('Parsing topic : %s' % topic.topicid)
 
-        # for the federal data layers we get the restrictions calling the feature service and store the result in the DB
-        if topic.topicid in extract.baseconfig['ch_topics']:
-            xml_layers = []
-            for xml_layer in topic.layers:
-                xml_layers.append(xml_layer.layername)
-            #  get_XML(feature['geom'], topic.topicid, extractcreationdate, lang, translations)
-
-        topicdata[str(topic.topicid)] = {
-            "categorie": 0,
-            "docids": set([]),
-            "topicname": topic.topicname,
-            "bboxlegend": [],
-            "layers": {},
-            "legalbase": [],
-            "legalprovision": [],
-            "reference": [],
-            "authority": {
-                "authorityuuid": topic.authority.authorityid,
-                "authorityname": topic.authority.authorityname,
-                "authorityurl": topic.authority.authoritywww
-                },
-            "topicorder": topic.topicorder,
-            "authorityfk": topic.authorityfk,
-            "publicationdate": topic.publicationdate
-            }
-
-        # if geographic layers are defined for the topic, get the list of all layers and then
-        # check for each layer the information regarding the features touching the property
-        if topic.layers:
-            topicdata[str(topic.topicid)]['wmslayerlist'] = []
-
-            for layer in topic.layers:
-                topicdata[str(topic.topicid)]["layers"][layer.layerid] = {
-                    "layername": layer.layername,
-                    "features": None
-                    }
-                topicdata[str(topic.topicid)]['wmslayerlist'].append(layer.layername)
-
-                # intersects a given layer with the feature and adds the results to the topicdata- see method add_layer
-                layerdata = add_layer(layer, propertynumber, featureinfo, translations, appconfig, topicdata)
-                if layerdata is not None:
-                    topicdata[str(topic.topicid)]['layers'][layer.layerid]['features'] = layerdata[str(layer.layerid)]['features']
-                    topicdata[str(topic.topicid)]['categorie'] = 3
-                    for restrictionid in layerdata[str(layer.layerid)]['ids']:
-                        docfilters = [restrictionid]
-                        for doctype in appconfig['doctypes'].split(','):
-                            docfilters.append(doctype)
-                            docidlist = get_document_ref(docfilters)
-                            docs = set_documents(str(layer.topicfk), doctype, docidlist, featureinfo, False, topicdata[str(topic.topicid)]['docids'])
-                            for doc in docs:
-                                topicdata[str(topic.topicid)]['docids'].add(doc['documentid'])
-                                del doc['documentid']
-                                topicdata[str(topic.topicid)][doctype].append(doc)
-                else:
-                    topicdata[str(topic.topicid)]['layers'][layer.layerid] = {'layername': layer.layername, 'features': None}
-                    if topicdata[str(topic.topicid)]['categorie'] != 3:
-                        topicdata[str(topic.topicid)]['categorie'] = 1
-
-                # get the legend entries in the map bbox not touching the features
-                featurelegend = get_legend_classes(to_shape(featureinfo['geom']), layer.layername, translations, extract.srid)
-                bboxlegend = get_legend_classes(to_shape(WKTElement(map_bbox)), layer.layername, translations, extract.srid)
-                bboxitems = set()
-                for legenditem in bboxlegend:
-                    if legenditem not in featurelegend:
-                        bboxitems.add(tuple(legenditem.items()))
-                if len(bboxitems) > 0:
-                    for el in bboxitems:
-                        legendclass = dict((x, y) for x, y in el)
-                        legendclass['codegenre'] = legenddir+legendclass['codegenre']+".png"
-                        topicdata[str(topic.topicid)]["bboxlegend"].append(legendclass)
-            # Get the list of documents related to a topic with layers and results
-            if topicdata[str(layer.topicfk)]["categorie"] == 3:
-                docfilters = [str(topic.topicid)]
-                for doctype in appconfig["doctypes"].split(','):
-                    docidlist = get_document_ref(docfilters)
-                    docs = set_documents(str(topic.topicid), doctype, docidlist, featureinfo, True, topicdata[str(topic.topicid)]['docids'])
-                    for doc in docs:
-                        topicdata[str(topic.topicid)]['docids'].add(doc['documentid'])
-                        del doc['documentid']
-                        topicdata[str(topic.topicid)][doctype].append(doc)
-        else:
-            if str(topic.topicid) in appconfig['emptytopics']:
-                emptytopics.append(topic.topicname)
-                topicdata[str(topic.topicid)]['layers'] = None
-                topicdata[str(topic.topicid)]['categorie'] = 0
-            else:
-                topicdata[str(topic.topicid)]['layers'] = None
-                topicdata[str(topic.topicid)]['categorie'] = 1
-
-        if topicdata[str(topic.topicid)]['categorie'] == 1:
-            notconcernedtopics.append(topic.topicname)
-
-        if topicdata[topic.topicid]["categorie"] == 3:
-            appendiceslist = []
-
-            for i, legalprovision in enumerate(topicdata[str(topic.topicid)]["legalprovision"]):
-                if legalprovision["officialtitle"] != "":
-                    appendiceslist.append(['A'+str(i+1), legalprovision["officialtitle"]])
-            for doctype in appconfig["doctypes"].split(','):
-                if topicdata[str(topic.topicid)][doctype] == []:
-                    topicdata[str(topic.topicid)][doctype] = [{
+        currenttopic = extract.topiclist[topic.topicorder]
+        if currenttopic['legalprovisions'] == []:
+            currenttopic['legalprovisions'] = [{
+                'officialtitle': "",
+                'title': "",
+                'officialnb': "",
+                'abbreviation': "",
+                'remoteurl': ""
+            }]
+        if currenttopic['hints'] == []:
+            currenttopic['hints'] = [{
                         "title": "",
                         "officialtitle": "",
                         "officialnb": "",
                         "abbreviation": "",
                         "remoteurl": ""
                     }]
-
-            concernedtopics.append({
-                "topicname": topic.topicname,
-                "documentlist": {
-                    "columns": ["appendixno", "appendixtitle"],
-                    "data": appendiceslist
-                }
-            })
-
-            if topicdata[topic.topicid]['layers']:
-                topicdata[str(topic.topicid)]["restrictions"] = []
-
-                for layer in topicdata[topic.topicid]['layers']:
-                    if topicdata[topic.topicid]['layers'][layer]['features']:
-                        for feature in topicdata[topic.topicid]['layers'][layer]['features']:
-                            if 'teneur' in feature.keys() and feature['teneur'] is not None and feature['statutjuridique'] is not None:
-                                if feature['codegenre'] is None:
-                                    feature['codegenre'] = '9999'
-                                if isinstance(feature['codegenre'], int):
-                                    feature['codegenre'] = str(feature['codegenre'])
-                                if feature['geomType'] == 'area':
-                                    topicdata[str(topic.topicid)]["restrictions"].append({
-                                        "codegenre": legenddir+feature['codegenre']+".png",
-                                        "teneur": feature['teneur'],
-                                        "area": str(feature['intersectionMeasure'])+' m<sup>2</sup>',
-                                        "area_pct": round((float(
-                                            feature['intersectionMeasure'])*100)/propertyarea, 1)
-                                    })
-                                elif feature['geomType'] == 'point':
-                                    topicdata[str(topic.topicid)]["restrictions"].append({
-                                        "codegenre": legenddir+feature['codegenre']+".png",
-                                        "teneur": feature['teneur'],
-                                        "area": str(feature['intersectionMeasure']),
-                                        "area_pct": -1
-                                    })
-                                else:
-                                    topicdata[str(topic.topicid)]["restrictions"].append({
-                                        "codegenre": legenddir+feature['codegenre']+".png",
-                                        "teneur": feature['teneur'],
-                                        "area": str(feature['intersectionMeasure'])+ ' m',
-                                        "area_pct": -1
-                                    })
-                            else:
-                                for property, value in feature.iteritems():
-                                    if value is not None and property != 'featureClass':
-                                        if isinstance(value, float) or isinstance(value, int):
-                                            value = str(value)
-            topiclayers = {
-                "baseURL": request.registry.settings['crdppf_wms'],
-                "opacity": 1,
-                "type": "WMS",
-                "layers": topicdata[str(topic.topicid)]['wmslayerlist'],
-                "imageFormat": "image/png",
-                "styles": "default",
-                "customParams": {
-                    "TRANSPARENT": "true"
-                }
-            }
-
-            # This define the "general" map that we are going to copy x times,
-            # one time as base map and x times as topic map.
-            map = {
-                "projection": "EPSG:"+str(extract.srid),
-                "dpi": 150,
-                "rotation": 0,
-                "center": feature_center,
-                "scale": print_box['scale']*map_buffer,
-                "longitudeFirst": "true",
-                "layers": [
-                    {
-                        "type": "geojson",
-                        "geoJson": request.route_url('get_property')+'?id='+id,
-                        "style": {
-                            "version": "2",
-                            "strokeColor": "gray",
-                            "strokeLinecap": "round",
-                            "strokeOpacity": 0.5,
-                            "[INTERSECTS(geometry, "+wkt_polygon+")]": {
-                                "symbolizers": [
-                                    {
-                                        "strokeColor": "red",
-                                        "strokeWidth": 4,
-                                        "type": "line"
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    topiclayers,
-                    basemaplayers
-                ]
-            }
-
-            if topicdata[str(topic.topicid)]["bboxlegend"] == []:
-                topicdata[str(topic.topicid)]["bboxlegend"] = [{
-                    "codegenre": "",
-                    "teneur": ""
+        if currenttopic['bboxlegend'] == []:
+            currenttopic['bboxlegend'] = [{
+                        "codegenre": "",
+                        "teneur": ""
                     }]
 
+        if currenttopic['categorie'] == 3:
             data.append({
-                "topicname": topic.topicname,
-                "map": map,
-                "restrictions": topicdata[str(topic.topicid)]["restrictions"],
-                "bboxlegend": topicdata[str(topic.topicid)]["bboxlegend"],
-                "completelegend": extract.topiclegenddir+str(topic.topicid)+'_topiclegend.pdf',
-                "legalbases": topicdata[str(topic.topicid)]["legalbase"],
-                "legalprovisions": topicdata[str(topic.topicid)]["legalprovision"],
-                "references": topicdata[str(topic.topicid)]["reference"],
+                "topicname": currenttopic['topicname'],
+                "map":  currenttopic['map'],
+                "restrictions":  currenttopic['restrictions'],
+                "bboxlegend":  currenttopic['bboxlegend'],
+                "completelegend":  currenttopic['topiclegend'],
+                "legalbases":  currenttopic['legalbases'],
+                "legalprovisions":  currenttopic['legalprovisions'],
+                "references":  currenttopic['hints'],
                 "authority": [
-                    topicdata[str(topic.topicid)]["authority"]
+                     currenttopic['authority']
                 ]
             })
+        elif currenttopic['categorie'] == 1:
+            notconcernedtopics.append(
+                currenttopic['topicname']
+            )
+        else:
+            emptytopics.append(
+                currenttopic['topicname']
+            )
 
     d = {
         "attributes": {
-            "reporttype": type,
+            "reporttype": extract.reporttype,
             "directprint": directprint,
             "extractcreationdate": extract.creationdate,
             "filename": extract.filename,
@@ -576,7 +397,7 @@ def get_content(id, request):
             "municipality": municipality,
             "cadastre": cadastre,
             "cadastrelabel": "Cadastre",
-            "propertytype": propertytype,
+            "propertytype": extract.real_estate['type'],
             "propertynumber": propertynumber,
             "EGRIDnumber": featureinfo['egrid'],
             "municipalitylogopath": municipalitylogopath,
@@ -599,10 +420,10 @@ def get_content(id, request):
     }
 
     # pretty printed json data for the extract
-    # import json
-    # jsonfile = open('C:/Temp/'+extract.filename+'.json', 'w')
-    # jsondata = json.dumps(d, indent=4)
-    # jsonfile.write(jsondata)
-    # jsonfile.close()
+    #import json
+    #jsonfile = open('C:/Temp/'+extract.filename+'.json', 'w')
+    #jsondata = json.dumps(d, indent=4)
+    #jsonfile.write(jsondata)
+    #jsonfile.close()
 
     return d

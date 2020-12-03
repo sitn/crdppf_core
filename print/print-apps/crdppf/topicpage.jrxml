@@ -407,7 +407,7 @@
 		</band>
 		<band height="18">
 			<textField>
-				<reportElement x="0" y="0" width="493" height="18" uuid="fc59437f-651b-423a-9edc-0bd82cdc4811">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="493" height="18" isPrintWhenDetailOverflows="true" uuid="fc59437f-651b-423a-9edc-0bd82cdc4811">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
