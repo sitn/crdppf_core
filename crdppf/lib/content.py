@@ -222,7 +222,7 @@ def get_content(id, request):
     propertynumber = featureinfo['nummai'].strip()
     propertytype = featureinfo['type'].strip()
     propertyarea = featureinfo['area']
-    report_title = translations[str(reporttype+'extracttitlelabel')]
+    report_title = translations[str(extract.reporttype+'extracttitlelabel')]
 
     # AS does the german language, the french contains a few accents we have to replace to fetch the banner which has no accents in its pathname...
     conversion = [
