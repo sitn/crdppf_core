@@ -17,38 +17,6 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def get_mapbox(feature_center, scale, buffer, height, width, fitratio):
-    """Function to calculate the coordinates of the map bounding box in the real world
-        height: map height in mm
-        width: map width in mm
-        scale: the map scale denominator
-        feature_center: center point (X/Y) of the real estate feature
-    """
-
-    scale = scale*buffer
-    delta_Y = round((height*scale/1000)/2, 1)
-    delta_X = round((width*scale/1000)/2, 1)
-    X = round(feature_center[0], 1)
-    Y = round(feature_center[1], 1)
-
-    map_bbox = ''.join([
-        'POLYGON((',
-        str(X-delta_X)+' ',
-        str(Y-delta_Y)+',',
-        str(X-delta_X)+' ',
-        str(Y+delta_Y)+',',
-        str(X+delta_X)+' ',
-        str(Y+delta_Y)+',',
-        str(X+delta_X)+' ',
-        str(Y-delta_Y)+',',
-        str(X-delta_X)+' ',
-        str(Y-delta_Y),
-        '))'
-    ])
-
-    return map_bbox
-
-
 def set_documents(topicid, doctype, docids, featureinfo, geofilter, doclist):
     """ Function to fetch the documents related to the restriction:
     legal provisions, temporary provisions, references
@@ -263,8 +231,6 @@ def get_content(id, request):
         'proj/images/icons/'])
 
     # Get the raw feature BBOX
-    #extract.basemap['bbox'] = get_feature_bbox(id)
-    #bbox = extract.basemap['bbox']
     bbox = extract.real_estate['BBOX']
 
     if bbox is False:
@@ -272,18 +238,14 @@ def get_content(id, request):
         return False
 
     # Get the feature center
-    #extract.basemap['feature_center'] = get_feature_center(id)
-    #feature_center = extract.basemap['feature_center']
-    feature_center = [extract.real_estate['centerX'], extract.real_estate['centerY']]
+    feature_center = [extract.real_estate['centroidX'], extract.real_estate['centroidY']]
 
     if feature_center is False:
         log.warning('Found more then one geometry for id: %s' % id)
         return False
 
     # Get the print BOX
-    print_box = get_print_format(bbox, request.registry.settings['pdf_config']['fitratio'])
-    map_bbox = get_mapbox(feature_center, print_box['scale'], map_buffer, print_box['height'], print_box['width'],
-                          request.registry.settings['pdf_config']['fitratio'])
+    print_box = extract.print_box
 
     log.warning('Calling feature: %s' % request.route_url('get_property')+'?id='+id)
 
@@ -304,10 +266,10 @@ def get_content(id, request):
 
     basemap = {
         "projection": "EPSG:"+str(extract.srid),
-        "dpi": 150,
+        "dpi": extract.mapconfig['resolution'],
         "rotation": 0,
         "center": feature_center,
-        "scale": print_box['scale']*map_buffer,
+        "scale": print_box['scale'],
         "longitudeFirst": "true",
         "layers": [{
             "type": "geojson",

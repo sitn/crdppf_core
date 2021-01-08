@@ -366,8 +366,9 @@ def get_feature_info(id, srid, translations):
     parcelInfo['numcom'] = queryresult.numcom
     parcelInfo['nomcom'] = queryresult2.comnom
     parcelInfo['nufeco'] = queryresult2.nufeco
-    parcelInfo['centerX'] = DBSession.scalar(functions.ST_X(queryresult.geom.ST_Centroid()))
-    parcelInfo['centerY'] = DBSession.scalar(functions.ST_Y(queryresult.geom.ST_Centroid()))
+    bbox = queryresult.geom.ST_Envelope()
+    parcelInfo['centroidX'] = DBSession.scalar(functions.ST_X(bbox.ST_Centroid()))
+    parcelInfo['centroidY'] = DBSession.scalar(functions.ST_Y(bbox.ST_Centroid()))
     parcelInfo['BBOX'] = get_bbox_from_geometry(DBSession.scalar(functions.ST_AsText(queryresult.geom.ST_Envelope())))
 
     # the get_print_format function is not needed any longer as the paper size has been fixed to A4 by the cantons
