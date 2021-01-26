@@ -52,9 +52,6 @@ class Extract(object):
         self.baseconfig = {}
         # empty dict for a list of  the topics and it's depending values
         self.topiclist = {}
-        # dict holding the feature information
-        self.feature = {}
-
         # initalize configuration regarding the database
         self.db_config = db_config
 
@@ -75,6 +72,9 @@ class Extract(object):
         # set the default coordinates reference system to CH1903+/LV95 - EPSG:2056
         self.srid = db_config['srid']
         self.basemap = {}
+
+        # fetch the map configuration parameters
+        self.mapconfig = request.registry.settings['map']
 
         self.wms_params = {}
         # setting the GetLegendGraphic option for a dynamic composition of the WMS URL
@@ -111,8 +111,10 @@ class Extract(object):
         self.filename = self.id + self.propertyid
 
         # Gets the basic attributs of the real estate if it exists
+        self.real_estate = get_feature_info(self.propertyid, self.srid, self.translations)
         try:
             self.real_estate = get_feature_info(self.propertyid, self.srid, self.translations)
+            self.real_estate['feature_center'] = get_feature_center(self.propertyid)
         except:
             raise HTTPNotFound('No real estate with the given id could be found.')
 
@@ -200,7 +202,7 @@ class Extract(object):
 
                 # TO BE DONE : put real layer list by topic
                 completelegend = ''.join([
-                    'https://sitn.ne.ch/ogc-pyramid-oereb-dev/wms?',
+                    'https://sitn.ne.ch/ogc-pyramid-oereb/wms?',
                     'SINGLETILE=true&',
                     'TRANSPARENT=true&',
                     'SERVICE=WMS&VERSION=1.1.1&',
@@ -282,10 +284,10 @@ class Extract(object):
 
             map = {
                 "projection": "EPSG:"+str(self.srid),
-                "dpi": 150,
+                "dpi": self.mapconfig['resolution'],
                 "rotation": 0,
-                "center": [self.real_estate['centerX'],self.real_estate['centerY']],
-                "scale": self.print_box['scale']*self.appconfig['map_buffer'],
+                "center": [self.real_estate['centroidX'],self.real_estate['centroidY']],
+                "scale": self.print_box['scale'],
                 "longitudeFirst": "true",
                 "layers": [
                     {
@@ -534,30 +536,69 @@ class Extract(object):
             needed for printing
         """
 
-        bbox = self.real_estate['BBOX']
-        fitratio = self.pdfconfig['fitratio']
-        print_format = get_print_format(bbox, fitratio)
+        # default orientation
+        orientation = 'landscape'
 
-        return print_format
+        # compute BBOX height and width to get the basic proportion
+        bbox = self.real_estate['BBOX']
+        bbox_width = bbox['maxX'] - bbox['minX']
+        bbox_height = bbox['maxY'] - bbox['minY']
+        bbox_sides_ratio = bbox_height/bbox_width
+        margin_px = self.mapconfig['margin']
+
+        map_sides_ratio = self.mapconfig['height_px']/self.mapconfig['width_px']
+
+        # calculate the scale from bbox width and print resolution
+        inch_in_meters = 0.0254
+        dpis = 72
+        pixel_per_meter = dpis/inch_in_meters
+
+        if bbox_sides_ratio > map_sides_ratio:
+            orientation = 'portrait'
+            scale = (bbox_height/(self.mapconfig['height_px']-2*margin_px))*pixel_per_meter
+        else:
+            scale = (bbox_width/(self.mapconfig['width_px']-2*margin_px))*pixel_per_meter
+
+        print_parameters = {
+            'orientation': orientation,
+            'height': bbox_height,
+            'width': bbox_width,
+            'scale': scale
+        }
+
+        return print_parameters
 
 
     def set_mapbox(self):
         """Function to calculate the coordinates of the map bounding box in the real world
-            height: map height in mm
-            width: map width in mm
-            scale: the map scale denominator
-            feature_center: center point (X/Y) of the real estate feature
+            bbox_height: feature's bounding box height in meters
+            bbox_width: feature's bounding box width in meters
+            bbox_center: center point (X/Y) of the real estate feature's bbox
         """
-        scale = self.print_box['scale']
-        height = self.print_box['height']
-        width = self.print_box['width']
-        buffer = self.appconfig['map_buffer']
 
-        scale = scale*buffer
-        delta_Y = round((height*scale/1000)/2, 1)
-        delta_X = round((width*scale/1000)/2, 1)
-        X = round(self.real_estate['centerX'],1)
-        Y = round(self.real_estate['centerY'], 1)
+        bbox_height = self.print_box['height']
+        bbox_width = self.print_box['width']
+        margin_px = self.mapconfig['margin']
+
+        if self.print_box['orientation'] == 'portrait':
+            map_sides_ratio = self.mapconfig['width_px']/self.mapconfig['height_px']
+            margin_pct = 2*margin_px/self.mapconfig['height_px']
+            geometric_margin = bbox_height*margin_pct
+            buffered_bbox_height = round(bbox_height+2*geometric_margin,1)
+            # half the buffered height in meters to add/substract to the center coordinate
+            delta_Y = round(buffered_bbox_height/2, 1)
+            delta_X = round(delta_Y*map_sides_ratio, 1)
+        else:
+            map_sides_ratio = self.mapconfig['height_px']/self.mapconfig['width_px']
+            margin_pct = 2*margin_px/self.mapconfig['width_px']
+            geometric_margin = bbox_height*margin_pct
+            new_bbox_width = round(bbox_width+2*geometric_margin, 1)
+            # half the buffered width in meters to add/substract to the center coordinate
+            delta_X = round(new_bbox_width/2, 1)
+            delta_Y = round(delta_X*map_sides_ratio, 1)
+
+        X = round(self.real_estate['centroidX'],1)
+        Y = round(self.real_estate['centroidY'],1)
 
         map_bbox = ''.join([
             'POLYGON((',
